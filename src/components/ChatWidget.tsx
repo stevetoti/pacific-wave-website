@@ -55,7 +55,10 @@ export default function ChatWidget() {
     <div className="chat-bubble">
       {/* Chat Panel */}
       {isOpen && (
-        <div className="absolute bottom-20 right-0 w-[360px] max-h-[500px] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden">
+        <div 
+          className="absolute bottom-20 right-0 w-[360px] max-h-[500px] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden"
+          onClick={(e) => e.stopPropagation()}
+        >
           {/* Header */}
           <div className="gradient-blue p-4 text-white">
             <div className="flex items-center justify-between">
