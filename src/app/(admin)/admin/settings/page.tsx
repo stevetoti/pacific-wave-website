@@ -276,7 +276,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
                 {faviconUrl ? (
-                  <Image src={faviconUrl} alt="Favicon" width={48} height={48} className="object-contain" />
+                  <img src={faviconUrl} alt="Favicon" className="w-12 h-12 object-contain" />
                 ) : (
                   <span className="text-gray-400 text-2xl">🖼️</span>
                 )}
@@ -310,7 +310,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center gap-4">
               <div className="w-32 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
                 {logoUrl ? (
-                  <Image src={logoUrl} alt="Logo" width={120} height={48} className="object-contain" />
+                  <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
                 ) : (
                   <span className="text-gray-400 text-2xl">🖼️</span>
                 )}
@@ -344,7 +344,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center gap-4">
               <div className="w-32 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-800">
                 {logoWhiteUrl ? (
-                  <Image src={logoWhiteUrl} alt="Logo White" width={120} height={48} className="object-contain" />
+                  <img src={logoWhiteUrl} alt="Logo White" className="w-full h-full object-contain" />
                 ) : (
                   <span className="text-gray-400 text-2xl">🖼️</span>
                 )}
@@ -378,7 +378,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
                 {appleTouchIconUrl ? (
-                  <Image src={appleTouchIconUrl} alt="Apple Touch Icon" width={48} height={48} className="object-contain" />
+                  <img src={appleTouchIconUrl} alt="Apple Touch Icon" className="w-12 h-12 object-contain" />
                 ) : (
                   <span className="text-gray-400 text-2xl">📱</span>
                 )}
@@ -412,7 +412,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
                 {iconUrl ? (
-                  <Image src={iconUrl} alt="Browser Icon" width={48} height={48} className="object-contain" />
+                  <img src={iconUrl} alt="Browser Icon" className="w-12 h-12 object-contain" />
                 ) : (
                   <span className="text-gray-400 text-2xl">🌐</span>
                 )}
@@ -446,7 +446,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center gap-4">
               <div className="w-48 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
                 {ogImageUrl ? (
-                  <Image src={ogImageUrl} alt="OG Image" width={180} height={90} className="object-cover" />
+                  <img src={ogImageUrl} alt="OG Image" className="w-full h-full object-cover" />
                 ) : (
                   <span className="text-gray-400 text-2xl">🔗</span>
                 )}
