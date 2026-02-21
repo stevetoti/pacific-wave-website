@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ChatWidget from '@/components/ChatWidget';
 import VoiceWidget from '@/components/VoiceWidget';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://pacificwavedigital.com'),
@@ -115,6 +116,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col">
+        <GoogleAnalytics />
         <Navbar />
         <main className="flex-1 pt-20">{children}</main>
         <Footer />
