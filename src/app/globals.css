@@ -91,6 +91,22 @@
   @apply fixed bottom-6 right-6 z-50;
 }
 
+/* Smaller chat button */
+.chat-bubble button {
+  @apply w-12 h-12;
+}
+
+/* Widget container styling */
+.widget-stack {
+  @apply fixed bottom-6 right-6 z-50 flex flex-col gap-4 items-end;
+}
+
+/* ElevenLabs widget styling - positioned above chat */
+elevenlabs-convai {
+  transform: scale(0.8);
+  transform-origin: bottom right;
+}
+
 /* Gradient text */
 .text-gradient {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-vibrant-orange to-soft-orange;

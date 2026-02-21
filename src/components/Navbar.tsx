@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 
 const navLinks = [
@@ -22,11 +23,13 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20 px-4 sm:px-6 lg:px-8">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg gradient-blue flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
+            <Image
+              src="/images/logo-icon.jpg"
+              alt="Pacific Wave Digital"
+              width={44}
+              height={44}
+              className="rounded-lg"
+            />
             <div>
               <span className="text-xl font-bold text-deep-blue font-heading">Pacific Wave</span>
               <span className="text-xl font-bold text-vibrant-orange font-heading"> Digital</span>
