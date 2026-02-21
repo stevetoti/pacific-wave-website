@@ -51,11 +51,21 @@ const defaultVideos: VideoItem[] = [
   { id: '4', title: 'Why Choose Us', youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
 ];
 
-const getYoutubeEmbedUrl = (url: string) => {
+const getYoutubeVideoId = (url: string) => {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
-  const videoId = (match && match[2].length === 11) ? match[2] : null;
-  return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+  return (match && match[2].length === 11) ? match[2] : null;
+};
+
+const getYoutubeEmbedUrl = (url: string) => {
+  const videoId = getYoutubeVideoId(url);
+  // Use youtube-nocookie for privacy + params to minimize branding
+  return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}?modestbranding=1&rel=0&showinfo=0&iv_load_policy=3` : '';
+};
+
+const getYoutubeThumbnail = (url: string) => {
+  const videoId = getYoutubeVideoId(url);
+  return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : '';
 };
 
 export default function HomePage() {
@@ -411,16 +421,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Video Section */}
-      <section className="section-padding bg-gradient-to-br from-deep-blue via-deep-blue to-dark-navy">
-        <div className="container-max">
+      {/* Video Section - Modern UI */}
+      <section className="py-24 bg-gradient-to-br from-[#0a1628] via-deep-blue to-[#0a1628] relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-vibrant-orange/20 rounded-full blur-[150px]" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-[150px]" />
+        </div>
+        
+        <div className="container-max relative z-10 px-4 sm:px-6 lg:px-8">
           <FadeInView>
             <div className="text-center mb-16">
-              <span className="text-vibrant-orange font-semibold text-sm uppercase tracking-wider">Watch & Learn</span>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white font-heading mt-3 mb-4">
-                See Us in Action
+              <motion.div
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full mb-6"
+                whileHover={{ scale: 1.05 }}
+              >
+                <span className="w-2 h-2 bg-vibrant-orange rounded-full animate-pulse"></span>
+                <span className="text-white/90 text-sm font-medium">Featured Videos</span>
+              </motion.div>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white font-heading mb-6">
+                See Us in <span className="text-transparent bg-clip-text bg-gradient-to-r from-vibrant-orange to-yellow-400">Action</span>
               </h2>
-              <p className="text-blue-100 max-w-2xl mx-auto text-lg">
+              <p className="text-blue-200 max-w-2xl mx-auto text-lg">
                 Watch our videos to learn more about how we help Pacific businesses succeed.
               </p>
             </div>
@@ -430,11 +452,12 @@ export default function HomePage() {
             {videos.map((video, i) => (
               <FadeInView key={video.id} delay={i * 0.1}>
                 <motion.div
-                  className="bg-white/5 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10"
-                  whileHover={{ y: -5, scale: 1.02 }}
+                  className="group relative bg-gradient-to-br from-white/10 to-white/5 rounded-3xl overflow-hidden border border-white/10 hover:border-vibrant-orange/50 transition-all duration-500"
+                  whileHover={{ y: -8 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="aspect-video">
+                  {/* Video Container */}
+                  <div className="aspect-video relative overflow-hidden">
                     {getYoutubeEmbedUrl(video.youtubeUrl) ? (
                       <iframe
                         src={getYoutubeEmbedUrl(video.youtubeUrl)}
@@ -444,14 +467,34 @@ export default function HomePage() {
                         allowFullScreen
                       />
                     ) : (
-                      <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                        <span className="text-gray-400">Video not available</span>
+                      <div className="w-full h-full bg-gray-900 flex items-center justify-center">
+                        <span className="text-gray-500">Video not available</span>
                       </div>
                     )}
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-white">{video.title}</h3>
+                  
+                  {/* Video Info */}
+                  <div className="p-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="text-xl font-bold text-white group-hover:text-vibrant-orange transition-colors">
+                          {video.title}
+                        </h3>
+                        <p className="text-blue-300/70 text-sm mt-1">Pacific Wave Digital</p>
+                      </div>
+                      <motion.div
+                        className="w-10 h-10 bg-vibrant-orange/20 rounded-full flex items-center justify-center flex-shrink-0"
+                        whileHover={{ scale: 1.1, backgroundColor: 'rgba(239, 94, 51, 0.4)' }}
+                      >
+                        <svg className="w-4 h-4 text-vibrant-orange" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </motion.div>
+                    </div>
                   </div>
+                  
+                  {/* Glow effect on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-vibrant-orange/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                 </motion.div>
               </FadeInView>
             ))}
