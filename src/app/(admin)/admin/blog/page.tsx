@@ -1,73 +1,96 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-
-// Static blog posts for now - will be replaced with Supabase
-const initialPosts = [
-  {
-    id: '1',
-    title: 'AI Business Automation for Pacific Island Enterprises: A Complete Guide for 2025',
-    slug: 'ai-business-automation-pacific-islands-2025',
-    excerpt: 'Discover how AI-powered automation is transforming businesses across Vanuatu, Fiji, and the Pacific Islands.',
-    category: 'AI Solutions',
-    image: '/images/services/ai-solutions.jpg',
-    published: true,
-    date: 'February 15, 2026',
-  },
-  {
-    id: '2',
-    title: 'Why Every Vanuatu Business Needs a Professional Website in 2025',
-    slug: 'web-development-vanuatu-business-growth',
-    excerpt: 'In today\'s digital economy, a professional website is essential for business growth in Vanuatu.',
-    category: 'Web Development',
-    image: '/images/services/web-dev.jpg',
-    published: true,
-    date: 'February 10, 2026',
-  },
-  {
-    id: '3',
-    title: 'Mobile App Development for Pacific Island Businesses',
-    slug: 'mobile-app-development-pacific-islands',
-    excerpt: 'Building mobile apps for the Pacific requires unique considerations.',
-    category: 'Mobile Development',
-    image: '/images/services/mobile-apps.jpg',
-    published: true,
-    date: 'February 5, 2026',
-  },
-  {
-    id: '4',
-    title: 'Digital Marketing Strategies That Work for Pacific Island SMEs',
-    slug: 'digital-marketing-strategies-pacific-smes',
-    excerpt: 'Discover proven digital marketing strategies specifically designed for Pacific businesses.',
-    category: 'Digital Marketing',
-    image: '/images/services/digital-marketing.jpg',
-    published: true,
-    date: 'January 28, 2026',
-  },
-];
+import { supabase, BlogPost } from '@/lib/supabase';
 
 export default function BlogAdminPage() {
-  const [posts, setPosts] = useState(initialPosts);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  // Fetch posts from Supabase
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('site_id', 'pwd')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching posts:', error);
+    } else {
+      setPosts(data || []);
+    }
+    setLoading(false);
+  };
 
   const filteredPosts = posts.filter(post =>
     post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    post.category.toLowerCase().includes(searchTerm.toLowerCase())
+    (post.category && post.category.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const togglePublish = (id: string) => {
-    setPosts(posts.map(post =>
-      post.id === id ? { ...post, published: !post.published } : post
-    ));
+  const togglePublish = async (id: string) => {
+    const post = posts.find(p => p.id === id);
+    if (!post) return;
+
+    const newPublished = !post.published;
+    const { error } = await supabase
+      .from('blog_posts')
+      .update({ 
+        published: newPublished,
+        published_at: newPublished ? new Date().toISOString() : null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error updating post:', error);
+      alert('Failed to update post status');
+    } else {
+      setPosts(posts.map(p =>
+        p.id === id ? { ...p, published: newPublished } : p
+      ));
+    }
   };
 
-  const deletePost = (id: string) => {
-    if (confirm('Are you sure you want to delete this post?')) {
+  const deletePost = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this post?')) return;
+
+    const { error } = await supabase
+      .from('blog_posts')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting post:', error);
+      alert('Failed to delete post');
+    } else {
       setPosts(posts.filter(post => post.id !== id));
     }
   };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-deep-blue"></div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -122,13 +145,17 @@ export default function BlogAdminPage() {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                      <Image
-                        src={post.image}
-                        alt={post.title}
-                        width={64}
-                        height={48}
-                        className="object-cover w-full h-full"
-                      />
+                      {post.image_url ? (
+                        <Image
+                          src={post.image_url}
+                          alt={post.title}
+                          width={64}
+                          height={48}
+                          className="object-cover w-full h-full"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">📝</div>
+                      )}
                     </div>
                     <div className="min-w-0">
                       <p className="font-medium text-gray-900 truncate max-w-md">{post.title}</p>
@@ -138,7 +165,7 @@ export default function BlogAdminPage() {
                 </td>
                 <td className="px-6 py-4">
                   <span className="bg-pale-orange text-vibrant-orange text-xs font-semibold px-2 py-1 rounded-full">
-                    {post.category}
+                    {post.category || 'Uncategorized'}
                   </span>
                 </td>
                 <td className="px-6 py-4">
@@ -154,7 +181,7 @@ export default function BlogAdminPage() {
                   </button>
                 </td>
                 <td className="px-6 py-4 text-gray-500 text-sm">
-                  {post.date}
+                  {formatDate(post.created_at)}
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-end gap-2">

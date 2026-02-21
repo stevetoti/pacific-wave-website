@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import { supabase } from '@/lib/supabase';
 
 // Dynamic import for rich text editor
 const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor'), {
@@ -53,19 +54,46 @@ export default function NewBlogPost() {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, publish: boolean = true) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // For now, just log the data - will connect to Supabase later
-    console.log('Saving post:', formData);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Parse keywords into array
+    const keywordsArray = formData.keywords
+      .split(',')
+      .map(k => k.trim())
+      .filter(k => k.length > 0);
 
-    alert('Post saved! (Note: Supabase integration pending)');
-    setIsSubmitting(false);
-    router.push('/admin/blog');
+    const postData = {
+      title: formData.title,
+      slug: formData.slug,
+      excerpt: formData.excerpt,
+      content: formData.content,
+      category: formData.category,
+      image_url: formData.imageUrl,
+      keywords: keywordsArray,
+      read_time: formData.readTime,
+      published: publish,
+      published_at: publish ? new Date().toISOString() : null,
+      site_id: 'pwd',
+    };
+
+    const { error } = await supabase
+      .from('blog_posts')
+      .insert(postData);
+
+    if (error) {
+      console.error('Error creating post:', error);
+      alert('Failed to create post: ' + error.message);
+      setIsSubmitting(false);
+    } else {
+      router.push('/admin/blog');
+    }
+  };
+
+  const handleSaveDraft = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmit(e, false);
   };
 
   return (
@@ -81,13 +109,14 @@ export default function NewBlogPost() {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={() => setFormData({ ...formData, published: false })}
-            className="px-6 py-3 border border-gray-200 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+            onClick={handleSaveDraft}
+            disabled={isSubmitting}
+            className="px-6 py-3 border border-gray-200 rounded-lg font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
             Save Draft
           </button>
           <button
-            onClick={handleSubmit}
+            onClick={(e) => handleSubmit(e, true)}
             disabled={isSubmitting}
             className="bg-vibrant-orange text-white px-6 py-3 rounded-lg font-semibold hover:bg-soft-orange transition-colors disabled:opacity-50 flex items-center gap-2"
           >
@@ -106,7 +135,7 @@ export default function NewBlogPost() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <form onSubmit={(e) => handleSubmit(e, true)} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Title */}

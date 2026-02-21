@@ -17,9 +17,11 @@ export interface BlogPost {
   keywords: string[];
   read_time: string;
   published: boolean;
+  published_at: string | null;
   created_at: string;
   updated_at: string;
-  author_id: string;
+  author_id: string | null;
+  site_id: string;
 }
 
 // Updated AdminUser type to match database schema

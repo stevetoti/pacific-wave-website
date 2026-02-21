@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import { supabase, BlogPost } from '@/lib/supabase';
 
 const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor'), {
   ssr: false,
@@ -23,64 +24,6 @@ const categories = [
   'Industry Insights',
   'Company News',
 ];
-
-// Static posts data - will be replaced with Supabase
-const postsData: Record<string, {
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  category: string;
-  keywords: string;
-  readTime: string;
-  imageUrl: string;
-  published: boolean;
-}> = {
-  '1': {
-    title: 'AI Business Automation for Pacific Island Enterprises: A Complete Guide for 2025',
-    slug: 'ai-business-automation-pacific-islands-2025',
-    excerpt: 'Discover how AI-powered automation is transforming businesses across Vanuatu, Fiji, and the Pacific Islands.',
-    content: '<p>AI-powered automation is revolutionizing how Pacific Island businesses operate...</p>',
-    category: 'AI Solutions',
-    keywords: 'AI automation, Pacific Islands, business automation, Vanuatu AI',
-    readTime: '8 min read',
-    imageUrl: '/images/services/ai-solutions.jpg',
-    published: true,
-  },
-  '2': {
-    title: 'Why Every Vanuatu Business Needs a Professional Website in 2025',
-    slug: 'web-development-vanuatu-business-growth',
-    excerpt: 'In today\'s digital economy, a professional website is essential for business growth in Vanuatu.',
-    content: '<p>The digital landscape in Vanuatu is evolving rapidly...</p>',
-    category: 'Web Development',
-    keywords: 'web development, Vanuatu, business website, digital presence',
-    readTime: '6 min read',
-    imageUrl: '/images/services/web-dev.jpg',
-    published: true,
-  },
-  '3': {
-    title: 'Mobile App Development for Pacific Island Businesses',
-    slug: 'mobile-app-development-pacific-islands',
-    excerpt: 'Building mobile apps for the Pacific requires unique considerations.',
-    content: '<p>Mobile app development in the Pacific Islands presents unique challenges and opportunities...</p>',
-    category: 'Mobile Development',
-    keywords: 'mobile apps, Pacific Islands, app development, iOS, Android',
-    readTime: '7 min read',
-    imageUrl: '/images/services/mobile-apps.jpg',
-    published: true,
-  },
-  '4': {
-    title: 'Digital Marketing Strategies That Work for Pacific Island SMEs',
-    slug: 'digital-marketing-strategies-pacific-smes',
-    excerpt: 'Discover proven digital marketing strategies specifically designed for Pacific businesses.',
-    content: '<p>Digital marketing in the Pacific region requires a tailored approach...</p>',
-    category: 'Digital Marketing',
-    keywords: 'digital marketing, Pacific SMEs, online marketing, social media',
-    readTime: '5 min read',
-    imageUrl: '/images/services/digital-marketing.jpg',
-    published: true,
-  },
-};
 
 interface SEOAnalysis {
   score: number;
@@ -118,16 +61,36 @@ export default function EditBlogPost() {
   const [suggestedAltText, setSuggestedAltText] = useState('');
 
   useEffect(() => {
-    // Load post data
-    const post = postsData[postId];
-    if (post) {
-      setFormData(post);
-      setIsLoading(false);
-    } else {
-      setNotFound(true);
-      setIsLoading(false);
-    }
+    fetchPost();
   }, [postId]);
+
+  const fetchPost = async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('id', postId)
+      .single();
+
+    if (error || !data) {
+      console.error('Error fetching post:', error);
+      setNotFound(true);
+    } else {
+      const post = data as BlogPost;
+      setFormData({
+        title: post.title || '',
+        slug: post.slug || '',
+        excerpt: post.excerpt || '',
+        content: post.content || '',
+        category: post.category || '',
+        keywords: Array.isArray(post.keywords) ? post.keywords.join(', ') : '',
+        readTime: post.read_time || '5 min read',
+        imageUrl: post.image_url || '',
+        published: post.published || false,
+      });
+    }
+    setIsLoading(false);
+  };
 
   // API call helper
   const callSEOFunction = async (functionName: string, body: object) => {
@@ -181,7 +144,6 @@ export default function EditBlogPost() {
         keywords: result.keywords.join(', '),
       });
       
-      // Also set the title if it's better
       if (result.title && !formData.title) {
         setFormData(prev => ({ ...prev, title: result.title }));
       }
@@ -239,7 +201,6 @@ export default function EditBlogPost() {
     if (!formData.imageUrl) return;
     setAiLoading('alt');
 
-    // Simulated alt text generation based on context
     setTimeout(() => {
       const altText = `${formData.title} - Featured image showing ${formData.category.toLowerCase()} concepts for Pacific Island businesses`;
       setSuggestedAltText(altText);
@@ -261,13 +222,54 @@ export default function EditBlogPost() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    console.log('Updating post:', formData);
-    
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Parse keywords into array
+    const keywordsArray = formData.keywords
+      .split(',')
+      .map(k => k.trim())
+      .filter(k => k.length > 0);
 
-    alert('Post updated! (Note: Supabase integration pending)');
-    setIsSubmitting(false);
-    router.push('/admin/blog');
+    const updateData = {
+      title: formData.title,
+      slug: formData.slug,
+      excerpt: formData.excerpt,
+      content: formData.content,
+      category: formData.category,
+      image_url: formData.imageUrl,
+      keywords: keywordsArray,
+      read_time: formData.readTime,
+      published: formData.published,
+      published_at: formData.published ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error } = await supabase
+      .from('blog_posts')
+      .update(updateData)
+      .eq('id', postId);
+
+    if (error) {
+      console.error('Error updating post:', error);
+      alert('Failed to update post: ' + error.message);
+      setIsSubmitting(false);
+    } else {
+      router.push('/admin/blog');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to delete this post? This cannot be undone.')) return;
+
+    const { error } = await supabase
+      .from('blog_posts')
+      .delete()
+      .eq('id', postId);
+
+    if (error) {
+      console.error('Error deleting post:', error);
+      alert('Failed to delete post');
+    } else {
+      router.push('/admin/blog');
+    }
   };
 
   // Get score color
@@ -599,12 +601,7 @@ export default function EditBlogPost() {
             <h3 className="font-semibold text-red-700 mb-4">Danger Zone</h3>
             <button
               type="button"
-              onClick={() => {
-                if (confirm('Are you sure you want to delete this post? This cannot be undone.')) {
-                  alert('Post deleted! (Note: Supabase integration pending)');
-                  router.push('/admin/blog');
-                }
-              }}
+              onClick={handleDelete}
               className="w-full py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
             >
               🗑️ Delete Post
