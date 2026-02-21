@@ -1,9 +1,5 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import ChatWidget from '@/components/ChatWidget';
-import VoiceWidget from '@/components/VoiceWidget';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 
 export const metadata: Metadata = {
@@ -117,11 +113,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <GoogleAnalytics />
-        <Navbar />
-        <main className="flex-1 pt-20">{children}</main>
-        <Footer />
-        <VoiceWidget />
-        <ChatWidget />
+        {children}
       </body>
     </html>
   );
