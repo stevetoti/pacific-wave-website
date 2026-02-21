@@ -67,7 +67,8 @@ export default function HomePage() {
         </div>
 
         <div className="relative z-10 container-max section-padding">
-          <div className="max-w-4xl">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="max-w-2xl">
             <FadeInView>
               <motion.div 
                 className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm mb-8 border border-white/20"
@@ -137,6 +138,82 @@ export default function HomePage() {
                 ))}
               </div>
             </FadeInView>
+          </div>
+          
+          {/* Code Snippet Mockup */}
+          <FadeInView delay={0.5}>
+            <motion.div
+              className="hidden lg:block"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+            >
+              <div className="bg-[#1e293b] rounded-2xl shadow-2xl overflow-hidden border border-white/10 backdrop-blur-sm">
+                {/* macOS Window Chrome */}
+                <div className="flex items-center gap-2 px-4 py-3 bg-[#0f172a] border-b border-white/5">
+                  <div className="w-3 h-3 rounded-full bg-[#ff5f57]"></div>
+                  <div className="w-3 h-3 rounded-full bg-[#febc2e]"></div>
+                  <div className="w-3 h-3 rounded-full bg-[#28c840]"></div>
+                  <span className="ml-4 text-gray-400 text-sm font-mono">app.tsx</span>
+                </div>
+                {/* Code Content */}
+                <div className="p-6 font-mono text-sm">
+                  <div className="text-gray-500">{`// Build powerful digital solutions`}</div>
+                  <div className="mt-3">
+                    <span className="text-purple-400">const</span>{' '}
+                    <span className="text-blue-300">app</span>{' '}
+                    <span className="text-white">=</span>{' '}
+                    <span className="text-yellow-300">createApp</span>
+                    <span className="text-white">(&#123;</span>
+                  </div>
+                  <div className="ml-4">
+                    <span className="text-blue-300">name</span>
+                    <span className="text-white">:</span>{' '}
+                    <span className="text-green-400">&quot;Pacific Wave Digital&quot;</span>
+                    <span className="text-white">,</span>
+                  </div>
+                  <div className="ml-4">
+                    <span className="text-blue-300">features</span>
+                    <span className="text-white">: [</span>
+                  </div>
+                  <div className="ml-8">
+                    <span className="text-green-400">&quot;AI Solutions&quot;</span>
+                    <span className="text-white">,</span>
+                  </div>
+                  <div className="ml-8">
+                    <span className="text-green-400">&quot;Web Development&quot;</span>
+                    <span className="text-white">,</span>
+                  </div>
+                  <div className="ml-8">
+                    <span className="text-green-400">&quot;Mobile Apps&quot;</span>
+                  </div>
+                  <div className="ml-4">
+                    <span className="text-white">]</span>
+                  </div>
+                  <div>
+                    <span className="text-white">&#125;);</span>
+                    <span className="animate-pulse text-vibrant-orange">|</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Floating badges */}
+              <motion.div
+                className="absolute -top-4 -right-4 bg-vibrant-orange text-white px-4 py-2 rounded-xl shadow-lg text-sm font-semibold"
+                animate={{ y: [0, -5, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                ✨ AI-Powered
+              </motion.div>
+              <motion.div
+                className="absolute -bottom-4 -left-4 bg-white text-deep-blue px-4 py-2 rounded-xl shadow-lg text-sm font-semibold"
+                animate={{ y: [0, 5, 0] }}
+                transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+              >
+                🚀 50+ Projects Delivered
+              </motion.div>
+            </motion.div>
+          </FadeInView>
           </div>
         </div>
         

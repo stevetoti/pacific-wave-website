@@ -35,10 +35,10 @@ export const metadata: Metadata = {
       'Leading digital agency in Vanuatu specializing in AI-powered business solutions, web development, and digital transformation.',
     images: [
       {
-        url: '/images/hero-pacific.jpg',
+        url: '/images/hero-og-share.jpg',
         width: 1200,
         height: 630,
-        alt: 'Pacific Wave Digital',
+        alt: 'Pacific Wave Digital - Digital Innovation for the Pacific',
       },
     ],
   },
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: 'Pacific Wave Digital — Digital Innovation for the Pacific',
     description:
       'Leading digital agency in Vanuatu specializing in AI-powered business solutions, web development, and digital transformation.',
-    images: ['/images/hero-pacific.jpg'],
+    images: ['/images/hero-og-share.jpg'],
   },
   robots: {
     index: true,
