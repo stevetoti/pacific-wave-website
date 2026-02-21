@@ -20,8 +20,16 @@ export default function AdminSettingsPage() {
   const [tagline, setTagline] = useState('');
   const [faviconUrl, setFaviconUrl] = useState('');
   const [logoUrl, setLogoUrl] = useState('');
+  const [logoWhiteUrl, setLogoWhiteUrl] = useState('');
+  const [appleTouchIconUrl, setAppleTouchIconUrl] = useState('');
+  const [ogImageUrl, setOgImageUrl] = useState('');
+  const [iconUrl, setIconUrl] = useState('');
   const [faviconUploading, setFaviconUploading] = useState(false);
   const [logoUploading, setLogoUploading] = useState(false);
+  const [logoWhiteUploading, setLogoWhiteUploading] = useState(false);
+  const [appleTouchIconUploading, setAppleTouchIconUploading] = useState(false);
+  const [ogImageUploading, setOgImageUploading] = useState(false);
+  const [iconUploading, setIconUploading] = useState(false);
   
   // Contact
   const [email, setEmail] = useState('');
@@ -41,6 +49,10 @@ export default function AdminSettingsPage() {
   
   const faviconInputRef = useRef<HTMLInputElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const logoWhiteInputRef = useRef<HTMLInputElement>(null);
+  const appleTouchIconInputRef = useRef<HTMLInputElement>(null);
+  const ogImageInputRef = useRef<HTMLInputElement>(null);
+  const iconInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadSettings();
@@ -56,6 +68,10 @@ export default function AdminSettingsPage() {
       setTagline(settings[SETTINGS_KEYS.TAGLINE] || '');
       setFaviconUrl(settings[SETTINGS_KEYS.FAVICON_URL] || '');
       setLogoUrl(settings[SETTINGS_KEYS.LOGO_URL] || '');
+      setLogoWhiteUrl(settings[SETTINGS_KEYS.LOGO_WHITE_URL] || '');
+      setAppleTouchIconUrl(settings[SETTINGS_KEYS.APPLE_TOUCH_ICON_URL] || '');
+      setOgImageUrl(settings[SETTINGS_KEYS.OG_IMAGE_URL] || '');
+      setIconUrl(settings[SETTINGS_KEYS.ICON_URL] || '');
       
       // Contact
       setEmail(settings[SETTINGS_KEYS.EMAIL] || '');
@@ -95,6 +111,10 @@ export default function AdminSettingsPage() {
         [SETTINGS_KEYS.TAGLINE]: tagline,
         [SETTINGS_KEYS.FAVICON_URL]: faviconUrl,
         [SETTINGS_KEYS.LOGO_URL]: logoUrl,
+        [SETTINGS_KEYS.LOGO_WHITE_URL]: logoWhiteUrl,
+        [SETTINGS_KEYS.APPLE_TOUCH_ICON_URL]: appleTouchIconUrl,
+        [SETTINGS_KEYS.OG_IMAGE_URL]: ogImageUrl,
+        [SETTINGS_KEYS.ICON_URL]: iconUrl,
         // Contact
         [SETTINGS_KEYS.EMAIL]: email,
         [SETTINGS_KEYS.PHONE]: phone,
@@ -274,6 +294,142 @@ export default function AdminSettingsPage() {
                   {logoUploading ? 'Uploading...' : 'Upload Logo'}
                 </button>
                 <p className="text-xs text-gray-500 mt-1">.png, .jpg, .svg (400x100 recommended)</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Logo White (for dark backgrounds) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Logo (White/Light)</label>
+            <div className="flex items-center gap-4">
+              <div className="w-32 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-800">
+                {logoWhiteUrl ? (
+                  <Image src={logoWhiteUrl} alt="Logo White" width={120} height={48} className="object-contain" />
+                ) : (
+                  <span className="text-gray-400 text-2xl">🖼️</span>
+                )}
+              </div>
+              <div className="flex-1">
+                <input
+                  ref={logoWhiteInputRef}
+                  type="file"
+                  accept=".png,.jpg,.jpeg,.svg"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file, setLogoWhiteUrl, setLogoWhiteUploading, 'logo-white');
+                  }}
+                />
+                <button
+                  onClick={() => logoWhiteInputRef.current?.click()}
+                  disabled={logoWhiteUploading}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm"
+                >
+                  {logoWhiteUploading ? 'Uploading...' : 'Upload White Logo'}
+                </button>
+                <p className="text-xs text-gray-500 mt-1">For dark backgrounds</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Apple Touch Icon */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Apple Touch Icon</label>
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
+                {appleTouchIconUrl ? (
+                  <Image src={appleTouchIconUrl} alt="Apple Touch Icon" width={48} height={48} className="object-contain" />
+                ) : (
+                  <span className="text-gray-400 text-2xl">📱</span>
+                )}
+              </div>
+              <div className="flex-1">
+                <input
+                  ref={appleTouchIconInputRef}
+                  type="file"
+                  accept=".png"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file, setAppleTouchIconUrl, setAppleTouchIconUploading, 'apple-touch-icon');
+                  }}
+                />
+                <button
+                  onClick={() => appleTouchIconInputRef.current?.click()}
+                  disabled={appleTouchIconUploading}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm"
+                >
+                  {appleTouchIconUploading ? 'Uploading...' : 'Upload Apple Icon'}
+                </button>
+                <p className="text-xs text-gray-500 mt-1">.png (180x180 recommended) - iOS home screen</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Browser Icon */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Browser Icon (PWA)</label>
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
+                {iconUrl ? (
+                  <Image src={iconUrl} alt="Browser Icon" width={48} height={48} className="object-contain" />
+                ) : (
+                  <span className="text-gray-400 text-2xl">🌐</span>
+                )}
+              </div>
+              <div className="flex-1">
+                <input
+                  ref={iconInputRef}
+                  type="file"
+                  accept=".png"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file, setIconUrl, setIconUploading, 'icon');
+                  }}
+                />
+                <button
+                  onClick={() => iconInputRef.current?.click()}
+                  disabled={iconUploading}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm"
+                >
+                  {iconUploading ? 'Uploading...' : 'Upload Browser Icon'}
+                </button>
+                <p className="text-xs text-gray-500 mt-1">.png (192x192 or 512x512) - Modern browsers</p>
+              </div>
+            </div>
+          </div>
+
+          {/* OG Image (Social Share) */}
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Social Share Image (OG Image)</label>
+            <div className="flex items-center gap-4">
+              <div className="w-48 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
+                {ogImageUrl ? (
+                  <Image src={ogImageUrl} alt="OG Image" width={180} height={90} className="object-cover" />
+                ) : (
+                  <span className="text-gray-400 text-2xl">🔗</span>
+                )}
+              </div>
+              <div className="flex-1">
+                <input
+                  ref={ogImageInputRef}
+                  type="file"
+                  accept=".png,.jpg,.jpeg"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file, setOgImageUrl, setOgImageUploading, 'og-image');
+                  }}
+                />
+                <button
+                  onClick={() => ogImageInputRef.current?.click()}
+                  disabled={ogImageUploading}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm"
+                >
+                  {ogImageUploading ? 'Uploading...' : 'Upload Social Image'}
+                </button>
+                <p className="text-xs text-gray-500 mt-1">.png, .jpg (1200x630 recommended) - Shows when sharing on social media</p>
               </div>
             </div>
           </div>

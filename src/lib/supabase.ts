@@ -54,6 +54,10 @@ export const SETTINGS_KEYS = {
   TAGLINE: 'tagline',
   FAVICON_URL: 'favicon_url',
   LOGO_URL: 'logo_url',
+  APPLE_TOUCH_ICON_URL: 'apple_touch_icon_url',
+  OG_IMAGE_URL: 'og_image_url',
+  ICON_URL: 'icon_url',
+  LOGO_WHITE_URL: 'logo_white_url',
   // Contact
   EMAIL: 'contact_email',
   PHONE: 'contact_phone',
