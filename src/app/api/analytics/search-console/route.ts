@@ -115,7 +115,7 @@ export async function GET() {
     return NextResponse.json({
       connected: true,
       queries,
-      summary,
+      overview: summary,  // Frontend expects 'overview', not 'summary'
       dateRange: {
         start: formatDate(startDate),
         end: formatDate(endDate),
