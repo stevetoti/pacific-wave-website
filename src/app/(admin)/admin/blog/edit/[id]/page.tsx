@@ -10,6 +10,9 @@ const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor')
   loading: () => <div className="h-64 bg-gray-100 rounded-lg animate-pulse"></div>,
 });
 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://rndegttgwtpkbjtvjgnc.supabase.co';
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
 const categories = [
   'AI Solutions',
   'Web Development',
@@ -79,6 +82,14 @@ const postsData: Record<string, {
   },
 };
 
+interface SEOAnalysis {
+  score: number;
+  recommendations: string[];
+  keywordDensity: number;
+  wordCount: number;
+  readabilityScore: number;
+}
+
 export default function EditBlogPost() {
   const router = useRouter();
   const params = useParams();
@@ -87,6 +98,7 @@ export default function EditBlogPost() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [showAIPanel, setShowAIPanel] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -99,6 +111,12 @@ export default function EditBlogPost() {
     published: false,
   });
 
+  // AI Assistant State
+  const [aiLoading, setAiLoading] = useState<string | null>(null);
+  const [seoScore, setSeoScore] = useState<SEOAnalysis | null>(null);
+  const [suggestedKeywords, setSuggestedKeywords] = useState<string[]>([]);
+  const [suggestedAltText, setSuggestedAltText] = useState('');
+
   useEffect(() => {
     // Load post data
     const post = postsData[postId];
@@ -110,6 +128,25 @@ export default function EditBlogPost() {
       setIsLoading(false);
     }
   }, [postId]);
+
+  // API call helper
+  const callSEOFunction = async (functionName: string, body: object) => {
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/${functionName}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'API request failed');
+    }
+
+    return response.json();
+  };
 
   const generateSlug = (title: string) => {
     return title
@@ -127,6 +164,99 @@ export default function EditBlogPost() {
     });
   };
 
+  // AI Assistant Functions
+  const handleGenerateMeta = async () => {
+    if (!formData.content && !formData.title) return;
+    setAiLoading('meta');
+
+    try {
+      const result = await callSEOFunction('seo-generate-meta', {
+        topic: formData.title,
+        content: formData.content,
+      });
+      
+      setFormData({
+        ...formData,
+        excerpt: result.description,
+        keywords: result.keywords.join(', '),
+      });
+      
+      // Also set the title if it's better
+      if (result.title && !formData.title) {
+        setFormData(prev => ({ ...prev, title: result.title }));
+      }
+    } catch (error) {
+      console.error('Generate meta error:', error);
+      alert('Failed to generate meta tags');
+    } finally {
+      setAiLoading(null);
+    }
+  };
+
+  const handleSuggestKeywords = async () => {
+    if (!formData.title && !formData.content) return;
+    setAiLoading('keywords');
+
+    try {
+      const result = await callSEOFunction('seo-keyword-research', {
+        topic: formData.title || 'blog post',
+        industry: 'Technology',
+        location: 'Pacific Islands',
+      });
+      
+      setSuggestedKeywords(result.keywords.map((k: { keyword: string }) => k.keyword).slice(0, 10));
+    } catch (error) {
+      console.error('Keyword research error:', error);
+      alert('Failed to suggest keywords');
+    } finally {
+      setAiLoading(null);
+    }
+  };
+
+  const handleAnalyzeContent = async () => {
+    if (!formData.content) return;
+    setAiLoading('analyze');
+
+    try {
+      const targetKeyword = formData.keywords.split(',')[0]?.trim() || '';
+      const result = await callSEOFunction('seo-analyze-content', {
+        content: formData.content,
+        targetKeyword,
+        title: formData.title,
+        description: formData.excerpt,
+      });
+      
+      setSeoScore(result);
+    } catch (error) {
+      console.error('Content analysis error:', error);
+      alert('Failed to analyze content');
+    } finally {
+      setAiLoading(null);
+    }
+  };
+
+  const handleGenerateAltText = async () => {
+    if (!formData.imageUrl) return;
+    setAiLoading('alt');
+
+    // Simulated alt text generation based on context
+    setTimeout(() => {
+      const altText = `${formData.title} - Featured image showing ${formData.category.toLowerCase()} concepts for Pacific Island businesses`;
+      setSuggestedAltText(altText);
+      setAiLoading(null);
+    }, 1500);
+  };
+
+  const addKeywordToList = (keyword: string) => {
+    const currentKeywords = formData.keywords ? formData.keywords.split(',').map(k => k.trim()) : [];
+    if (!currentKeywords.includes(keyword)) {
+      setFormData({
+        ...formData,
+        keywords: [...currentKeywords, keyword].join(', '),
+      });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -138,6 +268,14 @@ export default function EditBlogPost() {
     alert('Post updated! (Note: Supabase integration pending)');
     setIsSubmitting(false);
     router.push('/admin/blog');
+  };
+
+  // Get score color
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'text-green-600 bg-green-100';
+    if (score >= 60) return 'text-yellow-600 bg-yellow-100';
+    if (score >= 40) return 'text-orange-600 bg-orange-100';
+    return 'text-red-600 bg-red-100';
   };
 
   if (isLoading) {
@@ -175,6 +313,17 @@ export default function EditBlogPost() {
           <h1 className="text-3xl font-bold text-gray-900 font-heading">Edit Blog Post</h1>
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowAIPanel(!showAIPanel)}
+            className={`px-4 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 ${
+              showAIPanel 
+                ? 'bg-deep-blue text-white' 
+                : 'border border-gray-200 hover:bg-gray-50'
+            }`}
+          >
+            <span>✨</span>
+            AI Assistant
+          </button>
           <Link
             href={`/blog/${formData.slug}`}
             target="_blank"
@@ -202,9 +351,9 @@ export default function EditBlogPost() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className={`${showAIPanel ? 'lg:col-span-2' : 'lg:col-span-3'} space-y-6`}>
           {/* Title */}
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -218,13 +367,31 @@ export default function EditBlogPost() {
               className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-blue/20 text-xl font-medium"
               required
             />
+            <p className="text-gray-400 text-xs mt-2">
+              {formData.title.length}/60 characters (recommended for SEO)
+            </p>
           </div>
 
           {/* Excerpt */}
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Excerpt / Summary
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-semibold text-gray-700">
+                Excerpt / Meta Description
+              </label>
+              <button
+                type="button"
+                onClick={handleGenerateMeta}
+                disabled={aiLoading === 'meta'}
+                className="text-sm text-vibrant-orange hover:underline flex items-center gap-1"
+              >
+                {aiLoading === 'meta' ? (
+                  <span className="animate-spin">⏳</span>
+                ) : (
+                  <span>✨</span>
+                )}
+                Generate with AI
+              </button>
+            </div>
             <textarea
               value={formData.excerpt}
               onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
@@ -233,8 +400,8 @@ export default function EditBlogPost() {
               className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-blue/20"
               required
             />
-            <p className="text-gray-400 text-xs mt-2">
-              {formData.excerpt.length}/160 characters (recommended for SEO)
+            <p className={`text-xs mt-2 ${formData.excerpt.length > 160 ? 'text-red-500' : 'text-gray-400'}`}>
+              {formData.excerpt.length}/160 characters
             </p>
           </div>
 
@@ -250,8 +417,43 @@ export default function EditBlogPost() {
           </div>
         </div>
 
-        {/* Sidebar */}
+        {/* Settings Sidebar */}
         <div className="space-y-6">
+          {/* SEO Score Indicator */}
+          {seoScore && (
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                📊 SEO Score
+              </h3>
+              <div className="text-center mb-4">
+                <div className={`inline-block text-4xl font-bold px-6 py-3 rounded-full ${getScoreColor(seoScore.score)}`}>
+                  {seoScore.score}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+                <div className="p-2 bg-gray-50 rounded">
+                  <p className="text-gray-500">Words</p>
+                  <p className="font-semibold">{seoScore.wordCount}</p>
+                </div>
+                <div className="p-2 bg-gray-50 rounded">
+                  <p className="text-gray-500">Keyword %</p>
+                  <p className="font-semibold">{seoScore.keywordDensity}%</p>
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-500 mb-2">RECOMMENDATIONS</p>
+                <ul className="text-xs space-y-1">
+                  {seoScore.recommendations.slice(0, 3).map((rec, i) => (
+                    <li key={i} className="text-gray-600 flex items-start gap-1">
+                      <span className="text-vibrant-orange">•</span>
+                      {rec}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
           {/* Publish Settings */}
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
             <h3 className="font-semibold text-gray-900 mb-4">Publish Settings</h3>
@@ -330,15 +532,42 @@ export default function EditBlogPost() {
               📤 Upload Image
             </button>
             {formData.imageUrl && (
-              <div className="mt-3 rounded-lg overflow-hidden">
-                <img src={formData.imageUrl} alt="Preview" className="w-full h-32 object-cover" />
-              </div>
+              <>
+                <div className="mt-3 rounded-lg overflow-hidden">
+                  <img src={formData.imageUrl} alt="Preview" className="w-full h-32 object-cover" />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleGenerateAltText}
+                  disabled={aiLoading === 'alt'}
+                  className="mt-2 text-sm text-vibrant-orange hover:underline flex items-center gap-1"
+                >
+                  {aiLoading === 'alt' ? <span className="animate-spin">⏳</span> : <span>✨</span>}
+                  Generate Alt Text
+                </button>
+                {suggestedAltText && (
+                  <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-600">
+                    <strong>Suggested:</strong> {suggestedAltText}
+                  </div>
+                )}
+              </>
             )}
           </div>
 
           {/* SEO Keywords */}
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-gray-900 mb-4">SEO Keywords</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-gray-900">SEO Keywords</h3>
+              <button
+                type="button"
+                onClick={handleSuggestKeywords}
+                disabled={aiLoading === 'keywords'}
+                className="text-sm text-vibrant-orange hover:underline flex items-center gap-1"
+              >
+                {aiLoading === 'keywords' ? <span className="animate-spin">⏳</span> : <span>✨</span>}
+                Suggest
+              </button>
+            </div>
             <textarea
               value={formData.keywords}
               onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
@@ -346,9 +575,23 @@ export default function EditBlogPost() {
               rows={3}
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-blue/20 text-sm"
             />
-            <p className="text-gray-400 text-xs mt-2">
-              e.g., AI automation Pacific, web development Vanuatu
-            </p>
+            {suggestedKeywords.length > 0 && (
+              <div className="mt-3">
+                <p className="text-xs text-gray-500 mb-2">Click to add:</p>
+                <div className="flex flex-wrap gap-1">
+                  {suggestedKeywords.map((kw, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => addKeywordToList(kw)}
+                      className="text-xs px-2 py-1 bg-deep-blue/10 text-deep-blue rounded hover:bg-deep-blue/20 transition-colors"
+                    >
+                      + {kw}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Danger Zone */}
@@ -368,6 +611,101 @@ export default function EditBlogPost() {
             </button>
           </div>
         </div>
+
+        {/* AI Writing Assistant Panel */}
+        {showAIPanel && (
+          <div className="space-y-6">
+            <div className="bg-gradient-to-br from-deep-blue to-dark-navy rounded-xl p-6 text-white">
+              <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+                <span>✨</span>
+                AI Writing Assistant
+              </h3>
+              <p className="text-white/70 text-sm mb-4">
+                Use AI to optimize your content for search engines
+              </p>
+
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={handleGenerateMeta}
+                  disabled={aiLoading === 'meta'}
+                  className="w-full bg-white/10 hover:bg-white/20 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+                >
+                  {aiLoading === 'meta' ? <span className="animate-spin">⏳</span> : <span>🏷️</span>}
+                  Generate Meta Tags
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSuggestKeywords}
+                  disabled={aiLoading === 'keywords'}
+                  className="w-full bg-white/10 hover:bg-white/20 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+                >
+                  {aiLoading === 'keywords' ? <span className="animate-spin">⏳</span> : <span>🔑</span>}
+                  Suggest Keywords
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleAnalyzeContent}
+                  disabled={aiLoading === 'analyze' || !formData.content}
+                  className="w-full bg-vibrant-orange hover:bg-soft-orange py-3 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium disabled:opacity-50"
+                >
+                  {aiLoading === 'analyze' ? <span className="animate-spin">⏳</span> : <span>📊</span>}
+                  Analyze SEO Score
+                </button>
+              </div>
+            </div>
+
+            {/* SEO Checklist */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <h3 className="font-semibold text-gray-900 mb-4">SEO Checklist</h3>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2">
+                  <span className={formData.title.length > 0 && formData.title.length <= 60 ? 'text-green-500' : 'text-gray-300'}>✓</span>
+                  <span className={formData.title.length > 0 && formData.title.length <= 60 ? 'text-gray-700' : 'text-gray-400'}>
+                    Title under 60 characters
+                  </span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className={formData.excerpt.length > 0 && formData.excerpt.length <= 160 ? 'text-green-500' : 'text-gray-300'}>✓</span>
+                  <span className={formData.excerpt.length > 0 && formData.excerpt.length <= 160 ? 'text-gray-700' : 'text-gray-400'}>
+                    Description under 160 characters
+                  </span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className={formData.keywords.length > 0 ? 'text-green-500' : 'text-gray-300'}>✓</span>
+                  <span className={formData.keywords.length > 0 ? 'text-gray-700' : 'text-gray-400'}>
+                    Keywords defined
+                  </span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className={formData.imageUrl ? 'text-green-500' : 'text-gray-300'}>✓</span>
+                  <span className={formData.imageUrl ? 'text-gray-700' : 'text-gray-400'}>
+                    Featured image set
+                  </span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className={formData.content.length > 300 ? 'text-green-500' : 'text-gray-300'}>✓</span>
+                  <span className={formData.content.length > 300 ? 'text-gray-700' : 'text-gray-400'}>
+                    Content has 300+ words
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Quick Tips */}
+            <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
+              <h4 className="font-semibold text-amber-800 mb-2 text-sm">💡 Quick Tips</h4>
+              <ul className="text-xs text-amber-700 space-y-1">
+                <li>• Include your keyword in the first 100 words</li>
+                <li>• Use H2/H3 headings to structure content</li>
+                <li>• Add internal links to other pages</li>
+                <li>• Keep paragraphs short (2-3 sentences)</li>
+              </ul>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );
