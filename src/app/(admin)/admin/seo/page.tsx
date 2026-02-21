@@ -1,7 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { getAllSettings, upsertSettings } from '@/lib/supabase';
+
+// Settings keys for SEO
+const SEO_SETTINGS_KEYS = {
+  GOOGLE_ANALYTICS_ID: 'google_analytics_id',
+  GOOGLE_SEARCH_CONSOLE_ID: 'google_search_console_id',
+  GOOGLE_CLIENT_ID: 'google_client_id',
+  GOOGLE_CLIENT_SECRET: 'google_client_secret',
+  SITE_TITLE: 'site_title',
+  SITE_DESCRIPTION: 'site_description',
+  OG_IMAGE: 'og_image',
+  TWITTER_HANDLE: 'twitter_handle',
+  FACEBOOK_URL: 'facebook_url',
+  LINKEDIN_URL: 'linkedin_url',
+};
 
 export default function SEOSettingsPage() {
   const [settings, setSettings] = useState({
@@ -25,28 +40,131 @@ export default function SEOSettingsPage() {
     searchConsole: false,
   });
 
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showCredentialsForm, setShowCredentialsForm] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Load settings on mount
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const data = await getAllSettings('pwd');
+        
+        setSettings({
+          googleAnalyticsId: data[SEO_SETTINGS_KEYS.GOOGLE_ANALYTICS_ID] || '',
+          googleSearchConsoleId: data[SEO_SETTINGS_KEYS.GOOGLE_SEARCH_CONSOLE_ID] || '',
+          siteTitle: data[SEO_SETTINGS_KEYS.SITE_TITLE] || 'Pacific Wave Digital',
+          siteDescription: data[SEO_SETTINGS_KEYS.SITE_DESCRIPTION] || 'AI-powered business solutions, web development, and digital transformation for Pacific Island businesses.',
+          ogImage: data[SEO_SETTINGS_KEYS.OG_IMAGE] || '/images/hero-digital-innovation.jpg',
+          twitterHandle: data[SEO_SETTINGS_KEYS.TWITTER_HANDLE] || '@pacificwavedigital',
+          facebookUrl: data[SEO_SETTINGS_KEYS.FACEBOOK_URL] || 'https://facebook.com/pacificwavedigital',
+          linkedinUrl: data[SEO_SETTINGS_KEYS.LINKEDIN_URL] || 'https://linkedin.com/company/pacific-wave-digital',
+        });
+
+        setGoogleCredentials({
+          clientId: data[SEO_SETTINGS_KEYS.GOOGLE_CLIENT_ID] || '',
+          clientSecret: data[SEO_SETTINGS_KEYS.GOOGLE_CLIENT_SECRET] || '',
+        });
+
+        // Check connection status
+        setConnectionStatus({
+          analytics: !!data[SEO_SETTINGS_KEYS.GOOGLE_ANALYTICS_ID],
+          searchConsole: !!data[SEO_SETTINGS_KEYS.GOOGLE_SEARCH_CONSOLE_ID],
+        });
+
+        // Show credentials form if credentials exist
+        if (data[SEO_SETTINGS_KEYS.GOOGLE_CLIENT_ID]) {
+          setShowCredentialsForm(false);
+        }
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadSettings();
+  }, []);
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Simulate save
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    alert('SEO settings saved!');
-    setIsSaving(false);
+    setSaveMessage(null);
+
+    try {
+      const success = await upsertSettings({
+        [SEO_SETTINGS_KEYS.GOOGLE_ANALYTICS_ID]: settings.googleAnalyticsId,
+        [SEO_SETTINGS_KEYS.GOOGLE_SEARCH_CONSOLE_ID]: settings.googleSearchConsoleId,
+        [SEO_SETTINGS_KEYS.SITE_TITLE]: settings.siteTitle,
+        [SEO_SETTINGS_KEYS.SITE_DESCRIPTION]: settings.siteDescription,
+        [SEO_SETTINGS_KEYS.OG_IMAGE]: settings.ogImage,
+        [SEO_SETTINGS_KEYS.TWITTER_HANDLE]: settings.twitterHandle,
+        [SEO_SETTINGS_KEYS.FACEBOOK_URL]: settings.facebookUrl,
+        [SEO_SETTINGS_KEYS.LINKEDIN_URL]: settings.linkedinUrl,
+      }, 'pwd');
+
+      if (success) {
+        setSaveMessage({ type: 'success', text: 'SEO settings saved successfully!' });
+        setConnectionStatus({
+          analytics: !!settings.googleAnalyticsId,
+          searchConsole: !!settings.googleSearchConsoleId,
+        });
+      } else {
+        setSaveMessage({ type: 'error', text: 'Failed to save settings. Please try again.' });
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      setSaveMessage({ type: 'error', text: 'An error occurred while saving.' });
+    } finally {
+      setIsSaving(false);
+      setTimeout(() => setSaveMessage(null), 5000);
+    }
   };
 
   const handleSaveCredentials = async () => {
     setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    alert('Google API credentials saved! OAuth integration will be enabled shortly.');
-    setShowCredentialsForm(false);
-    setIsSaving(false);
+    setSaveMessage(null);
+
+    try {
+      const success = await upsertSettings({
+        [SEO_SETTINGS_KEYS.GOOGLE_CLIENT_ID]: googleCredentials.clientId,
+        [SEO_SETTINGS_KEYS.GOOGLE_CLIENT_SECRET]: googleCredentials.clientSecret,
+      }, 'pwd');
+
+      if (success) {
+        setSaveMessage({ type: 'success', text: 'Google API credentials saved successfully!' });
+        setShowCredentialsForm(false);
+      } else {
+        setSaveMessage({ type: 'error', text: 'Failed to save credentials. Please try again.' });
+      }
+    } catch (error) {
+      console.error('Error saving credentials:', error);
+      setSaveMessage({ type: 'error', text: 'An error occurred while saving credentials.' });
+    } finally {
+      setIsSaving(false);
+      setTimeout(() => setSaveMessage(null), 5000);
+    }
   };
 
   const handleTestConnection = async (service: 'analytics' | 'searchConsole') => {
-    alert(`Testing ${service === 'analytics' ? 'Google Analytics' : 'Search Console'} connection...\n\nNote: Full OAuth integration requires Google Cloud setup.`);
+    const value = service === 'analytics' ? settings.googleAnalyticsId : settings.googleSearchConsoleId;
+    if (!value) {
+      alert(`Please enter a ${service === 'analytics' ? 'Google Analytics ID' : 'Search Console verification code'} first.`);
+      return;
+    }
+    alert(`${service === 'analytics' ? 'Google Analytics' : 'Search Console'} ID is set!\n\nFor full data integration, make sure to also configure Google API credentials.`);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-deep-blue mx-auto mb-4"></div>
+          <p className="text-gray-500">Loading SEO settings...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -74,7 +192,14 @@ export default function SEOSettingsPage() {
         </div>
       </div>
 
-      {/* Quick Stats Preview */}
+      {/* Save Message */}
+      {saveMessage && (
+        <div className={`mb-6 p-4 rounded-lg ${saveMessage.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
+          {saveMessage.type === 'success' ? '✅' : '❌'} {saveMessage.text}
+        </div>
+      )}
+
+      {/* Quick Stats Preview - Shows real data when connected */}
       <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="flex items-center gap-3">
@@ -82,7 +207,7 @@ export default function SEOSettingsPage() {
               <span className="text-lg">📄</span>
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">12</p>
+              <p className="text-2xl font-bold text-gray-400">--</p>
               <p className="text-xs text-gray-500">Indexed Pages</p>
             </div>
           </div>
@@ -93,7 +218,7 @@ export default function SEOSettingsPage() {
               <span className="text-lg">🔍</span>
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">8.2</p>
+              <p className="text-2xl font-bold text-gray-400">--</p>
               <p className="text-xs text-gray-500">Avg. Position</p>
             </div>
           </div>
@@ -104,7 +229,7 @@ export default function SEOSettingsPage() {
               <span className="text-lg">👆</span>
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">2.4K</p>
+              <p className="text-2xl font-bold text-gray-400">--</p>
               <p className="text-xs text-gray-500">Monthly Clicks</p>
             </div>
           </div>
@@ -115,11 +240,19 @@ export default function SEOSettingsPage() {
               <span className="text-lg">📈</span>
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">5.4%</p>
+              <p className="text-2xl font-bold text-gray-400">--</p>
               <p className="text-xs text-gray-500">Avg. CTR</p>
             </div>
           </div>
         </div>
+      </div>
+      
+      {/* Info banner */}
+      <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <p className="text-blue-800 text-sm">
+          <strong>📊 Live Stats:</strong> Connect Google Analytics and Search Console APIs below to see real-time data here. 
+          Go to <Link href="/admin/analytics" className="underline font-semibold">Analytics Dashboard</Link> for detailed reports.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -212,7 +345,28 @@ export default function SEOSettingsPage() {
             Configure OAuth credentials to display real analytics data directly in the dashboard.
           </p>
 
-          {!showCredentialsForm ? (
+          {!showCredentialsForm && googleCredentials.clientId ? (
+            <div className="space-y-4">
+              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-green-800">OAuth Credentials Configured</p>
+                    <p className="text-sm text-green-600">Client ID: ...{googleCredentials.clientId.slice(-20)}</p>
+                  </div>
+                  <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
+                    ✓ Saved
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowCredentialsForm(true)}
+                className="w-full py-3 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                Update Credentials
+              </button>
+            </div>
+          ) : !showCredentialsForm ? (
             <div className="space-y-4">
               <div className="p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center justify-between">
@@ -273,10 +427,10 @@ export default function SEOSettingsPage() {
               <div className="flex gap-3">
                 <button
                   onClick={handleSaveCredentials}
-                  disabled={!googleCredentials.clientId || !googleCredentials.clientSecret}
+                  disabled={!googleCredentials.clientId || !googleCredentials.clientSecret || isSaving}
                   className="flex-1 bg-deep-blue text-white py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-colors disabled:opacity-50"
                 >
-                  Save Credentials
+                  {isSaving ? 'Saving...' : 'Save Credentials'}
                 </button>
                 <button
                   onClick={() => setShowCredentialsForm(false)}
@@ -307,8 +461,8 @@ export default function SEOSettingsPage() {
                 onChange={(e) => setSettings({ ...settings, siteTitle: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-blue/20"
               />
-              <p className="text-gray-400 text-xs mt-2">
-                {settings.siteTitle.length}/60 characters
+              <p className={`text-xs mt-2 ${settings.siteTitle.length > 60 ? 'text-red-500' : 'text-gray-400'}`}>
+                {settings.siteTitle.length}/60 characters {settings.siteTitle.length > 60 && '(too long!)'}
               </p>
             </div>
 
@@ -322,8 +476,8 @@ export default function SEOSettingsPage() {
                 rows={3}
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-blue/20"
               />
-              <p className="text-gray-400 text-xs mt-2">
-                {settings.siteDescription.length}/160 characters
+              <p className={`text-xs mt-2 ${settings.siteDescription.length > 160 ? 'text-red-500' : 'text-gray-400'}`}>
+                {settings.siteDescription.length}/160 characters {settings.siteDescription.length > 160 && '(too long!)'}
               </p>
             </div>
 

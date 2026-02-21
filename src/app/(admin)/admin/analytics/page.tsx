@@ -1,67 +1,136 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-interface AnalyticsWidget {
-  title: string;
-  value: string | number;
-  change: string;
-  trend: 'up' | 'down' | 'neutral';
-  icon: string;
+interface GA4Overview {
+  sessions: number;
+  users: number;
+  pageviews: number;
+  bounceRate: number;
+  avgSessionDuration: number;
+}
+
+interface TopPage {
+  page: string;
+  pageviews: number;
+  users: number;
+}
+
+interface TrafficSource {
+  source: string;
+  sessions: number;
+  percentage: number;
 }
 
 interface SearchQuery {
   query: string;
   clicks: number;
   impressions: number;
-  ctr: string;
+  ctr: number;
   position: number;
 }
 
-interface TrafficSource {
-  source: string;
-  visitors: number;
-  percentage: number;
+interface SearchConsoleOverview {
+  totalClicks: number;
+  totalImpressions: number;
+  avgCtr: number;
+  avgPosition: number;
 }
 
 export default function AnalyticsPage() {
-  const [isConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [dateRange, setDateRange] = useState('last30');
+  const [error, setError] = useState<string | null>(null);
+  
+  // GA4 Data
+  const [ga4Overview, setGa4Overview] = useState<GA4Overview | null>(null);
+  const [topPages, setTopPages] = useState<TopPage[]>([]);
+  const [trafficSources, setTrafficSources] = useState<TrafficSource[]>([]);
+  
+  // Search Console Data
+  const [scOverview, setScOverview] = useState<SearchConsoleOverview | null>(null);
+  const [searchQueries, setSearchQueries] = useState<SearchQuery[]>([]);
 
-  // Placeholder data for when connected
-  const searchConsoleData: SearchQuery[] = [
-    { query: 'web development vanuatu', clicks: 245, impressions: 3420, ctr: '7.2%', position: 4.2 },
-    { query: 'pacific island digital agency', clicks: 189, impressions: 2890, ctr: '6.5%', position: 5.8 },
-    { query: 'ai business automation pacific', clicks: 156, impressions: 2100, ctr: '7.4%', position: 3.9 },
-    { query: 'custom software vanuatu', clicks: 134, impressions: 1850, ctr: '7.2%', position: 6.1 },
-    { query: 'mobile app development fiji', clicks: 98, impressions: 1200, ctr: '8.2%', position: 4.5 },
-  ];
+  useEffect(() => {
+    checkConnectionAndFetchData();
+  }, []);
 
-  const trafficSources: TrafficSource[] = [
-    { source: 'Organic Search', visitors: 4520, percentage: 45 },
-    { source: 'Direct', visitors: 2890, percentage: 29 },
-    { source: 'Social Media', visitors: 1560, percentage: 16 },
-    { source: 'Referral', visitors: 780, percentage: 8 },
-    { source: 'Email', visitors: 250, percentage: 2 },
-  ];
+  const checkConnectionAndFetchData = async () => {
+    setIsLoading(true);
+    setError(null);
 
-  const overviewWidgets: AnalyticsWidget[] = [
-    { title: 'Total Visitors', value: '10,245', change: '+12.5%', trend: 'up', icon: '👥' },
-    { title: 'Page Views', value: '32,847', change: '+8.3%', trend: 'up', icon: '📄' },
-    { title: 'Avg. Session', value: '2m 34s', change: '+5.2%', trend: 'up', icon: '⏱️' },
-    { title: 'Bounce Rate', value: '42.3%', change: '-3.1%', trend: 'up', icon: '📊' },
-  ];
+    try {
+      // Check connection status
+      const statusRes = await fetch('/api/analytics/connection-status');
+      const statusData = await statusRes.json();
+      
+      if (statusData.connected) {
+        setIsConnected(true);
+        
+        // Fetch GA4 data
+        const ga4Res = await fetch('/api/analytics/ga4');
+        const ga4Data = await ga4Res.json();
+        
+        if (ga4Data.connected && !ga4Data.error) {
+          setGa4Overview(ga4Data.overview);
+          setTopPages(ga4Data.topPages || []);
+          setTrafficSources(ga4Data.trafficSources || []);
+        } else if (ga4Data.needsPropertyId) {
+          setError('GA4 Property ID not found. The system will auto-detect it, or add it manually in SEO Settings.');
+        }
 
-  const searchWidgets: AnalyticsWidget[] = [
-    { title: 'Total Clicks', value: '2,456', change: '+18.2%', trend: 'up', icon: '👆' },
-    { title: 'Impressions', value: '45,230', change: '+24.5%', trend: 'up', icon: '👁️' },
-    { title: 'Avg. CTR', value: '5.4%', change: '+2.1%', trend: 'up', icon: '📈' },
-    { title: 'Avg. Position', value: '8.2', change: '-1.3', trend: 'up', icon: '🎯' },
-  ];
+        // Fetch Search Console data
+        const scRes = await fetch('/api/analytics/search-console');
+        const scData = await scRes.json();
+        
+        if (scData.connected && !scData.error) {
+          setScOverview(scData.overview);
+          setSearchQueries(scData.queries || []);
+        }
+      } else {
+        setIsConnected(false);
+      }
+    } catch (err) {
+      console.error('Error fetching analytics:', err);
+      setError('Failed to load analytics data');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleConnectGoogle = () => {
-    alert('Google OAuth integration coming soon! Stephen will need to provide:\n\n1. Google Cloud Project credentials\n2. Enable Search Console API\n3. Enable Analytics Data API\n\nContact support to set this up.');
+    window.location.href = '/api/auth/google';
   };
+
+  const handleDisconnect = async () => {
+    if (confirm('Are you sure you want to disconnect Google Analytics?')) {
+      await fetch('/api/auth/google/disconnect', { method: 'POST' });
+      setIsConnected(false);
+      setGa4Overview(null);
+      setScOverview(null);
+      setTopPages([]);
+      setTrafficSources([]);
+      setSearchQueries([]);
+    }
+  };
+
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}m ${secs}s`;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-deep-blue mx-auto mb-4"></div>
+          <p className="text-gray-500">Loading analytics data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -80,9 +149,15 @@ export default function AnalyticsPage() {
             <option value="last7">Last 7 days</option>
             <option value="last30">Last 30 days</option>
             <option value="last90">Last 90 days</option>
-            <option value="last365">Last 12 months</option>
           </select>
-          {!isConnected && (
+          {isConnected ? (
+            <button
+              onClick={handleDisconnect}
+              className="px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+            >
+              Disconnect
+            </button>
+          ) : (
             <button
               onClick={handleConnectGoogle}
               className="bg-vibrant-orange text-white px-6 py-2 rounded-lg font-semibold hover:bg-soft-orange transition-colors flex items-center gap-2"
@@ -99,6 +174,13 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
+      {/* Error Banner */}
+      {error && (
+        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
+          ⚠️ {error}
+        </div>
+      )}
+
       {/* Connection Status Banner */}
       {!isConnected && (
         <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
@@ -110,22 +192,32 @@ export default function AnalyticsPage() {
                 Get real-time data by connecting your Google accounts. You&apos;ll be able to see actual visitor statistics, 
                 search queries, click-through rates, and more.
               </p>
-              <div className="mt-4 flex flex-wrap gap-3">
+              <div className="mt-4">
                 <button
                   onClick={handleConnectGoogle}
-                  className="bg-white border border-gray-200 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+                  className="bg-deep-blue text-white px-6 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
                 >
-                  <span>📊</span> Connect Google Analytics 4
-                </button>
-                <button
-                  onClick={handleConnectGoogle}
-                  className="bg-white border border-gray-200 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
-                >
-                  <span>🔍</span> Connect Search Console
+                  Connect Google Account
                 </button>
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Connected Status */}
+      {isConnected && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
+          <div className="flex items-center gap-2 text-green-800">
+            <span className="text-lg">✅</span>
+            <span>Connected to Google Analytics & Search Console</span>
+          </div>
+          <button
+            onClick={checkConnectionAndFetchData}
+            className="text-green-700 hover:text-green-900 text-sm font-medium"
+          >
+            🔄 Refresh Data
+          </button>
         </div>
       )}
 
@@ -134,70 +226,94 @@ export default function AnalyticsPage() {
         <div className="flex items-center gap-2 mb-4">
           <span className="text-2xl">📊</span>
           <h2 className="text-xl font-bold text-gray-900">Google Analytics Overview</h2>
-          {!isConnected && <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">Sample Data</span>}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {overviewWidgets.map((widget, i) => (
-            <div key={i} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-2xl">{widget.icon}</span>
-                <span className={`text-sm font-medium ${widget.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                  {widget.change}
-                </span>
-              </div>
-              <div className="text-2xl font-bold text-gray-900">{widget.value}</div>
-              <div className="text-sm text-gray-500">{widget.title}</div>
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-2xl">👥</span>
             </div>
-          ))}
+            <div className="text-2xl font-bold text-gray-900">
+              {ga4Overview ? ga4Overview.users.toLocaleString() : '--'}
+            </div>
+            <div className="text-sm text-gray-500">Total Users</div>
+          </div>
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-2xl">📄</span>
+            </div>
+            <div className="text-2xl font-bold text-gray-900">
+              {ga4Overview ? ga4Overview.pageviews.toLocaleString() : '--'}
+            </div>
+            <div className="text-sm text-gray-500">Page Views</div>
+          </div>
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-2xl">⏱️</span>
+            </div>
+            <div className="text-2xl font-bold text-gray-900">
+              {ga4Overview ? formatDuration(ga4Overview.avgSessionDuration) : '--'}
+            </div>
+            <div className="text-sm text-gray-500">Avg. Session</div>
+          </div>
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-2xl">📈</span>
+            </div>
+            <div className="text-2xl font-bold text-gray-900">
+              {ga4Overview ? `${(ga4Overview.bounceRate * 100).toFixed(1)}%` : '--'}
+            </div>
+            <div className="text-sm text-gray-500">Bounce Rate</div>
+          </div>
         </div>
       </div>
 
-      {/* Traffic Sources */}
+      {/* Traffic Sources & Top Pages */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
           <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
             <span>📈</span> Traffic Sources
           </h3>
-          <div className="space-y-4">
-            {trafficSources.map((source, i) => (
-              <div key={i}>
-                <div className="flex items-center justify-between text-sm mb-1">
-                  <span className="text-gray-700">{source.source}</span>
-                  <span className="text-gray-500">{source.visitors.toLocaleString()} ({source.percentage}%)</span>
+          {trafficSources.length > 0 ? (
+            <div className="space-y-4">
+              {trafficSources.map((source, i) => (
+                <div key={i}>
+                  <div className="flex items-center justify-between text-sm mb-1">
+                    <span className="text-gray-700">{source.source}</span>
+                    <span className="text-gray-500">{source.sessions.toLocaleString()} ({source.percentage}%)</span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-2">
+                    <div
+                      className="bg-gradient-to-r from-deep-blue to-vibrant-orange h-2 rounded-full"
+                      style={{ width: `${source.percentage}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="w-full bg-gray-100 rounded-full h-2">
-                  <div
-                    className="bg-gradient-to-r from-deep-blue to-vibrant-orange h-2 rounded-full"
-                    style={{ width: `${source.percentage}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400 text-center py-8">No data available yet</p>
+          )}
         </div>
 
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
           <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
             <span>📍</span> Top Pages
           </h3>
-          <div className="space-y-3">
-            {[
-              { page: '/', views: 8420, title: 'Home' },
-              { page: '/services', views: 4230, title: 'Services' },
-              { page: '/blog/ai-automation-guide', views: 2890, title: 'AI Automation Guide' },
-              { page: '/contact', views: 2150, title: 'Contact' },
-              { page: '/about', views: 1780, title: 'About Us' },
-            ].map((page, i) => (
-              <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                <div>
-                  <p className="font-medium text-gray-800">{page.title}</p>
-                  <p className="text-xs text-gray-400">{page.page}</p>
+          {topPages.length > 0 ? (
+            <div className="space-y-3">
+              {topPages.slice(0, 5).map((page, i) => (
+                <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                  <div className="truncate max-w-[200px]">
+                    <p className="font-medium text-gray-800 truncate">{page.page}</p>
+                  </div>
+                  <span className="text-sm text-gray-600">{page.pageviews.toLocaleString()} views</span>
                 </div>
-                <span className="text-sm text-gray-600">{page.views.toLocaleString()} views</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400 text-center py-8">No data available yet</p>
+          )}
         </div>
       </div>
 
@@ -206,94 +322,70 @@ export default function AnalyticsPage() {
         <div className="flex items-center gap-2 mb-4">
           <span className="text-2xl">🔍</span>
           <h2 className="text-xl font-bold text-gray-900">Search Console Performance</h2>
-          {!isConnected && <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">Sample Data</span>}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          {searchWidgets.map((widget, i) => (
-            <div key={i} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-2xl">{widget.icon}</span>
-                <span className={`text-sm font-medium ${widget.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                  {widget.change}
-                </span>
-              </div>
-              <div className="text-2xl font-bold text-gray-900">{widget.value}</div>
-              <div className="text-sm text-gray-500">{widget.title}</div>
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="text-2xl mb-2">👆</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {scOverview ? scOverview.totalClicks.toLocaleString() : '--'}
             </div>
-          ))}
+            <div className="text-sm text-gray-500">Total Clicks</div>
+          </div>
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="text-2xl mb-2">👁️</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {scOverview ? scOverview.totalImpressions.toLocaleString() : '--'}
+            </div>
+            <div className="text-sm text-gray-500">Impressions</div>
+          </div>
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="text-2xl mb-2">📊</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {scOverview ? `${(scOverview.avgCtr * 100).toFixed(1)}%` : '--'}
+            </div>
+            <div className="text-sm text-gray-500">Avg. CTR</div>
+          </div>
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="text-2xl mb-2">🎯</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {scOverview ? scOverview.avgPosition.toFixed(1) : '--'}
+            </div>
+            <div className="text-sm text-gray-500">Avg. Position</div>
+          </div>
         </div>
 
-        {/* Search Queries Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-4 border-b border-gray-100">
-            <h3 className="font-bold text-gray-900">Top Search Queries</h3>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="text-left px-6 py-3 text-sm font-semibold text-gray-700">Query</th>
-                  <th className="text-right px-6 py-3 text-sm font-semibold text-gray-700">Clicks</th>
-                  <th className="text-right px-6 py-3 text-sm font-semibold text-gray-700">Impressions</th>
-                  <th className="text-right px-6 py-3 text-sm font-semibold text-gray-700">CTR</th>
-                  <th className="text-right px-6 py-3 text-sm font-semibold text-gray-700">Position</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {searchConsoleData.map((row, i) => (
-                  <tr key={i} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm font-medium text-gray-800">{row.query}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600 text-right">{row.clicks.toLocaleString()}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600 text-right">{row.impressions.toLocaleString()}</td>
-                    <td className="px-6 py-4 text-sm text-right">
-                      <span className="text-green-600 font-medium">{row.ctr}</span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-right">
-                      <span className={`font-medium ${row.position <= 5 ? 'text-green-600' : row.position <= 10 ? 'text-yellow-600' : 'text-gray-600'}`}>
-                        {row.position}
-                      </span>
-                    </td>
+        {/* Top Search Queries */}
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <h3 className="font-bold text-gray-900 mb-4">Top Search Queries</h3>
+          {searchQueries.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="text-left text-sm text-gray-500 border-b">
+                    <th className="pb-3 font-medium">Query</th>
+                    <th className="pb-3 font-medium text-right">Clicks</th>
+                    <th className="pb-3 font-medium text-right">Impressions</th>
+                    <th className="pb-3 font-medium text-right">CTR</th>
+                    <th className="pb-3 font-medium text-right">Position</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      {/* Setup Instructions */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <span>⚙️</span> Setup Instructions
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <h4 className="font-semibold text-blue-900 mb-2">Google Analytics 4</h4>
-            <ol className="text-sm text-blue-800 space-y-2 list-decimal list-inside">
-              <li>Go to <a href="https://analytics.google.com" target="_blank" rel="noopener" className="underline">Google Analytics</a></li>
-              <li>Create a new GA4 property for pacificwavedigital.com</li>
-              <li>Copy the Measurement ID (G-XXXXXXXXXX)</li>
-              <li>Add it to the SEO Settings page</li>
-            </ol>
-          </div>
-          <div className="p-4 bg-green-50 rounded-lg">
-            <h4 className="font-semibold text-green-900 mb-2">Search Console</h4>
-            <ol className="text-sm text-green-800 space-y-2 list-decimal list-inside">
-              <li>Go to <a href="https://search.google.com/search-console" target="_blank" rel="noopener" className="underline">Search Console</a></li>
-              <li>Add pacificwavedigital.com as a property</li>
-              <li>Verify ownership (DNS or HTML file)</li>
-              <li>Wait 24-48 hours for data to appear</li>
-            </ol>
-          </div>
-        </div>
-
-        <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-          <p className="text-sm text-amber-800">
-            <strong>🔐 For OAuth Integration:</strong> To display real data directly in this dashboard, 
-            we need to set up Google Cloud OAuth. This requires creating a Google Cloud project, 
-            enabling the relevant APIs, and configuring credentials. Contact Stephen to set this up.
-          </p>
+                </thead>
+                <tbody>
+                  {searchQueries.map((query, i) => (
+                    <tr key={i} className="border-b last:border-0">
+                      <td className="py-3 text-gray-800">{query.query}</td>
+                      <td className="py-3 text-right text-gray-600">{query.clicks.toLocaleString()}</td>
+                      <td className="py-3 text-right text-gray-600">{query.impressions.toLocaleString()}</td>
+                      <td className="py-3 text-right text-green-600">{(query.ctr * 100).toFixed(1)}%</td>
+                      <td className="py-3 text-right text-vibrant-orange">{query.position.toFixed(1)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-gray-400 text-center py-8">No search data available yet. It may take 24-48 hours for data to appear after connecting.</p>
+          )}
         </div>
       </div>
     </div>
