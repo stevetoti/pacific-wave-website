@@ -205,6 +205,12 @@ export default function AdminLayout({
     adminUser ? canAccess(adminUser.role, item.page) : false
   );
 
+  // Special handling for reset-password page - render without layout wrapper
+  // This page handles its own full-screen UI
+  if (pathname === '/admin/reset-password') {
+    return <>{children}</>;
+  }
+
   // Loading state
   if (authStatus === 'loading') {
     return (
