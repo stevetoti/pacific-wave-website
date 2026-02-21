@@ -17,6 +17,7 @@ interface NavItem {
 
 const adminNav: NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: '📊', page: 'dashboard' },
+  { href: '/admin/submissions', label: 'Submissions', icon: '📥', page: 'dashboard' },
   { href: '/admin/blog', label: 'Blog Posts', icon: '📝', page: 'blog' },
   { href: '/admin/seo', label: 'SEO Settings', icon: '🔍', page: 'seo' },
   { href: '/admin/media', label: 'Media Library', icon: '🖼️', page: 'media' },

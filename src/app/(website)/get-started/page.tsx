@@ -209,6 +209,27 @@ export default function GetStartedPage() {
         // Still show success - will fix DB later
       }
 
+      // Send email notification
+      try {
+        await fetch('/api/notify-submission', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contact_name: formData.name,
+            contact_email: formData.email,
+            contact_phone: formData.phone,
+            company_name: formData.company,
+            project_type: formData.projectType,
+            budget_range: formData.budgetRange,
+            timeline: formData.timeline,
+            project_description: formData.projectDescription,
+          }),
+        });
+      } catch (notifyErr) {
+        console.error('Notification error:', notifyErr);
+        // Don't fail the submission if notification fails
+      }
+
       setIsSubmitted(true);
     } catch (err) {
       console.error('Submit error:', err);
