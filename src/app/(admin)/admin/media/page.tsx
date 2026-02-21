@@ -1,74 +1,77 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { supabase, uploadFile } from '@/lib/supabase';
 
-interface MediaItem {
-  name: string;
+interface SiteImage {
   id: string;
-  metadata: Record<string, unknown> | null;
-  created_at: string;
-  url: string;
-  bucket_id?: string;
-  owner?: string;
-  updated_at?: string;
-  last_accessed_at?: string;
-  isStatic?: boolean;
-  category?: string;
+  name: string;
+  path: string;
+  description: string;
+  dimensions?: string;
+  section: string;
 }
 
-// Static site images - these are in /public/images/ and used across the website
-const staticSiteImages: MediaItem[] = [
-  // Hero & Branding
-  { id: 'hero-pacific', name: 'hero-pacific.jpg', url: '/images/hero-pacific.jpg', created_at: '', metadata: null, category: 'Hero & Branding', isStatic: true },
-  { id: 'logo-icon', name: 'logo-icon.jpg', url: '/images/logo-icon.jpg', created_at: '', metadata: null, category: 'Hero & Branding', isStatic: true },
-  
-  // Services
-  { id: 'ai-solutions', name: 'ai-solutions.jpg', url: '/images/services/ai-solutions.jpg', created_at: '', metadata: null, category: 'Services', isStatic: true },
-  { id: 'web-dev', name: 'web-dev.jpg', url: '/images/services/web-dev.jpg', created_at: '', metadata: null, category: 'Services', isStatic: true },
-  { id: 'mobile-apps', name: 'mobile-apps.jpg', url: '/images/services/mobile-apps.jpg', created_at: '', metadata: null, category: 'Services', isStatic: true },
-  { id: 'digital-marketing', name: 'digital-marketing.jpg', url: '/images/services/digital-marketing.jpg', created_at: '', metadata: null, category: 'Services', isStatic: true },
-  { id: 'automation', name: 'automation.jpg', url: '/images/services/automation.jpg', created_at: '', metadata: null, category: 'Services', isStatic: true },
-  { id: 'cloud', name: 'cloud.jpg', url: '/images/services/cloud.jpg', created_at: '', metadata: null, category: 'Services', isStatic: true },
-  
-  // About
-  { id: 'about-team', name: 'about-team.jpg', url: '/images/about/team.jpg', created_at: '', metadata: null, category: 'About', isStatic: true },
-  { id: 'about-office', name: 'about-office.jpg', url: '/images/about/office.jpg', created_at: '', metadata: null, category: 'About', isStatic: true },
-  
-  // Portfolio
-  { id: 'portfolio-1', name: 'portfolio-1.jpg', url: '/images/portfolio/project-1.jpg', created_at: '', metadata: null, category: 'Portfolio', isStatic: true },
-  { id: 'portfolio-2', name: 'portfolio-2.jpg', url: '/images/portfolio/project-2.jpg', created_at: '', metadata: null, category: 'Portfolio', isStatic: true },
-  { id: 'portfolio-3', name: 'portfolio-3.jpg', url: '/images/portfolio/project-3.jpg', created_at: '', metadata: null, category: 'Portfolio', isStatic: true },
-];
+// All images used on the website, organized by section
+const websiteImages: Record<string, SiteImage[]> = {
+  'Hero & Branding': [
+    { id: 'hero-bg', name: 'Hero Background', path: '/images/hero-digital-innovation.jpg', description: 'Main homepage hero background image', dimensions: '1920x1080', section: 'Homepage Hero' },
+    { id: 'hero-og', name: 'Social Share Image', path: '/images/hero-og-share.jpg', description: 'Image shown when sharing on social media (og:image)', dimensions: '1200x630', section: 'SEO/Social' },
+    { id: 'logo', name: 'Main Logo', path: '/images/logo.jpg', description: 'Company logo for light backgrounds', dimensions: '400x100', section: 'Header/Footer' },
+    { id: 'logo-icon', name: 'Logo Icon', path: '/images/logo-icon.jpg', description: 'Square logo icon for small displays', dimensions: '200x200', section: 'Favicon/Icons' },
+  ],
+  'Services Page': [
+    { id: 'ai-tech', name: 'AI Technology', path: '/images/ai-technology.jpg', description: 'AI Solutions service image', dimensions: '800x600', section: 'Services Grid' },
+    { id: 'coding-screen', name: 'Coding Screen', path: '/images/coding-screen.jpg', description: 'Web Development service image', dimensions: '800x600', section: 'Services Grid' },
+    { id: 'mobile-app', name: 'Mobile App', path: '/images/mobile-app.jpg', description: 'Mobile Apps service image', dimensions: '800x600', section: 'Services Grid' },
+    { id: 'digital-marketing', name: 'Digital Marketing', path: '/images/digital-marketing.jpg', description: 'Digital Marketing service image', dimensions: '800x600', section: 'Services Grid' },
+    { id: 'cloud-server', name: 'Cloud Server', path: '/images/cloud-server.jpg', description: 'Cloud & Hosting service image', dimensions: '800x600', section: 'Services Grid' },
+  ],
+  'About Page': [
+    { id: 'about-team', name: 'Team Photo', path: '/images/about-team.jpg', description: 'Team/office image on About page', dimensions: '600x400', section: 'About Section' },
+    { id: 'diverse-team', name: 'Diverse Team', path: '/images/diverse-team.jpg', description: 'Diverse team collaboration image', dimensions: '600x400', section: 'About Section' },
+    { id: 'team-meeting', name: 'Team Meeting', path: '/images/team-meeting.jpg', description: 'Team meeting/collaboration image', dimensions: '600x400', section: 'About Section' },
+    { id: 'tech-office', name: 'Tech Office', path: '/images/tech-office.jpg', description: 'Modern office environment', dimensions: '600x400', section: 'About Section' },
+  ],
+  'Contact & Location': [
+    { id: 'port-vila', name: 'Port Vila', path: '/images/port-vila.jpg', description: 'Port Vila, Vanuatu location image', dimensions: '800x600', section: 'Contact Page' },
+    { id: 'business-handshake', name: 'Business Handshake', path: '/images/business-handshake.jpg', description: 'Partnership/collaboration image', dimensions: '600x400', section: 'Contact/CTA' },
+  ],
+  'Partner Logos': [
+    { id: 'pwd-logo', name: 'PWD Logo', path: '/images/logos/pwd-logo.jpg', description: 'Pacific Wave Digital logo', dimensions: '200x200', section: 'Footer/Partners' },
+    { id: 'gdp-logo', name: 'GDP Logo', path: '/images/logos/gdp-logo.jpg', description: 'Global Digital Prime logo', dimensions: '200x200', section: 'Footer/Partners' },
+    { id: 'rapid-logo', name: 'Rapid Logo', path: '/images/logos/rapid-logo.jpg', description: 'Rapid Entrepreneurs logo', dimensions: '200x200', section: 'Footer/Partners' },
+  ],
+  'Backgrounds & Decorative': [
+    { id: 'pacific-sunset', name: 'Pacific Sunset', path: '/images/pacific-sunset.jpg', description: 'Decorative Pacific sunset image', dimensions: '1920x1080', section: 'Backgrounds' },
+    { id: 'tropical-beach', name: 'Tropical Beach', path: '/images/tropical-beach.jpg', description: 'Tropical beach scene', dimensions: '1920x1080', section: 'Backgrounds' },
+    { id: 'laptop-work', name: 'Laptop Work', path: '/images/laptop-work.jpg', description: 'Person working on laptop', dimensions: '800x600', section: 'General Use' },
+    { id: 'phone-user', name: 'Phone User', path: '/images/phone-user.jpg', description: 'Person using smartphone', dimensions: '600x400', section: 'General Use' },
+  ],
+};
 
 export default function MediaPage() {
-  const [uploadedItems, setUploadedItems] = useState<MediaItem[]>([]);
+  const [uploadedItems, setUploadedItems] = useState<Array<{name: string; url: string; created_at: string}>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
-  const [error, setError] = useState('');
+  const [replacingImage, setReplacingImage] = useState<string | null>(null);
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'all' | 'uploaded' | 'static'>('all');
-  const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [expandedSection, setExpandedSection] = useState<string | null>('Hero & Branding');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const replaceInputRef = useRef<HTMLInputElement>(null);
 
   const fetchMedia = async () => {
     try {
       const { data, error } = await supabase.storage
         .from('site-assets')
-        .list('', {
-          limit: 100,
-          sortBy: { column: 'created_at', order: 'desc' },
-        });
+        .list('', { limit: 100, sortBy: { column: 'created_at', order: 'desc' } });
 
-      if (error) {
-        console.warn('Supabase storage not configured:', error);
-        // Don't show error if bucket doesn't exist - just show static images
-      } else {
-        const items = (data || []).map(item => ({
-          ...item,
+      if (!error && data) {
+        const items = data.map(item => ({
+          name: item.name,
           url: supabase.storage.from('site-assets').getPublicUrl(item.name).data.publicUrl,
-          isStatic: false,
-          category: 'Uploaded',
+          created_at: item.created_at || '',
         }));
         setUploadedItems(items);
       }
@@ -88,258 +91,249 @@ export default function MediaPage() {
     if (!files || files.length === 0) return;
 
     setIsUploading(true);
-    setError('');
-
     try {
       for (const file of Array.from(files)) {
-        const url = await uploadFile(file);
-        if (!url) {
-          setError(`Failed to upload ${file.name}`);
-        }
+        await uploadFile(file, 'site-assets', 'uploads');
       }
       await fetchMedia();
     } catch (err) {
       console.error('Upload error:', err);
-      setError('Upload failed. Please try again.');
+      alert('Upload failed. Please try again.');
     } finally {
       setIsUploading(false);
       e.target.value = '';
     }
   };
 
-  const handleDelete = async (name: string, isStatic?: boolean) => {
-    if (isStatic) {
-      alert('Static images cannot be deleted from here. They are part of the website codebase.');
-      return;
-    }
-    
-    if (!confirm('Are you sure you want to delete this file?')) return;
+  const handleReplaceImage = async (e: React.ChangeEvent<HTMLInputElement>, imageId: string) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
+    setReplacingImage(imageId);
     try {
-      const { error } = await supabase.storage
-        .from('site-assets')
-        .remove([name]);
-
-      if (error) throw error;
-      setUploadedItems(items => items.filter(item => item.name !== name));
+      // Upload to Supabase with a specific path
+      const url = await uploadFile(file, 'site-assets', `website-images/${imageId}`);
+      if (url) {
+        alert(`Image uploaded! To fully replace the static image, update the path in the code or contact your developer.\n\nNew image URL:\n${url}`);
+        await fetchMedia();
+      }
     } catch (err) {
-      console.error('Delete error:', err);
-      setError('Failed to delete file');
+      console.error('Replace error:', err);
+      alert('Failed to upload replacement image.');
+    } finally {
+      setReplacingImage(null);
+      e.target.value = '';
     }
   };
 
   const copyUrl = (url: string) => {
-    // If it's a relative URL, make it absolute
     const fullUrl = url.startsWith('/') ? `https://pacificwavedigital.com${url}` : url;
     navigator.clipboard.writeText(fullUrl);
     setCopiedUrl(url);
     setTimeout(() => setCopiedUrl(null), 2000);
   };
 
-  const formatSize = (bytes: number) => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  const sectionIcons: Record<string, string> = {
+    'Hero & Branding': '🏠',
+    'Services Page': '⚙️',
+    'About Page': '👥',
+    'Contact & Location': '📍',
+    'Partner Logos': '🤝',
+    'Backgrounds & Decorative': '🎨',
   };
-
-  const getMimetype = (metadata: Record<string, unknown> | null): string => {
-    return (metadata?.mimetype as string) || '';
-  };
-
-  const getSize = (metadata: Record<string, unknown> | null): number => {
-    return (metadata?.size as number) || 0;
-  };
-
-  const isImage = (url: string, mimetype?: string) => {
-    if (mimetype?.startsWith('image/')) return true;
-    return /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(url);
-  };
-
-  // Get all items based on active tab
-  const allItems = [...uploadedItems, ...staticSiteImages];
-  
-  const filteredItems = allItems.filter(item => {
-    if (activeTab === 'uploaded' && item.isStatic) return false;
-    if (activeTab === 'static' && !item.isStatic) return false;
-    if (filterCategory !== 'all' && item.category !== filterCategory) return false;
-    return true;
-  });
-
-  // Get unique categories
-  const categories = Array.from(new Set(allItems.map(item => item.category).filter(Boolean)));
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-deep-blue"></div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-6xl">
       {/* Header */}
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Media Library</h1>
-          <p className="text-gray-600 mt-1">Manage all images and media used on the website</p>
+          <h1 className="text-3xl font-bold text-deep-blue font-heading">Media Library</h1>
+          <p className="text-gray-500 mt-1">All images used on the website, organized by section</p>
         </div>
-        <label className="inline-flex items-center gap-2 px-4 py-2 bg-vibrant-orange text-white font-bold rounded-lg hover:bg-soft-orange transition-colors cursor-pointer">
-          <span>{isUploading ? '⏳' : '📤'}</span>
-          {isUploading ? 'Uploading...' : 'Upload Files'}
+        <div>
           <input
+            ref={fileInputRef}
             type="file"
+            accept="image/*"
             multiple
-            accept="image/*,video/*,application/pdf"
-            onChange={handleUpload}
-            disabled={isUploading}
             className="hidden"
+            onChange={handleUpload}
           />
-        </label>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
+            className="bg-vibrant-orange text-white font-bold px-6 py-3 rounded-lg hover:bg-soft-orange transition-colors disabled:opacity-50 flex items-center gap-2"
+          >
+            {isUploading ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+                Uploading...
+              </>
+            ) : (
+              <>
+                <span>📤</span> Upload Files
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
-      {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600">
-          {error}
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="text-3xl font-bold text-deep-blue">{Object.values(websiteImages).flat().length}</div>
+          <div className="text-gray-500 text-sm">Site Images</div>
         </div>
-      )}
-
-      {/* Tabs & Filters */}
-      <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="flex gap-2">
-          <button
-            onClick={() => setActiveTab('all')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeTab === 'all'
-                ? 'bg-deep-blue text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            All ({allItems.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('uploaded')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeTab === 'uploaded'
-                ? 'bg-deep-blue text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Uploaded ({uploadedItems.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('static')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeTab === 'static'
-                ? 'bg-deep-blue text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Site Images ({staticSiteImages.length})
-          </button>
+        <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="text-3xl font-bold text-vibrant-orange">{uploadedItems.length}</div>
+          <div className="text-gray-500 text-sm">Uploaded</div>
         </div>
-        
-        <select
-          value={filterCategory}
-          onChange={(e) => setFilterCategory(e.target.value)}
-          className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-blue/20"
-        >
-          <option value="all">All Categories</option>
-          {categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
+        <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="text-3xl font-bold text-green-600">{Object.keys(websiteImages).length}</div>
+          <div className="text-gray-500 text-sm">Sections</div>
+        </div>
+        <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="text-3xl font-bold text-blue-600">🖼️</div>
+          <div className="text-gray-500 text-sm">Media Library</div>
+        </div>
       </div>
 
-      {/* Info Box for Static Images */}
-      {activeTab === 'static' && (
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-blue-800 text-sm">
-            <strong>ℹ️ Site Images</strong> are bundled with the website code. To replace them, upload a new image with the same dimensions and let Toti update the code.
-          </p>
-        </div>
-      )}
-
-      {/* Media Grid */}
-      {filteredItems.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-          <div className="text-gray-400 text-6xl mb-4">🖼️</div>
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">No media files found</h3>
-          <p className="text-gray-500">
-            {activeTab === 'uploaded' 
-              ? 'Upload images to get started.' 
-              : 'No files match your current filter.'}
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {filteredItems.map((item) => (
-            <div
-              key={item.id}
-              className={`bg-white rounded-xl shadow-sm overflow-hidden group ${
-                item.isStatic ? 'ring-2 ring-blue-100' : ''
-              }`}
+      {/* Website Images by Section */}
+      <div className="space-y-4">
+        {Object.entries(websiteImages).map(([section, images]) => (
+          <div key={section} className="bg-white rounded-xl shadow-sm overflow-hidden">
+            {/* Section Header - Clickable */}
+            <button
+              onClick={() => setExpandedSection(expandedSection === section ? null : section)}
+              className="w-full px-6 py-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
             >
-              <div className="aspect-square relative bg-gray-100">
-                {isImage(item.url, getMimetype(item.metadata)) ? (
-                  <Image
-                    src={item.url}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                    unoptimized={item.isStatic}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-4xl">
-                    {getMimetype(item.metadata)?.includes('video') ? '🎬' :
-                     getMimetype(item.metadata)?.includes('pdf') ? '📄' : '📁'}
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                  <button
-                    onClick={() => copyUrl(item.url)}
-                    className="p-2 bg-white rounded-lg hover:bg-gray-100"
-                    title="Copy URL"
-                  >
-                    {copiedUrl === item.url ? '✓' : '📋'}
-                  </button>
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 bg-white rounded-lg hover:bg-gray-100"
-                    title="Open"
-                  >
-                    🔗
-                  </a>
-                  {!item.isStatic && (
-                    <button
-                      onClick={() => handleDelete(item.name, item.isStatic)}
-                      className="p-2 bg-white rounded-lg hover:bg-red-100"
-                      title="Delete"
-                    >
-                      🗑️
-                    </button>
-                  )}
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{sectionIcons[section] || '📁'}</span>
+                <div className="text-left">
+                  <h2 className="text-lg font-bold text-deep-blue">{section}</h2>
+                  <p className="text-sm text-gray-500">{images.length} images</p>
                 </div>
-                {item.isStatic && (
-                  <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
-                    Static
-                  </div>
-                )}
               </div>
-              <div className="p-3">
-                <p className="text-sm font-medium text-gray-800 truncate" title={item.name}>
-                  {item.name}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {item.isStatic ? item.category : formatSize(getSize(item.metadata))}
-                </p>
+              <div className={`transform transition-transform ${expandedSection === section ? 'rotate-180' : ''}`}>
+                <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </button>
+
+            {/* Section Content */}
+            {expandedSection === section && (
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {images.map((image) => (
+                    <div key={image.id} className="border border-gray-200 rounded-xl overflow-hidden group hover:shadow-lg transition-shadow">
+                      {/* Image Preview */}
+                      <div className="relative aspect-video bg-gray-100">
+                        <Image
+                          src={image.path}
+                          alt={image.name}
+                          fill
+                          className="object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                          }}
+                        />
+                        {/* Overlay Actions */}
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => copyUrl(image.path)}
+                            className="bg-white text-deep-blue px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-100"
+                          >
+                            {copiedUrl === image.path ? '✓ Copied!' : '📋 Copy URL'}
+                          </button>
+                          <label className="bg-vibrant-orange text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-soft-orange cursor-pointer">
+                            {replacingImage === image.id ? '...' : '🔄 Replace'}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => handleReplaceImage(e, image.id)}
+                            />
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Image Info */}
+                      <div className="p-4">
+                        <h3 className="font-semibold text-gray-900">{image.name}</h3>
+                        <p className="text-sm text-gray-500 mt-1">{image.description}</p>
+                        <div className="flex items-center justify-between mt-3 text-xs text-gray-400">
+                          <span>📐 {image.dimensions}</span>
+                          <span>📍 {image.section}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Uploaded Files Section */}
+      {uploadedItems.length > 0 && (
+        <div className="mt-8 bg-white rounded-xl shadow-sm overflow-hidden">
+          <div className="px-6 py-4 bg-gray-50 border-b">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">📤</span>
+              <div>
+                <h2 className="text-lg font-bold text-deep-blue">Uploaded Files</h2>
+                <p className="text-sm text-gray-500">{uploadedItems.length} files in storage</p>
               </div>
             </div>
-          ))}
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {uploadedItems.map((item) => (
+                <div key={item.name} className="border border-gray-200 rounded-lg overflow-hidden group">
+                  <div className="relative aspect-square bg-gray-100">
+                    <Image
+                      src={item.url}
+                      alt={item.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="p-2">
+                    <p className="text-xs text-gray-600 truncate" title={item.name}>{item.name}</p>
+                    <button
+                      onClick={() => copyUrl(item.url)}
+                      className="text-xs text-vibrant-orange hover:underline mt-1"
+                    >
+                      {copiedUrl === item.url ? '✓ Copied!' : 'Copy URL'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
+
+      {/* Help Section */}
+      <div className="mt-8 bg-blue-50 rounded-xl p-6">
+        <h3 className="font-bold text-deep-blue mb-2">💡 How to Replace Images</h3>
+        <ol className="text-sm text-gray-600 space-y-2">
+          <li>1. <strong>Hover</strong> over any image to see the Replace button</li>
+          <li>2. Click <strong>&quot;🔄 Replace&quot;</strong> and select your new image</li>
+          <li>3. The new image will be uploaded to storage</li>
+          <li>4. For immediate site updates, go to <strong>Settings → Branding</strong> for logos/favicons</li>
+        </ol>
+      </div>
     </div>
   );
 }
