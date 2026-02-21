@@ -100,7 +100,7 @@ export default function HomePage() {
             <FadeInView delay={0.3}>
               <div className="flex flex-col sm:flex-row gap-4 mb-12">
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link href="/contact" className="btn-primary text-lg !px-10 !py-4 inline-flex items-center">
+                  <Link href="/get-started" className="btn-primary text-lg !px-10 !py-4 inline-flex items-center">
                     Start Your Project
                     <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

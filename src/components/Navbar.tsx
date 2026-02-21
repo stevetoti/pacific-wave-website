@@ -47,7 +47,7 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <Link href="/contact" className="btn-primary text-sm !px-6 !py-2.5">
+            <Link href="/get-started" className="btn-primary text-sm !px-6 !py-2.5">
               Get Started
             </Link>
           </div>
@@ -83,7 +83,7 @@ export default function Navbar() {
                 </Link>
               ))}
               <div className="pt-3">
-                <Link href="/contact" onClick={() => setIsOpen(false)} className="btn-primary w-full text-center text-sm">
+                <Link href="/get-started" onClick={() => setIsOpen(false)} className="btn-primary w-full text-center text-sm">
                   Get Started
                 </Link>
               </div>
