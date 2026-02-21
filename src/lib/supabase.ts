@@ -58,6 +58,8 @@ export const SETTINGS_KEYS = {
   OG_IMAGE_URL: 'og_image_url',
   ICON_URL: 'icon_url',
   LOGO_WHITE_URL: 'logo_white_url',
+  // Videos (JSON array of {title, youtubeUrl})
+  HOMEPAGE_VIDEOS: 'homepage_videos',
   // Contact
   EMAIL: 'contact_email',
   PHONE: 'contact_phone',

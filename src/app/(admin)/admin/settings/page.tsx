@@ -10,6 +10,12 @@ interface FooterLink {
   url: string;
 }
 
+interface VideoItem {
+  id: string;
+  title: string;
+  youtubeUrl: string;
+}
+
 export default function AdminSettingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -46,6 +52,14 @@ export default function AdminSettingsPage() {
   // Footer
   const [copyrightText, setCopyrightText] = useState('');
   const [footerLinks, setFooterLinks] = useState<FooterLink[]>([]);
+  
+  // Videos
+  const [videos, setVideos] = useState<VideoItem[]>([
+    { id: '1', title: 'Welcome to Pacific Wave Digital', youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+    { id: '2', title: 'Our Services', youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+    { id: '3', title: 'Client Success Stories', youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+    { id: '4', title: 'Why Choose Us', youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+  ]);
   
   const faviconInputRef = useRef<HTMLInputElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
@@ -93,6 +107,16 @@ export default function AdminSettingsPage() {
       } catch {
         setFooterLinks([]);
       }
+      
+      // Videos
+      try {
+        const videosData = JSON.parse(settings[SETTINGS_KEYS.HOMEPAGE_VIDEOS] || '[]');
+        if (videosData.length > 0) {
+          setVideos(videosData);
+        }
+      } catch {
+        // Keep default videos
+      }
     } catch (error) {
       console.error('Error loading settings:', error);
     } finally {
@@ -128,6 +152,8 @@ export default function AdminSettingsPage() {
         // Footer
         [SETTINGS_KEYS.COPYRIGHT_TEXT]: copyrightText,
         [SETTINGS_KEYS.FOOTER_LINKS]: JSON.stringify(footerLinks),
+        // Videos
+        [SETTINGS_KEYS.HOMEPAGE_VIDEOS]: JSON.stringify(videos),
       };
       
       const success = await upsertSettings(settings, 'pwd');
@@ -180,6 +206,20 @@ export default function AdminSettingsPage() {
 
   const removeFooterLink = (id: string) => {
     setFooterLinks(footerLinks.filter(link => link.id !== id));
+  };
+
+  const updateVideo = (id: string, field: 'title' | 'youtubeUrl', value: string) => {
+    setVideos(videos.map(video => 
+      video.id === id ? { ...video, [field]: value } : video
+    ));
+  };
+
+  const getYoutubeEmbedUrl = (url: string) => {
+    // Extract video ID from various YouTube URL formats
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    const videoId = (match && match[2].length === 11) ? match[2] : null;
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
   };
 
   if (isLoading) {
@@ -646,6 +686,66 @@ export default function AdminSettingsPage() {
               ))}
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Homepage Videos Section */}
+      <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <h2 className="text-xl font-bold text-deep-blue mb-4 flex items-center gap-2">
+          <span>🎬</span> Homepage Videos
+        </h2>
+        <p className="text-gray-500 text-sm mb-6">
+          Add YouTube video links to display on the homepage. Paste the full YouTube URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID)
+        </p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {videos.map((video, index) => (
+            <div key={video.id} className="border border-gray-200 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="bg-deep-blue text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold">
+                  {index + 1}
+                </span>
+                <span className="font-medium text-gray-700">Video {index + 1}</span>
+              </div>
+              
+              {/* Video Title */}
+              <div className="mb-3">
+                <label className="block text-sm text-gray-600 mb-1">Title</label>
+                <input
+                  type="text"
+                  value={video.title}
+                  onChange={(e) => updateVideo(video.id, 'title', e.target.value)}
+                  placeholder="Enter video title"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-blue/20 focus:border-deep-blue text-sm"
+                />
+              </div>
+              
+              {/* YouTube URL */}
+              <div className="mb-3">
+                <label className="block text-sm text-gray-600 mb-1">YouTube URL</label>
+                <input
+                  type="url"
+                  value={video.youtubeUrl}
+                  onChange={(e) => updateVideo(video.id, 'youtubeUrl', e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-blue/20 focus:border-deep-blue text-sm"
+                />
+              </div>
+              
+              {/* Video Preview */}
+              {video.youtubeUrl && getYoutubeEmbedUrl(video.youtubeUrl) && (
+                <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                  <iframe
+                    src={getYoutubeEmbedUrl(video.youtubeUrl)}
+                    title={video.title}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 

@@ -1,11 +1,19 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import FadeInView from '@/components/animations/FadeInView';
 import { StaggerContainer, StaggerItem } from '@/components/animations/StaggerContainer';
 import TechStack from '@/components/TechStack';
+import { getAllSettings, SETTINGS_KEYS } from '@/lib/supabase';
+
+interface VideoItem {
+  id: string;
+  title: string;
+  youtubeUrl: string;
+}
 
 const services = [
   { title: 'Web Development', description: 'Custom websites and web applications built with modern technologies.', icon: '💻', gradient: 'from-blue-500 to-cyan-500' },
@@ -36,7 +44,41 @@ const stats = [
   { value: '99.9%', label: 'Uptime', icon: '⚡' },
 ];
 
+const defaultVideos: VideoItem[] = [
+  { id: '1', title: 'Welcome to Pacific Wave Digital', youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+  { id: '2', title: 'Our Services', youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+  { id: '3', title: 'Client Success Stories', youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+  { id: '4', title: 'Why Choose Us', youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+];
+
+const getYoutubeEmbedUrl = (url: string) => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  const videoId = (match && match[2].length === 11) ? match[2] : null;
+  return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+};
+
 export default function HomePage() {
+  const [videos, setVideos] = useState<VideoItem[]>(defaultVideos);
+
+  useEffect(() => {
+    const loadVideos = async () => {
+      try {
+        const settings = await getAllSettings('pwd');
+        const videosData = settings[SETTINGS_KEYS.HOMEPAGE_VIDEOS];
+        if (videosData) {
+          const parsed = JSON.parse(videosData);
+          if (parsed.length > 0) {
+            setVideos(parsed);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading videos:', error);
+      }
+    };
+    loadVideos();
+  }, []);
+
   return (
     <>
       {/* Hero Section - Enhanced */}
@@ -366,6 +408,54 @@ export default function HomePage() {
               </Link>
             </div>
           </FadeInView>
+        </div>
+      </section>
+
+      {/* Video Section */}
+      <section className="section-padding bg-gradient-to-br from-deep-blue via-deep-blue to-dark-navy">
+        <div className="container-max">
+          <FadeInView>
+            <div className="text-center mb-16">
+              <span className="text-vibrant-orange font-semibold text-sm uppercase tracking-wider">Watch & Learn</span>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white font-heading mt-3 mb-4">
+                See Us in Action
+              </h2>
+              <p className="text-blue-100 max-w-2xl mx-auto text-lg">
+                Watch our videos to learn more about how we help Pacific businesses succeed.
+              </p>
+            </div>
+          </FadeInView>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {videos.map((video, i) => (
+              <FadeInView key={video.id} delay={i * 0.1}>
+                <motion.div
+                  className="bg-white/5 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10"
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="aspect-video">
+                    {getYoutubeEmbedUrl(video.youtubeUrl) ? (
+                      <iframe
+                        src={getYoutubeEmbedUrl(video.youtubeUrl)}
+                        title={video.title}
+                        className="w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                        <span className="text-gray-400">Video not available</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold text-white">{video.title}</h3>
+                  </div>
+                </motion.div>
+              </FadeInView>
+            ))}
+          </div>
         </div>
       </section>
 
