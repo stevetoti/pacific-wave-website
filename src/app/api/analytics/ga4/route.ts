@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import { getValidAccessToken } from '@/lib/google-auth';
 import { getAllSettings, upsertSetting } from '@/lib/supabase';
 
+// Disable caching for this route
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export interface GA4Overview {
   sessions: number;
   users: number;
@@ -113,7 +117,12 @@ export async function GET() {
     }
 
     const settings = await getAllSettings('pwd');
+    console.log('[GA4] Settings loaded:', Object.keys(settings));
+    console.log('[GA4] google_analytics_property_id:', settings['google_analytics_property_id']);
+    console.log('[GA4] google_analytics_id:', settings['google_analytics_id']);
+    
     const propertyId = await getPropertyId(settings, accessToken);
+    console.log('[GA4] Resolved propertyId:', propertyId);
 
     if (!propertyId) {
       return NextResponse.json(
