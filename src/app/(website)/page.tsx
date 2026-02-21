@@ -143,12 +143,12 @@ export default function HomePage() {
           {/* Code Snippet Mockup */}
           <FadeInView delay={0.5}>
             <motion.div
-              className="hidden lg:block"
+              className="hidden lg:block relative"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
             >
-              <div className="bg-[#1e293b] rounded-2xl shadow-2xl overflow-hidden border border-white/10 backdrop-blur-sm">
+              <div className="bg-[#1e293b] rounded-2xl shadow-2xl overflow-hidden border border-white/10 backdrop-blur-sm relative">
                 {/* macOS Window Chrome */}
                 <div className="flex items-center gap-2 px-4 py-3 bg-[#0f172a] border-b border-white/5">
                   <div className="w-3 h-3 rounded-full bg-[#ff5f57]"></div>
@@ -197,20 +197,13 @@ export default function HomePage() {
                 </div>
               </div>
               
-              {/* Floating badges */}
+              {/* Floating badge - AI-Powered only */}
               <motion.div
-                className="absolute -top-4 -right-4 bg-vibrant-orange text-white px-4 py-2 rounded-xl shadow-lg text-sm font-semibold"
-                animate={{ y: [0, -5, 0] }}
+                className="absolute -top-3 -right-3 bg-vibrant-orange text-white px-3 py-1.5 rounded-lg shadow-lg text-xs font-semibold z-10"
+                animate={{ y: [0, -3, 0] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
                 ✨ AI-Powered
-              </motion.div>
-              <motion.div
-                className="absolute -bottom-4 -left-4 bg-white text-deep-blue px-4 py-2 rounded-xl shadow-lg text-sm font-semibold"
-                animate={{ y: [0, 5, 0] }}
-                transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-              >
-                🚀 50+ Projects Delivered
               </motion.div>
             </motion.div>
           </FadeInView>
