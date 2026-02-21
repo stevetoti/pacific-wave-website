@@ -1,7 +1,16 @@
 import { NextResponse } from 'next/server';
 import { getValidAccessToken } from '@/lib/google-auth';
 
-const SITE_URL = 'https://pacificwavedigital.com';
+// Disable caching for this route
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+// Try domain property first (sc-domain:), then URL property
+const SITE_URLS = [
+  'sc-domain:pacificwavedigital.com',
+  'https://pacificwavedigital.com',
+  'https://www.pacificwavedigital.com',
+];
 
 export interface SearchQueryData {
   query: string;
@@ -37,32 +46,48 @@ export async function GET() {
 
     const formatDate = (d: Date) => d.toISOString().split('T')[0];
 
-    // Fetch search analytics data
-    const response = await fetch(
-      `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(SITE_URL)}/searchAnalytics/query`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          startDate: formatDate(startDate),
-          endDate: formatDate(endDate),
-          dimensions: ['query'],
-          rowLimit: 25,
-          dataState: 'final',
-        }),
+    // Try each site URL format until one works
+    let data = null;
+    let lastError = null;
+    
+    for (const siteUrl of SITE_URLS) {
+      console.log(`[SearchConsole] Trying site URL: ${siteUrl}`);
+      
+      const response = await fetch(
+        `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            startDate: formatDate(startDate),
+            endDate: formatDate(endDate),
+            dimensions: ['query'],
+            rowLimit: 25,
+            dataState: 'final',
+          }),
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        console.log(`[SearchConsole] Success with: ${siteUrl}`);
+        data = responseData;
+        break;
+      } else {
+        console.log(`[SearchConsole] Failed with ${siteUrl}: ${responseData.error?.message}`);
+        lastError = responseData.error?.message || 'Failed to fetch Search Console data';
       }
-    );
+    }
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error('Search Console API error:', data);
+    if (!data) {
+      console.error('Search Console API error - all URLs failed:', lastError);
       return NextResponse.json(
-        { error: data.error?.message || 'Failed to fetch Search Console data' },
-        { status: response.status }
+        { error: lastError },
+        { status: 403 }
       );
     }
 
