@@ -76,6 +76,7 @@ export async function GET() {
 
       if (summaryResponse.ok) {
         console.log(`[SearchConsole] Success with: ${siteUrl}`);
+        console.log(`[SearchConsole] Raw response:`, JSON.stringify(summaryResponseData));
         summaryData = summaryResponseData;
         workingSiteUrl = siteUrl;
         break;
@@ -144,6 +145,11 @@ export async function GET() {
         end: formatDate(endDate),
       },
       lastUpdated: new Date().toISOString(),
+      // Debug info (remove after testing)
+      _debug: {
+        rawSummary: summaryData,
+        workingSiteUrl,
+      },
     });
   } catch (error) {
     console.error('Search Console fetch error:', error);
