@@ -47,13 +47,16 @@ export async function GET() {
     const formatDate = (d: Date) => d.toISOString().split('T')[0];
 
     // Try each site URL format until one works
-    let data = null;
+    let summaryData = null;
+    let queryData = null;
     let lastError = null;
+    let workingSiteUrl = null;
     
     for (const siteUrl of SITE_URLS) {
       console.log(`[SearchConsole] Trying site URL: ${siteUrl}`);
       
-      const response = await fetch(
+      // First, get overall summary (no dimensions - gets total clicks/impressions)
+      const summaryResponse = await fetch(
         `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`,
         {
           method: 'POST',
@@ -64,26 +67,25 @@ export async function GET() {
           body: JSON.stringify({
             startDate: formatDate(startDate),
             endDate: formatDate(endDate),
-            dimensions: ['query'],
-            rowLimit: 25,
-            dataState: 'final',
+            // No dimensions = get totals
           }),
         }
       );
 
-      const responseData = await response.json();
+      const summaryResponseData = await summaryResponse.json();
 
-      if (response.ok) {
+      if (summaryResponse.ok) {
         console.log(`[SearchConsole] Success with: ${siteUrl}`);
-        data = responseData;
+        summaryData = summaryResponseData;
+        workingSiteUrl = siteUrl;
         break;
       } else {
-        console.log(`[SearchConsole] Failed with ${siteUrl}: ${responseData.error?.message}`);
-        lastError = responseData.error?.message || 'Failed to fetch Search Console data';
+        console.log(`[SearchConsole] Failed with ${siteUrl}: ${summaryResponseData.error?.message}`);
+        lastError = summaryResponseData.error?.message || 'Failed to fetch Search Console data';
       }
     }
 
-    if (!data) {
+    if (!summaryData || !workingSiteUrl) {
       console.error('Search Console API error - all URLs failed:', lastError);
       return NextResponse.json(
         { error: lastError },
@@ -91,26 +93,47 @@ export async function GET() {
       );
     }
 
-    // Transform the data
-    const queries: SearchQueryData[] = (data.rows || []).map((row: { keys: string[]; clicks: number; impressions: number; ctr: number; position: number }) => ({
+    // Now get query breakdown using the working URL
+    const queryResponse = await fetch(
+      `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(workingSiteUrl)}/searchAnalytics/query`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          startDate: formatDate(startDate),
+          endDate: formatDate(endDate),
+          dimensions: ['query'],
+          rowLimit: 25,
+        }),
+      }
+    );
+
+    if (queryResponse.ok) {
+      queryData = await queryResponse.json();
+    }
+
+    // Extract summary from summaryData (single row without dimensions)
+    const summaryRow = summaryData.rows?.[0] || { clicks: 0, impressions: 0, ctr: 0, position: 0 };
+    const summary: SearchConsoleSummary = {
+      totalClicks: summaryRow.clicks || 0,
+      totalImpressions: summaryRow.impressions || 0,
+      avgCtr: summaryRow.ctr || 0,
+      avgPosition: summaryRow.position || 0,
+    };
+
+    console.log(`[SearchConsole] Summary: ${summary.totalClicks} clicks, ${summary.totalImpressions} impressions`);
+
+    // Transform query data
+    const queries: SearchQueryData[] = (queryData?.rows || []).map((row: { keys: string[]; clicks: number; impressions: number; ctr: number; position: number }) => ({
       query: row.keys[0],
       clicks: row.clicks,
       impressions: row.impressions,
       ctr: row.ctr,
       position: row.position,
     }));
-
-    // Calculate summary
-    const summary: SearchConsoleSummary = {
-      totalClicks: queries.reduce((sum, q) => sum + q.clicks, 0),
-      totalImpressions: queries.reduce((sum, q) => sum + q.impressions, 0),
-      avgCtr: queries.length > 0 
-        ? queries.reduce((sum, q) => sum + q.ctr, 0) / queries.length 
-        : 0,
-      avgPosition: queries.length > 0 
-        ? queries.reduce((sum, q) => sum + q.position, 0) / queries.length 
-        : 0,
-    };
 
     return NextResponse.json({
       connected: true,
