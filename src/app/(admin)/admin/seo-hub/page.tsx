@@ -48,6 +48,9 @@ interface SEOMemory {
 export default function SEOHubPage() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'keywords' | 'opportunities' | 'tasks' | 'memory'>('dashboard');
   const [keywords, setKeywords] = useState<TargetKeyword[]>([]);
+  const [apiStatus, setApiStatus] = useState<{ connected: boolean; balance?: number } | null>(null);
+  const [isResearching, setIsResearching] = useState(false);
+  const [researchKeyword, setResearchKeyword] = useState('');
   const [tasks, setTasks] = useState<SEOTask[]>([]);
   const [opportunities, setOpportunities] = useState<ContentOpportunity[]>([]);
   const [memories, setMemories] = useState<SEOMemory[]>([]);
@@ -57,7 +60,185 @@ export default function SEOHubPage() {
 
   useEffect(() => {
     fetchAllData();
+    checkApiStatus();
   }, []);
+
+  const checkApiStatus = async () => {
+    try {
+      const response = await fetch('/api/seo/dataforseo');
+      const data = await response.json();
+      setApiStatus(data);
+    } catch (error) {
+      setApiStatus({ connected: false });
+    }
+  };
+
+  const researchKeywordData = async (keyword: string) => {
+    setIsResearching(true);
+    try {
+      // Get keyword data
+      const response = await fetch('/api/seo/dataforseo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'keyword_data',
+          keywords: [keyword.toLowerCase()],
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success && result.data.keywords?.[0]) {
+        const kwData = result.data.keywords[0];
+        
+        // Update keyword in database with real data
+        await supabase
+          .from('seo_target_keywords')
+          .update({
+            search_volume: kwData.search_volume,
+            difficulty: Math.round((kwData.competition || 0) * 100),
+            cpc: kwData.cpc,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('keyword', keyword.toLowerCase())
+          .eq('site_id', 'pwd');
+        
+        // Refresh data
+        fetchAllData();
+        
+        return kwData;
+      }
+    } catch (error) {
+      console.error('Research error:', error);
+    } finally {
+      setIsResearching(false);
+    }
+    return null;
+  };
+
+  const findKeywordOpportunities = async () => {
+    if (!researchKeyword.trim()) return;
+    
+    setIsResearching(true);
+    try {
+      const response = await fetch('/api/seo/dataforseo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'keyword_suggestions',
+          keywords: [researchKeyword.toLowerCase()],
+          limit: 30,
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success && result.data.suggestions) {
+        // Add top opportunities to database
+        const topSuggestions = result.data.suggestions
+          .filter((s: any) => s.search_volume > 50)
+          .slice(0, 10);
+        
+        for (const suggestion of topSuggestions) {
+          const opportunityScore = Math.round(
+            (Math.min(suggestion.search_volume, 10000) / 100) + 
+            (100 - (suggestion.competition || 0.5) * 100)
+          );
+          
+          await supabase
+            .from('seo_content_opportunities')
+            .upsert({
+              site_id: 'pwd',
+              keyword: suggestion.keyword,
+              suggested_title: `Guide to ${suggestion.keyword.charAt(0).toUpperCase() + suggestion.keyword.slice(1)}`,
+              search_volume: suggestion.search_volume,
+              difficulty: Math.round((suggestion.competition || 0) * 100),
+              opportunity_score: opportunityScore,
+              status: 'suggested',
+            }, {
+              onConflict: 'keyword,site_id',
+            });
+        }
+        
+        // Add to SEO memory
+        await supabase
+          .from('seo_memory')
+          .insert({
+            site_id: 'pwd',
+            memory_type: 'research',
+            title: `Keyword Research: ${researchKeyword}`,
+            content: `Found ${topSuggestions.length} content opportunities related to "${researchKeyword}". Top keywords: ${topSuggestions.slice(0, 5).map((s: any) => s.keyword).join(', ')}`,
+            importance: 'normal',
+          });
+        
+        fetchAllData();
+        setResearchKeyword('');
+        alert(`Found ${topSuggestions.length} keyword opportunities!`);
+      }
+    } catch (error) {
+      console.error('Opportunity research error:', error);
+      alert('Failed to find opportunities. Please try again.');
+    } finally {
+      setIsResearching(false);
+    }
+  };
+
+  const checkRankings = async () => {
+    if (keywords.length === 0) return;
+    
+    setIsResearching(true);
+    try {
+      for (const kw of keywords.slice(0, 5)) { // Check first 5 keywords
+        const response = await fetch('/api/seo/dataforseo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'rank_tracker',
+            keyword: kw.keyword,
+            target_domain: 'pacificwavedigital.com',
+          }),
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          const position = result.data.position;
+          const previousPosition = kw.current_position;
+          
+          // Record ranking history
+          await supabase
+            .from('seo_rankings_history')
+            .insert({
+              site_id: 'pwd',
+              keyword: kw.keyword,
+              position: position,
+              previous_position: previousPosition,
+              change: previousPosition ? previousPosition - position : null,
+              url: result.data.url,
+            });
+          
+          // Update keyword status
+          await supabase
+            .from('seo_target_keywords')
+            .update({
+              status: position ? 'ranking' : 'tracking',
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', kw.id);
+        }
+        
+        // Small delay between requests
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+      
+      fetchAllData();
+      alert('Ranking check complete!');
+    } catch (error) {
+      console.error('Ranking check error:', error);
+    } finally {
+      setIsResearching(false);
+    }
+  };
 
   const fetchAllData = async () => {
     setIsLoading(true);
@@ -397,6 +578,7 @@ export default function SEOHubPage() {
                     <th className="pb-3 font-medium text-center">Position</th>
                     <th className="pb-3 font-medium text-center">Status</th>
                     <th className="pb-3 font-medium text-center">Priority</th>
+                    <th className="pb-3 font-medium text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -430,6 +612,16 @@ export default function SEOHubPage() {
                           {kw.priority}
                         </span>
                       </td>
+                      <td className="py-3 text-center">
+                        <button
+                          onClick={() => researchKeywordData(kw.keyword)}
+                          disabled={isResearching}
+                          className="text-xs text-vibrant-orange hover:underline disabled:opacity-50"
+                          title="Fetch real data from DataForSEO"
+                        >
+                          🔍 Research
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -456,9 +648,31 @@ export default function SEOHubPage() {
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-bold text-gray-900">Content Opportunities</h2>
-            <button className="bg-vibrant-orange text-white px-4 py-2 rounded-lg font-medium hover:bg-soft-orange transition-colors flex items-center gap-2">
-              <span>🔍</span> Find Opportunities
-            </button>
+            <div className="flex items-center gap-3">
+              <input
+                type="text"
+                value={researchKeyword}
+                onChange={(e) => setResearchKeyword(e.target.value)}
+                placeholder="Enter seed keyword..."
+                className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-vibrant-orange/20 w-64"
+                onKeyPress={(e) => e.key === 'Enter' && findKeywordOpportunities()}
+              />
+              <button 
+                onClick={findKeywordOpportunities}
+                disabled={isResearching || !researchKeyword.trim()}
+                className="bg-vibrant-orange text-white px-4 py-2 rounded-lg font-medium hover:bg-soft-orange transition-colors flex items-center gap-2 disabled:opacity-50"
+              >
+                {isResearching ? (
+                  <>
+                    <span className="animate-spin">⏳</span> Finding...
+                  </>
+                ) : (
+                  <>
+                    <span>🔍</span> Find Opportunities
+                  </>
+                )}
+              </button>
+            </div>
           </div>
           
           {opportunities.length > 0 ? (
@@ -602,14 +816,35 @@ export default function SEOHubPage() {
         </div>
       )}
 
-      {/* DataForSEO Integration Notice */}
-      <div className="mt-8 p-4 bg-blue-50 rounded-xl border border-blue-200">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">🔌</span>
-          <div>
-            <p className="font-medium text-blue-800">DataForSEO Integration Ready</p>
-            <p className="text-sm text-blue-600">Add your API credentials in Settings to enable real-time keyword data and rankings</p>
+      {/* DataForSEO Integration Status */}
+      <div className={`mt-8 p-4 rounded-xl border ${
+        apiStatus?.connected 
+          ? 'bg-green-50 border-green-200' 
+          : 'bg-yellow-50 border-yellow-200'
+      }`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">{apiStatus?.connected ? '✅' : '🔌'}</span>
+            <div>
+              <p className={`font-medium ${apiStatus?.connected ? 'text-green-800' : 'text-yellow-800'}`}>
+                {apiStatus?.connected ? 'DataForSEO Connected' : 'DataForSEO Integration'}
+              </p>
+              <p className={`text-sm ${apiStatus?.connected ? 'text-green-600' : 'text-yellow-600'}`}>
+                {apiStatus?.connected 
+                  ? `API Balance: $${apiStatus.balance?.toFixed(2) || '0.00'}`
+                  : 'Checking connection status...'}
+              </p>
+            </div>
           </div>
+          {apiStatus?.connected && (
+            <button
+              onClick={checkRankings}
+              disabled={isResearching || keywords.length === 0}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50"
+            >
+              {isResearching ? '⏳ Checking...' : '📊 Check Rankings'}
+            </button>
+          )}
         </div>
       </div>
     </div>
