@@ -76,40 +76,56 @@ export default function SEOHubPage() {
   const researchKeywordData = async (keyword: string) => {
     setIsResearching(true);
     try {
-      // Get keyword data
+      console.log('[SEO Hub] Researching keyword:', keyword);
+      
+      // Get keyword data - use US location for better data availability
       const response = await fetch('/api/seo/dataforseo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'keyword_data',
           keywords: [keyword.toLowerCase()],
+          location_code: 2840, // US - better data availability
         }),
       });
       
       const result = await response.json();
+      console.log('[SEO Hub] API Response:', result);
       
-      if (result.success && result.data.keywords?.[0]) {
+      if (result.success && result.data?.keywords?.[0]) {
         const kwData = result.data.keywords[0];
+        console.log('[SEO Hub] Keyword data:', kwData);
         
         // Update keyword in database with real data
-        await supabase
+        const { error: updateError } = await supabase
           .from('seo_target_keywords')
           .update({
-            search_volume: kwData.search_volume,
-            difficulty: Math.round((kwData.competition || 0) * 100),
-            cpc: kwData.cpc,
+            search_volume: kwData.search_volume || 0,
+            difficulty: kwData.competition || 0, // Already 0-100 from API
+            cpc: kwData.cpc || 0,
             updated_at: new Date().toISOString(),
           })
           .eq('keyword', keyword.toLowerCase())
           .eq('site_id', 'pwd');
         
+        if (updateError) {
+          console.error('[SEO Hub] Update error:', updateError);
+          alert('Failed to save keyword data');
+        } else {
+          console.log('[SEO Hub] Keyword data saved successfully');
+        }
+        
         // Refresh data
-        fetchAllData();
+        await fetchAllData();
         
         return kwData;
+      } else {
+        console.error('[SEO Hub] No data in response:', result);
+        alert(result.error || 'No data found for this keyword');
       }
     } catch (error) {
-      console.error('Research error:', error);
+      console.error('[SEO Hub] Research error:', error);
+      alert('Research failed. Check console for details.');
     } finally {
       setIsResearching(false);
     }
@@ -586,10 +602,14 @@ export default function SEOHubPage() {
                     <tr key={kw.id} className="border-b last:border-0 hover:bg-gray-50">
                       <td className="py-3 font-medium text-gray-800">{kw.keyword}</td>
                       <td className="py-3 text-right text-gray-600">
-                        {kw.search_volume?.toLocaleString() || '-'}
+                        {kw.search_volume !== null && kw.search_volume !== undefined && kw.search_volume > 0
+                          ? kw.search_volume.toLocaleString()
+                          : <span className="text-gray-400">-</span>}
                       </td>
                       <td className={`py-3 text-right ${getDifficultyColor(kw.difficulty)}`}>
-                        {kw.difficulty || '-'}
+                        {kw.difficulty !== null && kw.difficulty !== undefined && kw.difficulty > 0
+                          ? kw.difficulty
+                          : <span className="text-gray-400">-</span>}
                       </td>
                       <td className="py-3 text-center">
                         {kw.current_position ? (

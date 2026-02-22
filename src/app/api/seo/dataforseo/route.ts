@@ -148,13 +148,14 @@ export async function POST(request: Request) {
       processedData = {
         keywords: data.tasks[0].result.map((item: any) => ({
           keyword: item.keyword,
-          search_volume: item.search_volume,
-          cpc: item.cpc,
-          competition: item.competition,
-          competition_level: item.competition_level,
-          monthly_searches: item.monthly_searches,
+          search_volume: item.search_volume || 0,
+          cpc: item.cpc || 0,
+          competition: item.competition_index || 0, // Use competition_index (0-100)
+          competition_level: item.competition || 'UNKNOWN', // LOW, MEDIUM, HIGH
+          monthly_searches: item.monthly_searches || [],
         })),
       };
+      console.log('[DataForSEO] Processed keywords:', JSON.stringify(processedData.keywords));
     }
 
     if (action === 'keyword_suggestions' && data.tasks?.[0]?.result) {
