@@ -217,7 +217,7 @@ export default function SEOHubPage() {
           {/* Today's Tasks */}
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <span>📋</span> Today's SEO Tasks
+              <span>📋</span> Today&apos;s SEO Tasks
             </h2>
             {tasks.length > 0 ? (
               <div className="space-y-3">
