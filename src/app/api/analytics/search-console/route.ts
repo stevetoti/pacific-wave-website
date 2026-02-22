@@ -38,11 +38,12 @@ export async function GET() {
       );
     }
 
-    // Calculate date range (last 28 days)
+    // Calculate date range (last 28 days including today)
+    // Note: Search Console API has 2-3 day data delay, but we include today just in case
     const endDate = new Date();
-    endDate.setDate(endDate.getDate() - 1); // Yesterday (data has 1-day delay)
+    // Don't subtract 1 - include today for freshest possible data
     const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 29); // 28 days before yesterday
+    startDate.setDate(startDate.getDate() - 28);
 
     const formatDate = (d: Date) => d.toISOString().split('T')[0];
 
