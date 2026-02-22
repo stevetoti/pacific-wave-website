@@ -202,7 +202,9 @@ const TitleSuggestionsModal = ({
                       Use →
                     </span>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">{title.length}/60 characters</p>
+                  <p className={`text-xs mt-1 ${title.length <= 60 ? 'text-green-500' : 'text-red-500'}`}>
+                    {title.length <= 60 ? '✓' : '⚠️'} {title.length}/60 characters
+                  </p>
                 </button>
               ))}
             </div>
@@ -322,6 +324,28 @@ export default function EditBlogPost() {
     });
   };
 
+  // Helper: Ensure title is under 60 characters (SEO best practice)
+  const ensureSEOTitle = (title: string, maxLength: number = 55): string => {
+    if (title.length <= maxLength) return title;
+    // Truncate at last word boundary before maxLength
+    const truncated = title.substring(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(' ');
+    return lastSpace > 20 ? truncated.substring(0, lastSpace) : truncated;
+  };
+
+  // Extract main topic from content
+  const extractMainTopic = (content: string): string => {
+    // Remove HTML tags and get plain text
+    const plainText = content.replace(/<[^>]*>/g, '');
+    // Get first meaningful sentence or phrase
+    const firstSentence = plainText.split(/[.!?]/)[0]?.trim() || '';
+    // Extract key words (skip common words)
+    const words = firstSentence.split(/\s+/).filter(w => 
+      w.length > 3 && !['the', 'and', 'for', 'with', 'that', 'this', 'from', 'your', 'have', 'are', 'was', 'were'].includes(w.toLowerCase())
+    );
+    return words.slice(0, 3).join(' ');
+  };
+
   // AI Assistant Functions
   const handleSuggestTitles = async () => {
     if (!formData.content && !formData.excerpt) {
@@ -337,28 +361,65 @@ export default function EditBlogPost() {
         topic: formData.category || 'Technology',
         content: formData.content || formData.excerpt,
         generateTitles: true,
+        maxTitleLength: 55, // Leave room for truncation display
       });
       
-      // Generate 5 title variations
-      const baseTopic = formData.content.substring(0, 200) || formData.excerpt;
-      const titles = result.titleSuggestions || [
+      // Get topic from content for better titles
+      const topic = extractMainTopic(formData.content) || formData.category || 'Business';
+      const category = formData.category || 'Business';
+      const year = new Date().getFullYear();
+      
+      // Generate SEO-optimized titles (all under 60 chars)
+      const titleTemplates = [
+        // From API result (if available and short enough)
         result.title,
-        `How to ${result.title?.replace(/^How to /i, '')}`,
-        `The Complete Guide to ${formData.category || 'This Topic'}`,
-        `${new Date().getFullYear()} Guide: ${result.title}`,
-        `Why ${formData.category || 'This'} Matters for Pacific Island Businesses`,
+        // Template-based titles optimized for length
+        `${category} in Vanuatu: A Complete Guide`,
+        `${year} Guide to ${category} Success`,
+        `Why ${category} Matters in the Pacific`,
+        `How to Master ${category} in Vanuatu`,
+        `${category} Tips for Pacific Businesses`,
+        `The Future of ${category} in Vanuatu`,
+        `Essential ${category} Strategies for ${year}`,
+        `${category}: What You Need to Know`,
+        `Grow Your Business with ${category}`,
       ].filter(Boolean);
       
-      setSuggestedTitles(titles.slice(0, 5));
+      // Filter and ensure all titles are under 60 characters
+      const validTitles = titleTemplates
+        .map(t => ensureSEOTitle(t || '', 55))
+        .filter(t => t.length >= 20 && t.length <= 58) // Min 20, max 58 chars
+        .filter((t, i, arr) => arr.indexOf(t) === i) // Remove duplicates
+        .slice(0, 5);
+      
+      // If we don't have enough, add some generic but SEO-friendly ones
+      while (validTitles.length < 5) {
+        const extras = [
+          `${category} Solutions That Work`,
+          `Smart ${category} for ${year}`,
+          `${category} Made Simple`,
+          `Your Guide to ${category}`,
+          `${category} Best Practices`,
+        ];
+        const extra = extras[validTitles.length % extras.length];
+        if (!validTitles.includes(extra) && extra.length <= 58) {
+          validTitles.push(extra);
+        } else {
+          break;
+        }
+      }
+      
+      setSuggestedTitles(validTitles);
     } catch (error) {
       console.error('Title suggestion error:', error);
-      // Fallback suggestions based on content
+      // Fallback suggestions - all guaranteed under 60 chars
+      const category = formData.category || 'Digital';
       const fallbackTitles = [
-        `${formData.category || 'Technology'} Solutions for Pacific Island Businesses`,
-        `How to Leverage ${formData.category || 'Digital Tools'} in ${new Date().getFullYear()}`,
-        `The Ultimate Guide to ${formData.category || 'Business Growth'}`,
-        `Why ${formData.category || 'Innovation'} is Essential for Success`,
-        `Transform Your Business with ${formData.category || 'Modern Solutions'}`,
+        ensureSEOTitle(`${category} Solutions for Your Business`, 55),
+        ensureSEOTitle(`How to Succeed with ${category}`, 55),
+        ensureSEOTitle(`The Smart Guide to ${category}`, 55),
+        ensureSEOTitle(`Why ${category} Matters Today`, 55),
+        ensureSEOTitle(`${category} Tips That Actually Work`, 55),
       ];
       setSuggestedTitles(fallbackTitles);
     } finally {
