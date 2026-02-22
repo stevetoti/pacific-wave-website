@@ -126,3 +126,27 @@ elevenlabs-convai {
   background: white;
   clip-path: polygon(0 60%, 100% 0, 100% 100%, 0% 100%);
 }
+
+/* TipTap Editor Placeholder */
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #9ca3af;
+  pointer-events: none;
+  height: 0;
+}
+
+/* TipTap Editor Image Styles */
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem auto;
+  display: block;
+}
+
+.tiptap img.ProseMirror-selectednode {
+  outline: 3px solid #EF5E33;
+  outline-offset: 2px;
+}
+
