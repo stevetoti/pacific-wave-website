@@ -427,6 +427,36 @@ export default function EditBlogPost() {
     }
   };
 
+  // Helper: Ensure meta description is 150-160 characters (SEO best practice)
+  const ensureSEODescription = (text: string, maxLength: number = 155): string => {
+    // Remove HTML tags
+    const clean = text.replace(/<[^>]*>/g, '').trim();
+    if (clean.length <= maxLength) return clean;
+    // Truncate at last sentence or word boundary
+    let truncated = clean.substring(0, maxLength);
+    const lastPeriod = truncated.lastIndexOf('.');
+    const lastSpace = truncated.lastIndexOf(' ');
+    if (lastPeriod > maxLength - 30) {
+      return truncated.substring(0, lastPeriod + 1);
+    }
+    return truncated.substring(0, lastSpace) + '...';
+  };
+
+  // Helper: Generate SEO-friendly slug (short, keyword-rich)
+  const ensureSEOSlug = (text: string): string => {
+    // Remove common stop words for shorter slugs
+    const stopWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'shall', 'can', 'need', 'dare', 'ought', 'used', 'that', 'this', 'these', 'those', 'your', 'our', 'their'];
+    
+    const words = text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '')
+      .split(/\s+/)
+      .filter(w => w.length > 2 && !stopWords.includes(w))
+      .slice(0, 5); // Max 5 words for short URLs
+    
+    return words.join('-');
+  };
+
   const handleGenerateMeta = async () => {
     if (!formData.content && !formData.title) {
       alert('Please add a title or content first.');
@@ -438,19 +468,21 @@ export default function EditBlogPost() {
       const result = await callSEOFunction('seo-generate-meta', {
         topic: formData.title,
         content: formData.content,
+        maxDescriptionLength: 155,
       });
+      
+      // Ensure description is SEO-optimized (150-160 chars)
+      const seoDescription = ensureSEODescription(result.description || '', 155);
       
       setFormData(prev => ({
         ...prev,
-        excerpt: result.description,
+        excerpt: seoDescription,
       }));
     } catch (error) {
       console.error('Generate meta error:', error);
-      // Fallback: generate from content
-      const excerpt = formData.content
-        .replace(/<[^>]*>/g, '')
-        .substring(0, 155)
-        .trim() + '...';
+      // Fallback: generate from content with SEO limits
+      const plainContent = formData.content.replace(/<[^>]*>/g, '');
+      const excerpt = ensureSEODescription(plainContent, 155);
       setFormData(prev => ({ ...prev, excerpt }));
     } finally {
       setAiLoading(null);
@@ -468,18 +500,47 @@ export default function EditBlogPost() {
       const result = await callSEOFunction('seo-generate-meta', {
         topic: formData.title || formData.category,
         content: formData.content,
+        maxTitleLength: 55,
+        maxDescriptionLength: 155,
       });
+      
+      // Apply SEO best practices to ALL generated fields
+      const seoTitle = ensureSEOTitle(result.title || formData.title || `${formData.category} Guide`, 55);
+      const seoDescription = ensureSEODescription(result.description || '', 155);
+      const seoSlug = ensureSEOSlug(seoTitle);
+      const seoKeywords = (result.keywords || [])
+        .slice(0, 8) // Max 8 keywords
+        .map((k: string) => k.toLowerCase().trim())
+        .filter((k: string) => k.length > 2)
+        .join(', ');
+      
+      // Calculate read time based on word count (avg 200 words/min)
+      const wordCount = formData.content.replace(/<[^>]*>/g, '').split(/\s+/).length;
+      const readTime = Math.max(1, Math.ceil(wordCount / 200));
       
       setFormData(prev => ({
         ...prev,
-        title: prev.title || result.title,
-        slug: prev.slug || generateSlug(result.title),
-        excerpt: result.description,
-        keywords: result.keywords?.join(', ') || prev.keywords,
+        title: prev.title || seoTitle,
+        slug: prev.slug || seoSlug,
+        excerpt: seoDescription,
+        keywords: seoKeywords || prev.keywords,
+        readTime: `${readTime} min read`,
       }));
     } catch (error) {
       console.error('Generate all error:', error);
-      alert('Failed to generate meta. Please try individual actions.');
+      // Fallback with SEO best practices
+      const plainContent = formData.content.replace(/<[^>]*>/g, '');
+      const fallbackTitle = ensureSEOTitle(`${formData.category || 'Business'} Guide`, 55);
+      const fallbackDesc = ensureSEODescription(plainContent, 155);
+      const wordCount = plainContent.split(/\s+/).length;
+      
+      setFormData(prev => ({
+        ...prev,
+        title: prev.title || fallbackTitle,
+        slug: prev.slug || ensureSEOSlug(fallbackTitle),
+        excerpt: fallbackDesc,
+        readTime: `${Math.max(1, Math.ceil(wordCount / 200))} min read`,
+      }));
     } finally {
       setAiLoading(null);
     }
@@ -495,21 +556,41 @@ export default function EditBlogPost() {
     try {
       const result = await callSEOFunction('seo-keyword-research', {
         topic: formData.title || 'blog post',
-        industry: 'Technology',
+        industry: formData.category || 'Technology',
         location: 'Pacific Islands',
+        maxKeywords: 8,
       });
       
-      setSuggestedKeywords(result.keywords.map((k: { keyword: string }) => k.keyword).slice(0, 10));
+      // Process keywords: lowercase, trim, remove duplicates, max 8
+      const processedKeywords = result.keywords
+        .map((k: { keyword: string } | string) => typeof k === 'string' ? k : k.keyword)
+        .map((k: string) => k.toLowerCase().trim())
+        .filter((k: string) => k.length > 2 && k.length < 30)
+        .filter((k: string, i: number, arr: string[]) => arr.indexOf(k) === i)
+        .slice(0, 8);
+      
+      setSuggestedKeywords(processedKeywords);
     } catch (error) {
       console.error('Keyword research error:', error);
-      // Fallback keywords
-      setSuggestedKeywords([
-        formData.category?.toLowerCase() || 'technology',
-        'pacific islands',
-        'business solutions',
+      // Fallback: extract keywords from content + category
+      const category = formData.category?.toLowerCase() || 'business';
+      const contentWords = formData.content
+        .replace(/<[^>]*>/g, '')
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((w: string) => w.length > 4)
+        .slice(0, 3);
+      
+      const fallbackKeywords = [
+        category,
         'vanuatu',
-        'digital transformation',
-      ]);
+        'pacific islands',
+        ...contentWords,
+        `${category} solutions`,
+        `${category} services`,
+      ].filter((k, i, arr) => arr.indexOf(k) === i).slice(0, 8);
+      
+      setSuggestedKeywords(fallbackKeywords);
     } finally {
       setAiLoading(null);
     }
@@ -584,10 +665,30 @@ export default function EditBlogPost() {
     setAiLoading('alt');
 
     setTimeout(() => {
-      const altText = `${formData.title} - Featured image showing ${formData.category.toLowerCase()} concepts for Pacific Island businesses`;
+      // Generate SEO-friendly alt text (max 125 characters)
+      const category = formData.category?.toLowerCase() || 'business';
+      const title = formData.title || category;
+      
+      // Create concise, descriptive alt text
+      let altText = `${title} - ${category} solutions`;
+      
+      // Ensure it's under 125 characters
+      if (altText.length > 120) {
+        altText = title.substring(0, 100);
+        if (altText.length < title.length) {
+          const lastSpace = altText.lastIndexOf(' ');
+          altText = altText.substring(0, lastSpace);
+        }
+      }
+      
+      // Add location context if there's room
+      if (altText.length < 100) {
+        altText += ' in Vanuatu';
+      }
+      
       setSuggestedAltText(altText);
       setAiLoading(null);
-    }, 1500);
+    }, 800);
   };
 
   const addKeywordToList = (keyword: string) => {
@@ -973,39 +1074,124 @@ export default function EditBlogPost() {
 
           {/* SEO Checklist */}
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-gray-900 mb-4">SEO Checklist</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">📋 SEO Checklist</h3>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-center gap-2">
-                <span className={formData.title.length > 0 && formData.title.length <= 60 ? 'text-green-500' : 'text-gray-300'}>✓</span>
-                <span className={formData.title.length > 0 && formData.title.length <= 60 ? 'text-gray-700' : 'text-gray-400'}>
-                  Title under 60 characters
+              <li className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className={formData.title.length >= 30 && formData.title.length <= 60 ? 'text-green-500' : formData.title.length > 0 ? 'text-yellow-500' : 'text-gray-300'}>
+                    {formData.title.length >= 30 && formData.title.length <= 60 ? '✓' : formData.title.length > 60 ? '⚠️' : '○'}
+                  </span>
+                  <span className="text-gray-700">Title (50-60 chars)</span>
+                </div>
+                <span className={`text-xs font-mono ${formData.title.length > 60 ? 'text-red-500' : formData.title.length >= 30 ? 'text-green-500' : 'text-gray-400'}`}>
+                  {formData.title.length}/60
                 </span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className={formData.excerpt.length > 0 && formData.excerpt.length <= 160 ? 'text-green-500' : 'text-gray-300'}>✓</span>
-                <span className={formData.excerpt.length > 0 && formData.excerpt.length <= 160 ? 'text-gray-700' : 'text-gray-400'}>
-                  Description under 160 characters
+              <li className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className={formData.excerpt.length >= 120 && formData.excerpt.length <= 160 ? 'text-green-500' : formData.excerpt.length > 0 ? 'text-yellow-500' : 'text-gray-300'}>
+                    {formData.excerpt.length >= 120 && formData.excerpt.length <= 160 ? '✓' : formData.excerpt.length > 160 ? '⚠️' : '○'}
+                  </span>
+                  <span className="text-gray-700">Description (150-160)</span>
+                </div>
+                <span className={`text-xs font-mono ${formData.excerpt.length > 160 ? 'text-red-500' : formData.excerpt.length >= 120 ? 'text-green-500' : 'text-gray-400'}`}>
+                  {formData.excerpt.length}/160
                 </span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className={formData.keywords.length > 0 ? 'text-green-500' : 'text-gray-300'}>✓</span>
-                <span className={formData.keywords.length > 0 ? 'text-gray-700' : 'text-gray-400'}>
-                  Keywords defined
+              <li className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className={formData.slug.length > 0 && formData.slug.length <= 50 ? 'text-green-500' : formData.slug.length > 50 ? 'text-yellow-500' : 'text-gray-300'}>
+                    {formData.slug.length > 0 && formData.slug.length <= 50 ? '✓' : formData.slug.length > 50 ? '⚠️' : '○'}
+                  </span>
+                  <span className="text-gray-700">URL slug (short)</span>
+                </div>
+                <span className={`text-xs font-mono ${formData.slug.length > 50 ? 'text-yellow-500' : 'text-green-500'}`}>
+                  {formData.slug.length} chars
                 </span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className={formData.imageUrl ? 'text-green-500' : 'text-gray-300'}>✓</span>
-                <span className={formData.imageUrl ? 'text-gray-700' : 'text-gray-400'}>
-                  Featured image set
+              <li className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {(() => {
+                    const keywordCount = formData.keywords ? formData.keywords.split(',').filter(k => k.trim()).length : 0;
+                    const isGood = keywordCount >= 3 && keywordCount <= 8;
+                    return (
+                      <>
+                        <span className={isGood ? 'text-green-500' : keywordCount > 0 ? 'text-yellow-500' : 'text-gray-300'}>
+                          {isGood ? '✓' : keywordCount > 8 ? '⚠️' : '○'}
+                        </span>
+                        <span className="text-gray-700">Keywords (3-8)</span>
+                      </>
+                    );
+                  })()}
+                </div>
+                <span className="text-xs font-mono text-gray-500">
+                  {formData.keywords ? formData.keywords.split(',').filter(k => k.trim()).length : 0} keywords
                 </span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className={formData.content.length > 300 ? 'text-green-500' : 'text-gray-300'}>✓</span>
-                <span className={formData.content.length > 300 ? 'text-gray-700' : 'text-gray-400'}>
-                  Content has 300+ words
+              <li className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className={formData.imageUrl ? 'text-green-500' : 'text-gray-300'}>
+                    {formData.imageUrl ? '✓' : '○'}
+                  </span>
+                  <span className="text-gray-700">Featured image</span>
+                </div>
+                <span className={`text-xs ${formData.imageUrl ? 'text-green-500' : 'text-gray-400'}`}>
+                  {formData.imageUrl ? 'Set' : 'Missing'}
+                </span>
+              </li>
+              <li className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {(() => {
+                    const wordCount = formData.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(w => w).length;
+                    const isGood = wordCount >= 300;
+                    return (
+                      <>
+                        <span className={isGood ? 'text-green-500' : wordCount > 0 ? 'text-yellow-500' : 'text-gray-300'}>
+                          {isGood ? '✓' : '○'}
+                        </span>
+                        <span className="text-gray-700">Content (300+ words)</span>
+                      </>
+                    );
+                  })()}
+                </div>
+                <span className="text-xs font-mono text-gray-500">
+                  {formData.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(w => w).length} words
                 </span>
               </li>
             </ul>
+            
+            {/* Overall SEO Score indicator */}
+            {(() => {
+              let score = 0;
+              if (formData.title.length >= 30 && formData.title.length <= 60) score++;
+              if (formData.excerpt.length >= 120 && formData.excerpt.length <= 160) score++;
+              if (formData.slug.length > 0 && formData.slug.length <= 50) score++;
+              const keywordCount = formData.keywords ? formData.keywords.split(',').filter(k => k.trim()).length : 0;
+              if (keywordCount >= 3 && keywordCount <= 8) score++;
+              if (formData.imageUrl) score++;
+              const wordCount = formData.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(w => w).length;
+              if (wordCount >= 300) score++;
+              
+              const percentage = Math.round((score / 6) * 100);
+              const color = percentage >= 80 ? 'bg-green-500' : percentage >= 50 ? 'bg-yellow-500' : 'bg-red-500';
+              
+              return (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">SEO Score</span>
+                    <span className={`text-sm font-bold ${percentage >= 80 ? 'text-green-600' : percentage >= 50 ? 'text-yellow-600' : 'text-red-600'}`}>
+                      {percentage}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full transition-all ${color}`}
+                      style={{ width: `${percentage}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Danger Zone */}
