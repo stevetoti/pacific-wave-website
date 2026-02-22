@@ -816,37 +816,29 @@ export default function SEOHubPage() {
         </div>
       )}
 
-      {/* DataForSEO Integration Status */}
-      <div className={`mt-8 p-4 rounded-xl border ${
-        apiStatus?.connected 
-          ? 'bg-green-50 border-green-200' 
-          : 'bg-yellow-50 border-yellow-200'
-      }`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">{apiStatus?.connected ? '✅' : '🔌'}</span>
-            <div>
-              <p className={`font-medium ${apiStatus?.connected ? 'text-green-800' : 'text-yellow-800'}`}>
-                {apiStatus?.connected ? 'DataForSEO Connected' : 'DataForSEO Integration'}
-              </p>
-              <p className={`text-sm ${apiStatus?.connected ? 'text-green-600' : 'text-yellow-600'}`}>
-                {apiStatus?.connected 
-                  ? `API Balance: $${apiStatus.balance?.toFixed(2) || '0.00'}`
-                  : 'Checking connection status...'}
-              </p>
+      {/* SEO Engine Status - Only show if connected */}
+      {apiStatus?.connected && (
+        <div className="mt-8 p-4 rounded-xl border bg-gradient-to-r from-deep-blue/5 to-vibrant-orange/5 border-deep-blue/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-deep-blue to-vibrant-orange rounded-lg flex items-center justify-center text-white font-bold">
+                SEO
+              </div>
+              <div>
+                <p className="font-medium text-gray-800">SEO Engine Active</p>
+                <p className="text-sm text-gray-500">Real-time keyword data and ranking tracking enabled</p>
+              </div>
             </div>
-          </div>
-          {apiStatus?.connected && (
             <button
               onClick={checkRankings}
               disabled={isResearching || keywords.length === 0}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50"
+              className="bg-deep-blue text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-opacity-90 disabled:opacity-50 transition-colors"
             >
-              {isResearching ? '⏳ Checking...' : '📊 Check Rankings'}
+              {isResearching ? '⏳ Checking...' : '📊 Check All Rankings'}
             </button>
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
