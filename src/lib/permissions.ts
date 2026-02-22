@@ -9,14 +9,15 @@ export type AdminPage =
   | 'settings' 
   | 'users' 
   | 'media' 
-  | 'transcripts';
+  | 'transcripts'
+  | 'help';
 
 // Define permissions for each role
 export const rolePermissions: Record<Role, AdminPage[]> = {
-  super_admin: ['dashboard', 'blog', 'seo', 'settings', 'users', 'media', 'transcripts'],
-  admin: ['dashboard', 'blog', 'seo', 'settings', 'media', 'transcripts'],
-  editor: ['dashboard', 'blog', 'media'],
-  viewer: ['dashboard'],
+  super_admin: ['dashboard', 'blog', 'seo', 'settings', 'users', 'media', 'transcripts', 'help'],
+  admin: ['dashboard', 'blog', 'seo', 'settings', 'media', 'transcripts', 'help'],
+  editor: ['dashboard', 'blog', 'media', 'help'],
+  viewer: ['dashboard', 'help'],
 };
 
 // Human-readable role names
@@ -102,6 +103,8 @@ export const pathToPage: Record<string, AdminPage> = {
   '/admin/users': 'users',
   '/admin/media': 'media',
   '/admin/transcripts': 'transcripts',
+  '/admin/help': 'help',
+  '/admin/help/manage': 'help',
 };
 
 // Get the required page permission for a given path

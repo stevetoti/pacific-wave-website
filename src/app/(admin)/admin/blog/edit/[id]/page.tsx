@@ -795,7 +795,7 @@ export default function EditBlogPost() {
         <div className="flex items-center gap-3">
           <AIDropdown onAction={handleAIAction} isLoading={aiLoading} />
           <Link
-            href={`/blog/${formData.slug}`}
+            href={`/blog/preview/${postId}`}
             target="_blank"
             className="px-6 py-3 border border-gray-200 rounded-lg font-semibold hover:bg-gray-50 transition-colors flex items-center gap-2"
           >

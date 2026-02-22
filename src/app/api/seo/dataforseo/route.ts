@@ -144,18 +144,32 @@ export async function POST(request: Request) {
     // Process response based on action
     let processedData: any = data;
 
-    if (action === 'keyword_data' && data.tasks?.[0]?.result) {
-      processedData = {
-        keywords: data.tasks[0].result.map((item: any) => ({
-          keyword: item.keyword,
-          search_volume: item.search_volume || 0,
-          cpc: item.cpc || 0,
-          competition: item.competition_index || 0, // Use competition_index (0-100)
-          competition_level: item.competition || 'UNKNOWN', // LOW, MEDIUM, HIGH
-          monthly_searches: item.monthly_searches || [],
-        })),
-      };
-      console.log('[DataForSEO] Processed keywords:', JSON.stringify(processedData.keywords));
+    if (action === 'keyword_data') {
+      // Handle keyword data - check multiple possible response structures
+      const result = data.tasks?.[0]?.result;
+      console.log('[DataForSEO] Raw result:', JSON.stringify(result));
+      
+      if (result && Array.isArray(result) && result.length > 0) {
+        processedData = {
+          keywords: result.map((item: any) => ({
+            keyword: item.keyword,
+            search_volume: item.search_volume || 0,
+            cpc: item.cpc || 0,
+            competition: item.competition_index ?? (typeof item.competition === 'number' ? item.competition * 100 : 0),
+            competition_level: item.competition || 'UNKNOWN',
+            monthly_searches: item.monthly_searches || [],
+          })),
+        };
+        console.log('[DataForSEO] Processed keywords:', JSON.stringify(processedData.keywords));
+      } else {
+        // No data returned for these keywords
+        console.log('[DataForSEO] No keyword data returned. Full response:', JSON.stringify(data));
+        processedData = {
+          keywords: [],
+          message: 'No data found for these keywords. Try more common keywords or a different location.',
+          raw_status: data.tasks?.[0]?.status_message,
+        };
+      }
     }
 
     if (action === 'keyword_suggestions' && data.tasks?.[0]?.result) {

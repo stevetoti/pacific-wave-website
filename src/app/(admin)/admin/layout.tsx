@@ -25,6 +25,7 @@ const adminNav: NavItem[] = [
   { href: '/admin/media', label: 'Media Library', icon: '🖼️', page: 'media' },
   { href: '/admin/transcripts', label: 'Transcripts', icon: '💬', page: 'transcripts' },
   { href: '/admin/users', label: 'User Management', icon: '👥', page: 'users' },
+  { href: '/admin/help', label: 'Help Center', icon: '❓', page: 'help' },
   { href: '/admin/settings', label: 'Settings', icon: '⚙️', page: 'settings' },
 ];
 
