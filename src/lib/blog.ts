@@ -282,32 +282,42 @@ export function addHeadingIds(content: string): string {
  * Links service-related terms to the services page
  */
 export function addInternalLinks(content: string): string {
-  const linkMap: { pattern: RegExp; replacement: string }[] = [
-    // Services links
+  // Map keywords to specific service section anchors
+  const linkMap: { pattern: RegExp; url: string }[] = [
+    // Web Development - links to #web-development section
     { 
-      pattern: /\b(web development|website development|web design)\b(?![^<]*>)/gi, 
-      replacement: '[$1](/services "Web Development Services")' 
+      pattern: /\b(web development|website development|web design)\b(?![^[]*\]|\([^)]*\))/gi, 
+      url: '/services#web-development'
     },
+    // AI Solutions - links to #ai-solutions section
     { 
-      pattern: /\b(AI automation|artificial intelligence|AI solutions|AI-powered)\b(?![^<]*>)/gi, 
-      replacement: '[$1](/services "AI Automation Services")' 
+      pattern: /\b(AI automation|artificial intelligence|AI solutions|AI-powered)\b(?![^[]*\]|\([^)]*\))/gi, 
+      url: '/services#ai-solutions'
     },
+    // Mobile Apps - links to #mobile-apps section
     { 
-      pattern: /\b(mobile app development|mobile apps|app development)\b(?![^<]*>)/gi, 
-      replacement: '[$1](/services "Mobile App Development")' 
+      pattern: /\b(mobile app development|mobile apps|app development)\b(?![^[]*\]|\([^)]*\))/gi, 
+      url: '/services#mobile-apps'
     },
+    // Digital Marketing - links to #digital-marketing section
     { 
-      pattern: /\b(digital marketing|SEO|search engine optimization)\b(?![^<]*>)/gi, 
-      replacement: '[$1](/services "Digital Marketing Services")' 
+      pattern: /\b(digital marketing|SEO|search engine optimization)\b(?![^[]*\]|\([^)]*\))/gi, 
+      url: '/services#digital-marketing'
     },
+    // Business Automation - links to #business-automation section
     { 
-      pattern: /\b(business automation|workflow automation)\b(?![^<]*>)/gi, 
-      replacement: '[$1](/services "Business Automation")' 
+      pattern: /\b(business automation|workflow automation)\b(?![^[]*\]|\([^)]*\))/gi, 
+      url: '/services#business-automation'
+    },
+    // Cloud & Hosting - links to #cloud-hosting section
+    { 
+      pattern: /\b(cloud hosting|cloud infrastructure|managed hosting)\b(?![^[]*\]|\([^)]*\))/gi, 
+      url: '/services#cloud-hosting'
     },
     // Contact links
     { 
-      pattern: /\b(contact us|get in touch|reach out|free consultation)\b(?![^<]*>)/gi, 
-      replacement: '[$1](/contact "Contact Pacific Wave Digital")' 
+      pattern: /\b(contact us|get in touch|reach out|free consultation)\b(?![^[]*\]|\([^)]*\))/gi, 
+      url: '/contact'
     },
   ];
 
@@ -315,16 +325,14 @@ export function addInternalLinks(content: string): string {
   const linkedTerms = new Set<string>();
 
   // Only link each term once (first occurrence)
-  for (const { pattern, replacement } of linkMap) {
-    const match = processedContent.match(pattern);
-    if (match && !linkedTerms.has(match[0].toLowerCase())) {
-      // Replace only the first occurrence
-      processedContent = processedContent.replace(pattern, (m) => {
-        if (linkedTerms.has(m.toLowerCase())) return m;
-        linkedTerms.add(m.toLowerCase());
-        return replacement.replace('$1', m);
-      });
-    }
+  for (const { pattern, url } of linkMap) {
+    processedContent = processedContent.replace(pattern, (match) => {
+      const lowerMatch = match.toLowerCase();
+      if (linkedTerms.has(lowerMatch)) return match;
+      linkedTerms.add(lowerMatch);
+      // Use simple markdown link syntax without title attribute
+      return `[${match}](${url})`;
+    });
   }
 
   return processedContent;
