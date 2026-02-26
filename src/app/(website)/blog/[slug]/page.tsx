@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import {
   getPostBySlug,
   getRelatedPosts,
@@ -222,6 +223,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               {/* Article Body */}
               <div className="prose prose-lg prose-deep-blue max-w-none">
                 <ReactMarkdown
+                  rehypePlugins={[rehypeRaw]}
                   components={{
                     h2: ({ children }) => {
                       const text = String(children);
