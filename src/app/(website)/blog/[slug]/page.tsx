@@ -27,6 +27,9 @@ interface BlogPostPageProps {
 // Revalidate every 60 seconds
 export const revalidate = 60;
 
+// Allow dynamic paths (slugs not known at build time)
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   const slugs = await getAllPublishedSlugs();
   return slugs.map((slug) => ({ slug }));
