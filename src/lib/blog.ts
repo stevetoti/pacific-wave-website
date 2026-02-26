@@ -283,40 +283,41 @@ export function addHeadingIds(content: string): string {
  */
 export function addInternalLinks(content: string): string {
   // Map keywords to specific service section anchors
+  // Uses HTML anchor tags since content is stored as HTML
   const linkMap: { pattern: RegExp; url: string }[] = [
     // Web Development - links to #web-development section
     { 
-      pattern: /\b(web development|website development|web design)\b(?![^[]*\]|\([^)]*\))/gi, 
+      pattern: /\b(web development|website development|web design)\b(?![^<]*>|[^<]*<\/a>)/gi, 
       url: '/services#web-development'
     },
     // AI Solutions - links to #ai-solutions section
     { 
-      pattern: /\b(AI automation|artificial intelligence|AI solutions|AI-powered)\b(?![^[]*\]|\([^)]*\))/gi, 
+      pattern: /\b(AI automation|artificial intelligence|AI solutions|AI-powered)\b(?![^<]*>|[^<]*<\/a>)/gi, 
       url: '/services#ai-solutions'
     },
     // Mobile Apps - links to #mobile-apps section
     { 
-      pattern: /\b(mobile app development|mobile apps|app development)\b(?![^[]*\]|\([^)]*\))/gi, 
+      pattern: /\b(mobile app development|mobile apps|app development)\b(?![^<]*>|[^<]*<\/a>)/gi, 
       url: '/services#mobile-apps'
     },
     // Digital Marketing - links to #digital-marketing section
     { 
-      pattern: /\b(digital marketing|SEO|search engine optimization)\b(?![^[]*\]|\([^)]*\))/gi, 
+      pattern: /\b(digital marketing|SEO|search engine optimization)\b(?![^<]*>|[^<]*<\/a>)/gi, 
       url: '/services#digital-marketing'
     },
     // Business Automation - links to #business-automation section
     { 
-      pattern: /\b(business automation|workflow automation)\b(?![^[]*\]|\([^)]*\))/gi, 
+      pattern: /\b(business automation|workflow automation)\b(?![^<]*>|[^<]*<\/a>)/gi, 
       url: '/services#business-automation'
     },
     // Cloud & Hosting - links to #cloud-hosting section
     { 
-      pattern: /\b(cloud hosting|cloud infrastructure|managed hosting)\b(?![^[]*\]|\([^)]*\))/gi, 
+      pattern: /\b(cloud hosting|cloud infrastructure|managed hosting)\b(?![^<]*>|[^<]*<\/a>)/gi, 
       url: '/services#cloud-hosting'
     },
     // Contact links
     { 
-      pattern: /\b(contact us|get in touch|reach out|free consultation)\b(?![^[]*\]|\([^)]*\))/gi, 
+      pattern: /\b(contact us|get in touch|reach out|free consultation)\b(?![^<]*>|[^<]*<\/a>)/gi, 
       url: '/contact'
     },
   ];
@@ -330,8 +331,8 @@ export function addInternalLinks(content: string): string {
       const lowerMatch = match.toLowerCase();
       if (linkedTerms.has(lowerMatch)) return match;
       linkedTerms.add(lowerMatch);
-      // Use simple markdown link syntax without title attribute
-      return `[${match}](${url})`;
+      // Use HTML anchor tag since content is stored as HTML
+      return `<a href="${url}" class="text-vibrant-orange hover:text-soft-orange underline">${match}</a>`;
     });
   }
 
