@@ -13,7 +13,9 @@ import {
   calculateReadingTime,
   generateArticleSchema,
   generateBreadcrumbSchema,
+  generateImageObjectSchema,
   addInternalLinks,
+  enhanceImagesForSEO,
 } from '@/lib/blog';
 import TableOfContents from '@/components/blog/TableOfContents';
 import RelatedPosts from '@/components/blog/RelatedPosts';
@@ -113,12 +115,20 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const breadcrumbSchema = generateBreadcrumbSchema(post.title, post.slug);
 
+  // Generate ImageObject schema for featured image
+  const imageSchema = post.image_url ? generateImageObjectSchema({
+    url: post.image_url,
+    caption: post.title,
+    description: post.excerpt || post.title,
+  }) : null;
+
   const publishedDate = post.published_at || post.created_at;
   const readTime = post.read_time || calculateReadingTime(post.content || '');
   const wasUpdated = post.updated_at && post.updated_at !== post.created_at;
   
-  // Process content with internal links for SEO
-  const processedContent = addInternalLinks(post.content || '');
+  // Process content with internal links and enhanced images for SEO
+  const linkedContent = addInternalLinks(post.content || '');
+  const processedContent = enhanceImagesForSEO(linkedContent);
 
   return (
     <>
@@ -131,6 +141,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      {imageSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(imageSchema) }}
+        />
+      )}
 
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center overflow-hidden">
@@ -139,6 +155,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <Image
               src={post.image_url}
               alt={post.title}
+              title={post.title}
               fill
               className="object-cover"
               priority

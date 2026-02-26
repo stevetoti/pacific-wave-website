@@ -339,6 +339,159 @@ export function addInternalLinks(content: string): string {
   return processedContent;
 }
 
+/**
+ * Auto-insert links to related blog articles based on keyword matching
+ * Inserts up to maxLinks links to other articles
+ */
+export async function addRelatedArticleLinks(
+  content: string,
+  currentPostId: string,
+  maxLinks: number = 3
+): Promise<string> {
+  // Fetch all published posts except current
+  const { data: posts, error } = await supabase
+    .from('blog_posts')
+    .select('id, title, slug, keywords, category')
+    .eq('site_id', SITE_ID)
+    .eq('published', true)
+    .neq('id', currentPostId);
+
+  if (error || !posts || posts.length === 0) {
+    return content;
+  }
+
+  const plainContent = content.replace(/<[^>]*>/g, ' ').toLowerCase();
+  let processedContent = content;
+  let linksInserted = 0;
+  const linkedSlugs = new Set<string>();
+
+  // Check existing links in content to avoid duplicates
+  const existingLinkRegex = /href=["']\/blog\/([^"']+)["']/g;
+  let match;
+  while ((match = existingLinkRegex.exec(content)) !== null) {
+    linkedSlugs.add(match[1]);
+  }
+
+  // Score and sort posts by relevance
+  const scoredPosts = posts.map(post => {
+    let score = 0;
+    const matchedTerms: string[] = [];
+
+    // Check if any of the post's keywords appear in our content
+    if (post.keywords && Array.isArray(post.keywords)) {
+      for (const keyword of post.keywords) {
+        if (keyword.length > 3 && plainContent.includes(keyword.toLowerCase())) {
+          score += 10;
+          matchedTerms.push(keyword);
+        }
+      }
+    }
+
+    // Check title words
+    const titleWords = post.title.toLowerCase().split(/\s+/).filter((w: string) => w.length > 4);
+    for (const word of titleWords) {
+      if (plainContent.includes(word)) {
+        score += 3;
+        matchedTerms.push(word);
+      }
+    }
+
+    return { post, score, matchedTerms: Array.from(new Set(matchedTerms)) };
+  })
+  .filter(item => item.score > 0 && !linkedSlugs.has(item.post.slug))
+  .sort((a, b) => b.score - a.score);
+
+  // Insert links for top matches
+  for (const { post, matchedTerms } of scoredPosts) {
+    if (linksInserted >= maxLinks) break;
+    
+    // Find a good term to link (prefer longer, more specific terms)
+    const sortedTerms = matchedTerms.sort((a, b) => b.length - a.length);
+    
+    for (const term of sortedTerms) {
+      // Create a pattern that avoids already-linked text and HTML tags
+      const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const pattern = new RegExp(
+        `(?<!<[^>]*)\\b(${escapedTerm})\\b(?![^<]*>|[^<]*<\\/a>)`,
+        'i'
+      );
+      
+      if (pattern.test(processedContent)) {
+        processedContent = processedContent.replace(pattern, (match) => {
+          return `<a href="/blog/${post.slug}" class="text-vibrant-orange hover:text-soft-orange underline" title="Read: ${post.title}">${match}</a>`;
+        });
+        linksInserted++;
+        linkedSlugs.add(post.slug);
+        break;
+      }
+    }
+  }
+
+  return processedContent;
+}
+
+/**
+ * Get suggestions for internal links to other blog posts
+ */
+export async function getInternalLinkSuggestions(
+  content: string,
+  currentPostId: string,
+  category: string | null
+): Promise<{ postId: string; title: string; slug: string; matchedKeywords: string[]; score: number }[]> {
+  const { data: posts, error } = await supabase
+    .from('blog_posts')
+    .select('id, title, slug, keywords, category')
+    .eq('site_id', SITE_ID)
+    .eq('published', true)
+    .neq('id', currentPostId);
+
+  if (error || !posts) return [];
+
+  const plainContent = content.replace(/<[^>]*>/g, ' ').toLowerCase();
+
+  const suggestions = posts.map(post => {
+    let score = 0;
+    const matchedKeywords: string[] = [];
+
+    // Category match bonus
+    if (category && post.category === category) {
+      score += 20;
+    }
+
+    // Keyword matches
+    if (post.keywords && Array.isArray(post.keywords)) {
+      for (const keyword of post.keywords) {
+        if (keyword.length > 3 && plainContent.includes(keyword.toLowerCase())) {
+          score += 10;
+          matchedKeywords.push(keyword);
+        }
+      }
+    }
+
+    // Title word matches
+    const titleWords = post.title.toLowerCase().split(/\s+/).filter((w: string) => w.length > 4);
+    for (const word of titleWords) {
+      if (plainContent.includes(word)) {
+        score += 3;
+        if (!matchedKeywords.includes(word)) matchedKeywords.push(word);
+      }
+    }
+
+    return {
+      postId: post.id,
+      title: post.title,
+      slug: post.slug,
+      matchedKeywords,
+      score,
+    };
+  })
+  .filter(s => s.score > 5)
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 5);
+
+  return suggestions;
+}
+
 // ==========================================
 // DATE FORMATTING
 // ==========================================
@@ -439,4 +592,69 @@ export function generateBreadcrumbSchema(postTitle: string, postSlug: string): o
       },
     ],
   };
+}
+
+/**
+ * Generate ImageObject JSON-LD schema for SEO
+ */
+export interface ImageSchemaProps {
+  url: string;
+  caption: string;
+  description?: string;
+  width?: number;
+  height?: number;
+}
+
+export function generateImageObjectSchema(props: ImageSchemaProps): object {
+  const imageUrl = props.url.startsWith('http') 
+    ? props.url 
+    : `https://pacificwavedigital.com${props.url}`;
+    
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ImageObject',
+    url: imageUrl,
+    contentUrl: imageUrl,
+    caption: props.caption,
+    description: props.description || props.caption,
+    width: props.width || 1200,
+    height: props.height || 630,
+    representativeOfPage: true,
+    copyrightHolder: {
+      '@type': 'Organization',
+      name: 'Pacific Wave Digital',
+    },
+    creator: {
+      '@type': 'Organization',
+      name: 'Pacific Wave Digital',
+    },
+  };
+}
+
+/**
+ * Extract and enhance images in content with SEO attributes
+ */
+export function enhanceImagesForSEO(content: string, focusKeyword?: string): string {
+  // Add loading="lazy" and title attribute to images
+  let enhanced = content.replace(
+    /<img([^>]*)>/gi,
+    (match, attributes) => {
+      // Check if loading is already set
+      if (!/loading=/i.test(attributes)) {
+        attributes += ' loading="lazy"';
+      }
+      
+      // Extract alt text to use as title if title missing
+      const altMatch = attributes.match(/alt=["']([^"']*)["']/i);
+      const alt = altMatch ? altMatch[1] : '';
+      
+      if (!/title=/i.test(attributes) && alt) {
+        attributes += ` title="${alt}"`;
+      }
+      
+      return `<img${attributes}>`;
+    }
+  );
+  
+  return enhanced;
 }

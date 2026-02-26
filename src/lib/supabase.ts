@@ -14,7 +14,9 @@ export interface BlogPost {
   content: string;
   category: string;
   image_url: string;
+  image_alt?: string;
   keywords: string[];
+  focus_keyword?: string;
   read_time: string;
   published: boolean;
   published_at: string | null;

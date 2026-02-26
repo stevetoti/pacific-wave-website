@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { supabase } from '@/lib/supabase';
 import { getWordCount } from '@/lib/blog';
+import SEOKeywordAnalyzer from '@/components/admin/SEOKeywordAnalyzer';
+import EnhancedSEOChecklist from '@/components/admin/EnhancedSEOChecklist';
 
 // Dynamic import for rich text editor
 const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor'), {
@@ -40,8 +42,10 @@ export default function NewBlogPost() {
     content: '',
     category: '',
     keywords: '',
+    focusKeyword: '',
     readTime: '5 min read',
     imageUrl: '',
+    imageAlt: '',
     published: false,
   });
 
@@ -160,7 +164,9 @@ export default function NewBlogPost() {
       content: formData.content,
       category: formData.category,
       image_url: formData.imageUrl,
+      image_alt: formData.imageAlt,
       keywords: keywordsArray,
+      focus_keyword: formData.focusKeyword,
       read_time: formData.readTime,
       published: publish,
       published_at: publish ? new Date().toISOString() : null,
@@ -305,6 +311,33 @@ export default function NewBlogPost() {
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* Focus Keyword - Primary SEO */}
+          <div className="bg-gradient-to-br from-deep-blue to-dark-navy rounded-xl p-6 shadow-sm">
+            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+              🎯 Focus Keyword
+            </h3>
+            <input
+              type="text"
+              value={formData.focusKeyword}
+              onChange={(e) => setFormData({ ...formData, focusKeyword: e.target.value })}
+              placeholder="Enter primary keyword..."
+              className="w-full px-4 py-3 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-vibrant-orange text-sm"
+            />
+            <p className="text-blue-200 text-xs mt-2">
+              Your main keyword for this article. This helps track SEO optimization.
+            </p>
+          </div>
+
+          {/* Focus Keyword Analysis */}
+          <SEOKeywordAnalyzer
+            focusKeyword={formData.focusKeyword}
+            title={formData.title}
+            slug={formData.slug}
+            metaDescription={formData.excerpt}
+            content={formData.content}
+            imageAlt={formData.imageAlt}
+          />
+
           {/* Publish Settings */}
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
             <h3 className="font-semibold text-gray-900 mb-4">Publish Settings</h3>
@@ -386,9 +419,27 @@ export default function NewBlogPost() {
               📤 Upload Image
             </button>
             {formData.imageUrl && (
-              <div className="mt-3 rounded-lg overflow-hidden">
-                <img src={formData.imageUrl} alt="Preview" className="w-full h-32 object-cover" />
-              </div>
+              <>
+                <div className="mt-3 rounded-lg overflow-hidden">
+                  <img src={formData.imageUrl} alt={formData.imageAlt || 'Preview'} className="w-full h-32 object-cover" />
+                </div>
+                {/* Image Alt Text Field */}
+                <div className="mt-3">
+                  <label className="block text-xs font-medium text-gray-600 mb-1">
+                    Alt Text (SEO)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.imageAlt}
+                    onChange={(e) => setFormData({ ...formData, imageAlt: e.target.value })}
+                    placeholder="Describe the image..."
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-blue/20 text-sm"
+                  />
+                  <p className={`text-xs mt-1 ${formData.imageAlt.length > 0 ? 'text-green-500' : 'text-gray-400'}`}>
+                    {formData.imageAlt.length > 0 ? '✓ Alt text set' : 'Add alt text for accessibility & SEO'}
+                  </p>
+                </div>
+              </>
             )}
             {!formData.imageUrl && (
               <p className="text-gray-400 text-xs mt-2">Required for publishing</p>
@@ -416,27 +467,17 @@ export default function NewBlogPost() {
             </p>
           </div>
 
-          {/* Publishing Checklist */}
-          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-            <h3 className="font-semibold text-gray-900 mb-4">📋 Publishing Checklist</h3>
-            <ul className="space-y-2 text-sm">
-              <li className={formData.imageUrl ? 'text-green-600' : 'text-gray-400'}>
-                {formData.imageUrl ? '✓' : '○'} Featured image
-              </li>
-              <li className={formData.excerpt.length >= 150 && formData.excerpt.length <= 160 ? 'text-green-600' : 'text-gray-400'}>
-                {formData.excerpt.length >= 150 && formData.excerpt.length <= 160 ? '✓' : '○'} Meta description (150-160 chars)
-              </li>
-              <li className={keywordsArray.length >= 3 && keywordsArray.length <= 8 ? 'text-green-600' : 'text-gray-400'}>
-                {keywordsArray.length >= 3 && keywordsArray.length <= 8 ? '✓' : '○'} 3-8 keywords
-              </li>
-              <li className={wordCount >= 600 ? 'text-green-600' : 'text-gray-400'}>
-                {wordCount >= 600 ? '✓' : '○'} 600+ words content
-              </li>
-              <li className={formData.category ? 'text-green-600' : 'text-gray-400'}>
-                {formData.category ? '✓' : '○'} Category selected
-              </li>
-            </ul>
-          </div>
+          {/* Enhanced SEO Checklist */}
+          <EnhancedSEOChecklist
+            focusKeyword={formData.focusKeyword}
+            title={formData.title}
+            slug={formData.slug}
+            excerpt={formData.excerpt}
+            content={formData.content}
+            keywords={formData.keywords}
+            imageUrl={formData.imageUrl}
+            imageAlt={formData.imageAlt}
+          />
         </div>
       </form>
     </div>

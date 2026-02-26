@@ -6,6 +6,9 @@ import { useRouter, useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { supabase, BlogPost, uploadFile } from '@/lib/supabase';
 import { getWordCount } from '@/lib/blog';
+import SEOKeywordAnalyzer from '@/components/admin/SEOKeywordAnalyzer';
+import RelatedArticlesSuggestions from '@/components/admin/RelatedArticlesSuggestions';
+import EnhancedSEOChecklist from '@/components/admin/EnhancedSEOChecklist';
 
 const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor'), {
   ssr: false,
@@ -346,8 +349,10 @@ export default function EditBlogPost() {
     content: '',
     category: '',
     keywords: '',
+    focusKeyword: '',
     readTime: '5 min read',
     imageUrl: '',
+    imageAlt: '',
     published: false,
   });
 
@@ -387,8 +392,10 @@ export default function EditBlogPost() {
         content: normalizeContentForEditor(post.content || ''),
         category: post.category || '',
         keywords: Array.isArray(post.keywords) ? post.keywords.join(', ') : '',
+        focusKeyword: post.focus_keyword || '',
         readTime: post.read_time || '5 min read',
         imageUrl: post.image_url || '',
+        imageAlt: post.image_alt || '',
         published: post.published || false,
       });
     }
@@ -945,7 +952,9 @@ export default function EditBlogPost() {
       content: formData.content,
       category: formData.category,
       image_url: formData.imageUrl,
+      image_alt: formData.imageAlt,
       keywords: keywordsArray,
+      focus_keyword: formData.focusKeyword,
       read_time: formData.readTime,
       published: formData.published,
       published_at: formData.published ? new Date().toISOString() : null,
@@ -1149,6 +1158,48 @@ export default function EditBlogPost() {
 
         {/* Settings Sidebar */}
         <div className="space-y-6">
+          {/* Focus Keyword - Primary SEO */}
+          <div className="bg-gradient-to-br from-deep-blue to-dark-navy rounded-xl p-6 shadow-sm">
+            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+              🎯 Focus Keyword
+            </h3>
+            <input
+              type="text"
+              value={formData.focusKeyword}
+              onChange={(e) => setFormData({ ...formData, focusKeyword: e.target.value })}
+              placeholder="Enter primary keyword..."
+              className="w-full px-4 py-3 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-vibrant-orange text-sm"
+            />
+            <p className="text-blue-200 text-xs mt-2">
+              Your main keyword for this article. This helps track SEO optimization.
+            </p>
+          </div>
+
+          {/* Focus Keyword Analysis */}
+          <SEOKeywordAnalyzer
+            focusKeyword={formData.focusKeyword}
+            title={formData.title}
+            slug={formData.slug}
+            metaDescription={formData.excerpt}
+            content={formData.content}
+            imageAlt={formData.imageAlt}
+          />
+
+          {/* Related Articles / Internal Linking */}
+          <RelatedArticlesSuggestions
+            currentPostId={postId}
+            content={formData.content}
+            category={formData.category}
+            onInsertLink={(title, slug) => {
+              // Insert link at cursor or append to content
+              const linkHtml = `<a href="/blog/${slug}" class="text-vibrant-orange hover:text-soft-orange underline">${title}</a>`;
+              setFormData(prev => ({
+                ...prev,
+                content: prev.content + `<p>Related: ${linkHtml}</p>`,
+              }));
+            }}
+          />
+
           {/* SEO Score Indicator */}
           {seoScore && (
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
@@ -1273,20 +1324,56 @@ export default function EditBlogPost() {
             {formData.imageUrl && (
               <>
                 <div className="mt-3 rounded-lg overflow-hidden">
-                  <img src={formData.imageUrl} alt="Preview" className="w-full h-32 object-cover" />
+                  <img src={formData.imageUrl} alt={formData.imageAlt || 'Preview'} className="w-full h-32 object-cover" />
                 </div>
-                <button
-                  type="button"
-                  onClick={handleGenerateAltText}
-                  disabled={aiLoading === 'alt'}
-                  className="mt-2 text-sm text-vibrant-orange hover:underline flex items-center gap-1"
-                >
-                  {aiLoading === 'alt' ? <span className="animate-spin">⏳</span> : <span>✨</span>}
-                  Generate Alt Text
-                </button>
-                {suggestedAltText && (
-                  <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-600">
-                    <strong>Suggested:</strong> {suggestedAltText}
+                
+                {/* Image Alt Text Field */}
+                <div className="mt-3">
+                  <label className="block text-xs font-medium text-gray-600 mb-1">
+                    Alt Text (SEO)
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={formData.imageAlt}
+                      onChange={(e) => setFormData({ ...formData, imageAlt: e.target.value })}
+                      placeholder="Describe the image..."
+                      className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-blue/20 text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (suggestedAltText) {
+                          setFormData({ ...formData, imageAlt: suggestedAltText });
+                        } else {
+                          handleGenerateAltText();
+                        }
+                      }}
+                      disabled={aiLoading === 'alt'}
+                      className="px-3 py-2 bg-vibrant-orange text-white rounded-lg hover:bg-soft-orange transition-colors text-sm disabled:opacity-50"
+                    >
+                      {aiLoading === 'alt' ? '⏳' : '✨ AI'}
+                    </button>
+                  </div>
+                  <p className={`text-xs mt-1 ${formData.imageAlt.length > 0 ? 'text-green-500' : 'text-gray-400'}`}>
+                    {formData.imageAlt.length > 0 ? '✓ Alt text set' : 'Add alt text for accessibility & SEO'}
+                  </p>
+                </div>
+                
+                {suggestedAltText && !formData.imageAlt && (
+                  <div className="mt-2 p-2 bg-blue-50 rounded text-xs">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="text-blue-700">
+                        <strong>Suggested:</strong> {suggestedAltText}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, imageAlt: suggestedAltText })}
+                        className="text-blue-600 hover:text-blue-800 font-medium whitespace-nowrap"
+                      >
+                        Use →
+                      </button>
+                    </div>
                   </div>
                 )}
               </>
@@ -1330,127 +1417,17 @@ export default function EditBlogPost() {
             )}
           </div>
 
-          {/* SEO Checklist */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-gray-900 mb-4">📋 SEO Checklist</h3>
-            <ul className="space-y-3 text-sm">
-              <li className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className={formData.title.length >= 30 && formData.title.length <= 60 ? 'text-green-500' : formData.title.length > 0 ? 'text-yellow-500' : 'text-gray-300'}>
-                    {formData.title.length >= 30 && formData.title.length <= 60 ? '✓' : formData.title.length > 60 ? '⚠️' : '○'}
-                  </span>
-                  <span className="text-gray-700">Title (50-60 chars)</span>
-                </div>
-                <span className={`text-xs font-mono ${formData.title.length > 60 ? 'text-red-500' : formData.title.length >= 30 ? 'text-green-500' : 'text-gray-400'}`}>
-                  {formData.title.length}/60
-                </span>
-              </li>
-              <li className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className={formData.excerpt.length >= 120 && formData.excerpt.length <= 160 ? 'text-green-500' : formData.excerpt.length > 0 ? 'text-yellow-500' : 'text-gray-300'}>
-                    {formData.excerpt.length >= 120 && formData.excerpt.length <= 160 ? '✓' : formData.excerpt.length > 160 ? '⚠️' : '○'}
-                  </span>
-                  <span className="text-gray-700">Description (150-160)</span>
-                </div>
-                <span className={`text-xs font-mono ${formData.excerpt.length > 160 ? 'text-red-500' : formData.excerpt.length >= 120 ? 'text-green-500' : 'text-gray-400'}`}>
-                  {formData.excerpt.length}/160
-                </span>
-              </li>
-              <li className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className={formData.slug.length > 0 && formData.slug.length <= 50 ? 'text-green-500' : formData.slug.length > 50 ? 'text-yellow-500' : 'text-gray-300'}>
-                    {formData.slug.length > 0 && formData.slug.length <= 50 ? '✓' : formData.slug.length > 50 ? '⚠️' : '○'}
-                  </span>
-                  <span className="text-gray-700">URL slug (short)</span>
-                </div>
-                <span className={`text-xs font-mono ${formData.slug.length > 50 ? 'text-yellow-500' : 'text-green-500'}`}>
-                  {formData.slug.length} chars
-                </span>
-              </li>
-              <li className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {(() => {
-                    const keywordCount = formData.keywords ? formData.keywords.split(',').filter(k => k.trim()).length : 0;
-                    const isGood = keywordCount >= 3 && keywordCount <= 8;
-                    return (
-                      <>
-                        <span className={isGood ? 'text-green-500' : keywordCount > 0 ? 'text-yellow-500' : 'text-gray-300'}>
-                          {isGood ? '✓' : keywordCount > 8 ? '⚠️' : '○'}
-                        </span>
-                        <span className="text-gray-700">Keywords (3-8)</span>
-                      </>
-                    );
-                  })()}
-                </div>
-                <span className="text-xs font-mono text-gray-500">
-                  {formData.keywords ? formData.keywords.split(',').filter(k => k.trim()).length : 0} keywords
-                </span>
-              </li>
-              <li className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className={formData.imageUrl ? 'text-green-500' : 'text-gray-300'}>
-                    {formData.imageUrl ? '✓' : '○'}
-                  </span>
-                  <span className="text-gray-700">Featured image</span>
-                </div>
-                <span className={`text-xs ${formData.imageUrl ? 'text-green-500' : 'text-gray-400'}`}>
-                  {formData.imageUrl ? 'Set' : 'Missing'}
-                </span>
-              </li>
-              <li className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {(() => {
-                    const wordCount = formData.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(w => w).length;
-                    const isGood = wordCount >= 300;
-                    return (
-                      <>
-                        <span className={isGood ? 'text-green-500' : wordCount > 0 ? 'text-yellow-500' : 'text-gray-300'}>
-                          {isGood ? '✓' : '○'}
-                        </span>
-                        <span className="text-gray-700">Content (300+ words)</span>
-                      </>
-                    );
-                  })()}
-                </div>
-                <span className="text-xs font-mono text-gray-500">
-                  {formData.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(w => w).length} words
-                </span>
-              </li>
-            </ul>
-            
-            {/* Overall SEO Score indicator */}
-            {(() => {
-              let score = 0;
-              if (formData.title.length >= 30 && formData.title.length <= 60) score++;
-              if (formData.excerpt.length >= 120 && formData.excerpt.length <= 160) score++;
-              if (formData.slug.length > 0 && formData.slug.length <= 50) score++;
-              const keywordCount = formData.keywords ? formData.keywords.split(',').filter(k => k.trim()).length : 0;
-              if (keywordCount >= 3 && keywordCount <= 8) score++;
-              if (formData.imageUrl) score++;
-              const wordCount = formData.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(w => w).length;
-              if (wordCount >= 300) score++;
-              
-              const percentage = Math.round((score / 6) * 100);
-              const color = percentage >= 80 ? 'bg-green-500' : percentage >= 50 ? 'bg-yellow-500' : 'bg-red-500';
-              
-              return (
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">SEO Score</span>
-                    <span className={`text-sm font-bold ${percentage >= 80 ? 'text-green-600' : percentage >= 50 ? 'text-yellow-600' : 'text-red-600'}`}>
-                      {percentage}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className={`h-2 rounded-full transition-all ${color}`}
-                      style={{ width: `${percentage}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
+          {/* Enhanced SEO Checklist */}
+          <EnhancedSEOChecklist
+            focusKeyword={formData.focusKeyword}
+            title={formData.title}
+            slug={formData.slug}
+            excerpt={formData.excerpt}
+            content={formData.content}
+            keywords={formData.keywords}
+            imageUrl={formData.imageUrl}
+            imageAlt={formData.imageAlt}
+          />
 
           {/* Danger Zone */}
           <div className="bg-red-50 rounded-xl p-6 border border-red-100">
