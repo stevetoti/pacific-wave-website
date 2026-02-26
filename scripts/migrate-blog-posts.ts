@@ -1,22 +1,31 @@
-export interface BlogPost {
-  slug: string;
-  title: string;
-  excerpt: string;
-  category: string;
-  date: string;
-  readTime: string;
-  image: string;
-  keywords: string[];
-  author: {
-    name: string;
-    role: string;
-    avatar: string;
-  };
-  content: string;
-  metaDescription: string;
+/**
+ * Migration Script: Move hardcoded blog posts to Supabase
+ * 
+ * Run with: npx tsx scripts/migrate-blog-posts.ts
+ * 
+ * Make sure you have the following environment variables set:
+ * - NEXT_PUBLIC_SUPABASE_URL
+ * - NEXT_PUBLIC_SUPABASE_ANON_KEY
+ */
+
+import { createClient } from '@supabase/supabase-js';
+
+// Load environment variables
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('❌ Missing Supabase environment variables');
+  console.log('Make sure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set');
+  process.exit(1);
 }
 
-export const blogPosts: BlogPost[] = [
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+const SITE_ID = 'pwd';
+
+// Hardcoded blog posts from blog-data.ts
+const blogPosts = [
   {
     slug: 'ai-business-automation-pacific-islands-2025',
     title: 'AI Business Automation for Pacific Island Enterprises: A Complete Guide for 2025',
@@ -27,11 +36,6 @@ export const blogPosts: BlogPost[] = [
     readTime: '8 min read',
     image: '/images/services/ai-solutions.jpg',
     keywords: ['AI automation Pacific', 'business automation Vanuatu', 'chatbots Pacific Islands', 'AI Fiji business', 'workflow automation Melanesia'],
-    author: {
-      name: 'Pacific Wave Digital',
-      role: 'Digital Innovation Team',
-      avatar: '/images/logo-icon.png',
-    },
     metaDescription: 'Learn how AI business automation is transforming Pacific Island enterprises. Practical guide for Vanuatu, Fiji, and Pacific businesses to implement chatbots, workflow automation, and AI systems in 2025.',
     content: `
 ## Introduction: The AI Revolution Reaches the Pacific
@@ -235,11 +239,6 @@ Don't let your competitors get ahead. The businesses that embrace AI now will do
     readTime: '6 min read',
     image: '/images/services/web-dev.jpg',
     keywords: ['web development Vanuatu', 'website design Port Vila', 'Pacific business website', 'Vanuatu digital marketing', 'business website Melanesia'],
-    author: {
-      name: 'Pacific Wave Digital',
-      role: 'Digital Innovation Team',
-      avatar: '/images/logo-icon.png',
-    },
     metaDescription: 'Discover why every Vanuatu business needs a professional website in 2025. Learn how modern web design increases revenue, builds trust, and attracts tourists and local customers.',
     content: `
 ## Introduction: The Digital Imperative for Vanuatu Businesses
@@ -511,11 +510,6 @@ Every day without a professional website is a day you're losing customers to com
     readTime: '7 min read',
     image: '/images/services/mobile-apps.jpg',
     keywords: ['mobile app development Pacific', 'app developers Vanuatu', 'offshore development Pacific Islands', 'mobile apps Fiji', 'low bandwidth app development'],
-    author: {
-      name: 'Pacific Wave Digital',
-      role: 'Digital Innovation Team',
-      avatar: '/images/logo-icon.png',
-    },
     metaDescription: 'Expert guide to mobile app development for Pacific Island businesses. Learn offline-first strategies, low-bandwidth optimization, and best practices for Vanuatu, Fiji, and Pacific app development.',
     content: `
 ## Introduction: The Mobile-First Pacific
@@ -842,11 +836,6 @@ Ready to explore mobile app development for your Pacific Island business? Here's
     readTime: '10 min read',
     image: '/images/services/digital-marketing.jpg',
     keywords: ['digital marketing Vanuatu', 'SEO Pacific Islands', 'social media marketing Fiji', 'Google Ads Pacific', 'SME marketing Melanesia'],
-    author: {
-      name: 'Pacific Wave Digital',
-      role: 'Digital Innovation Team',
-      avatar: '/images/logo-icon.png',
-    },
     metaDescription: 'Proven digital marketing strategies for Pacific Island SMEs. Learn SEO, social media, Google Ads, and email marketing tactics specifically designed for Vanuatu, Fiji, and Pacific businesses.',
     content: `
 ## Introduction: Digital Marketing in the Pacific Context
@@ -1178,10 +1167,91 @@ Digital marketing can be overwhelming, especially when running a business. That'
   },
 ];
 
-export function getBlogPost(slug: string): BlogPost | undefined {
-  return blogPosts.find((post) => post.slug === slug);
+// Parse date string to ISO format
+function parseDate(dateString: string): string {
+  const months: { [key: string]: string } = {
+    'January': '01', 'February': '02', 'March': '03', 'April': '04',
+    'May': '05', 'June': '06', 'July': '07', 'August': '08',
+    'September': '09', 'October': '10', 'November': '11', 'December': '12'
+  };
+  
+  const parts = dateString.split(' ');
+  const month = months[parts[0]] || '01';
+  const day = parts[1].replace(',', '').padStart(2, '0');
+  const year = parts[2];
+  
+  return `${year}-${month}-${day}T12:00:00.000Z`;
 }
 
-export function getAllBlogSlugs(): string[] {
-  return blogPosts.map((post) => post.slug);
+async function migratePost(post: typeof blogPosts[0]): Promise<boolean> {
+  const publishedAt = parseDate(post.date);
+  
+  // Check if post already exists
+  const { data: existing } = await supabase
+    .from('blog_posts')
+    .select('id')
+    .eq('site_id', SITE_ID)
+    .eq('slug', post.slug)
+    .single();
+
+  if (existing) {
+    console.log(`⏭️  Skipping "${post.title}" - already exists`);
+    return true;
+  }
+
+  const { error } = await supabase
+    .from('blog_posts')
+    .insert({
+      site_id: SITE_ID,
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt,
+      content: post.content.trim(),
+      category: post.category,
+      image_url: post.image,
+      keywords: post.keywords,
+      read_time: post.readTime,
+      published: true,
+      published_at: publishedAt,
+      created_at: publishedAt,
+      updated_at: new Date().toISOString(),
+    });
+
+  if (error) {
+    console.error(`❌ Failed to migrate "${post.title}":`, error.message);
+    return false;
+  }
+
+  console.log(`✅ Migrated: ${post.title}`);
+  return true;
 }
+
+async function main() {
+  console.log('🚀 Starting blog post migration...\n');
+  console.log(`📍 Site ID: ${SITE_ID}`);
+  console.log(`📝 Posts to migrate: ${blogPosts.length}\n`);
+
+  let success = 0;
+  let failed = 0;
+
+  for (const post of blogPosts) {
+    const result = await migratePost(post);
+    if (result) success++;
+    else failed++;
+  }
+
+  console.log('\n📊 Migration Summary:');
+  console.log(`   ✅ Successful: ${success}`);
+  console.log(`   ❌ Failed: ${failed}`);
+  console.log(`   📝 Total: ${blogPosts.length}`);
+
+  // Verify migration
+  const { count } = await supabase
+    .from('blog_posts')
+    .select('*', { count: 'exact', head: true })
+    .eq('site_id', SITE_ID);
+
+  console.log(`\n📦 Total posts in database for site '${SITE_ID}': ${count}`);
+}
+
+main().catch(console.error);

@@ -6,6 +6,16 @@ export const metadata: Metadata = {
   title: 'About Us',
   description:
     'Learn about Pacific Wave Digital — Vanuatu\'s leading digital agency. Founded by Stephen Totimeh, we bring world-class AI solutions, web development, and digital transformation to the Pacific.',
+  keywords: [
+    'Pacific Wave Digital about',
+    'web development Vanuatu company',
+    'digital agency Pacific Islands',
+    'AI automation Vanuatu team',
+    'Stephen Totimeh',
+    'business automation Pacific experts',
+    'digital transformation Vanuatu',
+    'tech company Pacific Islands',
+  ],
 };
 
 const values = [

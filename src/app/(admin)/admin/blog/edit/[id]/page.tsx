@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { supabase, BlogPost } from '@/lib/supabase';
+import { getWordCount } from '@/lib/blog';
 
 const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor'), {
   ssr: false,
@@ -337,6 +338,7 @@ export default function EditBlogPost() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<{ field: string; message: string }[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -801,8 +803,91 @@ export default function EditBlogPost() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Publishing gate validation
+  const validateForPublishing = (): { field: string; message: string }[] => {
+    const errors: { field: string; message: string }[] = [];
+    const keywordsArray = formData.keywords
+      .split(',')
+      .map(k => k.trim())
+      .filter(k => k.length > 0);
+
+    // Featured image required
+    if (!formData.imageUrl || formData.imageUrl.trim() === '') {
+      errors.push({
+        field: 'imageUrl',
+        message: 'Featured image is required for publishing',
+      });
+    }
+
+    // Meta description (excerpt) 150-160 chars
+    if (formData.excerpt.length < 150) {
+      errors.push({
+        field: 'excerpt',
+        message: `Meta description too short (${formData.excerpt.length}/150-160 chars). Add ${150 - formData.excerpt.length} more characters.`,
+      });
+    } else if (formData.excerpt.length > 160) {
+      errors.push({
+        field: 'excerpt',
+        message: `Meta description too long (${formData.excerpt.length}/160 chars). Remove ${formData.excerpt.length - 160} characters.`,
+      });
+    }
+
+    // 3-8 keywords
+    if (keywordsArray.length < 3) {
+      errors.push({
+        field: 'keywords',
+        message: `At least 3 keywords required (currently ${keywordsArray.length}). Add ${3 - keywordsArray.length} more.`,
+      });
+    } else if (keywordsArray.length > 8) {
+      errors.push({
+        field: 'keywords',
+        message: `Maximum 8 keywords allowed (currently ${keywordsArray.length}). Remove ${keywordsArray.length - 8}.`,
+      });
+    }
+
+    // Content 600+ words
+    const wordCount = getWordCount(formData.content);
+    if (wordCount < 600) {
+      errors.push({
+        field: 'content',
+        message: `Content too short (${wordCount}/600+ words required). Add ${600 - wordCount} more words for SEO.`,
+      });
+    }
+
+    // Category required
+    if (!formData.category) {
+      errors.push({
+        field: 'category',
+        message: 'Category is required for publishing',
+      });
+    }
+
+    // Title required
+    if (!formData.title.trim()) {
+      errors.push({
+        field: 'title',
+        message: 'Title is required',
+      });
+    }
+
+    return errors;
+  };
+
+  const handleSubmit = async (e: React.FormEvent, saveDraft: boolean = false) => {
     e.preventDefault();
+    setValidationErrors([]);
+
+    // Validate before publishing (not for drafts)
+    const isPublishing = !saveDraft && formData.published;
+    if (isPublishing) {
+      const errors = validateForPublishing();
+      if (errors.length > 0) {
+        setValidationErrors(errors);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+    }
+
     setIsSubmitting(true);
 
     const keywordsArray = formData.keywords
@@ -921,7 +1006,28 @@ export default function EditBlogPost() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Validation Errors */}
+      {validationErrors.length > 0 && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+          <h3 className="text-red-800 font-semibold mb-3 flex items-center gap-2">
+            <span>⚠️</span>
+            Cannot Publish - Please Fix These Issues:
+          </h3>
+          <ul className="space-y-2">
+            {validationErrors.map((error, index) => (
+              <li key={index} className="text-red-700 text-sm flex items-start gap-2">
+                <span className="text-red-500">•</span>
+                <span><strong className="capitalize">{error.field}:</strong> {error.message}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-red-600 text-xs mt-4">
+            Set status to &quot;Draft&quot; to save without meeting these requirements.
+          </p>
+        </div>
+      )}
+
+      <form onSubmit={(e) => handleSubmit(e, false)} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Title */}

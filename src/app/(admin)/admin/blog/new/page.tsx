@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { supabase } from '@/lib/supabase';
+import { getWordCount } from '@/lib/blog';
 
 // Dynamic import for rich text editor
 const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor'), {
@@ -23,9 +24,15 @@ const categories = [
   'Company News',
 ];
 
+interface ValidationError {
+  field: string;
+  message: string;
+}
+
 export default function NewBlogPost() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -54,8 +61,90 @@ export default function NewBlogPost() {
     });
   };
 
+  // Publishing gate validation
+  const validateForPublishing = (): ValidationError[] => {
+    const errors: ValidationError[] = [];
+    const keywordsArray = formData.keywords
+      .split(',')
+      .map(k => k.trim())
+      .filter(k => k.length > 0);
+
+    // Featured image required
+    if (!formData.imageUrl || formData.imageUrl.trim() === '') {
+      errors.push({
+        field: 'imageUrl',
+        message: 'Featured image is required for publishing',
+      });
+    }
+
+    // Meta description (excerpt) 150-160 chars
+    if (formData.excerpt.length < 150) {
+      errors.push({
+        field: 'excerpt',
+        message: `Meta description too short (${formData.excerpt.length}/150-160 chars). Add ${150 - formData.excerpt.length} more characters.`,
+      });
+    } else if (formData.excerpt.length > 160) {
+      errors.push({
+        field: 'excerpt',
+        message: `Meta description too long (${formData.excerpt.length}/160 chars). Remove ${formData.excerpt.length - 160} characters.`,
+      });
+    }
+
+    // 3-8 keywords
+    if (keywordsArray.length < 3) {
+      errors.push({
+        field: 'keywords',
+        message: `At least 3 keywords required (currently ${keywordsArray.length}). Add ${3 - keywordsArray.length} more.`,
+      });
+    } else if (keywordsArray.length > 8) {
+      errors.push({
+        field: 'keywords',
+        message: `Maximum 8 keywords allowed (currently ${keywordsArray.length}). Remove ${keywordsArray.length - 8}.`,
+      });
+    }
+
+    // Content 600+ words
+    const wordCount = getWordCount(formData.content);
+    if (wordCount < 600) {
+      errors.push({
+        field: 'content',
+        message: `Content too short (${wordCount}/600+ words required). Add ${600 - wordCount} more words for SEO.`,
+      });
+    }
+
+    // Category required
+    if (!formData.category) {
+      errors.push({
+        field: 'category',
+        message: 'Category is required for publishing',
+      });
+    }
+
+    // Title required
+    if (!formData.title.trim()) {
+      errors.push({
+        field: 'title',
+        message: 'Title is required',
+      });
+    }
+
+    return errors;
+  };
+
   const handleSubmit = async (e: React.FormEvent, publish: boolean = true) => {
     e.preventDefault();
+    setValidationErrors([]);
+
+    // Validate before publishing (not for drafts)
+    if (publish) {
+      const errors = validateForPublishing();
+      if (errors.length > 0) {
+        setValidationErrors(errors);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+    }
+
     setIsSubmitting(true);
 
     // Parse keywords into array
@@ -96,6 +185,9 @@ export default function NewBlogPost() {
     handleSubmit(e, false);
   };
 
+  const wordCount = getWordCount(formData.content);
+  const keywordsArray = formData.keywords.split(',').map(k => k.trim()).filter(k => k.length > 0);
+
   return (
     <div>
       {/* Header */}
@@ -135,11 +227,32 @@ export default function NewBlogPost() {
         </div>
       </div>
 
+      {/* Validation Errors */}
+      {validationErrors.length > 0 && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+          <h3 className="text-red-800 font-semibold mb-3 flex items-center gap-2">
+            <span>⚠️</span>
+            Cannot Publish - Please Fix These Issues:
+          </h3>
+          <ul className="space-y-2">
+            {validationErrors.map((error, index) => (
+              <li key={index} className="text-red-700 text-sm flex items-start gap-2">
+                <span className="text-red-500">•</span>
+                <span><strong className="capitalize">{error.field}:</strong> {error.message}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-red-600 text-xs mt-4">
+            You can still save as draft without meeting these requirements.
+          </p>
+        </div>
+      )}
+
       <form onSubmit={(e) => handleSubmit(e, true)} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Title */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className={`bg-white rounded-xl p-6 shadow-sm border ${validationErrors.some(e => e.field === 'title') ? 'border-red-300' : 'border-gray-100'}`}>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Post Title
             </label>
@@ -154,25 +267,28 @@ export default function NewBlogPost() {
           </div>
 
           {/* Excerpt */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className={`bg-white rounded-xl p-6 shadow-sm border ${validationErrors.some(e => e.field === 'excerpt') ? 'border-red-300' : 'border-gray-100'}`}>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Excerpt / Summary
+              Excerpt / Meta Description
             </label>
             <textarea
               value={formData.excerpt}
               onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-              placeholder="Brief summary for SEO and previews..."
+              placeholder="Brief summary for SEO and previews (150-160 characters)..."
               rows={3}
               className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-blue/20"
               required
             />
-            <p className="text-gray-400 text-xs mt-2">
-              {formData.excerpt.length}/160 characters (recommended for SEO)
+            <p className={`text-xs mt-2 ${formData.excerpt.length >= 150 && formData.excerpt.length <= 160 ? 'text-green-600' : formData.excerpt.length > 160 ? 'text-red-500' : 'text-gray-400'}`}>
+              {formData.excerpt.length}/160 characters 
+              {formData.excerpt.length >= 150 && formData.excerpt.length <= 160 && ' ✓'}
+              {formData.excerpt.length < 150 && ` (need ${150 - formData.excerpt.length} more)`}
+              {formData.excerpt.length > 160 && ` (${formData.excerpt.length - 160} too many)`}
             </p>
           </div>
 
           {/* Content Editor */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className={`bg-white rounded-xl p-6 shadow-sm border ${validationErrors.some(e => e.field === 'content') ? 'border-red-300' : 'border-gray-100'}`}>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Post Content
             </label>
@@ -180,6 +296,10 @@ export default function NewBlogPost() {
               content={formData.content}
               onChange={(content) => setFormData({ ...formData, content })}
             />
+            <p className={`text-xs mt-2 ${wordCount >= 600 ? 'text-green-600' : 'text-gray-400'}`}>
+              {wordCount} words {wordCount >= 600 && '✓'} 
+              {wordCount < 600 && ` (need ${600 - wordCount} more for SEO)`}
+            </p>
           </div>
         </div>
 
@@ -231,7 +351,7 @@ export default function NewBlogPost() {
           </div>
 
           {/* Category */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className={`bg-white rounded-xl p-6 shadow-sm border ${validationErrors.some(e => e.field === 'category') ? 'border-red-300' : 'border-gray-100'}`}>
             <h3 className="font-semibold text-gray-900 mb-4">Category</h3>
             <select
               value={formData.category}
@@ -247,8 +367,11 @@ export default function NewBlogPost() {
           </div>
 
           {/* Featured Image */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-gray-900 mb-4">Featured Image</h3>
+          <div className={`bg-white rounded-xl p-6 shadow-sm border ${validationErrors.some(e => e.field === 'imageUrl') ? 'border-red-300' : 'border-gray-100'}`}>
+            <h3 className="font-semibold text-gray-900 mb-4">
+              Featured Image
+              <span className="text-red-500 ml-1">*</span>
+            </h3>
             <input
               type="text"
               value={formData.imageUrl}
@@ -267,11 +390,17 @@ export default function NewBlogPost() {
                 <img src={formData.imageUrl} alt="Preview" className="w-full h-32 object-cover" />
               </div>
             )}
+            {!formData.imageUrl && (
+              <p className="text-gray-400 text-xs mt-2">Required for publishing</p>
+            )}
           </div>
 
           {/* SEO Keywords */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-gray-900 mb-4">SEO Keywords</h3>
+          <div className={`bg-white rounded-xl p-6 shadow-sm border ${validationErrors.some(e => e.field === 'keywords') ? 'border-red-300' : 'border-gray-100'}`}>
+            <h3 className="font-semibold text-gray-900 mb-4">
+              SEO Keywords
+              <span className="text-red-500 ml-1">*</span>
+            </h3>
             <textarea
               value={formData.keywords}
               onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
@@ -279,9 +408,34 @@ export default function NewBlogPost() {
               rows={3}
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-blue/20 text-sm"
             />
-            <p className="text-gray-400 text-xs mt-2">
-              e.g., AI automation Pacific, web development Vanuatu
+            <p className={`text-xs mt-2 ${keywordsArray.length >= 3 && keywordsArray.length <= 8 ? 'text-green-600' : 'text-gray-400'}`}>
+              {keywordsArray.length}/8 keywords 
+              {keywordsArray.length >= 3 && keywordsArray.length <= 8 && ' ✓'}
+              {keywordsArray.length < 3 && ` (need ${3 - keywordsArray.length} more)`}
+              {keywordsArray.length > 8 && ` (${keywordsArray.length - 8} too many)`}
             </p>
+          </div>
+
+          {/* Publishing Checklist */}
+          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+            <h3 className="font-semibold text-gray-900 mb-4">📋 Publishing Checklist</h3>
+            <ul className="space-y-2 text-sm">
+              <li className={formData.imageUrl ? 'text-green-600' : 'text-gray-400'}>
+                {formData.imageUrl ? '✓' : '○'} Featured image
+              </li>
+              <li className={formData.excerpt.length >= 150 && formData.excerpt.length <= 160 ? 'text-green-600' : 'text-gray-400'}>
+                {formData.excerpt.length >= 150 && formData.excerpt.length <= 160 ? '✓' : '○'} Meta description (150-160 chars)
+              </li>
+              <li className={keywordsArray.length >= 3 && keywordsArray.length <= 8 ? 'text-green-600' : 'text-gray-400'}>
+                {keywordsArray.length >= 3 && keywordsArray.length <= 8 ? '✓' : '○'} 3-8 keywords
+              </li>
+              <li className={wordCount >= 600 ? 'text-green-600' : 'text-gray-400'}>
+                {wordCount >= 600 ? '✓' : '○'} 600+ words content
+              </li>
+              <li className={formData.category ? 'text-green-600' : 'text-gray-400'}>
+                {formData.category ? '✓' : '○'} Category selected
+              </li>
+            </ul>
           </div>
         </div>
       </form>
