@@ -473,7 +473,7 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-lg max-w-none p-4 min-h-[400px] focus:outline-none',
+        class: 'tiptap max-w-none p-4 min-h-[420px] focus:outline-none',
       },
       handleDrop: (view, event, slice, moved) => {
         if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {

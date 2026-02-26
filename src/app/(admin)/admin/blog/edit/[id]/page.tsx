@@ -33,6 +33,106 @@ interface SEOAnalysis {
   readabilityScore: number;
 }
 
+function isProbablyHtml(content: string) {
+  return /<\s*\w+[\s>]/.test(content);
+}
+
+function escapeHtml(text: string) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// Minimal Markdown → HTML converter (enough for headings + lists + paragraphs)
+function markdownToHtml(md: string) {
+  const lines = md.replace(/\r\n/g, '\n').split('\n');
+  let html = '';
+  let inUl = false;
+  let inOl = false;
+
+  const closeLists = () => {
+    if (inUl) {
+      html += '</ul>';
+      inUl = false;
+    }
+    if (inOl) {
+      html += '</ol>';
+      inOl = false;
+    }
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.trimEnd();
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      closeLists();
+      continue;
+    }
+
+    // Headings
+    const h = trimmed.match(/^(#{1,3})\s+(.*)$/);
+    if (h) {
+      closeLists();
+      const level = Math.min(3, h[1].length);
+      html += `<h${level}>${escapeHtml(h[2].trim())}</h${level}>`;
+      continue;
+    }
+
+    // Ordered list: 1. item
+    const ol = trimmed.match(/^\d+\.\s+(.*)$/);
+    if (ol) {
+      if (inUl) {
+        html += '</ul>';
+        inUl = false;
+      }
+      if (!inOl) {
+        html += '<ol>';
+        inOl = true;
+      }
+      html += `<li>${escapeHtml(ol[1].trim())}</li>`;
+      continue;
+    }
+
+    // Bullet list: - item | * item
+    const ul = trimmed.match(/^[-*]\s+(.*)$/);
+    if (ul) {
+      if (inOl) {
+        html += '</ol>';
+        inOl = false;
+      }
+      if (!inUl) {
+        html += '<ul>';
+        inUl = true;
+      }
+      html += `<li>${escapeHtml(ul[1].trim())}</li>`;
+      continue;
+    }
+
+    // Paragraph
+    closeLists();
+    html += `<p>${escapeHtml(trimmed)}</p>`;
+  }
+
+  closeLists();
+  return html;
+}
+
+function normalizeContentForEditor(content: string) {
+  const c = (content || '').trim();
+  if (!c) return '';
+  if (isProbablyHtml(c)) return c;
+  // If it contains markdown markers, convert
+  if (/^\s*#{1,6}\s/m.test(c) || /^\s*[-*]\s+/m.test(c) || /^\s*\d+\.\s+/m.test(c)) {
+    return markdownToHtml(c);
+  }
+  // Fallback: treat as plain text
+  return `<p>${escapeHtml(c).replace(/\n+/g, '</p><p>')}</p>`;
+}
+
 // AI Dropdown Component
 const AIDropdown = ({ 
   onAction, 
@@ -278,7 +378,7 @@ export default function EditBlogPost() {
         title: post.title || '',
         slug: post.slug || '',
         excerpt: post.excerpt || '',
-        content: post.content || '',
+        content: normalizeContentForEditor(post.content || ''),
         category: post.category || '',
         keywords: Array.isArray(post.keywords) ? post.keywords.join(', ') : '',
         readTime: post.read_time || '5 min read',
