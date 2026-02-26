@@ -952,9 +952,11 @@ export default function EditBlogPost() {
       content: formData.content,
       category: formData.category,
       image_url: formData.imageUrl,
-      image_alt: formData.imageAlt,
+      // image_alt and focus_keyword require database migration - uncomment after running:
+      // supabase/migrations/20260228_add_seo_columns.sql
+      // image_alt: formData.imageAlt,
       keywords: keywordsArray,
-      focus_keyword: formData.focusKeyword,
+      // focus_keyword: formData.focusKeyword,
       read_time: formData.readTime,
       published: formData.published,
       published_at: formData.published ? new Date().toISOString() : null,

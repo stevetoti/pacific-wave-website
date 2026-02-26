@@ -448,6 +448,8 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
         heading: {
           levels: [1, 2, 3],
         },
+        // Disable default link to avoid duplicate extension error
+        // We use our own LinkExtension with custom configuration
       }),
       ImageExtension.configure({
         HTMLAttributes: {
