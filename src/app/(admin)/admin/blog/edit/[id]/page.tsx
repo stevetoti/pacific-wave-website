@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { supabase, BlogPost } from '@/lib/supabase';
+import { supabase, BlogPost, uploadFile } from '@/lib/supabase';
 import { getWordCount } from '@/lib/blog';
 
 const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor'), {
@@ -358,6 +358,10 @@ export default function EditBlogPost() {
   const [suggestedTitles, setSuggestedTitles] = useState<string[]>([]);
   const [showTitleModal, setShowTitleModal] = useState(false);
   const [suggestedAltText, setSuggestedAltText] = useState('');
+  
+  // Image Upload State
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchPost();
@@ -793,6 +797,45 @@ export default function EditBlogPost() {
     }, 800);
   };
 
+  // Handle image file upload
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image must be less than 5MB');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const imageId = `blog-${Date.now()}`;
+      const url = await uploadFile(file, 'site-assets', `blog-images/${imageId}`);
+      
+      if (url) {
+        setFormData({ ...formData, imageUrl: url });
+      } else {
+        alert('Failed to upload image. Please try again.');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setIsUploading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   const addKeywordToList = (keyword: string) => {
     const currentKeywords = formData.keywords ? formData.keywords.split(',').map(k => k.trim()) : [];
     if (!currentKeywords.includes(keyword)) {
@@ -1212,11 +1255,20 @@ export default function EditBlogPost() {
               placeholder="Enter image URL..."
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-blue/20 text-sm mb-3"
             />
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageUpload}
+              accept="image/*"
+              className="hidden"
+            />
             <button
               type="button"
-              className="w-full py-3 border-2 border-dashed border-gray-200 rounded-lg text-gray-500 hover:border-deep-blue hover:text-deep-blue transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className="w-full py-3 border-2 border-dashed border-gray-200 rounded-lg text-gray-500 hover:border-deep-blue hover:text-deep-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              📤 Upload Image
+              {isUploading ? '⏳ Uploading...' : '📤 Upload Image'}
             </button>
             {formData.imageUrl && (
               <>
