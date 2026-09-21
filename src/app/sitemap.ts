@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { getPublishedPosts } from '@/lib/blog';
+import { servicePages } from '@/lib/service-pages';
 
 // Re-generate the sitemap at most once per hour so newly published
 // blog posts appear without a redeploy.
@@ -20,6 +21,13 @@ const staticPages: MetadataRoute.Sitemap = [
     changeFrequency: 'weekly',
     priority: 0.9,
   },
+  // Dedicated service pages for commercial keywords (see src/lib/service-pages.ts).
+  ...servicePages.map((service) => ({
+    url: `${baseUrl}/services/${service.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.9,
+  })),
   {
     url: `${baseUrl}/products`,
     lastModified: new Date(),

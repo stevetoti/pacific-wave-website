@@ -8,10 +8,43 @@ import { StaggerContainer, StaggerItem } from '@/components/animations/StaggerCo
 import TechStack from '@/components/TechStack';
 import CodeShowcase from '@/components/CodeShowcase';
 
-const services = [
+interface HubService {
+  id: string;
+  title: string;
+  /** Dedicated service page, when one exists. */
+  href?: string;
+  description: string;
+  features: string[];
+  image: string;
+  fallbackImage: string;
+  gradient: string;
+  icon: string;
+}
+
+const services: HubService[] = [
+  {
+    id: 'web-design',
+    title: 'Web Design',
+    href: '/services/web-design',
+    description:
+      'Mobile-first web design in Vanuatu from our Port Vila team. Beautiful, fast-loading websites designed for island connections — built to turn visitors into customers, whether they browse from Vila or Sydney.',
+    features: [
+      'Mobile-first responsive design',
+      'Fast loading on island connections',
+      'Brand-aligned visual design',
+      'Search-ready page structure',
+      'Easy self-service content updates',
+      'Tourism & local business focus',
+    ],
+    image: '/images/laptop-work.jpg',
+    fallbackImage: '/images/coding-screen.jpg',
+    gradient: 'from-cyan-500 to-blue-500',
+    icon: '🎨',
+  },
   {
     id: 'web-development',
     title: 'Web Development',
+    href: '/services/web-development',
     description:
       'We build high-performance, responsive websites and web applications using modern technologies like React, Next.js, and Node.js. From corporate sites to complex SaaS platforms, we deliver solutions that scale.',
     features: [
@@ -28,8 +61,85 @@ const services = [
     icon: '💻',
   },
   {
+    id: 'software-development',
+    title: 'Custom Software',
+    href: '/services/software-development',
+    description:
+      'Custom software development for Vanuatu businesses, NGOs, and government — business systems that replace spreadsheets and manual processes with tools built around how your organisation actually works.',
+    features: [
+      'Business systems & databases',
+      'Inventory, bookings & client management',
+      'Offline-tolerant for outer islands',
+      'Automated reporting',
+      'Integrations with your existing tools',
+      'You own the code',
+    ],
+    image: '/images/tech-office.jpg',
+    fallbackImage: '/images/coding-screen.jpg',
+    gradient: 'from-indigo-500 to-purple-500',
+    icon: '⚙️',
+  },
+  {
+    id: 'digital-marketing',
+    title: 'Digital Marketing',
+    href: '/services/digital-marketing',
+    description:
+      'Digital marketing run from Port Vila: social media marketing and online advertising built for how customers in Vanuatu — and travellers overseas — actually spend their time online. Measured in enquiries and sales, not likes.',
+    features: [
+      'Social media management',
+      'Targeted online advertising',
+      'Seasonal campaign planning',
+      'Content & photography',
+      'Email marketing',
+      'Plain-language monthly reporting',
+    ],
+    image: '/images/services/digital-marketing.jpg',
+    fallbackImage: '/images/digital-marketing.jpg',
+    gradient: 'from-green-500 to-emerald-500',
+    icon: '📈',
+  },
+  {
+    id: 'seo',
+    title: 'SEO Services',
+    href: '/services/seo',
+    description:
+      'SEO services for Vanuatu and the Pacific Islands. Local SEO that wins the map pack and the searches your customers make every day — plus international visibility for tourism and export businesses.',
+    features: [
+      'Local SEO & Google Business Profile',
+      'Technical SEO foundations',
+      'Keyword-targeted content',
+      'Tourism & international visibility',
+      'Links, citations & reviews',
+      'Honest monthly reporting',
+    ],
+    image: '/images/digital-marketing.jpg',
+    fallbackImage: '/images/laptop-work.jpg',
+    gradient: 'from-orange-500 to-red-500',
+    icon: '🔍',
+  },
+  {
+    id: 'ecommerce',
+    title: 'E-commerce',
+    href: '/services/ecommerce',
+    description:
+      'E-commerce website development with payments and delivery designed for Vanuatu. Sell to customers in Port Vila, across the islands, and overseas — with a checkout that actually works here.',
+    features: [
+      'Payment options that work in Vanuatu',
+      'Local, inter-island & international delivery',
+      'Inventory & order management',
+      'Mobile-first checkout',
+      'Sell to Australia & New Zealand',
+      'Export & tourism storefronts',
+    ],
+    image: '/images/phone-user.jpg',
+    fallbackImage: '/images/mobile-app.jpg',
+    gradient: 'from-purple-500 to-pink-500',
+    icon: '🛒',
+  },
+  {
     id: 'mobile-apps',
     title: 'Mobile Apps',
+    href: '/services/mobile-apps',
     description:
       'Native and cross-platform mobile applications for iOS and Android. We use React Native and Flutter to create seamless mobile experiences that your customers will love.',
     features: [
@@ -62,24 +172,6 @@ const services = [
     fallbackImage: '/images/ai-technology.jpg',
     gradient: 'from-orange-500 to-red-500',
     icon: '🤖',
-  },
-  {
-    id: 'digital-marketing',
-    title: 'Digital Marketing',
-    description:
-      'Strategic digital marketing campaigns that drive measurable growth. We help Pacific Island businesses reach wider audiences through SEO, social media, content marketing, and paid advertising.',
-    features: [
-      'Search Engine Optimization (SEO)',
-      'Social media management',
-      'Content marketing & strategy',
-      'Pay-per-click advertising',
-      'Email marketing campaigns',
-      'Analytics & reporting',
-    ],
-    image: '/images/services/digital-marketing.jpg',
-    fallbackImage: '/images/digital-marketing.jpg',
-    gradient: 'from-green-500 to-emerald-500',
-    icon: '📈',
   },
   {
     id: 'business-automation',
@@ -236,7 +328,13 @@ export default function ServicesPage() {
                   </motion.div>
                   
                   <h2 className="text-3xl md:text-4xl font-bold text-deep-blue font-heading mb-4">
-                    {service.title}
+                    {service.href ? (
+                      <Link href={service.href} className="hover:text-vibrant-orange transition-colors">
+                        {service.title}
+                      </Link>
+                    ) : (
+                      service.title
+                    )}
                   </h2>
                   <p className="text-gray-600 text-lg leading-relaxed mb-8">{service.description}</p>
                   
@@ -256,8 +354,11 @@ export default function ServicesPage() {
                   </StaggerContainer>
                   
                   <motion.div whileHover={{ x: 5 }} transition={{ type: 'spring', stiffness: 300 }}>
-                    <Link href="/contact" className="btn-primary inline-flex items-center">
-                      Get Started
+                    <Link
+                      href={service.href ?? '/contact'}
+                      className="btn-primary inline-flex items-center"
+                    >
+                      {service.href ? `Explore ${service.title}` : 'Get Started'}
                       <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>

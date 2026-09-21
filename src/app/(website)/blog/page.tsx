@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { getPublishedPosts, formatDate, calculateReadingTime } from '@/lib/blog';
 
 export const metadata: Metadata = {
-  title: 'Blog & Insights | Pacific Wave Digital',
+  // Root layout's title template appends "| Pacific Wave Digital".
+  title: 'Blog & Insights',
   description: 'Expert insights on AI, web development, mobile apps, and digital transformation for Pacific Island businesses. Stay updated with the latest trends.',
   keywords: 'Pacific Island technology blog, Vanuatu digital marketing, AI business solutions Pacific, web development insights',
   openGraph: {

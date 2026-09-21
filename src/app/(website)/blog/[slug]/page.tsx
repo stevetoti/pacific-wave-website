@@ -44,7 +44,8 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
   if (!post) {
     return {
-      title: 'Blog Post Not Found | Pacific Wave Digital',
+      // Root layout's title template appends "| Pacific Wave Digital".
+      title: 'Blog Post Not Found',
     };
   }
 
@@ -54,7 +55,9 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     : `https://pacificwavedigital.com${post.image_url}`;
 
   return {
-    title: `${post.title} | Pacific Wave Digital`,
+    // Root layout's title template appends "| Pacific Wave Digital" —
+    // appending it here too rendered a duplicated brand suffix.
+    title: post.title,
     description: post.excerpt || post.title,
     keywords: post.keywords?.join(', '),
     openGraph: {
