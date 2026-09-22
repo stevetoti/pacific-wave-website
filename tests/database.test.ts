@@ -1,0 +1,61 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { PGlite } from '@electric-sql/pglite';
+
+test('hardening migration preserves other tenants, protects PWD and is repeatable', async () => {
+  const db = new PGlite();
+  try {
+    await db.exec(`
+      CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;
+      CREATE SCHEMA auth;
+      CREATE TABLE auth.users(id uuid PRIMARY KEY,email text);
+      CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
+      CREATE FUNCTION auth.jwt() RETURNS jsonb LANGUAGE sql STABLE AS $$ SELECT coalesce(nullif(current_setting('request.jwt.claims',true),''),'{}')::jsonb $$;
+      GRANT USAGE ON SCHEMA public,auth TO anon,authenticated,service_role;
+      CREATE TABLE public.admin_users(id uuid DEFAULT gen_random_uuid(),site_id text,email text,role text,is_active boolean);
+      CREATE TABLE public.site_settings(id uuid DEFAULT gen_random_uuid(),site_id text,key text,value text,UNIQUE(site_id,key));
+      CREATE TABLE public.project_submissions(id uuid DEFAULT gen_random_uuid(),contact_name text);
+      CREATE TABLE public.blog_posts(id uuid DEFAULT gen_random_uuid(),site_id text,title text,published boolean);
+      CREATE TABLE public.newsletter_subscribers(id uuid DEFAULT gen_random_uuid(),email text UNIQUE);
+      INSERT INTO public.newsletter_subscribers(email) VALUES('legacy@example.com');
+      CREATE TABLE public.seo_tasks(id uuid DEFAULT gen_random_uuid(),site_id text,title text);
+      GRANT ALL ON ALL TABLES IN SCHEMA public TO anon,authenticated,service_role;
+      ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
+      CREATE POLICY old_broad_access ON public.blog_posts FOR ALL USING(true) WITH CHECK(true);
+      ALTER TABLE public.seo_tasks ENABLE ROW LEVEL SECURITY;
+      CREATE POLICY old_broad_access ON public.seo_tasks FOR ALL USING(true) WITH CHECK(true);
+      INSERT INTO auth.users VALUES('00000000-0000-4000-8000-000000000001','admin@example.com'),('00000000-0000-4000-8000-000000000002','viewer@example.com');
+      INSERT INTO public.admin_users(site_id,email,role,is_active) VALUES('pacific-wave-digital','admin@example.com','super_admin',true),('pacific-wave-digital','viewer@example.com','viewer',true);
+      INSERT INTO public.site_settings(site_id,key,value) VALUES('pwd','google_client_secret','fake-secret'),('pwd','site_name','Public brand'),('other','google_client_secret','other-site-secret');
+      INSERT INTO public.blog_posts(site_id,title,published) VALUES('pwd','Public',true),('pwd','Draft',false),('other','Other tenant draft',false);
+      INSERT INTO public.seo_tasks(site_id,title) VALUES('pwd','Private SEO'),('other','Other SEO');
+    `);
+    const sql = readFileSync('supabase/migrations/20260915_readiness_hardening.sql','utf8');
+    await db.exec(sql);
+    await db.exec(sql);
+    assert.equal((await db.query("SELECT * FROM newsletter_subscribers WHERE email='legacy@example.com'")).rows.length,1);
+    assert.equal((await db.query("SELECT column_name FROM information_schema.columns WHERE table_name='newsletter_subscribers' AND column_name='site_id'")).rows.length,0);
+    assert.equal((await db.query("SELECT * FROM pwd_newsletter_subscribers")).rows.length,0);
+    const copied = await db.query<{value:string}>("SELECT value FROM integration_secrets WHERE site_id='pwd' AND key='google_client_secret'");
+    assert.equal(copied.rows[0].value,'fake-secret');
+    const publicSecrets = await db.query("SELECT * FROM site_settings WHERE site_id='pwd' AND key='google_client_secret'");
+    assert.equal(publicSecrets.rows.length,0);
+    await db.exec('SET ROLE anon');
+    const posts = await db.query<{title:string}>('SELECT title FROM blog_posts ORDER BY title');
+    assert.deepEqual(posts.rows.map(x=>x.title),['Other tenant draft','Public']);
+    assert.equal((await db.query("SELECT * FROM seo_tasks WHERE site_id='pwd'")).rows.length,0);
+    await assert.rejects(db.exec("INSERT INTO seo_tasks(site_id,title) VALUES('pwd','attack')"),/row-level security/);
+    await assert.rejects(db.query('SELECT * FROM integration_secrets'),/permission denied/);
+    await assert.rejects(db.query('SELECT * FROM pwd_newsletter_subscribers'),/permission denied/);
+    await db.exec("RESET ROLE; SET ROLE authenticated; SET request.jwt.claim.sub='00000000-0000-4000-8000-000000000002'; SET request.jwt.claims='{\"email\":\"viewer@example.com\"}';");
+    await db.exec("UPDATE blog_posts SET title='attack' WHERE site_id='pwd'");
+    assert.equal((await db.query("SELECT * FROM blog_posts WHERE title='attack'")).rows.length,0);
+    await db.exec("SET request.jwt.claim.sub='00000000-0000-4000-8000-000000000001'; SET request.jwt.claims='{\"email\":\"admin@example.com\"}';");
+    await db.exec("UPDATE blog_posts SET title='Edited' WHERE site_id='pwd' AND published=false");
+    assert.equal((await db.query("SELECT * FROM blog_posts WHERE title='Edited'")).rows.length,1);
+    await db.exec('RESET ROLE; SET ROLE service_role');
+    for(let i=0;i<5;i++) assert.equal((await db.query<{allowed:boolean}>("SELECT pwd_rate_limit('test',5,600) AS allowed")).rows[0].allowed,true);
+    assert.equal((await db.query<{allowed:boolean}>("SELECT pwd_rate_limit('test',5,600) AS allowed")).rows[0].allowed,false);
+  } finally { await db.close(); }
+});

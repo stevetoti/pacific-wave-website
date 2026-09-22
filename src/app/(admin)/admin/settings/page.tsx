@@ -68,11 +68,9 @@ export default function AdminSettingsPage() {
   const ogImageInputRef = useRef<HTMLInputElement>(null);
   const iconInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    loadSettings();
-  }, []);
 
-  const loadSettings = async () => {
+
+  async function loadSettings() {
     setIsLoading(true);
     try {
       const settings = await getAllSettings('pwd');
@@ -123,6 +121,10 @@ export default function AdminSettingsPage() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
 
   const handleSave = async () => {
     setIsSaving(true);

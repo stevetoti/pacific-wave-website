@@ -1,0 +1,5 @@
+-- Owner correction: total programme fee and included benefits. Issued orders retain their original amount.
+UPDATE public.pwd_lms_courses SET amount=250000,
+ description='Three months of personal mentorship to build your business with AI, websites and ecommerce. Build one software project during the programme, with three free months of Digi Assist AI Pro.',
+ introduction='Welcome to your personal mentorship. The total fee is VUV 250,000 for all three months. With your mentor, you will build one software project during the programme and receive three free months of Digi Assist AI Pro. Continued Pro use after the free period requires a paid subscription. After payment confirmation, contact the training team to arrange your start date and session times. Your learning plan is tailored to your business idea and experience. Your mentor will publish your individual sessions, project notes and private recordings here for replay during and after training. Domains, hosting and other third-party tools are separate.'
+WHERE slug='one-on-one-mentorship';

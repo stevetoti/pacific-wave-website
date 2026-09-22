@@ -1,4 +1,4 @@
-import { getAllSettings, upsertSetting } from './supabase';
+import { getAllSettings, upsertSetting } from './server/google-settings';
 
 export interface TokenData {
   accessToken: string;

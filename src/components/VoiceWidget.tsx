@@ -6,6 +6,7 @@ export default function VoiceWidget() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    if (!isOpen) return;
     // Load ElevenLabs convai widget script
     const script = document.createElement('script');
     script.src = 'https://elevenlabs.io/convai-widget/index.js';
@@ -18,14 +19,14 @@ export default function VoiceWidget() {
         existingScript.remove();
       }
     };
-  }, []);
+  }, [isOpen]);
 
   return (
     <>
       {/* Hidden ElevenLabs widget - only shown when user clicks */}
       <div className={`fixed bottom-24 right-6 z-40 transition-all duration-300 ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'}`}>
         {/* @ts-expect-error - Custom element from ElevenLabs */}
-        <elevenlabs-convai agent-id="agent_7901kgqzy9fzewss7xrxznre56w0" />
+        {isOpen && <elevenlabs-convai agent-id="agent_7901kgqzy9fzewss7xrxznre56w0" />}
       </div>
 
       {/* Custom round bubble button */}

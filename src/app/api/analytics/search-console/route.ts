@@ -1,3 +1,4 @@
+import { authorize, READ_ROLES } from '@/lib/server/auth';
 import { NextResponse } from 'next/server';
 import { getValidAccessToken } from '@/lib/google-auth';
 
@@ -27,7 +28,9 @@ export interface SearchConsoleSummary {
   avgPosition: number;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const access = await authorize(request, READ_ROLES);
+  if (access.response) return access.response;
   try {
     const accessToken = await getValidAccessToken();
 

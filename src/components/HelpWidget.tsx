@@ -1,5 +1,7 @@
 'use client';
 
+import { authFetch } from '@/lib/auth-fetch';
+
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { 
@@ -71,27 +73,22 @@ export function HelpWidget({
   const [chatInput, setChatInput] = useState('');
   const [isAIResponding, setIsAIResponding] = useState(false);
 
-  // Fetch popular articles on mount
   useEffect(() => {
-    if (isOpen && popularArticles.length === 0) {
-      fetchPopularArticles();
-    }
-  }, [isOpen]);
-
-  const fetchPopularArticles = async () => {
-    try {
-      const params = new URLSearchParams({ limit: '5', siteId });
-      if (defaultCategory) params.append('category', defaultCategory);
-      
-      const res = await fetch(`${baseUrl}/api/help/articles?${params}`);
-      if (res.ok) {
+    if (!isOpen) return;
+    let active = true;
+    const load = async () => {
+      try {
+        const params = new URLSearchParams({ limit: '5', siteId, published: 'true' });
+        if (defaultCategory) params.append('category', defaultCategory);
+        const res = await fetch(`${baseUrl}/api/help/articles?${params}`);
+        if (!res.ok) return;
         const data = await res.json();
-        setPopularArticles(data.articles || []);
-      }
-    } catch (err) {
-      console.error('Failed to fetch popular articles:', err);
-    }
-  };
+        if (active) setPopularArticles(data.data || []);
+      } catch { /* Keep the help panel usable when offline. */ }
+    };
+    void load();
+    return () => { active = false; };
+  }, [isOpen, baseUrl, siteId, defaultCategory]);
 
   const performSearch = useCallback(async (query: string) => {
     if (!query.trim()) {
@@ -109,7 +106,7 @@ export function HelpWidget({
 
       if (res.ok) {
         const data = await res.json();
-        setSearchResults(data.results || []);
+        setSearchResults(data.data || []);
       }
     } catch (err) {
       console.error('Search failed:', err);
@@ -135,7 +132,7 @@ export function HelpWidget({
     setIsAIResponding(true);
 
     try {
-      const res = await fetch(`${baseUrl}/api/help/ask-ai`, {
+      const res = await authFetch(`${baseUrl}/api/help/ask-ai`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: userMessage, siteId }),

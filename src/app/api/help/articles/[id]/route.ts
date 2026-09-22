@@ -1,120 +1,50 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
+import { authorize, EDIT_ROLES, READ_ROLES } from '@/lib/server/auth';
+import { getSupabaseAdmin } from '@/lib/server/clients';
+import { apiError, HttpError, readJson } from '@/lib/server/http';
+import { articleColumns, articleFields, slugify } from '@/lib/server/help';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-// GET: Single article by ID or slug
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-    const { searchParams } = new URL(request.url);
-    const siteId = searchParams.get('siteId') || 'pwd';
-    const bySlug = searchParams.get('bySlug') === 'true';
-    const incrementView = searchParams.get('view') === 'true';
-
-    let query = supabase
-      .from('help_articles')
-      .select('*')
-      .eq('site_id', siteId);
-
-    if (bySlug) {
-      query = query.eq('slug', id);
-    } else {
-      query = query.eq('id', id);
-    }
-
-    const { data, error } = await query.single();
-
-    if (error || !data) {
-      return NextResponse.json({ success: false, error: 'Article not found' }, { status: 404 });
-    }
-
-    // Increment view count if requested
-    if (incrementView) {
-      await supabase
-        .from('help_articles')
-        .update({ view_count: (data.view_count || 0) + 1 })
-        .eq('id', data.id);
-    }
-
-    return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error('Get article error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to get article' }, { status: 500 });
+type Context = { params: Promise<{ id: string }> };
+export async function GET(request: Request, context: Context) {
+  const authenticated = request.headers.has('authorization');
+  if (authenticated) {
+    const access = await authorize(request, READ_ROLES);
+    if (access.response) return access.response;
   }
-}
-
-// PUT: Update article
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
   try {
-    const { id } = await params;
-    const body = await request.json();
-    const { title, content, category, tags, related_feature, is_published } = body;
-
-    const updates: Record<string, unknown> = {
-      updated_at: new Date().toISOString(),
-    };
-
-    if (title !== undefined) {
-      updates.title = title;
-      updates.slug = title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '');
-    }
-    if (content !== undefined) updates.content = content;
-    if (category !== undefined) updates.category = category;
-    if (tags !== undefined) updates.tags = tags;
-    if (related_feature !== undefined) updates.related_feature = related_feature;
-    if (is_published !== undefined) updates.is_published = is_published;
-
-    const { data, error } = await supabase
-      .from('help_articles')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-    }
-
+    const { id } = await context.params;
+    const params = new URL(request.url).searchParams;
+    if (params.has('siteId') && params.get('siteId') !== 'pwd') throw new HttpError(403, 'Invalid site');
+    let query = getSupabaseAdmin().from('help_articles').select(articleColumns).eq('site_id', 'pwd').eq(params.get('bySlug') === 'true' ? 'slug' : 'id', id);
+    if (!authenticated) query = query.eq('is_published', true);
+    const { data, error } = await query.maybeSingle();
+    if (error) throw error;
+    if (!data) throw new HttpError(404, 'Article not found');
     return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error('Update article error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to update article' }, { status: 500 });
-  }
+  } catch (error) { return apiError(error, '/api/help/articles/[id]'); }
 }
-
-// DELETE: Delete article
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: Request, context: Context) {
+  const access = await authorize(request, EDIT_ROLES);
+  if (access.response) return access.response;
   try {
-    const { id } = await params;
-
-    const { error } = await supabase
-      .from('help_articles')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-    }
-
+    const { id } = await context.params;
+    const { siteId: _site, ...body } = await readJson(request, articleFields.partial());
+    const updates = { ...body, ...(body.title ? { slug: slugify(body.title) } : {}), updated_at: new Date().toISOString(), ...((body.title || body.content) ? { content_embedding: null } : {}) };
+    if ('slug' in updates && !updates.slug) throw new HttpError(400, 'Title must contain letters or numbers');
+    const { data, error } = await access.db.from('help_articles').update(updates).eq('site_id', 'pwd').eq('id', id).select(articleColumns).maybeSingle();
+    if (error) throw error;
+    if (!data) throw new HttpError(404, 'Article not found');
+    return NextResponse.json({ success: true, data });
+  } catch (error) { return apiError(error, '/api/help/articles/[id]'); }
+}
+export async function DELETE(request: Request, context: Context) {
+  const access = await authorize(request, EDIT_ROLES);
+  if (access.response) return access.response;
+  try {
+    const { id } = await context.params;
+    const { data, error } = await access.db.from('help_articles').delete().eq('site_id', 'pwd').eq('id', id).select('id');
+    if (error) throw error;
+    if (!data?.length) throw new HttpError(404, 'Article not found');
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Delete article error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to delete article' }, { status: 500 });
-  }
+  } catch (error) { return apiError(error, '/api/help/articles/[id]'); }
 }

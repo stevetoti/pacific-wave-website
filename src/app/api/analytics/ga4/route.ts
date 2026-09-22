@@ -1,6 +1,7 @@
+import { authorize, READ_ROLES } from '@/lib/server/auth';
 import { NextResponse } from 'next/server';
 import { getValidAccessToken } from '@/lib/google-auth';
-import { getAllSettings, upsertSetting } from '@/lib/supabase';
+import { getAllSettings, upsertSetting } from '@/lib/server/google-settings';
 
 // Disable caching for this route
 export const dynamic = 'force-dynamic';
@@ -105,7 +106,9 @@ async function getPropertyId(settings: Record<string, string>, accessToken: stri
   return null;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const access = await authorize(request, READ_ROLES);
+  if (access.response) return access.response;
   try {
     const accessToken = await getValidAccessToken();
 

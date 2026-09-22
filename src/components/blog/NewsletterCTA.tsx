@@ -9,7 +9,7 @@ export default function NewsletterCTA() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email) {
       setStatus('error');
       setMessage('Please enter your email address.');
@@ -19,12 +19,13 @@ export default function NewsletterCTA() {
     setStatus('loading');
 
     try {
-      // For now, we'll just simulate a subscription
-      // In production, this would call an API endpoint
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const response = await fetch('/api/newsletter', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error('Subscription could not be saved');
       setStatus('success');
-      setMessage('Thanks for subscribing! Check your inbox for confirmation.');
+      setMessage('Thanks! Your subscription has been saved.');
       setEmail('');
     } catch {
       setStatus('error');
@@ -39,8 +40,8 @@ export default function NewsletterCTA() {
           Stay Ahead of the Curve
         </h3>
         <p className="text-blue-100 mb-6">
-          Get weekly insights on AI, digital transformation, and business growth strategies 
-          delivered to your inbox. Join 500+ Pacific Island business leaders.
+          Get updates on AI, digital transformation, and business growth strategies
+          delivered to your inbox.
         </p>
 
         {status === 'success' ? (
@@ -72,7 +73,7 @@ export default function NewsletterCTA() {
         )}
 
         <p className="text-blue-300 text-xs mt-4">
-          No spam. Unsubscribe anytime. We respect your privacy.
+          By subscribing, you agree to receive email updates. We respect your privacy.
         </p>
       </div>
     </div>

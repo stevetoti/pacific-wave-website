@@ -1,10 +1,10 @@
+import { z } from 'zod';
+import { readJson, apiError } from '@/lib/server/http';
+import { rateLimit } from '@/lib/server/rate-limit';
+import { authorize, ADMIN_ROLES } from '@/lib/server/auth';
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseAdmin } from '@/lib/server/clients';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
@@ -17,8 +17,11 @@ interface Competitor {
 }
 
 export async function POST(request: Request) {
+  const access = await authorize(request, ADMIN_ROLES);
+  if (access.response) return access.response;
   try {
-    const { keyword, competitors, searchVolume, difficulty } = await request.json();
+    const { keyword, competitors, searchVolume, difficulty } = await readJson(request, z.object({ keyword: z.string().trim().min(1).max(200), competitors: z.array(z.object({ position: z.number(), domain: z.string().max(500), url: z.string().max(2000), title: z.string().max(500) })).max(10).optional(), searchVolume: z.number().optional(), difficulty: z.number().optional() }));
+    await rateLimit(request, 'generate-article', 10);
 
     if (!keyword) {
       return NextResponse.json({ error: 'Keyword is required' }, { status: 400 });
@@ -121,7 +124,7 @@ Don't let your competition dominate the search results. Contact Pacific Wave Dig
       // Create blog post draft
       const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
       
-      const { data: post, error: insertError } = await supabase
+      const { data: post, error: insertError } = await getSupabaseAdmin()
         .from('blog_posts')
         .insert({
           site_id: 'pwd',
@@ -194,7 +197,7 @@ Don't let your competition dominate the search results. Contact Pacific Wave Dig
     // Create blog post draft
     const slug = articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
     
-    const { data: post, error: insertError } = await supabase
+    const { data: post, error: insertError } = await getSupabaseAdmin()
       .from('blog_posts')
       .insert({
         site_id: 'pwd',
@@ -215,7 +218,7 @@ Don't let your competition dominate the search results. Contact Pacific Wave Dig
     }
 
     // Update content opportunity status
-    await supabase
+    await getSupabaseAdmin()
       .from('seo_content_opportunities')
       .update({ status: 'writing' })
       .eq('keyword', keyword)
@@ -228,8 +231,5 @@ Don't let your competition dominate the search results. Contact Pacific Wave Dig
       redirectUrl: `/admin/blog/edit/${post.id}`,
     });
 
-  } catch (error) {
-    console.error('Article generation error:', error);
-    return NextResponse.json({ error: 'Internal server error', details: String(error) }, { status: 500 });
-  }
+  } catch (error) { return apiError(error, '/api/seo/generate-article'); }
 }

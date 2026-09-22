@@ -1,99 +1,39 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
+import { authorize, EDIT_ROLES, READ_ROLES } from '@/lib/server/auth';
+import { getSupabaseAdmin } from '@/lib/server/clients';
+import { apiError, HttpError, readJson } from '@/lib/server/http';
+import { articleColumns, articleFields, slugify } from '@/lib/server/help';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-// GET: List articles
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
+  const params = new URL(request.url).searchParams;
+  // Anonymous requests can only read published articles for this site.
+  const wantsPrivate = params.get('published') !== 'true' && request.headers.has('authorization');
+  if (wantsPrivate) {
+    const access = await authorize(request, READ_ROLES);
+    if (access.response) return access.response;
+  }
   try {
-    const { searchParams } = new URL(request.url);
-    const siteId = searchParams.get('siteId') || 'pwd';
-    const category = searchParams.get('category');
-    const published = searchParams.get('published');
-    const limit = parseInt(searchParams.get('limit') || '50');
-
-    let query = supabase
-      .from('help_articles')
-      .select('*')
-      .eq('site_id', siteId)
-      .order('category')
-      .order('title')
-      .limit(limit);
-
-    if (category) {
-      query = query.eq('category', category);
-    }
-
-    if (published === 'true') {
-      query = query.eq('is_published', true);
-    } else if (published === 'false') {
-      query = query.eq('is_published', false);
-    }
-
+    if (params.has('siteId') && params.get('siteId') !== 'pwd') throw new HttpError(403, 'Invalid site');
+    const limit = Math.min(100, Math.max(1, Number(params.get('limit')) || 50));
+    let query = getSupabaseAdmin().from('help_articles').select(articleColumns).eq('site_id', 'pwd').order('category').order('title').limit(limit);
+    if (!wantsPrivate || params.get('published') === 'true') query = query.eq('is_published', true);
+    else if (params.get('published') === 'false') query = query.eq('is_published', false);
+    if (params.get('category')) query = query.eq('category', params.get('category'));
     const { data, error } = await query;
-
-    if (error) {
-      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-    }
-
+    if (error) throw error;
     return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error('List articles error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to list articles' }, { status: 500 });
-  }
+  } catch (error) { return apiError(error, '/api/help/articles'); }
 }
-
-// POST: Create article
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
+  const access = await authorize(request, EDIT_ROLES);
+  if (access.response) return access.response;
   try {
-    const body = await request.json();
-    const { title, content, category, tags, related_feature, is_published, siteId = 'pwd' } = body;
-
-    if (!title || !content || !category) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Title, content, and category are required' 
-      }, { status: 400 });
-    }
-
-    // Generate slug from title
-    const slug = title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-
-    const { data, error } = await supabase
-      .from('help_articles')
-      .insert({
-        site_id: siteId,
-        title,
-        slug,
-        content,
-        category,
-        tags: tags || [],
-        related_feature,
-        is_published: is_published ?? true,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      // Check for duplicate slug
-      if (error.code === '23505') {
-        return NextResponse.json({ 
-          success: false, 
-          error: 'An article with this title already exists' 
-        }, { status: 400 });
-      }
-      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-    }
-
+    const { siteId: _site, ...body } = await readJson(request, articleFields);
+    const slug = slugify(body.title);
+    if (!slug) throw new HttpError(400, 'Title must contain letters or numbers');
+    const { data, error } = await access.db.from('help_articles').insert({ ...body, slug, site_id: 'pwd', is_published: body.is_published ?? false }).select(articleColumns).single();
+    if (error?.code === '23505') throw new HttpError(409, 'An article with this title already exists');
+    if (error) throw error;
     return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error('Create article error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to create article' }, { status: 500 });
-  }
+  } catch (error) { return apiError(error, '/api/help/articles'); }
 }

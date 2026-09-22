@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { authFetch } from '@/lib/auth-fetch';
+
+import { useState, useEffect, use , useCallback} from 'react';
 import Link from 'next/link';
 import { 
   ArrowLeft, 
@@ -43,22 +45,20 @@ export default function HelpArticlePage({ params }: { params: Promise<{ slug: st
   const [feedbackGiven, setFeedbackGiven] = useState<'yes' | 'no' | null>(null);
   const [feedbackMessage, setFeedbackMessage] = useState('');
 
-  useEffect(() => {
-    fetchArticle();
-  }, [resolvedParams.slug]);
 
-  const fetchArticle = async () => {
+
+  const fetchArticle = useCallback(async () => {
     setIsLoading(true);
     try {
       // Fetch the article
-      const res = await fetch(`/api/help/articles/${resolvedParams.slug}?bySlug=true&view=true`);
+      const res = await authFetch(`/api/help/articles/${resolvedParams.slug}?bySlug=true&view=true`);
       const data = await res.json();
       
       if (data.success && data.data) {
         setArticle(data.data);
         
         // Fetch related articles from same category
-        const relatedRes = await fetch(`/api/help/articles?category=${data.data.category}&published=true&limit=5`);
+        const relatedRes = await authFetch(`/api/help/articles?category=${data.data.category}&published=true&limit=5`);
         const relatedData = await relatedRes.json();
         if (relatedData.success) {
           // Filter out current article
@@ -73,13 +73,17 @@ export default function HelpArticlePage({ params }: { params: Promise<{ slug: st
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [resolvedParams.slug]);
+
+  useEffect(() => {
+    fetchArticle();
+  }, [fetchArticle]);
 
   const handleFeedback = async (helpful: boolean) => {
     if (!article || feedbackGiven) return;
     
     try {
-      const res = await fetch('/api/help/feedback', {
+      const res = await authFetch('/api/help/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ articleId: article.id, helpful }),

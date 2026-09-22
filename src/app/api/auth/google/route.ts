@@ -1,43 +1,22 @@
 import { NextResponse } from 'next/server';
-import { getAllSettings } from '@/lib/supabase';
-
-export async function GET() {
+import { randomBytes } from 'node:crypto';
+import { authorize } from '@/lib/server/auth';
+import { getAllSettings } from '@/lib/server/google-settings';
+import { apiError, HttpError } from '@/lib/server/http';
+export async function POST(request: Request) {
+  const access = await authorize(request);
+  if (access.response) return access.response;
   try {
-    const settings = await getAllSettings('pwd');
-    const clientId = settings['google_client_id'];
-    
-    if (!clientId) {
-      return NextResponse.json(
-        { error: 'Google Client ID not configured. Please add it in SEO Settings.' },
-        { status: 400 }
-      );
-    }
-
-    // Build OAuth URL
-    const redirectUri = 'https://pacificwavedigital.com/api/auth/callback/google';
-    const scopes = [
-      'https://www.googleapis.com/auth/analytics.readonly',
-      'https://www.googleapis.com/auth/webmasters.readonly',
-    ].join(' ');
-
-    const params = new URLSearchParams({
-      client_id: clientId,
-      redirect_uri: redirectUri,
-      response_type: 'code',
-      scope: scopes,
-      access_type: 'offline',
-      prompt: 'consent', // Force consent to get refresh token
-      state: 'pacific-wave-analytics', // CSRF protection
-    });
-
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
-
-    return NextResponse.redirect(authUrl);
-  } catch (error) {
-    console.error('OAuth initiation error:', error);
-    return NextResponse.json(
-      { error: 'Failed to initiate OAuth flow' },
-      { status: 500 }
-    );
-  }
+    const settings = await getAllSettings();
+    if (!settings.google_client_id) throw new HttpError(400, 'Configure Google credentials in SEO Settings first');
+    const state = randomBytes(32).toString('hex');
+    const origin = process.env.NEXT_PUBLIC_SITE_URL || 'https://pacificwavedigital.com';
+    const params = new URLSearchParams({ client_id: settings.google_client_id, redirect_uri: `${origin}/api/auth/callback/google`,
+      response_type: 'code', scope: 'https://www.googleapis.com/auth/analytics.readonly https://www.googleapis.com/auth/webmasters.readonly', access_type: 'offline', prompt: 'consent', state });
+    const { error } = await access.db.from('oauth_states').insert({ state, site_id: 'pwd', user_id: access.user.id, expires_at: new Date(Date.now() + 600000).toISOString() });
+    if (error) throw error;
+    const response = NextResponse.json({ url: `https://accounts.google.com/o/oauth2/v2/auth?${params}` });
+    response.cookies.set('pwd_oauth_state', state, { httpOnly: true, secure: new URL(origin).protocol === 'https:', sameSite: 'lax', path: '/api/auth/callback/google', maxAge: 600 });
+    return response;
+  } catch (error) { return apiError(error, '/api/auth/google'); }
 }

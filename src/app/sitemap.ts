@@ -9,6 +9,10 @@ export const revalidate = 3600;
 const baseUrl = 'https://pacificwavedigital.com';
 
 const staticPages: MetadataRoute.Sitemap = [
+  { url: `${baseUrl}/training-center/programs/one-on-one-mentorship`, changeFrequency: 'monthly', priority: 0.8 },
+  { url: `${baseUrl}/training-center/programs/how-to-start-a-profitable-business`, changeFrequency: 'monthly', priority: 0.7 },
+  { url: `${baseUrl}/training-center`, changeFrequency: 'weekly', priority: 0.9 },
+  { url: `${baseUrl}/vanuatu-training`, changeFrequency: 'weekly', priority: 0.9 },
   {
     url: baseUrl,
     lastModified: new Date(),

@@ -1,19 +1,16 @@
+import { z } from 'zod';
+import { readJson, apiError } from '@/lib/server/http';
+import { rateLimit } from '@/lib/server/rate-limit';
+import { authorize, EDIT_ROLES } from '@/lib/server/auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import OpenAI from 'openai';
+import { getSupabaseAdmin } from '@/lib/server/clients';
+import { getOpenAI } from '@/lib/server/clients';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
 
 // Generate embedding for text
 async function generateEmbedding(text: string): Promise<number[]> {
-  const response = await openai.embeddings.create({
+  const response = await getOpenAI().embeddings.create({
     model: 'text-embedding-3-small',
     input: text,
   });
@@ -22,8 +19,11 @@ async function generateEmbedding(text: string): Promise<number[]> {
 
 // POST: Generate embeddings for all articles or specific one
 export async function POST(request: NextRequest) {
+  const access = await authorize(request, EDIT_ROLES);
+  if (access.response) return access.response;
   try {
-    const { articleId, regenerateAll } = await request.json();
+    const { articleId, regenerateAll } = await readJson(request, z.object({ articleId: z.string().uuid().optional(), regenerateAll: z.boolean().optional() }));
+    await rateLimit(request, 'embeddings', 5);
 
     // Check API key
     if (!process.env.OPENAI_API_KEY) {
@@ -31,10 +31,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Get articles to process
-    let query = supabase
+    let query = getSupabaseAdmin()
       .from('help_articles')
       .select('id, title, content, category')
-      .eq('is_published', true);
+      .eq('is_published', true).eq('site_id', 'pwd').limit(50);
 
     if (articleId) {
       query = query.eq('id', articleId);
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
         const embedding = await generateEmbedding(textToEmbed);
         
         // Update the article with embedding
-        const { error: updateError } = await supabase
+        const { error: updateError } = await getSupabaseAdmin()
           .from('help_articles')
           .update({ content_embedding: embedding })
           .eq('id', article.id);
@@ -93,11 +93,5 @@ export async function POST(request: NextRequest) {
       total: articles.length,
       results,
     });
-  } catch (error) {
-    console.error('Embeddings error:', error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Failed to generate embeddings' 
-    }, { status: 500 });
-  }
+  } catch (error) { return apiError(error, '/api/help/embeddings'); }
 }

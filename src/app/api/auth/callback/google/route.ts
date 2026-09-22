@@ -1,5 +1,7 @@
+import { getSupabaseAdmin } from '@/lib/server/clients';
+import { ADMIN_SITE_ID } from '@/lib/server/auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllSettings, upsertSetting } from '@/lib/supabase';
+import { getAllSettings, upsertSetting } from '@/lib/server/google-settings';
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,7 +19,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Validate state
-    if (state !== 'pacific-wave-analytics') {
+    if (!state || state !== request.cookies.get('pwd_oauth_state')?.value) {
       return NextResponse.redirect(
         new URL('/admin/analytics?error=invalid_state', request.url)
       );
@@ -28,6 +30,15 @@ export async function GET(request: NextRequest) {
         new URL('/admin/analytics?error=no_code', request.url)
       );
     }
+
+    const db = getSupabaseAdmin();
+    // Delete-and-return makes state single use, including concurrent callbacks.
+    const { data: pending, error: stateError } = await db.from('oauth_states').delete()
+      .eq('state', state).eq('site_id', 'pwd').gt('expires_at', new Date().toISOString()).select('user_id').maybeSingle();
+    if (stateError || !pending) return NextResponse.redirect(new URL('/admin/analytics?error=expired_state', request.url));
+    const { data: { user } } = await db.auth.admin.getUserById(pending.user_id);
+    const { data: admin } = await db.from('admin_users').select('role,is_active').eq('email', user?.email || '').eq('site_id', ADMIN_SITE_ID).maybeSingle();
+    if (!admin?.is_active || !['admin', 'super_admin'].includes(admin.role)) return NextResponse.redirect(new URL('/admin/analytics?error=access_denied', request.url));
 
     // Get credentials from settings
     const settings = await getAllSettings('pwd');
@@ -50,7 +61,7 @@ export async function GET(request: NextRequest) {
         code,
         client_id: clientId,
         client_secret: clientSecret,
-        redirect_uri: 'https://pacificwavedigital.com/api/auth/callback/google',
+        redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://pacificwavedigital.com'}/api/auth/callback/google`,
         grant_type: 'authorization_code',
       }),
     });
@@ -58,7 +69,7 @@ export async function GET(request: NextRequest) {
     const tokens = await tokenResponse.json();
 
     if (!tokenResponse.ok || tokens.error) {
-      console.error('Token exchange error:', tokens);
+      console.error('Google token exchange failed');
       return NextResponse.redirect(
         new URL('/admin/analytics?error=' + encodeURIComponent(tokens.error || 'token_error'), request.url)
       );
@@ -77,9 +88,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Redirect back to analytics with success
-    return NextResponse.redirect(
-      new URL('/admin/analytics?success=connected', request.url)
-    );
+    const response = NextResponse.redirect(new URL('/admin/analytics?success=connected', request.url));
+    response.cookies.set('pwd_oauth_state', '', { path: '/api/auth/callback/google', maxAge: 0 });
+    return response;
   } catch (error) {
     console.error('OAuth callback error:', error);
     return NextResponse.redirect(

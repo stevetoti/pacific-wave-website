@@ -141,7 +141,8 @@ export async function sendMagicLink(email: string): Promise<{ error: AuthError |
 export async function inviteUser(email: string): Promise<{ error: Error | null }> {
   // Note: This requires the service role key, so we call an API route
   try {
-    const response = await fetch('/api/admin/invite-user', {
+    const { authFetch } = await import('./auth-fetch');
+    const response = await authFetch('/api/admin/invite-user', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
@@ -166,6 +167,7 @@ export async function getAdminUserByEmail(email: string): Promise<AdminUser | nu
     .from('admin_users')
     .select('*')
     .eq('email', email)
+    .eq('site_id', 'pacific-wave-digital')
     .single();
 
   if (error || !data) return null;

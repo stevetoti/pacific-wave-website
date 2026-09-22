@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 
 interface Transcript {
   id: string;
@@ -13,93 +14,8 @@ interface Transcript {
   content: string;
 }
 
-// Sample transcripts for demonstration
-const sampleTranscripts: Transcript[] = [
-  {
-    id: '1',
-    title: 'VanuConnect Product Demo',
-    client: 'Air Vanuatu',
-    type: 'meeting',
-    date: 'Feb 20, 2026',
-    duration: '45 min',
-    summary: 'Demonstrated VanuConnect communication platform features to Air Vanuatu IT team.',
-    content: `Meeting Notes:
-    
-Attendees: John (Air Vanuatu IT), Sarah (Marketing), Stephen (Pacific Wave Digital)
-
-Key Points Discussed:
-- Showed multi-channel communication features (WhatsApp, SMS, Email)
-- Demonstrated AI chatbot capabilities
-- Discussed integration with existing booking systems
-- Pricing tier options reviewed
-
-Action Items:
-- Send detailed proposal by Friday
-- Schedule follow-up call with CTO
-- Prepare API documentation
-
-Next Steps:
-- Client to review proposal
-- Technical integration discussion in 2 weeks`,
-  },
-  {
-    id: '2',
-    title: 'Website Project Kickoff',
-    client: 'Trade & Farm Supplies',
-    type: 'call',
-    date: 'Feb 18, 2026',
-    duration: '30 min',
-    summary: 'Initial discovery call for new e-commerce website development.',
-    content: `Call Summary:
-
-Client Requirements:
-- E-commerce website for agricultural supplies
-- Product catalog with 500+ items
-- Online payment integration
-- Delivery tracking feature
-- Mobile-responsive design
-
-Timeline:
-- Phase 1: Design mockups (2 weeks)
-- Phase 2: Development (6 weeks)
-- Phase 3: Testing & Launch (2 weeks)
-
-Budget Discussion:
-- Approved budget range: $8,000 - $12,000
-- Payment terms: 50% upfront, 50% on completion`,
-  },
-  {
-    id: '3',
-    title: 'MEDD-SIM Feature Planning',
-    client: 'Internal',
-    type: 'notes',
-    date: 'Feb 15, 2026',
-    duration: '—',
-    summary: 'Internal planning session for MEDD-SIM white-label features.',
-    content: `Planning Notes:
-
-White-Label Requirements:
-1. Custom branding per tenant
-2. Separate user databases
-3. Individual billing
-4. Custom domains
-
-Technical Approach:
-- Tenant identification via subdomain
-- Row-level security in Supabase
-- Dynamic theme system
-- Stripe Connect for billing
-
-Priority Features:
-1. Tenant management dashboard ✅
-2. User isolation ✅
-3. Custom branding ✅
-4. Billing integration (pending)`,
-  },
-];
-
 export default function TranscriptsPage() {
-  const [transcripts, setTranscripts] = useState<Transcript[]>(sampleTranscripts);
+  const [transcripts, setTranscripts] = useState<Transcript[]>([]);
   const [selectedTranscript, setSelectedTranscript] = useState<Transcript | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
@@ -112,6 +28,16 @@ export default function TranscriptsPage() {
     content: '',
   });
 
+  const [error, setError] = useState('');
+  useEffect(() => {
+    async function load() {
+      const { data, error } = await supabase.from('pwd_transcripts').select('*').eq('site_id','pwd').order('created_at', { ascending: false });
+      if (error) setError('Unable to load transcripts. Please try again.');
+      else setTranscripts(data || []);
+    }
+    void load();
+  }, []);
+
   const filteredTranscripts = transcripts.filter(t => {
     const matchesSearch = 
       t.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -121,27 +47,32 @@ export default function TranscriptsPage() {
     return matchesSearch && matchesType;
   });
 
-  const handleAddTranscript = () => {
+  const handleAddTranscript = async () => {
     if (!newTranscript.title || !newTranscript.content) {
       alert('Please fill in title and content');
       return;
     }
 
     const transcript: Transcript = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       ...newTranscript,
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       duration: newTranscript.type === 'notes' ? '—' : '0 min',
     };
 
-    setTranscripts([transcript, ...transcripts]);
+    const { error } = await supabase.from('pwd_transcripts').insert({ ...transcript, site_id: 'pwd' });
+    if (error) { setError('Unable to save transcript. Your text has been kept.'); return; }
+    setError('');
+    setTranscripts(rows => [transcript, ...rows]);
     setNewTranscript({ title: '', client: '', type: 'notes', summary: '', content: '' });
     setIsAddingNew(false);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Delete this transcript?')) return;
-    setTranscripts(transcripts.filter(t => t.id !== id));
+    const { error } = await supabase.from('pwd_transcripts').delete().eq('site_id', 'pwd').eq('id', id);
+    if (error) { setError('Unable to delete transcript.'); return; }
+    setTranscripts(rows => rows.filter(t => t.id !== id));
     if (selectedTranscript?.id === id) {
       setSelectedTranscript(null);
     }
@@ -167,6 +98,7 @@ export default function TranscriptsPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
+      {error && <p role="alert" className="text-red-700 mb-4">{error}</p>}
       {/* Header */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>

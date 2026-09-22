@@ -243,7 +243,8 @@ export default function MediaPage() {
                           fill
                           className="object-cover"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                            (e.target as HTMLImageElement).onerror = null;
+                            (e.target as HTMLImageElement).src = '/images/logo-icon.jpg';
                           }}
                         />
                         {/* Overlay Actions */}

@@ -1,115 +1,23 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { authorize } from '@/lib/server/auth';
+import { apiError, readJson } from '@/lib/server/http';
 
-// Create admin client lazily to avoid build-time errors
-function getSupabaseAdmin(): SupabaseClient {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  
-  if (!url || !key) {
-    throw new Error('Missing Supabase environment variables');
-  }
-  
-  return createClient(url, key, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  });
-}
-
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
+  const access = await authorize(request, ['super_admin']);
+  if (access.response) return access.response;
   try {
-    const supabaseAdmin = getSupabaseAdmin();
-    const { email } = await request.json();
-
-    if (!email) {
-      return NextResponse.json(
-        { error: 'Email is required' },
-        { status: 400 }
-      );
-    }
-
-    // Verify the request is from an authenticated super_admin
-    const authHeader = request.headers.get('authorization');
-    if (authHeader) {
-      const token = authHeader.replace('Bearer ', '');
-      const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
-      
-      if (authError || !user) {
-        return NextResponse.json(
-          { error: 'Unauthorized' },
-          { status: 401 }
-        );
-      }
-
-      // Check if user is super_admin
-      const { data: adminUser } = await supabaseAdmin
-        .from('admin_users')
-        .select('role')
-        .eq('email', user.email)
-        .single();
-
-      if (!adminUser || adminUser.role !== 'super_admin') {
-        return NextResponse.json(
-          { error: 'Only super admins can invite users' },
-          { status: 403 }
-        );
-      }
-    }
-
-    // Check if user already exists in auth
-    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
-    const userExists = existingUsers?.users?.some(u => u.email === email);
-
-    if (userExists) {
-      // User already has auth account, just send password reset
-      const { error: resetError } = await supabaseAdmin.auth.admin.generateLink({
-        type: 'recovery',
-        email,
-        options: {
-          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://pacificwavedigital.com'}/admin`,
-        },
-      });
-
-      if (resetError) {
-        console.error('Reset link error:', resetError);
-        return NextResponse.json(
-          { error: 'Failed to send password reset email' },
-          { status: 500 }
-        );
-      }
-
-      return NextResponse.json({ 
-        success: true, 
-        message: 'Password reset email sent' 
-      });
-    }
-
-    // Invite new user
-    const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://pacificwavedigital.com'}/admin`,
-    });
-
+    const { email } = await readJson(request, z.object({ email: z.string().trim().email().max(254) }));
+    const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://pacificwavedigital.com'}/admin/reset-password`;
+    const { data, error } = await access.db.auth.admin.inviteUserByEmail(email, { redirectTo });
     if (error) {
-      console.error('Invite error:', error);
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
-      );
+      if (error.code === 'email_exists' || error.code === 'user_already_exists') {
+        const { error: resetError } = await access.db.auth.resetPasswordForEmail(email, { redirectTo });
+        if (resetError) throw resetError;
+        return NextResponse.json({ success: true, message: 'Password reset email requested' });
+      }
+      throw error;
     }
-
-    return NextResponse.json({ 
-      success: true, 
-      userId: data.user?.id,
-      message: 'Invite email sent' 
-    });
-
-  } catch (error) {
-    console.error('Invite user error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+    return NextResponse.json({ success: true, userId: data.user?.id, message: 'Invite email sent' });
+  } catch (error) { return apiError(error, '/api/admin/invite-user'); }
 }

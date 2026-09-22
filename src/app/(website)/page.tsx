@@ -44,12 +44,7 @@ const stats = [
   { value: '99.9%', label: 'Uptime', icon: '⚡' },
 ];
 
-const defaultVideos: VideoItem[] = [
-  { id: '1', title: 'Welcome to Pacific Wave Digital', youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-  { id: '2', title: 'Our Services', youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-  { id: '3', title: 'Client Success Stories', youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-  { id: '4', title: 'Why Choose Us', youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-];
+const defaultVideos: VideoItem[] = [];
 
 const getYoutubeVideoId = (url: string) => {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -78,8 +73,8 @@ export default function HomePage() {
         const videosData = settings[SETTINGS_KEYS.HOMEPAGE_VIDEOS];
         if (videosData) {
           const parsed = JSON.parse(videosData);
-          if (parsed.length > 0) {
-            setVideos(parsed);
+          if (Array.isArray(parsed)) {
+            setVideos(parsed.filter((video: VideoItem) => typeof video.youtubeUrl === 'string' && getYoutubeVideoId(video.youtubeUrl) && getYoutubeVideoId(video.youtubeUrl) !== 'dQw4w9WgXcQ'));
           }
         }
       } catch (error) {
@@ -422,6 +417,7 @@ export default function HomePage() {
       </section>
 
       {/* Video Section - Modern UI */}
+      {videos.length > 0 && (
       <section className="py-24 bg-gradient-to-br from-[#0a1628] via-deep-blue to-[#0a1628] relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 opacity-30">
@@ -460,6 +456,7 @@ export default function HomePage() {
                   <div className="aspect-video relative overflow-hidden">
                     {getYoutubeEmbedUrl(video.youtubeUrl) ? (
                       <iframe
+                        loading="lazy"
                         src={getYoutubeEmbedUrl(video.youtubeUrl)}
                         title={video.title}
                         className="w-full h-full"
@@ -502,6 +499,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      )}
       {/* About Section - Enhanced */}
       <section className="section-padding bg-light-gray">
         <div className="container-max">

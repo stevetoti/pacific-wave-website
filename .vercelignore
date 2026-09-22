@@ -1,0 +1,8 @@
+marketing/
+.deployment/
+.env*
+node_modules/
+.next/
+test-results/
+playwright-report/
+.git/

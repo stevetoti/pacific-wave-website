@@ -1,5 +1,7 @@
 'use client';
 
+import { authFetch } from '@/lib/auth-fetch';
+
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { 
@@ -98,7 +100,7 @@ export default function HelpCenterPage() {
     setIsLoading(true);
     try {
       // Fetch all articles for searching
-      const articlesRes = await fetch('/api/help/articles?published=true&limit=100');
+      const articlesRes = await authFetch('/api/help/articles?published=true&limit=100');
       const articlesData = await articlesRes.json();
       if (articlesData.success) {
         const articles = articlesData.data || [];
@@ -150,25 +152,15 @@ export default function HelpCenterPage() {
     fetchInitialData();
   }, [fetchInitialData]);
 
-  useEffect(() => {
-    const debounce = setTimeout(() => {
-      if (searchQuery.trim().length >= 2) {
-        performSearch();
-      } else {
-        setSearchResults([]);
-      }
-    }, 300);
 
-    return () => clearTimeout(debounce);
-  }, [searchQuery]);
 
-  const performSearch = async () => {
+  const performSearch = useCallback(async () => {
     setIsSearching(true);
     const query = searchQuery.toLowerCase().trim();
     
     try {
       // First try API search
-      const res = await fetch('/api/help/search', {
+      const res = await authFetch('/api/help/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: searchQuery }),
@@ -196,7 +188,19 @@ export default function HelpCenterPage() {
     
     setSearchResults(filtered);
     setIsSearching(false);
-  };
+  }, [searchQuery, allArticles]);
+
+  useEffect(() => {
+    const debounce = setTimeout(() => {
+      if (searchQuery.trim().length >= 2) {
+        performSearch();
+      } else {
+        setSearchResults([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(debounce);
+  }, [performSearch, searchQuery]);
 
   const handleAskAI = async () => {
     if (!aiQuestion.trim()) return;
@@ -206,7 +210,7 @@ export default function HelpCenterPage() {
     setRelatedArticles([]);
     
     try {
-      const res = await fetch('/api/help/ask-ai', {
+      const res = await authFetch('/api/help/ask-ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: aiQuestion }),

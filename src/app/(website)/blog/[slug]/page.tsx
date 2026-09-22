@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
 import {
   getPostBySlug,
   getRelatedPosts,
@@ -138,16 +139,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {/* JSON-LD Schema */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema).replace(/</g, "\\u003c") }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema).replace(/</g, "\\u003c") }}
       />
       {imageSchema && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(imageSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(imageSchema).replace(/</g, "\\u003c") }}
         />
       )}
 
@@ -243,7 +244,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               {/* Article Body */}
               <div className="prose prose-lg prose-deep-blue max-w-none">
                 <ReactMarkdown
-                  rehypePlugins={[rehypeRaw]}
+                  rehypePlugins={[rehypeRaw, rehypeSanitize]}
                   components={{
                     h2: ({ children }) => {
                       const text = String(children);

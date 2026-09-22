@@ -111,7 +111,7 @@ export default function ProtectedRoute({ children, requiredPage }: ProtectedRout
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        checkAuth();
+        setTimeout(() => { if (mounted) void checkAuth(); }, 0);
       } else {
         if (mounted) {
           setAuthState({
@@ -243,7 +243,7 @@ export function useAuth() {
     checkAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
-      checkAuth();
+      setTimeout(() => { void checkAuth(); }, 0);
     });
 
     return () => {

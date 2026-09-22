@@ -1,5 +1,7 @@
 'use client';
 
+import { authFetch } from '@/lib/auth-fetch';
+
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
@@ -111,7 +113,7 @@ export default function AdminDashboard() {
 
       // 3) GA4 (pageviews)
       try {
-        const res = await fetch('/api/analytics/ga4', { cache: 'no-store' });
+        const res = await authFetch('/api/analytics/ga4', { cache: 'no-store' });
         if (res.ok) {
           const json = await res.json();
           setPageviews(json?.overview?.pageviews ?? 0);
@@ -130,7 +132,7 @@ export default function AdminDashboard() {
 
       // 4) Search Console connection test
       try {
-        const res = await fetch('/api/analytics/search-console', { cache: 'no-store' });
+        const res = await authFetch('/api/analytics/search-console', { cache: 'no-store' });
         if (res.ok) {
           setSeoStatus((s) => ({ ...s, searchConsole: 'connected' }));
         } else if (res.status === 401) {

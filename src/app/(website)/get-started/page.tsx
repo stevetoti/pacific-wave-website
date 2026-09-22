@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+
 
 type ProjectType = 'website' | 'webapp' | 'mobile' | 'ai' | 'social' | 'full-package' | '';
 
@@ -120,6 +120,8 @@ const socialPlatformOptions = [
 ];
 
 export default function GetStartedPage() {
+  const [isReady, setIsReady] = useState(false);
+  useEffect(() => setIsReady(true), []);
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -149,12 +151,13 @@ export default function GetStartedPage() {
       case 3: return true; // Optional AI features
       case 4: return true; // Optional social
       case 5: return formData.budgetRange !== '' && formData.timeline !== '';
-      case 6: return formData.name !== '' && formData.email !== '';
+      case 6: return formData.name.trim().length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
       default: return true;
     }
   };
 
   const handleSubmit = async () => {
+    if (isSubmitting || !canProceed()) return;
     setIsSubmitting(true);
     setError('');
 
@@ -163,9 +166,7 @@ export default function GetStartedPage() {
       const summary = generateProjectSummary(formData);
 
       // Save to Supabase
-      const { error: dbError } = await supabase
-        .from('project_submissions')
-        .insert({
+      const payload = {
           project_type: formData.projectType,
           project_description: formData.projectDescription,
           website_details: {
@@ -201,39 +202,17 @@ export default function GetStartedPage() {
           best_time_to_call: formData.bestTimeToCall,
           additional_notes: formData.additionalNotes,
           ai_summary: summary,
-          status: 'new',
-        });
-
-      if (dbError) {
-        console.error('Database error:', dbError);
-        // Still show success - will fix DB later
-      }
-
-      // Send email notification
-      try {
-        await fetch('/api/notify-submission', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contact_name: formData.name,
-            contact_email: formData.email,
-            contact_phone: formData.phone,
-            company_name: formData.company,
-            project_type: formData.projectType,
-            budget_range: formData.budgetRange,
-            timeline: formData.timeline,
-            project_description: formData.projectDescription,
-          }),
-        });
-      } catch (notifyErr) {
-        console.error('Notification error:', notifyErr);
-        // Don't fail the submission if notification fails
-      }
+      };
+      const response = await fetch('/api/submissions', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.error || 'Unable to save your inquiry');
 
       setIsSubmitted(true);
     } catch (err) {
       console.error('Submit error:', err);
-      setError('Something went wrong. Please try again or contact us directly.');
+      setError(err instanceof Error ? err.message : 'Unable to save your inquiry. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -352,7 +331,7 @@ export default function GetStartedPage() {
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+        <fieldset disabled={!isReady} aria-busy={!isReady} className="min-w-0 bg-white rounded-2xl shadow-xl p-6 md:p-8">
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600">
               {error}
@@ -839,7 +818,7 @@ export default function GetStartedPage() {
               </button>
             )}
           </div>
-        </div>
+        </fieldset>
 
         {/* Trust Badges */}
         <div className="mt-8 text-center">

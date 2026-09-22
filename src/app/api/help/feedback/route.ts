@@ -1,12 +1,11 @@
+import { authorize, READ_ROLES } from '@/lib/server/auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseAdmin } from '@/lib/server/clients';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export async function POST(request: NextRequest) {
+  const access = await authorize(request, READ_ROLES);
+  if (access.response) return access.response;
   try {
     const { articleId, helpful } = await request.json();
 
@@ -18,10 +17,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current counts
-    const { data: article, error: fetchError } = await supabase
+    const { data: article, error: fetchError } = await getSupabaseAdmin()
       .from('help_articles')
       .select('helpful_yes, helpful_no')
-      .eq('id', articleId)
+      .eq('site_id', 'pwd').eq('is_published', true).eq('id', articleId)
       .single();
 
     if (fetchError || !article) {
@@ -33,10 +32,10 @@ export async function POST(request: NextRequest) {
       ? { helpful_yes: (article.helpful_yes || 0) + 1 }
       : { helpful_no: (article.helpful_no || 0) + 1 };
 
-    const { error: updateError } = await supabase
+    const { error: updateError } = await getSupabaseAdmin()
       .from('help_articles')
       .update(updates)
-      .eq('id', articleId);
+      .eq('site_id', 'pwd').eq('is_published', true).eq('id', articleId);
 
     if (updateError) {
       return NextResponse.json({ success: false, error: updateError.message }, { status: 500 });

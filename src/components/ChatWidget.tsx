@@ -46,7 +46,7 @@ export default function ChatWidget() {
     setMessages((prev) => [
       ...prev,
       { text: inputValue, isUser: true },
-      { text: 'Thank you for your message! Our team will get back to you shortly. For immediate assistance, please email info@pacificwavedigital.com or call +678 777 4567.', isUser: false },
+      { text: 'This quick-help widget does not send messages to our team. Please use our Contact page, email info@pacificwavedigital.com or call +678 777 4567.', isUser: false },
     ]);
     setInputValue('');
   };
@@ -56,7 +56,7 @@ export default function ChatWidget() {
       {/* Chat Panel */}
       {isOpen && (
         <div 
-          className="absolute bottom-20 right-0 w-[360px] max-h-[500px] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden"
+          className="absolute bottom-20 right-0 w-[min(360px,calc(100vw-32px))] max-h-[500px] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}

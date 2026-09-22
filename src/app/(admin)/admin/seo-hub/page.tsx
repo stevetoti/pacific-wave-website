@@ -1,5 +1,7 @@
 'use client';
 
+import { authFetch } from '@/lib/auth-fetch';
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { HelpTooltip } from '@/components/admin/HelpTooltip';
@@ -329,14 +331,11 @@ export default function SEOHubPage() {
     setIsLoading(false);
   }, []);
 
-  useEffect(() => {
-    fetchAllData();
-    checkApiStatus();
-  }, [fetchAllData]);
 
-  const checkApiStatus = async () => {
+
+  async function checkApiStatus() {
     try {
-      const response = await fetch('/api/seo/dataforseo');
+      const response = await authFetch('/api/seo/dataforseo');
       const data = await response.json();
       setApiStatus(data);
     } catch {
@@ -344,12 +343,17 @@ export default function SEOHubPage() {
     }
   };
 
+  useEffect(() => {
+    fetchAllData();
+    checkApiStatus();
+  }, [fetchAllData]);
+
   const researchKeywordData = async (keyword: string) => {
     setIsResearching(true);
     try {
       console.log('[SEO Hub] Researching keyword:', keyword);
       
-      const response = await fetch('/api/seo/dataforseo', {
+      const response = await authFetch('/api/seo/dataforseo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -405,7 +409,7 @@ export default function SEOHubPage() {
     
     setIsResearching(true);
     try {
-      const response = await fetch('/api/seo/dataforseo', {
+      const response = await authFetch('/api/seo/dataforseo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -474,7 +478,7 @@ export default function SEOHubPage() {
     
     try {
       for (const kw of keywords.slice(0, 10)) {
-        const response = await fetch('/api/seo/dataforseo', {
+        const response = await authFetch('/api/seo/dataforseo', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -577,7 +581,7 @@ export default function SEOHubPage() {
     try {
       const keywordData = keywords.find(k => k.keyword === keyword);
       
-      const response = await fetch('/api/seo/generate-article', {
+      const response = await authFetch('/api/seo/generate-article', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -606,7 +610,7 @@ export default function SEOHubPage() {
             importance: 'high',
           });
         
-        window.location.href = result.redirectUrl;
+        window.location.assign(result.redirectUrl);
       } else {
         alert(result.error || 'Failed to generate article. Check console.');
       }

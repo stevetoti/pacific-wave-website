@@ -29,8 +29,39 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local brainstorming companion
+.superpowers/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 .env.production
 .env.*
+
+# campaign media outputs
+marketing/pwd-030-proof/higgsfield/raw/*
+!marketing/pwd-030-proof/higgsfield/raw/.gitkeep
+marketing/pwd-030-proof/assets/audio/*
+!marketing/pwd-030-proof/assets/audio/.gitkeep
+marketing/pwd-030-proof/exports/*
+!marketing/pwd-030-proof/exports/.gitkeep
+marketing/pwd-030-proof/qa/*
+!marketing/pwd-030-proof/qa/.gitkeep
+marketing/pwd-030-proof/.tmp/
+
+marketing/pwd-full-brand-film/higgsfield/raw/*
+!marketing/pwd-full-brand-film/higgsfield/raw/.gitkeep
+marketing/pwd-full-brand-film/assets/audio/*
+!marketing/pwd-full-brand-film/assets/audio/.gitkeep
+marketing/pwd-full-brand-film/exports/*
+!marketing/pwd-full-brand-film/exports/.gitkeep
+marketing/pwd-full-brand-film/qa/*
+!marketing/pwd-full-brand-film/qa/.gitkeep
+marketing/pwd-full-brand-film/.tmp/
+
+# Verification artifacts
+/test-results/
+/playwright-report/
+
+!.env.example
+/.deployment/

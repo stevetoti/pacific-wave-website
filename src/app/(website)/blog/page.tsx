@@ -1,3 +1,4 @@
+import NewsletterCTA from '@/components/blog/NewsletterCTA';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -202,28 +203,8 @@ export default async function BlogPage() {
         </div>
       </section>
 
-      {/* Newsletter CTA */}
-      <section className="section-padding bg-gradient-to-br from-deep-blue to-dark-navy">
-        <div className="container-max">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-white font-heading mb-4">Stay Ahead of the Curve</h2>
-            <p className="text-blue-200 mb-8">
-              Get weekly insights on AI, digital transformation, and business growth strategies delivered to your inbox.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-5 py-3 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-vibrant-orange text-gray-800"
-              />
-              <button className="bg-vibrant-orange text-white font-bold px-8 py-3 rounded-lg hover:bg-soft-orange transition-colors">
-                Subscribe
-              </button>
-            </div>
-            <p className="text-blue-300 text-xs mt-4">No spam. Unsubscribe anytime.</p>
-          </div>
-        </div>
-      </section>
+      <section className="section-padding"><div className="container-max"><NewsletterCTA /></div></section>
+
     </>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect , useCallback} from 'react';
 import Link from 'next/link';
 import { HelpCircle, X } from 'lucide-react';
 
@@ -83,14 +83,9 @@ export default function HelpTooltip({ feature, position = 'right', size = 'md' }
   const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState(HELP_CONTENT[feature] || null);
 
-  useEffect(() => {
-    // If not in predefined content, try to fetch from API
-    if (!HELP_CONTENT[feature]) {
-      fetchHelpContent();
-    }
-  }, [feature]);
 
-  const fetchHelpContent = async () => {
+
+  const fetchHelpContent = useCallback(async () => {
     try {
       const response = await fetch(`/api/help/articles/${feature}?bySlug=true`);
       const result = await response.json();
@@ -104,7 +99,14 @@ export default function HelpTooltip({ feature, position = 'right', size = 'md' }
     } catch (error) {
       console.error('Failed to fetch help content:', error);
     }
-  };
+  }, [feature]);
+
+  useEffect(() => {
+    // If not in predefined content, try to fetch from API
+    if (!HELP_CONTENT[feature]) {
+      fetchHelpContent();
+    }
+  }, [fetchHelpContent, feature]);
 
   if (!content) return null;
 

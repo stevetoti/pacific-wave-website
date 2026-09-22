@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { authFetch } from '@/lib/auth-fetch';
+
+import { useState, useEffect, useRef , useCallback} from 'react';
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -164,7 +166,6 @@ const AIDropdown = ({
     { id: 'generate-meta', label: 'Generate Description', icon: '📄', desc: 'Meta description from content' },
     { id: 'suggest-keywords', label: 'Suggest Keywords', icon: '🔑', desc: 'SEO keyword ideas' },
     { id: 'analyze-seo', label: 'Analyze SEO Score', icon: '📊', desc: 'Check optimization' },
-    { id: 'improve-content', label: 'Improve Content', icon: '✨', desc: 'Enhance readability' },
   ];
 
   return (
@@ -368,11 +369,9 @@ export default function EditBlogPost() {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    fetchPost();
-  }, [postId]);
 
-  const fetchPost = async () => {
+
+  const fetchPost = useCallback(async () => {
     setIsLoading(true);
     const { data, error } = await supabase
       .from('blog_posts')
@@ -400,11 +399,15 @@ export default function EditBlogPost() {
       });
     }
     setIsLoading(false);
-  };
+  }, [postId]);
+
+  useEffect(() => {
+    fetchPost();
+  }, [fetchPost]);
 
   // API call helper
   const callSEOFunction = async (functionName: string, body: object) => {
-    const response = await fetch(`${SUPABASE_URL}/functions/v1/${functionName}`, {
+    const response = await authFetch(`${SUPABASE_URL}/functions/v1/${functionName}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -728,19 +731,8 @@ export default function EditBlogPost() {
       setSeoScore(result);
     } catch (error) {
       console.error('Content analysis error:', error);
-      // Fallback score
-      const wordCount = formData.content.replace(/<[^>]*>/g, '').split(/\s+/).length;
-      setSeoScore({
-        score: Math.min(100, wordCount > 300 ? 70 : 40),
-        wordCount,
-        keywordDensity: 2,
-        readabilityScore: 75,
-        recommendations: [
-          wordCount < 300 ? 'Add more content (aim for 300+ words)' : 'Good content length!',
-          !formData.keywords ? 'Add target keywords' : 'Keywords defined',
-          !formData.excerpt ? 'Add a meta description' : 'Meta description set',
-        ],
-      });
+      setSeoScore(null);
+      alert('Content analysis is unavailable. Please try again; no score has been calculated.');
     } finally {
       setAiLoading(null);
     }

@@ -1,3 +1,4 @@
+import { authorizeSEO } from '../_shared/auth.ts';
 // Supabase Edge Function: seo-keyword-research
 // Generates keyword suggestions with search intent analysis
 
@@ -19,6 +20,9 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
+
+  const denied = await authorizeSEO(req);
+  if (denied) return new Response(JSON.stringify({ error: 'Access denied' }), { status: denied, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   try {
     const { topic, industry, location } = await req.json()

@@ -1,5 +1,7 @@
 'use client';
 
+import { authFetch } from '@/lib/auth-fetch';
+
 import { useState } from 'react';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://rndegttgwtpkbjtvjgnc.supabase.co';
@@ -47,7 +49,7 @@ export default function SEOAssistantPage() {
 
   // API call helper
   const callSEOFunction = async (functionName: string, body: object) => {
-    const response = await fetch(`${SUPABASE_URL}/functions/v1/${functionName}`, {
+    const response = await authFetch(`${SUPABASE_URL}/functions/v1/${functionName}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -131,29 +133,19 @@ export default function SEOAssistantPage() {
     setCompetitorLoading(true);
     setCompetitorResults([]);
 
-    // Simulated competitor analysis based on URL
-    // In production, this would use web search API or scraping
-    setTimeout(() => {
-      const domain = competitorUrl.replace(/https?:\/\//, '').split('/')[0];
-      setCompetitorResults([
-        `🎯 Domain: ${domain}`,
-        '📊 Estimated monthly traffic: 5K-15K visits',
-        '🔑 Likely target keywords:',
-        '   • web development services',
-        '   • digital agency pacific',
-        '   • business automation',
-        '   • custom software solutions',
-        '💡 Content strategy: Blog-focused with case studies',
-        '📱 Mobile optimization: Good',
-        '⚡ Page speed: Needs improvement',
-        '',
-        '🚀 Opportunities to outrank:',
-        '   • Create more in-depth content on automation',
-        '   • Target long-tail local keywords',
-        '   • Add more customer testimonials',
-      ]);
-      setCompetitorLoading(false);
-    }, 2000);
+    try {
+      const domain = new URL(competitorUrl.startsWith('http') ? competitorUrl : `https://${competitorUrl}`).hostname;
+      const response = await authFetch('/api/seo/dataforseo', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'competitor_keywords', domain, limit: 10 }),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.error || 'Competitor research unavailable');
+      const items = result.data?.tasks?.[0]?.result?.[0]?.items || [];
+      setCompetitorResults(items.length ? items.map((item: { domain?: string; intersections?: number }) => `${item.domain || domain}: ${item.intersections ?? 0} shared search terms`) : ['No competitor data returned for this domain.']);
+    } catch (error) {
+      setCompetitorResults([error instanceof Error ? error.message : 'Competitor research unavailable']);
+    } finally { setCompetitorLoading(false); }
   };
 
   // Score color helper

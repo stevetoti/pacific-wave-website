@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/check-release-routes.mjs && next build --webpack && node scripts/check-release-routes.mjs --built",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint src",
+    "test": "node --conditions=react-server --import tsx --test tests/*.test.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.97.0",
@@ -17,22 +19,33 @@
     "@tiptap/starter-kit": "^3.20.0",
     "framer-motion": "^12.34.3",
     "lucide-react": "^0.575.0",
-    "next": "^14.2.0",
+    "next": "^16.3.5",
     "openai": "^6.22.0",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "react-markdown": "^10.1.0",
-    "rehype-raw": "^7.0.0"
+    "rehype-raw": "^7.0.0",
+    "rehype-sanitize": "^6.0.0",
+    "server-only": "^0.0.1",
+    "sharp": "0.35.4",
+    "stripe": "^22.6.2",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@playwright/test": "^1.63.0",
     "@types/node": "^20.0.0",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.0",
-    "eslint": "^8.0.0",
-    "eslint-config-next": "^14.2.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.5",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.4.0",
+    "tsx": "^4.23.13",
     "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
   }
 }

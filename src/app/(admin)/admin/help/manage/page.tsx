@@ -1,5 +1,7 @@
 'use client';
 
+import { authFetch } from '@/lib/auth-fetch';
+
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { 
@@ -66,7 +68,7 @@ export default function HelpManagePage() {
       let url = '/api/help/articles?';
       if (filterCategory) url += `category=${filterCategory}&`;
       
-      const res = await fetch(url);
+      const res = await authFetch(url);
       const data = await res.json();
       
       if (data.success) {
@@ -130,13 +132,13 @@ export default function HelpManagePage() {
 
       let res;
       if (editingArticle) {
-        res = await fetch(`/api/help/articles/${editingArticle.id}`, {
+        res = await authFetch(`/api/help/articles/${editingArticle.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
       } else {
-        res = await fetch('/api/help/articles', {
+        res = await authFetch('/api/help/articles', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -164,7 +166,7 @@ export default function HelpManagePage() {
     if (!confirm(`Are you sure you want to delete "${article.title}"?`)) return;
 
     try {
-      const res = await fetch(`/api/help/articles/${article.id}`, {
+      const res = await authFetch(`/api/help/articles/${article.id}`, {
         method: 'DELETE',
       });
 
@@ -182,7 +184,7 @@ export default function HelpManagePage() {
 
   const handleTogglePublish = async (article: HelpArticle) => {
     try {
-      const res = await fetch(`/api/help/articles/${article.id}`, {
+      const res = await authFetch(`/api/help/articles/${article.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_published: !article.is_published }),

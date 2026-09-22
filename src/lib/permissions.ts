@@ -99,6 +99,13 @@ export const pathToPage: Record<string, AdminPage> = {
   '/admin/blog': 'blog',
   '/admin/blog/new': 'blog',
   '/admin/seo': 'seo',
+  '/admin/seo-hub': 'seo',
+  '/admin/seo-assistant': 'seo',
+  '/admin/analytics': 'seo',
+  '/admin/submissions': 'settings',
+  '/admin/training': 'settings',
+  '/admin/training-center': 'settings',
+  '/admin/errors': 'settings',
   '/admin/settings': 'settings',
   '/admin/users': 'users',
   '/admin/media': 'media',
@@ -115,7 +122,7 @@ export function getRequiredPermission(pathname: string): AdminPage | null {
   }
   
   // Check for partial matches (e.g., /admin/blog/edit/123 should match blog)
-  for (const [path, page] of Object.entries(pathToPage)) {
+  for (const [path, page] of Object.entries(pathToPage).sort(([a], [b]) => b.length - a.length)) {
     if (pathname.startsWith(path + '/') || pathname === path) {
       return page;
     }

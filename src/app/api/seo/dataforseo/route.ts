@@ -1,3 +1,7 @@
+import { z } from 'zod';
+import { readJson, apiError } from '@/lib/server/http';
+import { rateLimit } from '@/lib/server/rate-limit';
+import { authorize, ADMIN_ROLES } from '@/lib/server/auth';
 import { NextResponse } from 'next/server';
 
 // DataForSEO API credentials
@@ -13,8 +17,11 @@ const getAuthHeader = () => {
 const API_BASE = 'https://api.dataforseo.com/v3';
 
 export async function POST(request: Request) {
+  const access = await authorize(request, ADMIN_ROLES);
+  if (access.response) return access.response;
   try {
-    const body = await request.json();
+    const body = await readJson(request, z.object({ action: z.string().min(1).max(100), keywords: z.array(z.string().max(200)).max(20).optional(), keyword: z.string().max(200).optional(), location_code: z.number().int().optional(), language_code: z.string().max(10).optional(), limit: z.number().int().min(1).max(100).optional(), depth: z.number().int().min(1).max(100).optional(), device: z.enum(['desktop','mobile']).optional(), target: z.string().max(500).optional(), domain: z.string().max(500).optional(), target_domain: z.string().max(500).optional(), url: z.string().max(2000).optional() }));
+    await rateLimit(request, 'dataforseo', 30);
     const { action, ...params } = body;
 
     if (!DATAFORSEO_LOGIN || !DATAFORSEO_PASSWORD) {
@@ -232,17 +239,13 @@ export async function POST(request: Request) {
       raw: data, // Include raw response for debugging
     });
 
-  } catch (error) {
-    console.error('[DataForSEO] Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to call DataForSEO API', details: String(error) },
-      { status: 500 }
-    );
-  }
+  } catch (error) { return apiError(error, '/api/seo/dataforseo'); }
 }
 
 // GET endpoint for simple tests
-export async function GET() {
+export async function GET(request: Request) {
+  const access = await authorize(request, ADMIN_ROLES);
+  if (access.response) return access.response;
   if (!DATAFORSEO_LOGIN || !DATAFORSEO_PASSWORD) {
     return NextResponse.json({ 
       configured: false, 

@@ -1,5 +1,7 @@
 'use client';
 
+import { authFetch } from '@/lib/auth-fetch';
+
 import { useState, useEffect } from 'react';
 
 interface GA4Overview {
@@ -52,24 +54,22 @@ export default function AnalyticsPage() {
   const [scOverview, setScOverview] = useState<SearchConsoleOverview | null>(null);
   const [searchQueries, setSearchQueries] = useState<SearchQuery[]>([]);
 
-  useEffect(() => {
-    checkConnectionAndFetchData();
-  }, []);
 
-  const checkConnectionAndFetchData = async () => {
+
+  async function checkConnectionAndFetchData() {
     setIsLoading(true);
     setError(null);
 
     try {
       // Check connection status
-      const statusRes = await fetch('/api/analytics/connection-status');
+      const statusRes = await authFetch('/api/analytics/connection-status');
       const statusData = await statusRes.json();
       
       if (statusData.connected) {
         setIsConnected(true);
         
         // Fetch GA4 data
-        const ga4Res = await fetch('/api/analytics/ga4');
+        const ga4Res = await authFetch('/api/analytics/ga4');
         const ga4Data = await ga4Res.json();
         
         if (ga4Data.connected && !ga4Data.error) {
@@ -81,7 +81,7 @@ export default function AnalyticsPage() {
         }
 
         // Fetch Search Console data
-        const scRes = await fetch('/api/analytics/search-console');
+        const scRes = await authFetch('/api/analytics/search-console');
         const scData = await scRes.json();
         
         if (scData.connected && !scData.error) {
@@ -99,13 +99,22 @@ export default function AnalyticsPage() {
     }
   };
 
-  const handleConnectGoogle = () => {
-    window.location.href = '/api/auth/google';
+  useEffect(() => {
+    checkConnectionAndFetchData();
+  }, []);
+
+  const handleConnectGoogle = async () => {
+    try {
+      const response = await authFetch('/api/auth/google', { method: 'POST' });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Unable to connect Google');
+      window.location.assign(data.url);
+    } catch (error) { setError(error instanceof Error ? error.message : 'Unable to connect Google'); }
   };
 
   const handleDisconnect = async () => {
     if (confirm('Are you sure you want to disconnect Google Analytics?')) {
-      await fetch('/api/auth/google/disconnect', { method: 'POST' });
+      await authFetch('/api/auth/google/disconnect', { method: 'POST' });
       setIsConnected(false);
       setGa4Overview(null);
       setScOverview(null);

@@ -17,7 +17,7 @@ const MenuBar = ({
   editor, 
   onImageUpload 
 }: { 
-  editor: ReturnType<typeof useEditor>;
+  editor: ReturnType<typeof useEditor> | null;
   onImageUpload: () => void;
 }) => {
   if (!editor) {
@@ -443,6 +443,7 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
   const [isDragging, setIsDragging] = useState(false);
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: {

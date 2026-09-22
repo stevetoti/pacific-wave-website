@@ -58,9 +58,25 @@ export default function ContactPage() {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (submitting) return;
+    setSubmitting(true);
+    setError('');
+    try {
+      const response = await fetch('/api/submissions', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contact_name: formData.name, contact_email: formData.email,
+          company_name: formData.company, project_type: 'contact', budget_range: formData.budget,
+          project_description: formData.message, additional_notes: `Service: ${formData.service}` }),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.error || 'Unable to save your message');
+      setSubmitted(true);
+    } catch (err) { setError(err instanceof Error ? err.message : 'Please try again.'); }
+    finally { setSubmitting(false); }
   };
 
   return (
@@ -247,7 +263,8 @@ export default function ContactPage() {
                       placeholder="Tell us about your project, goals, and timeline..."
                     ></textarea>
                   </div>
-                  <button type="submit" className="btn-primary w-full text-lg !py-4">
+                  {error && <p role="alert" className="text-red-700 mb-4">{error}</p>}
+                  <button type="submit" disabled={submitting} aria-busy={submitting} className="btn-primary w-full text-lg !py-4">
                     Send Message
                     <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

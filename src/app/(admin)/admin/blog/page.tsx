@@ -11,11 +11,9 @@ export default function BlogAdminPage() {
   const [loading, setLoading] = useState(true);
 
   // Fetch posts from Supabase
-  useEffect(() => {
-    fetchPosts();
-  }, []);
 
-  const fetchPosts = async () => {
+
+  async function fetchPosts() {
     setLoading(true);
     const { data, error } = await supabase
       .from('blog_posts')
@@ -30,6 +28,10 @@ export default function BlogAdminPage() {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const filteredPosts = posts.filter(post =>
     post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||

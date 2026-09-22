@@ -1,8 +1,11 @@
+import { authorize, READ_ROLES } from '@/lib/server/auth';
 import { NextResponse } from 'next/server';
 import { isGoogleConnected } from '@/lib/google-auth';
-import { getAllSettings } from '@/lib/supabase';
+import { getAllSettings } from '@/lib/server/google-settings';
 
-export async function GET() {
+export async function GET(request: Request) {
+  const access = await authorize(request, READ_ROLES);
+  if (access.response) return access.response;
   try {
     const connected = await isGoogleConnected();
     const settings = await getAllSettings('pwd');

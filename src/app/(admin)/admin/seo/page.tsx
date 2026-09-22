@@ -1,4 +1,5 @@
 'use client';
+import { authFetch } from '@/lib/auth-fetch';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -62,10 +63,11 @@ export default function SEOSettingsPage() {
           linkedinUrl: data[SEO_SETTINGS_KEYS.LINKEDIN_URL] || 'https://linkedin.com/company/pacific-wave-digital',
         });
 
-        setGoogleCredentials({
-          clientId: data[SEO_SETTINGS_KEYS.GOOGLE_CLIENT_ID] || '',
-          clientSecret: data[SEO_SETTINGS_KEYS.GOOGLE_CLIENT_SECRET] || '',
-        });
+        const credentialsResponse = await authFetch('/api/admin/google-credentials');
+        if (credentialsResponse.ok) {
+          const credentials = await credentialsResponse.json();
+          setGoogleCredentials({ clientId: credentials.clientId, clientSecret: '' });
+        }
 
         // Check connection status
         setConnectionStatus({
@@ -126,10 +128,10 @@ export default function SEOSettingsPage() {
     setSaveMessage(null);
 
     try {
-      const success = await upsertSettings({
-        [SEO_SETTINGS_KEYS.GOOGLE_CLIENT_ID]: googleCredentials.clientId,
-        [SEO_SETTINGS_KEYS.GOOGLE_CLIENT_SECRET]: googleCredentials.clientSecret,
-      }, 'pwd');
+      const response = await authFetch('/api/admin/google-credentials', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(googleCredentials),
+      });
+      const success = response.ok;
 
       if (success) {
         setSaveMessage({ type: 'success', text: 'Google API credentials saved successfully!' });

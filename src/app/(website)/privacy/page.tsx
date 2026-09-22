@@ -13,7 +13,7 @@ export default function PrivacyPage() {
         <div className="absolute inset-0 gradient-blue"></div>
         <div className="relative container-max px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white font-heading mb-4">Privacy Policy</h1>
-          <p className="text-blue-100 text-lg">Last updated: January 1, 2025</p>
+          <p className="text-blue-100 text-lg">Last updated: September 15, 2026</p>
         </div>
       </section>
 
@@ -39,6 +39,13 @@ export default function PrivacyPage() {
                 </ul>
               </div>
 
+              <div id="training-registrations" className="scroll-mt-28">
+                <h2 className="text-2xl font-bold text-deep-blue font-heading mb-4">Course registrations</h2><p>For the training centre we also store your student account identifier, course orders, payment status, privately uploaded bank payment proof, lesson completion and quiz scores. Authorised Pacific Wave Digital administrators review bank proof. Card details are collected by Stripe; we do not store card numbers. YouTube provides embedded course recordings and may process playback information when you play a video. Transactional account, registration and payment messages are separate from optional marketing consent.</p>
+                <p>For Pacific Wave Digital training, we collect your name, email, contact number, general location, attendance preference and any optional business information you provide. We record your acknowledgement of the course fee and this notice, and your separate choice about future PWD training updates.</p>
+                <p className="mt-4">We use these details to manage your registration, plan attendance and contact you with payment, preparation and joining instructions. Our database and transactional email providers process the information to support these services. Registrations are available only to authorised staff, not other students. We keep records while needed for course administration, follow-up and applicable recordkeeping obligations.</p>
+                <p className="mt-4">Future training updates are optional. You can register without choosing them and withdraw that choice at any time. It does not authorise unrelated third-party marketing or automatic paid software renewal. Contact <a href="mailto:steve@pacificwavedigital.com" className="underline">steve@pacificwavedigital.com</a> to request access, corrections, deletion or to stop training updates. Please avoid including sensitive information in the optional question field.</p>
+                <p className="mt-4">Optional form analytics record only form views and successful saves with a cohort identifier, never your name, email, phone or form answers. Registration works without analytics consent. Training notice version: training-2026-09-15.</p>
+              </div>
               <div>
                 <h2 className="text-2xl font-bold text-deep-blue font-heading mb-4">3. How We Use Your Information</h2>
                 <ul className="list-disc pl-6 space-y-2">

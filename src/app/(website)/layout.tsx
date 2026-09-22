@@ -1,7 +1,6 @@
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import ChatWidget from '@/components/ChatWidget';
-import VoiceWidget from '@/components/VoiceWidget';
+import WebsiteFrame from "@/components/WebsiteFrame";
+import WebsiteFooter from "@/components/WebsiteFooter";
+import ContactWidgets from "@/components/ContactWidgets";
 
 export default function WebsiteLayout({
   children,
@@ -10,11 +9,9 @@ export default function WebsiteLayout({
 }) {
   return (
     <>
-      <Navbar />
-      <main className="flex-1 pt-20">{children}</main>
-      <Footer />
-      <VoiceWidget />
-      <ChatWidget />
+      <WebsiteFrame>{children}</WebsiteFrame>
+      <WebsiteFooter />
+      <ContactWidgets />
     </>
   );
 }

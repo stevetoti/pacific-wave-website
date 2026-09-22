@@ -1,4 +1,5 @@
 'use client';
+import { authFetch } from '@/lib/auth-fetch';
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
@@ -24,6 +25,7 @@ interface Submission {
   ai_summary: string | null;
   status: string;
   assigned_to: string | null;
+  notification_status: string;
   notes: string | null;
 }
 
@@ -74,7 +76,7 @@ export default function SubmissionsPage() {
     try {
       const { data, error } = await supabase
         .from('project_submissions')
-        .select('*')
+        .select('*').eq('site_id', 'pwd')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -96,7 +98,7 @@ export default function SubmissionsPage() {
       const { error } = await supabase
         .from('project_submissions')
         .update({ status: newStatus })
-        .eq('id', id);
+        .eq('id', id).eq('site_id', 'pwd');
 
       if (error) throw error;
 
@@ -111,6 +113,15 @@ export default function SubmissionsPage() {
       console.error('Failed to update status:', err);
       alert('Failed to update status');
     }
+  };
+
+  const retryNotification = async (id: string) => {
+    const response = await authFetch('/api/notify-submission', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }),
+    });
+    if (!response.ok) { alert('Email could not be sent. The inquiry remains saved.'); return; }
+    setSubmissions(rows => rows.map(row => row.id === id ? { ...row, notification_status: 'sent' } : row));
+    setSelectedSubmission(row => row?.id === id ? { ...row, notification_status: 'sent' } : row);
   };
 
   const filteredSubmissions = submissions.filter(s => 
@@ -363,6 +374,12 @@ export default function SubmissionsPage() {
               )}
 
               {/* Additional Notes */}
+              {selectedSubmission.notification_status !== 'sent' && (
+                <div className="rounded-xl bg-amber-50 p-4 text-amber-900">
+                  <p>Inquiry saved. Email notification is pending.</p>
+                  <button className="underline mt-2" onClick={() => retryNotification(selectedSubmission.id)}>Retry notification</button>
+                </div>
+              )}
               {selectedSubmission.additional_notes && (
                 <div className="bg-yellow-50 rounded-xl p-4 mb-6">
                   <h3 className="font-semibold text-yellow-700 mb-3">📝 Additional Notes</h3>

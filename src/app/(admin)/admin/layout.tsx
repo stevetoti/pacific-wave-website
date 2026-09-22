@@ -1,4 +1,5 @@
 'use client';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -17,7 +18,9 @@ interface NavItem {
 
 const adminNav: NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: '📊', page: 'dashboard' },
-  { href: '/admin/submissions', label: 'Submissions', icon: '📥', page: 'dashboard' },
+  { href: '/admin/submissions', label: 'Submissions', icon: '📥', page: 'settings' },
+  { href: '/admin/training-center', label: 'Training centre LMS', icon: '📚', page: 'settings' },
+  { href: '/admin/training', label: 'Training registrations', icon: '🎓', page: 'settings' },
   { href: '/admin/blog', label: 'Blog Posts', icon: '📝', page: 'blog' },
   { href: '/admin/seo', label: 'SEO Settings', icon: '🔍', page: 'seo' },
   { href: '/admin/seo-hub', label: 'SEO Hub', icon: '🎯', page: 'seo' },
@@ -26,6 +29,7 @@ const adminNav: NavItem[] = [
   { href: '/admin/transcripts', label: 'Transcripts', icon: '💬', page: 'transcripts' },
   { href: '/admin/users', label: 'User Management', icon: '👥', page: 'users' },
   { href: '/admin/help', label: 'Help Center', icon: '❓', page: 'help' },
+  { href: '/admin/errors', label: 'Service Errors', icon: '⚠️', page: 'settings' },
   { href: '/admin/settings', label: 'Settings', icon: '⚙️', page: 'settings' },
 ];
 
@@ -118,7 +122,7 @@ export default function AdminLayout({
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        initAuth();
+        setTimeout(() => { if (mounted) void initAuth(); }, 0);
       } else {
         if (mounted) {
           setAuthStatus('unauthenticated');
@@ -334,10 +338,11 @@ export default function AdminLayout({
             // Login Form
             <form onSubmit={handleLogin}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="admin-login-email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email Address
                 </label>
                 <input
+                  id="admin-login-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -347,10 +352,11 @@ export default function AdminLayout({
                 />
               </div>
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="admin-login-password" className="block text-sm font-medium text-gray-700 mb-2">
                   Password
                 </label>
                 <input
+                  id="admin-login-password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -486,7 +492,7 @@ export default function AdminLayout({
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 min-w-0 flex flex-col min-h-screen">
         {/* Mobile header */}
         <header className="lg:hidden bg-white shadow-sm p-4 flex items-center gap-4">
           <button
@@ -500,8 +506,8 @@ export default function AdminLayout({
           <span className="font-bold text-deep-blue">PWD Admin</span>
         </header>
 
-        <main className="flex-1 p-4 lg:p-8">
-          {children}
+        <main className="flex-1 min-w-0 p-4 lg:p-8">
+          <ProtectedRoute>{children}</ProtectedRoute>
         </main>
       </div>
     </div>

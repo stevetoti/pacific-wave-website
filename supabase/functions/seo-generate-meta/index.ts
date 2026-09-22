@@ -1,3 +1,4 @@
+import { authorizeSEO } from '../_shared/auth.ts';
 // Supabase Edge Function: seo-generate-meta
 // Generates SEO-optimized meta tags using Claude AI
 
@@ -13,6 +14,9 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
+
+  const denied = await authorizeSEO(req);
+  if (denied) return new Response(JSON.stringify({ error: 'Access denied' }), { status: denied, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   try {
     const { topic, content } = await req.json()

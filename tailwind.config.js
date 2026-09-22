@@ -17,8 +17,8 @@ module.exports = {
         'light-gray': '#F8F9FA',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        heading: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+        sans: ['var(--font-inter)', 'system-ui', '-apple-system', 'sans-serif'],
+        heading: ['var(--font-jakarta)', 'var(--font-inter)', 'sans-serif'],
       },
     },
   },
