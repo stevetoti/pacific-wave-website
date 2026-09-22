@@ -45,7 +45,7 @@ export default function ProgramDetail({ course }: { course: Course }) {
           {course.enrollment_open ? (
             <Link
               className="lms-button"
-              href={`/training-center/checkout?course=${course.slug}`}
+              href={`/training-center/account?mode=signup&course=${course.slug}`}
             >
               Enrol now <ArrowRight size={18} />
             </Link>
@@ -179,7 +179,7 @@ export default function ProgramDetail({ course }: { course: Course }) {
           className="lms-button"
           href={
             course.enrollment_open
-              ? `/training-center/checkout?course=${course.slug}`
+              ? `/training-center/account?mode=signup&course=${course.slug}`
               : "/training-center#courses"
           }
         >

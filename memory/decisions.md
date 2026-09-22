@@ -55,3 +55,7 @@ Lesson artwork uses private course-scoped storage paths and one-hour signed URLs
 ## 2026-09-22 — [Codex] Training deployment recovery
 
 Production application source must be committed alongside SEO before Git production deployment. Required-route build guard and combined SEO/training browser coverage protect against partial application releases.
+
+## 2026-09-22 — [Codex] Simplified training enrollment
+
+User requested signup-first CTAs and immediate account access without mailbox confirmation. Implementing training-only new-account creation (existing users unchanged, shared Supabase auth settings unchanged), required name/phone/location/attendance/consent, pending enrollment at the server-side course price, immediate password login, and non-blocking welcome email. Payment/grant checks still protect paid lessons. Verification in progress.

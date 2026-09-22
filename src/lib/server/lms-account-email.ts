@@ -10,9 +10,10 @@ import type { Course } from "../lms/types";
 export async function sendAccountEmail(input: {
   email: string;
   password?: string;
-  mode: "signup" | "recovery";
+  mode: "signup" | "recovery" | "welcome";
   course?: string;
 }) {
+  if (process.env.TRAINING_EMAIL_MODE === "disabled") return;
   const db = getSupabaseAdmin();
   const live =
     process.env.TRAINING_EMAIL_MODE === "live" &&
@@ -22,7 +23,7 @@ export async function sendAccountEmail(input: {
     : process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3100";
-  const result = await db.auth.admin.generateLink(
+  const result = input.mode === "welcome" ? { error: null, data: null } : await db.auth.admin.generateLink(
     input.mode === "signup"
       ? { type: "signup", email: input.email, password: input.password! }
       : { type: "recovery", email: input.email },
@@ -42,9 +43,11 @@ export async function sendAccountEmail(input: {
   const query = input.course
     ? `course=${encodeURIComponent(input.course)}`
     : "";
-  const link = existing
+  const link = input.mode === "welcome"
+    ? `${origin}/training-center/account?mode=signin${query ? "&" + query : ""}`
+    : existing
     ? `${origin}/training-center/account${query ? "?" + query : ""}`
-    : `${origin}/training-center/account?verify=${encodeURIComponent(result.data.properties!.hashed_token)}&type=${input.mode}${query ? "&" + query : ""}`;
+    : `${origin}/training-center/account?verify=${encodeURIComponent(result.data!.properties!.hashed_token)}&type=${input.mode}${query ? "&" + query : ""}`;
   const courses = checked(
     await db
       .from("pwd_lms_courses")
@@ -54,23 +57,23 @@ export async function sendAccountEmail(input: {
       .limit(10),
   ) as Course[];
   const content = trainingTemplate({
-    title: existing
+    title: input.mode === "welcome" ? "Welcome to Pacific Wave Digital Training" : existing
       ? "Your training account is ready"
       : input.mode === "signup"
         ? "Welcome to your next chapter"
         : "Reset your student password",
-    intro: existing
+    intro: input.mode === "welcome" ? "Your student account is ready. You can sign in immediately, complete your course payment and find your learning space. No email confirmation is needed." : existing
       ? "You already have a verified account with this email address. Use your existing password to sign in to the Pacific Wave Digital Training Centre. There is no need to create another account."
       : input.mode === "signup"
         ? "Welcome to Pacific Wave Digital. Confirm your email address to activate your student account and start your learning journey."
         : "We received a request to reset your training account password. Use the secure button below, then confirm the reset on our website and choose a new password.",
-    action: existing
+    action: input.mode === "welcome" ? (input.course ? "Complete my course enrollment" : "Open my dashboard") : existing
       ? "Sign in to your account"
       : input.mode === "signup"
         ? "Verify my email address"
         : "Reset my password",
     url: link,
-    details: existing
+    details: input.mode === "welcome" ? ["Learn practical AI, business, website and software skills with instructor support.", "Your dashboard brings together your courses, lesson recordings, community and progress. Course access follows your payment or administrator approval.", "Pay securely by card or use our ANZ/BRED VUV bank accounts and upload your payment proof at checkout."] : existing
       ? [
           "Forgot your password? Choose “Forgot password?” on the sign-in page to receive a secure reset link.",
           "Your account brings together your enrolled courses, class recordings, learning progress and instructor support.",
@@ -84,7 +87,7 @@ export async function sendAccountEmail(input: {
         : [
             "If you did not request this reset, you can ignore this email. Your password stays unchanged.",
           ],
-    courses: input.mode === "signup" ? courses : [],
+    courses: ["signup", "welcome"].includes(input.mode) ? courses : [],
   });
   const log = checked(
     await db
@@ -94,7 +97,7 @@ export async function sendAccountEmail(input: {
       .single(),
   );
   if (!log) throw Error("Email delivery record unavailable");
-  await queueOwnerNotification(`account-${log.id}`, `Training account activity: ${existing ? "existing account access" : input.mode === "signup" ? "new student account" : "password reset request"}`, `Student email: ${input.email}\nActivity: ${purpose}\nCourse selected: ${input.course || "Not selected"}\nAccount verification/reset links are sent privately to the student.`);
+  await queueOwnerNotification(`account-${log.id}`, `Training account activity: ${existing ? "existing account access" : ["signup", "welcome"].includes(input.mode) ? "new student account" : "password reset request"}`, `Student email: ${input.email}\nActivity: ${purpose}\nCourse selected: ${input.course || "Not selected"}\n${input.mode === "welcome" ? "Student can sign in immediately; welcome and enrollment details sent privately." : "Account verification/reset links are sent privately to the student."}`);
   after(sendOwnerNotifications);
   let response: Response | undefined;
   try {
@@ -114,7 +117,7 @@ export async function sendAccountEmail(input: {
               "Pacific Wave Digital <noreply@pacificwavedigital.com>",
             to: live ? input.email : "delivered@resend.dev",
             reply_to: "steve@pacificwavedigital.com",
-            subject: existing
+            subject: input.mode === "welcome" ? "Welcome — your Pacific Wave Digital student account is ready" : existing
               ? "Your Pacific Wave Digital training account and course guide"
               : input.mode === "signup"
                 ? "Welcome to Pacific Wave Digital — verify your student account"

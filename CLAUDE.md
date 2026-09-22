@@ -2,7 +2,7 @@
 
 ## Resume here — 2026-09-22 [Codex] training outage recovery
 
-The Sept 21 SEO Git deployment removed the LMS because the previously deployed LMS source was uncommitted. Production was immediately restored to `dpl_Eu5HccX8AogwF9wDrQpv5u4YSiyv`. This recovery branch combines the full live application with all SEO PR #2/#3 changes, excluding unrelated marketing branch history. Verification/publication status is in `memory/changelog.md`.
+The Sept 21 SEO Git deployment removed the LMS because the previously deployed LMS source was uncommitted. Production was immediately restored to `dpl_Eu5HccX8AogwF9wDrQpv5u4YSiyv`. This recovery branch combines the full live application with all SEO PR #2/#3 changes, excluding unrelated marketing branch history. Recovery is committed/pushed to `main` at `560681e`; Git production `dpl_GZHG67KGEDywDwuB9htiNzPorv97` is READY and owns pacificwavedigital.com. All eight live desktop/mobile smoke checks passed. Details are in `memory/changelog.md`.
 
 **Deploy only complete source from current `origin/main` or a branch based on it.** Historical `pwd-030-proof-production` checkout is not the deployment source of truth. Never deploy a marketing/SEO-only snapshot. `npm run build` checks the required training, registration API, admin and SEO routes before and after compilation. Keep those checks. Run the public desktop/mobile LMS and `release.spec.ts` tests before promotion. No database migration is needed for this recovery; existing students/payments remain in Supabase.
 

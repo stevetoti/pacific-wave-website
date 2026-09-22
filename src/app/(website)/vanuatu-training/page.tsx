@@ -120,6 +120,7 @@ export default async function TrainingPage() {
   ];
   return (
     <div className="training">
+      {open && <div className="sticky top-20 z-30 border-b border-slate-200 bg-white/95 backdrop-blur px-4 py-3"><div className="max-w-6xl mx-auto flex items-center justify-between gap-3"><div className="text-sm font-semibold">{monthLabel(c)} training<span className="block text-xs font-normal">{feeLabel(c)} · Online or in person</span></div><Link className="training-button !py-3 !px-5" href="/training-center/account?mode=signup&course=vanuatu-october-2026">Join class <ArrowUpRight size={18}/></Link></div></div>}
       <section className="training-section !pt-10 md:!pt-16 !pb-12">
         <div className="grid lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-14 items-center">
           <div>
@@ -153,7 +154,7 @@ export default async function TrainingPage() {
               <strong className="text-2xl ml-2">{feeLabel(c)}</strong>
             </p>
             <div className="flex flex-col sm:items-start gap-4 mt-6">
-              <a href="#register" className="training-button">
+              <a href={open ? "/training-center/account?mode=signup&course=vanuatu-october-2026" : "#register"} className="training-button">
                 {open
                   ? `Register for the ${monthLabel(c)} Class`
                   : "View registration information"}{" "}
@@ -485,7 +486,7 @@ export default async function TrainingPage() {
                 </p>
               </div>
             ) : (
-              <div className="training-form p-8"><h3 className="text-2xl font-bold">Your course starts here</h3><p className="my-5 leading-relaxed">Register through our training centre and access your personal learning dashboard. Bank transfers are verified before paid lessons unlock.</p>{open ? <Link className="training-button" href="/training-center/checkout?course=vanuatu-october-2026">Register & continue to checkout <ArrowUpRight size={18}/></Link> : <p>Registration is closed for this cohort.</p>}<p className="mt-5 text-sm"><Link className="underline" href="/training-center/account">Already registered? Sign in to your student account</Link></p></div>
+              <div className="training-form p-8"><h3 className="text-2xl font-bold">Your course starts here</h3><p className="my-5 leading-relaxed">Complete one signup form and choose online or in-person training. No email confirmation needed. Pay by card or bank transfer to complete enrollment; bank transfers are reviewed before paid lessons unlock.</p>{open ? <Link className="training-button" href="/training-center/account?mode=signup&course=vanuatu-october-2026">Register & join the class <ArrowUpRight size={18}/></Link> : <p>Registration is closed for this cohort.</p>}<p className="mt-5 text-sm"><Link className="underline" href="/training-center/account">Already registered? Sign in to your student account</Link></p></div>
             )}
           </div>
         </div>

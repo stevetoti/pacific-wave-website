@@ -59,7 +59,7 @@ export default async function Page({
       typeof value === "string" ? value : undefined,
     ]),
   );
-  const publicPage = !path.length || path[0] === "programs";
+  const publicPage = !path.length || path[0] === "programs" || (path[0] === "account" && Boolean(query.course));
   const initialCourses = publicPage ? await publicTrainingCourses().catch(() => undefined) : undefined;
   return <TrainingCenter path={path} query={query} initialCourses={initialCourses} />;
 }

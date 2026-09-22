@@ -102,4 +102,4 @@
 
 ## 2026-09-22 — [Codex] Training deployment recovery
 
-- [ ] Publish and verify combined LMS + SEO source on main; update final release evidence. Immediate registration access restored; no database changes.
+- [x] Publish and verify combined LMS + SEO source on main; update final release evidence. — [Codex] 2026-09-22: main 560681e and Git production dpl_GZHG67KGEDywDwuB9htiNzPorv97 verified READY; all eight live browser checks passed. No database changes.

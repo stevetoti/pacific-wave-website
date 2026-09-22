@@ -1,3 +1,6 @@
+import { accountSchema } from "@/lib/lms/signup";
+import { createTrainingAccount } from "@/lib/server/lms-signup";
+import { reportServerError } from "@/lib/server/report-error";
 import { withLessonThumbnails } from "@/lib/server/lesson-thumbnails";
 import {
   queueOwnerNotification,
@@ -318,22 +321,18 @@ export async function POST(request: Request, context: Context) {
     const { action } = await context.params;
     if (action === "account") {
       await rateLimit(request, "lms-account", 5);
-      const input = await readJson(
-        request,
-        z.object({
-          email: z.email().max(254),
-          password: z.string().min(10).max(128).optional(),
-          mode: z.enum(["signup", "recovery"]),
-          course: z
-            .string()
-            .regex(/^[a-z0-9-]+$/)
-            .max(100)
-            .optional(),
-        }),
-      );
-      if (input.mode === "signup" && !input.password)
-        throw new HttpError(400, "Password required");
+      const input = await readJson(request, accountSchema);
       await rateLimit(request, accountEmailBucket(input.email), 4);
+      if (input.mode === "signup") {
+        const registration = await createTrainingAccount(input);
+        after(async () => {
+          try {
+            await sendAccountEmail({ email: input.email, mode: "welcome", course: input.course });
+            await sendLmsEmails();
+          } catch (error) { await reportServerError("lms/signup-welcome", error); }
+        });
+        return json({ success: true, ...registration });
+      }
       await sendAccountEmail({
         ...input,
         email: input.email.trim().toLowerCase(),

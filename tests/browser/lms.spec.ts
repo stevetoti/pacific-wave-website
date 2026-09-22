@@ -23,16 +23,10 @@ test("training centre catalogue, October checkout and student entry work on all 
   ).toBe(true);
   await page.screenshot({path:`/tmp/lms-catalog-${test.info().project.name}.png`,fullPage:true});
   await page.locator("article").filter({hasText:"Build Your Online Business in 30 Days"}).getByRole("link", { name: "Register", exact: true }).click();
-  await expect(
-    page.getByRole("heading", { name: "Start with your student account" }),
-  ).toBeVisible();
-  await page.getByRole("link", { name: "Continue to account" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Welcome back", exact: true }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "New here? Create an account" })
-    .click();
+  await expect(page.getByRole("heading", { name: "Create your student account" })).toBeVisible();
+  await expect(page.getByLabel("Phone / WhatsApp")).toBeVisible();
+  await expect(page.getByLabel("Location (town, island or country)")).toBeVisible();
+  await expect(page.getByLabel("How would you like to attend?")).toBeVisible();
   await expect(page.getByLabel("Password", { exact: true })).toHaveAttribute(
     "minlength",
     "10",
@@ -404,10 +398,9 @@ test('three image courses and public mentorship details lead to the correct chec
  await expect(page.getByText('Total fee for all 3 months')).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  await page.getByRole('link',{name:'Enrol now'}).first().click();
- await expect(page).toHaveURL(/checkout\?course=one-on-one-mentorship/);
- await expect(page.locator('.lms-price')).toContainText('250,000');
- await page.getByRole('link',{name:'Continue to account'}).click();
- await expect(page).toHaveURL(/account\?course=one-on-one-mentorship/);
+ await expect(page).toHaveURL(/account\?mode=signup&course=one-on-one-mentorship/);
+ await expect(page.getByRole('heading',{name:'Create your student account'})).toBeVisible();
+ await expect(page.locator('.lms-notice')).toContainText('250,000');
  await page.goto('/training-center/programs/how-to-start-a-profitable-business');
  await expect(page.getByRole('heading',{name:'How To Start A Profitable Business',exact:true})).toBeVisible();
  await expect(page.getByText('Not yet open for enrolment')).toBeVisible();

@@ -95,9 +95,12 @@ export default function TrainingCenter({
     [current, setCurrent] = useState<Course | null>(null),
     [selectedBank, setSelectedBank] = useState(""),
     [authMode, setAuthMode] = useState(
-      query.mode === "reset" ? "reset" : "signin",
+      query.mode === "reset" ? "reset" : query.mode === "signup" || (query.course && query.mode !== "signin") ? "signup" : "signin",
     );
   const [accountEmail, setAccountEmail] = useState("");
+  useEffect(() => {
+    if (view === "account") setAuthMode(query.mode === "reset" ? "reset" : query.mode === "signup" || (query.course && query.mode !== "signin") ? "signup" : "signin");
+  }, [view, query.mode, query.course]);
   useEffect(() => {
     if (view === "course")
       setCourseTab(query.tab === "community" ? "community" : "lessons");
@@ -158,6 +161,13 @@ export default function TrainingCenter({
       subscription.unsubscribe();
     };
   }, [refresh]);
+  useEffect(() => {
+    if (view === "account" && email && query.course && !query.verify && !["reset", "update"].includes(authMode)) {
+      router.replace(`${base}/checkout?course=${encodeURIComponent(query.course)}`);
+    } else if (view === "checkout" && ready && !email && query.course && courses.some(c => (c.id === query.course || c.slug === query.course) && c.enrollment_open)) {
+      router.replace(`${base}/account?mode=signup&course=${encodeURIComponent(query.course)}`);
+    }
+  }, [view, email, ready, query.course, query.verify, authMode, router, courses]);
   async function run(work: () => Promise<void>) {
     if (busy) return;
     setBusy(true);
@@ -179,7 +189,7 @@ export default function TrainingCenter({
     (queryCourse ? undefined : courses[0]);
   const order = orders.find((o) => o.course_id === checkout?.id);
   const courseOrder = orders.find((o) => o.course_id === current?.id);
-  const authUrl = `${base}/account${queryCourse ? `?course=${queryCourse}` : ""}`;
+  const authUrl = `${base}/account?mode=signup${queryCourse ? `&course=${encodeURIComponent(queryCourse)}` : ""}`;
   function calendar() {
     const lines = [
       "BEGIN:VCALENDAR",
@@ -232,7 +242,7 @@ export default function TrainingCenter({
           <div>
             <Link href="/">Main website</Link>
             <Link href={base}>Explore courses</Link>
-            <Link href={email ? `${base}/dashboard` : authUrl}>
+            <Link href={email ? `${base}/dashboard` : authUrl.replace("mode=signup", "mode=signin")}>
               {email ? "My learning" : "Student sign in"}
             </Link>
           </div>
@@ -383,7 +393,7 @@ export default function TrainingCenter({
                               href={
                                 programs[c.slug] && !c.cohort_id
                                   ? `${base}/programs/${c.slug}`
-                                  : `${base}/checkout?course=${c.id}`
+                                  : `${base}/account?mode=signup&course=${c.slug}`
                               }
                             >
                               {c.cohort_id ? "Register" : "View course"}
@@ -465,6 +475,7 @@ export default function TrainingCenter({
                     PACIFIC WAVE DIGITAL · TRAINING CENTRE
                   </p>
 
+                  {authMode === "signup" && queryCourse && checkout && <div className="lms-notice"><strong>{checkout.title}</strong><p>{money(checkout.amount, checkout.currency)} · One-time course fee</p></div>}
                   <h1>
                     {authMode === "signup"
                       ? "Create your student account"
@@ -475,8 +486,7 @@ export default function TrainingCenter({
                           : "Welcome back"}
                   </h1>
                   <p>
-                    One account for your courses, class recordings and learning
-                    progress.
+                    {authMode === "signup" ? "Register once, then choose how to pay. No email confirmation needed." : "Your courses, class recordings and learning progress in one place."}
                   </p>
                   {accountEmail && (
                     <div className="lms-notice">
@@ -547,7 +557,7 @@ export default function TrainingCenter({
                       run(async () => {
                         const address = String(f.get("email") || ""),
                           password = String(f.get("password") || "");
-                        setAccountEmail(address);
+                        if (authMode === "reset") setAccountEmail(address);
                         if (authMode === "update") {
                           const { error } = await supabase.auth.updateUser({
                             password,
@@ -572,13 +582,13 @@ export default function TrainingCenter({
                           await api("account", {
                             email: address,
                             password,
+                            name: f.get("name"), phone: f.get("phone"), location: f.get("location"),
+                            attendance: f.get("attendance"), acknowledged: f.get("privacy") === "on",
                             mode: "signup",
                             course: queryCourse || undefined,
                           });
-                          setMessage(
-                            "Your account instructions have been sent. Check your inbox and spam folder. Existing accounts receive sign-in instructions; new accounts receive a verification link.",
-                          );
-                          return;
+                          // Sign in immediately using the supplied password; the new account
+                          // and pending enrollment were created together on the server.
                         }
                         const result = await supabase.auth.signInWithPassword({
                           email: address,
@@ -600,6 +610,12 @@ export default function TrainingCenter({
                     }}
                   >
                     <fieldset disabled={busy}>
+                      {authMode === "signup" && <>
+                        <label>Full name<input name="name" autoComplete="name" minLength={2} maxLength={120} required /></label>
+                        <label>Phone / WhatsApp<input name="phone" type="tel" autoComplete="tel" placeholder="+678 …" minLength={5} maxLength={40} required /></label>
+                        <label>Location (town, island or country)<input name="location" autoComplete="address-level2" placeholder="e.g. Port Vila, Efate" minLength={2} maxLength={100} required /></label>
+                        <label>How would you like to attend?<select name="attendance" required defaultValue=""><option value="" disabled>Choose your attendance</option><option value="online">Online</option><option value="in_person">In person (physical class)</option><option value="mixed">A mix of both</option></select></label>
+                      </>}
                       {authMode !== "update" && (
                         <label>
                           Email address
@@ -633,7 +649,7 @@ export default function TrainingCenter({
                       )}
                       {authMode === "signup" && (
                         <label className="lms-check">
-                          <input type="checkbox" required />I agree to the{" "}
+                          <input name="privacy" type="checkbox" required />I agree to the{" "}
                           <Link href="/privacy#training-registrations">
                             training privacy notice
                           </Link>
@@ -644,7 +660,7 @@ export default function TrainingCenter({
                         {busy
                           ? "Please wait…"
                           : authMode === "signup"
-                            ? "Create account"
+                            ? (queryCourse ? "Register & continue to payment" : "Create my account")
                             : authMode === "reset"
                               ? "Send reset email"
                               : authMode === "update"
@@ -664,9 +680,9 @@ export default function TrainingCenter({
                         ? "Already a student? Sign in"
                         : "New here? Create an account"}
                     </button>
-                    <button onClick={() => setAuthMode("reset")}>
+                    {authMode === "signin" && <button onClick={() => setAuthMode("reset")}>
                       Forgot password?
-                    </button>
+                    </button>}
                   </div>
                   <p className="lms-auth-reassurance">
                     <ShieldCheck size={16} aria-hidden="true" />
@@ -691,7 +707,7 @@ export default function TrainingCenter({
                     <p className="lms-eyebrow">YOUR NEXT STEP</p>
                     <h1>Join the course</h1>
                     <p>
-                      Account → Registration → Payment → Your learning dashboard
+                      Choose your payment option to complete enrollment.
                     </p>
                   </header>
                   <div className="lms-two">
@@ -757,7 +773,7 @@ export default function TrainingCenter({
                             registration and access your dashboard.
                           </p>
                           <Link className="lms-button" href={authUrl}>
-                            Continue to account <ArrowRight size={18} />
+                            Register to join <ArrowRight size={18} />
                           </Link>
                         </>
                       ) : !order ? (
