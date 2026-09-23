@@ -1,5 +1,11 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## Latest release — 2026-09-23 [Codex] course communication
+
+Application commits `d0c8d98` + `4e2f971`; verified production `dpl_3eyTu3HTRsVAHJukjYmPR3MeLRmp` promoted to pacificwavedigital.com. Admin **Course communication** is `/admin/training-center/community`; students use **Community & groups**, or **Private mentor chat** for one-on-one courses. Mentions/unread indicators, replies, reactions, pins/search, private files (4 MB), groups and moderation are implemented. Additive migrations `20260923_community_features.sql` and `20260923_mentorship_communication.sql` are applied. Chat notifications stay in-app; no automatic chat email blasts. See `docs/COURSE-COMMUNICATION.md` and memory for permission/testing details.
+
+**Canonical release checkout:** `.deployment/training-recovery`, based on current main. The historical original branch is not a safe standalone deployment source.
+
 ## Latest release — 2026-09-22 [Codex] simplified enrollment
 
 Main `af8aed3`, production `dpl_6LGo8aEtxhEiEh9R9RfpY4QxxHaR`: new training signup collects contact/location/attendance, creates a pending enrollment, signs in immediately without email confirmation, then opens payment. Only NEW training accounts bypass confirmation; never update an existing user or global Supabase auth settings. Paid lesson protection remains. See `docs/TRAINING-CENTER-HANDOFF.md` and memory for tests and release evidence.

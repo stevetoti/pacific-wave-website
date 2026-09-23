@@ -1,3 +1,7 @@
+## 2026-09-23 — [Codex] Course communication update
+
+Live admin link: https://pacificwavedigital.com/admin/training-center/community. Select a course to use its shared conversations/private groups. Students open Community & groups inside their paid/granted course; mentorship students use Private mentor chat. Tags notify inside the community, not by email. Private files use current access checks and a 4 MB limit. Full guide: `docs/COURSE-COMMUNICATION.md`. Applied migrations: `20260923_community_features.sql`, `20260923_mentorship_communication.sql`. Complete release source is in `.deployment/training-recovery` on main history; do not deploy the old marketing branch.
+
 # Pacific Wave Digital training centre
 
 ## Status — [Codex] 2026-09-15

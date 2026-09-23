@@ -108,4 +108,4 @@
 
 - [x] Make LMS registrations and payment proof reviews discoverable from admin; retain earlier enquiries separately — [Codex] 2026-09-23: dedicated route/menu, legacy banner and All payments default live on 4dd7781.
 
-- [ ] Release advanced course communication (mentions, replies, reactions, pins/search, private attachments/groups, unread indicators, moderation and isolated mentor chat) — [Codex] 2026-09-23: implementation/migrations/API checks complete; final browser checks and publication in progress.
+- [x] Release advanced course communication (mentions, replies, reactions, pins/search, private attachments/groups, unread indicators, moderation and isolated mentor chat) — [Codex] 2026-09-23: released and verified on dpl_3eyTu3HTRsVAHJukjYmPR3MeLRmp; API and persisted desktop/mobile chat checks passed.
