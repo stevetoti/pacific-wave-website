@@ -27,7 +27,11 @@ const emptyCourse = {
   published: false,
   enrollment_open: true,
 };
-export default function TrainingAdmin({ initialTab = "courses" }: { initialTab?: "courses" | "payments" }) {
+export default function TrainingAdmin({
+  initialTab = "courses",
+}: {
+  initialTab?: "courses" | "payments" | "community";
+}) {
   const [tab, setTab] = useState<string>(initialTab),
     [courses, setCourses] = useState<Course[]>([]),
     [lessons, setLessons] = useState<Lesson[]>([]),
@@ -131,7 +135,11 @@ export default function TrainingAdmin({ initialTab = "courses" }: { initialTab?:
               }}
               className={tab === t ? "selected" : ""}
             >
-              {t === "payments" ? "Registrations & payments" : t[0].toUpperCase() + t.slice(1)}
+              {t === "payments"
+                ? "Registrations & payments"
+                : t === "community"
+                  ? "Course communication"
+                  : t[0].toUpperCase() + t.slice(1)}
             </button>
           ))}
         </nav>
@@ -310,26 +318,26 @@ export default function TrainingAdmin({ initialTab = "courses" }: { initialTab?:
         )}
         {tab === "community" && (
           <>
+            <h2>Course communication</h2>
+            <p>
+              Select a course to chat with students, share announcements, tag
+              participants and manage private groups.
+            </p>
             <label>
-              Choose a group course
+              Choose a course
               <select
                 value={selected}
                 onChange={(e) => setSelected(e.target.value)}
               >
                 <option value="">Select course</option>
-                {courses
-                  .filter((c) => !c.private_sessions)
-                  .map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.title}
-                    </option>
-                  ))}
+                {courses.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.title}
+                  </option>
+                ))}
               </select>
             </label>
-            {selected &&
-              !courses.find((c) => c.id === selected)?.private_sessions && (
-                <CourseCommunity key={selected} courseId={selected} />
-              )}
+            {selected && <CourseCommunity key={selected} courseId={selected} />}
           </>
         )}
         {tab === "lessons" && (
@@ -769,8 +777,18 @@ export default function TrainingAdmin({ initialTab = "courses" }: { initialTab?:
         {tab === "payments" && (
           <>
             <h2>Student registrations & payments</h2>
-            <p>All course registrations appear here. “Review” means bank proof has been uploaded and is waiting for you to check the deposit and approve it.</p>
-            <button className="lms-text" disabled={busy} onClick={() => load().catch((e) => setError(e.message))}>Refresh registrations</button>
+            <p>
+              All course registrations appear here. “Review” means bank proof
+              has been uploaded and is waiting for you to check the deposit and
+              approve it.
+            </p>
+            <button
+              className="lms-text"
+              disabled={busy}
+              onClick={() => load().catch((e) => setError(e.message))}
+            >
+              Refresh registrations
+            </button>
             <label>
               Payment status
               <select

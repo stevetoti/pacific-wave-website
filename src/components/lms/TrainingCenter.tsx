@@ -95,11 +95,22 @@ export default function TrainingCenter({
     [current, setCurrent] = useState<Course | null>(null),
     [selectedBank, setSelectedBank] = useState(""),
     [authMode, setAuthMode] = useState(
-      query.mode === "reset" ? "reset" : query.mode === "signup" || (query.course && query.mode !== "signin") ? "signup" : "signin",
+      query.mode === "reset"
+        ? "reset"
+        : query.mode === "signup" || (query.course && query.mode !== "signin")
+          ? "signup"
+          : "signin",
     );
   const [accountEmail, setAccountEmail] = useState("");
   useEffect(() => {
-    if (view === "account") setAuthMode(query.mode === "reset" ? "reset" : query.mode === "signup" || (query.course && query.mode !== "signin") ? "signup" : "signin");
+    if (view === "account")
+      setAuthMode(
+        query.mode === "reset"
+          ? "reset"
+          : query.mode === "signup" || (query.course && query.mode !== "signin")
+            ? "signup"
+            : "signin",
+      );
   }, [view, query.mode, query.course]);
   useEffect(() => {
     if (view === "course")
@@ -162,12 +173,41 @@ export default function TrainingCenter({
     };
   }, [refresh]);
   useEffect(() => {
-    if (view === "account" && email && query.course && !query.verify && !["reset", "update"].includes(authMode)) {
-      router.replace(`${base}/checkout?course=${encodeURIComponent(query.course)}`);
-    } else if (view === "checkout" && ready && !email && query.course && courses.some(c => (c.id === query.course || c.slug === query.course) && c.enrollment_open)) {
-      router.replace(`${base}/account?mode=signup&course=${encodeURIComponent(query.course)}`);
+    if (
+      view === "account" &&
+      email &&
+      query.course &&
+      !query.verify &&
+      !["reset", "update"].includes(authMode)
+    ) {
+      router.replace(
+        `${base}/checkout?course=${encodeURIComponent(query.course)}`,
+      );
+    } else if (
+      view === "checkout" &&
+      ready &&
+      !email &&
+      query.course &&
+      courses.some(
+        (c) =>
+          (c.id === query.course || c.slug === query.course) &&
+          c.enrollment_open,
+      )
+    ) {
+      router.replace(
+        `${base}/account?mode=signup&course=${encodeURIComponent(query.course)}`,
+      );
     }
-  }, [view, email, ready, query.course, query.verify, authMode, router, courses]);
+  }, [
+    view,
+    email,
+    ready,
+    query.course,
+    query.verify,
+    authMode,
+    router,
+    courses,
+  ]);
   async function run(work: () => Promise<void>) {
     if (busy) return;
     setBusy(true);
@@ -242,7 +282,13 @@ export default function TrainingCenter({
           <div>
             <Link href="/">Main website</Link>
             <Link href={base}>Explore courses</Link>
-            <Link href={email ? `${base}/dashboard` : authUrl.replace("mode=signup", "mode=signin")}>
+            <Link
+              href={
+                email
+                  ? `${base}/dashboard`
+                  : authUrl.replace("mode=signup", "mode=signin")
+              }
+            >
               {email ? "My learning" : "Student sign in"}
             </Link>
           </div>
@@ -475,7 +521,15 @@ export default function TrainingCenter({
                     PACIFIC WAVE DIGITAL · TRAINING CENTRE
                   </p>
 
-                  {authMode === "signup" && queryCourse && checkout && <div className="lms-notice"><strong>{checkout.title}</strong><p>{money(checkout.amount, checkout.currency)} · One-time course fee</p></div>}
+                  {authMode === "signup" && queryCourse && checkout && (
+                    <div className="lms-notice">
+                      <strong>{checkout.title}</strong>
+                      <p>
+                        {money(checkout.amount, checkout.currency)} · One-time
+                        course fee
+                      </p>
+                    </div>
+                  )}
                   <h1>
                     {authMode === "signup"
                       ? "Create your student account"
@@ -486,7 +540,9 @@ export default function TrainingCenter({
                           : "Welcome back"}
                   </h1>
                   <p>
-                    {authMode === "signup" ? "Register once, then choose how to pay. No email confirmation needed." : "Your courses, class recordings and learning progress in one place."}
+                    {authMode === "signup"
+                      ? "Register once, then choose how to pay. No email confirmation needed."
+                      : "Your courses, class recordings and learning progress in one place."}
                   </p>
                   {accountEmail && (
                     <div className="lms-notice">
@@ -582,8 +638,11 @@ export default function TrainingCenter({
                           await api("account", {
                             email: address,
                             password,
-                            name: f.get("name"), phone: f.get("phone"), location: f.get("location"),
-                            attendance: f.get("attendance"), acknowledged: f.get("privacy") === "on",
+                            name: f.get("name"),
+                            phone: f.get("phone"),
+                            location: f.get("location"),
+                            attendance: f.get("attendance"),
+                            acknowledged: f.get("privacy") === "on",
                             mode: "signup",
                             course: queryCourse || undefined,
                           });
@@ -610,12 +669,56 @@ export default function TrainingCenter({
                     }}
                   >
                     <fieldset disabled={busy}>
-                      {authMode === "signup" && <>
-                        <label>Full name<input name="name" autoComplete="name" minLength={2} maxLength={120} required /></label>
-                        <label>Phone / WhatsApp<input name="phone" type="tel" autoComplete="tel" placeholder="+678 …" minLength={5} maxLength={40} required /></label>
-                        <label>Location (town, island or country)<input name="location" autoComplete="address-level2" placeholder="e.g. Port Vila, Efate" minLength={2} maxLength={100} required /></label>
-                        <label>How would you like to attend?<select name="attendance" required defaultValue=""><option value="" disabled>Choose your attendance</option><option value="online">Online</option><option value="in_person">In person (physical class)</option><option value="mixed">A mix of both</option></select></label>
-                      </>}
+                      {authMode === "signup" && (
+                        <>
+                          <label>
+                            Full name
+                            <input
+                              name="name"
+                              autoComplete="name"
+                              minLength={2}
+                              maxLength={120}
+                              required
+                            />
+                          </label>
+                          <label>
+                            Phone / WhatsApp
+                            <input
+                              name="phone"
+                              type="tel"
+                              autoComplete="tel"
+                              placeholder="+678 …"
+                              minLength={5}
+                              maxLength={40}
+                              required
+                            />
+                          </label>
+                          <label>
+                            Location (town, island or country)
+                            <input
+                              name="location"
+                              autoComplete="address-level2"
+                              placeholder="e.g. Port Vila, Efate"
+                              minLength={2}
+                              maxLength={100}
+                              required
+                            />
+                          </label>
+                          <label>
+                            How would you like to attend?
+                            <select name="attendance" required defaultValue="">
+                              <option value="" disabled>
+                                Choose your attendance
+                              </option>
+                              <option value="online">Online</option>
+                              <option value="in_person">
+                                In person (physical class)
+                              </option>
+                              <option value="mixed">A mix of both</option>
+                            </select>
+                          </label>
+                        </>
+                      )}
                       {authMode !== "update" && (
                         <label>
                           Email address
@@ -649,7 +752,8 @@ export default function TrainingCenter({
                       )}
                       {authMode === "signup" && (
                         <label className="lms-check">
-                          <input name="privacy" type="checkbox" required />I agree to the{" "}
+                          <input name="privacy" type="checkbox" required />I
+                          agree to the{" "}
                           <Link href="/privacy#training-registrations">
                             training privacy notice
                           </Link>
@@ -660,7 +764,9 @@ export default function TrainingCenter({
                         {busy
                           ? "Please wait…"
                           : authMode === "signup"
-                            ? (queryCourse ? "Register & continue to payment" : "Create my account")
+                            ? queryCourse
+                              ? "Register & continue to payment"
+                              : "Create my account"
                             : authMode === "reset"
                               ? "Send reset email"
                               : authMode === "update"
@@ -680,9 +786,11 @@ export default function TrainingCenter({
                         ? "Already a student? Sign in"
                         : "New here? Create an account"}
                     </button>
-                    {authMode === "signin" && <button onClick={() => setAuthMode("reset")}>
-                      Forgot password?
-                    </button>}
+                    {authMode === "signin" && (
+                      <button onClick={() => setAuthMode("reset")}>
+                        Forgot password?
+                      </button>
+                    )}
                   </div>
                   <p className="lms-auth-reassurance">
                     <ShieldCheck size={16} aria-hidden="true" />
@@ -706,9 +814,7 @@ export default function TrainingCenter({
                   <header className="lms-page-head">
                     <p className="lms-eyebrow">YOUR NEXT STEP</p>
                     <h1>Join the course</h1>
-                    <p>
-                      Choose your payment option to complete enrollment.
-                    </p>
+                    <p>Choose your payment option to complete enrollment.</p>
                   </header>
                   <div className="lms-two">
                     <section className="lms-panel">
@@ -1125,34 +1231,32 @@ export default function TrainingCenter({
                         </Link>
                       </div>
                     )}
-                    {!current.private_sessions && (
-                      <nav
-                        className="lms-admin-tabs"
-                        aria-label="Course sections"
+                    <nav
+                      className="lms-admin-tabs"
+                      aria-label="Course sections"
+                    >
+                      <button
+                        className={courseTab === "lessons" ? "selected" : ""}
+                        onClick={() => setCourseTab("lessons")}
                       >
-                        <button
-                          className={courseTab === "lessons" ? "selected" : ""}
-                          onClick={() => setCourseTab("lessons")}
-                        >
-                          Lessons & recordings
-                        </button>
-                        <button
-                          className={
-                            courseTab === "community" ? "selected" : ""
-                          }
-                          onClick={() => setCourseTab("community")}
-                        >
-                          Community & groups
-                        </button>
-                      </nav>
-                    )}
-                    {!current.private_sessions && courseTab === "community" && (
+                        Lessons & recordings
+                      </button>
+                      <button
+                        className={courseTab === "community" ? "selected" : ""}
+                        onClick={() => setCourseTab("community")}
+                      >
+                        {current.private_sessions
+                          ? "Private mentor chat"
+                          : "Community & groups"}
+                      </button>
+                    </nav>
+                    {courseTab === "community" && (
                       <CourseCommunity key={current.id} courseId={current.id} />
                     )}
                     <div
                       className="lms-learning"
                       style={
-                        !current.private_sessions && courseTab === "community"
+                        courseTab === "community"
                           ? { display: "none" }
                           : undefined
                       }

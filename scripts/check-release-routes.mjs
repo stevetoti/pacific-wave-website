@@ -5,6 +5,8 @@ const routes = [
   '/(website)/training-center/[[...path]]/page',
   '/(website)/vanuatu-training/page',
   '/(admin)/admin/training-center/page',
+  '/(admin)/admin/training-center/community/page',
+  '/api/lms-community/route',
   '/api/lms/[action]/route',
   '/api/training/register/route',
   '/(website)/services/[slug]/page',

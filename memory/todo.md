@@ -105,3 +105,7 @@
 - [x] Publish and verify combined LMS + SEO source on main; update final release evidence. — [Codex] 2026-09-22: main 560681e and Git production dpl_GZHG67KGEDywDwuB9htiNzPorv97 verified READY; all eight live browser checks passed. No database changes.
 
 - [x] Simplify enrollment to details → signup/contact/attendance → payment → learning dashboard; remove confirmation gate for new training accounts and add sticky October CTA — [Codex] 2026-09-22: released on main af8aed3, live desktop/mobile checks pass.
+
+- [x] Make LMS registrations and payment proof reviews discoverable from admin; retain earlier enquiries separately — [Codex] 2026-09-23: dedicated route/menu, legacy banner and All payments default live on 4dd7781.
+
+- [ ] Release advanced course communication (mentions, replies, reactions, pins/search, private attachments/groups, unread indicators, moderation and isolated mentor chat) — [Codex] 2026-09-23: implementation/migrations/API checks complete; final browser checks and publication in progress.

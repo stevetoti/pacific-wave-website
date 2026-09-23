@@ -21,6 +21,7 @@ const adminNav: NavItem[] = [
   { href: '/admin/submissions', label: 'Submissions', icon: '📥', page: 'settings' },
   { href: '/admin/training-center', label: 'Training centre LMS', icon: '📚', page: 'settings' },
   { href: '/admin/training-center/registrations', label: 'Registrations & payments', icon: '🎓', page: 'settings' },
+  { href: '/admin/training-center/community', label: 'Course communication', icon: '💬', page: 'settings' },
   { href: '/admin/training', label: 'Earlier training enquiries', icon: '📋', page: 'settings' },
   { href: '/admin/blog', label: 'Blog Posts', icon: '📝', page: 'blog' },
   { href: '/admin/seo', label: 'SEO Settings', icon: '🔍', page: 'seo' },

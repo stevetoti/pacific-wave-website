@@ -59,3 +59,10 @@ Production application source must be committed alongside SEO before Git product
 ## 2026-09-22 — [Codex] Simplified training enrollment
 
 User requested signup-first CTAs and immediate account access without mailbox confirmation. Implementing training-only new-account creation (existing users unchanged, shared Supabase auth settings unchanged), required name/phone/location/attendance/consent, pending enrollment at the server-side course price, immediate password login, and non-blocking welcome email. Payment/grant checks still protect paid lessons. Verification in progress.
+
+## 2026-09-23 — [Codex] Course communication privacy and delivery
+
+- Community messages/mentions notify inside course conversations with unread badges; no automatic chat email campaign.
+- Group courses support course lounge, instructor announcements and instructor-managed private groups. Mentorship gets one private room per paid/granted enrollment, with fixed student membership; instructors can access it, other mentees cannot.
+- Community attachment storage is private. Downloads proxy through current course/group authorization; membership removal or refund revokes access. Accepted images are re-encoded; up to three files per message, 4 MB per file.
+- Eight-second foreground feed polling and fifteen-second conversation count updates; browsing older history pauses live feed replacement. Mention names/IDs come from the current room roster, without exposing student emails.

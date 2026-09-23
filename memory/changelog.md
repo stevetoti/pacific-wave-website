@@ -356,3 +356,13 @@ Read-only investigation confirmed the reported October student is in LMS orders 
 — [Codex] 2026-09-23: Lint and production build passed, including release route guard. Added /admin/training-center/registrations opening the existing protected payments interface, renamed legacy enquiries, linked sidebar and legacy banner, and added refresh/status explanation. No database/payment mutations.
 
 — [Codex] 2026-09-23: Default registrations filter changed from review-only to All payments so pending and approved students remain visible too. Owner still chooses review-only when processing bank receipts.
+
+— [Codex] 2026-09-23: Published main 4dd7781, Git production dpl_5X9Ez3ALx5pDoXykiXzBAgg7VWmz READY and aliased to pacificwavedigital.com. New registrations route and legacy page return 200; anonymous LMS admin API remains 401. Lint and production builds passed. No student, bank proof, or payment decision changed.
+
+## 2026-09-23 — [Codex] Course communication expansion underway
+
+Building direct course communication navigation plus member-scoped mentions, replies, reactions, search/pins, unread markers, private file sharing and reporting/moderation. Preserve paid/granted course access and private group boundaries. In-app mention notifications only; no automatic chat email blasts. Additive private tables and service-only RPCs; migration not yet applied.
+
+— [Codex] 2026-09-23: Applied additive community features and private mentorship conversation migrations to rndegttgwtpkbjtvjgnc. Paid/granted mentorship orders receive isolated student/instructor rooms; backfill avoids changing orders or payment/email workflows. Added direct admin Course communication route. All 47 unit/SQL tests and production build pass; isolated API/browser verification underway with temporary users/courses, test email jobs removed in the same transaction as fixture orders.
+
+— [Codex] 2026-09-23: All 55 authenticated API checks passed, including mentions/unread, replies, edits, reactions, pins/search, private reports, file conversion/download, membership revocation, locked/archived posting rules and isolated mentor rooms. Temporary fixture data/uploads cleaned. 47 unit/SQL tests, lint and production build passed; eight desktop/mobile public regression checks passed (two unrelated opt-in tests skipped). Completing authenticated browser verification and release. Final file limit is 4 MB to stay below Vercel's function request/response limits; polling avoids overlapping feed requests and browser requests time out rather than hanging indefinitely.
