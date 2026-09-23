@@ -354,3 +354,5 @@ Main af8aed3 contains the complete tested signup-first flow. Staged dpl_Gh62gMGj
 Read-only investigation confirmed the reported October student is in LMS orders with bank proof and review status; owner was viewing legacy /admin/training enquiries. No payment approved or record modified. Adding explicit Registrations & payments sidebar/deep link, legacy-page banner and refreshed labels. Verification/release pending.
 
 — [Codex] 2026-09-23: Lint and production build passed, including release route guard. Added /admin/training-center/registrations opening the existing protected payments interface, renamed legacy enquiries, linked sidebar and legacy banner, and added refresh/status explanation. No database/payment mutations.
+
+— [Codex] 2026-09-23: Default registrations filter changed from review-only to All payments so pending and approved students remain visible too. Owner still chooses review-only when processing bank receipts.

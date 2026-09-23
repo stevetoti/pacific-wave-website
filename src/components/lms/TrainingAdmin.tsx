@@ -39,7 +39,7 @@ export default function TrainingAdmin({ initialTab = "courses" }: { initialTab?:
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [message, setMessage] = useState(""),
-    [filter, setFilter] = useState("review");
+    [filter, setFilter] = useState("");
   const [exportCourse, setExportCourse] = useState("");
   const [emailLogs, setEmailLogs] = useState<
     {
