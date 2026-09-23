@@ -436,6 +436,32 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
           {notice}
         </p>
       )}
+      <div className="chat-mobile-rooms">
+        <label>
+          Conversation
+          <select
+            aria-label="Choose conversation"
+            value={selected}
+            disabled={busy}
+            onChange={(e) => setSelected(e.target.value)}
+          >
+            {channels.map((c) => (
+              <option key={c.id} value={c.id}>
+                {roomTitle(c)}
+                {c.private ? " · Private" : ""}
+                {Number(c.mentions) > 0
+                  ? ` · @${c.mentions}`
+                  : Number(c.unread) > 0
+                    ? ` · ${c.unread} unread`
+                    : ""}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button className="lms-text" disabled={busy} onClick={() => run(load)}>
+          Refresh conversations
+        </button>
+      </div>
       <div className="lms-community-layout">
         <aside className="lms-community-channels">
           <h3>Conversations</h3>
@@ -486,7 +512,10 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
                   <h3>{roomTitle(active)}</h3>
                   <p>{active.description}</p>
                   <small>
-                    {people.length} participants ·{" "}
+                    {people.length
+                      ? `${people.length} participants`
+                      : "Loading participants…"}{" "}
+                    ·{" "}
                     {active.private
                       ? "Private conversation"
                       : "Enrolled students & instructors"}

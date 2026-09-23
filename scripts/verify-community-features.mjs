@@ -107,15 +107,13 @@ try {
   }
   const [one, two, teacher, outsider] = users;
   await check(
-    db
-      .from("admin_users")
-      .insert({
-        email: teacher.email,
-        name: "QA Instructor",
-        role: "admin",
-        site_id: "pacific-wave-digital",
-        is_active: true,
-      }),
+    db.from("admin_users").insert({
+      email: teacher.email,
+      name: "QA Instructor",
+      role: "admin",
+      site_id: "pacific-wave-digital",
+      is_active: true,
+    }),
   );
   for (let i = 0; i < 3; i++) {
     courses.push(
@@ -412,9 +410,7 @@ try {
     route.fulfill({ json: { courses, lessons: [], orders: [], banks: [] } }),
   );
   await adminPage.goto(base + "/admin/training-center/community");
-  await adminPage
-    .getByLabel("Choose a course")
-    .selectOption(course.id);
+  await adminPage.getByLabel("Choose a course").selectOption(course.id);
   await adminPage
     .getByRole("heading", { name: "Course conversations", exact: true })
     .waitFor();
@@ -469,9 +465,15 @@ try {
     await page
       .getByRole("button", { name: "Send message", exact: true })
       .click();
+    await page.getByText("Message sent.", { exact: true }).waitFor();
     await page
+      .locator(".lms-message")
       .getByText(`Student UI message at ${width}px`, { exact: true })
       .waitFor();
+    if (width === 390)
+      await page
+        .getByLabel("Choose conversation", { exact: true })
+        .selectOption({ label: "Course lounge" });
     assert.ok(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth + 1,
@@ -501,6 +503,17 @@ try {
     .click();
   await mentorPage
     .getByRole("heading", { name: "Mentorship · QA Mentee 1", exact: true })
+    .waitFor();
+  await mentorPage
+    .getByLabel("Message Mentorship · QA Mentee 1", { exact: true })
+    .fill("My private mentoring project question");
+  await mentorPage
+    .getByRole("button", { name: "Send message", exact: true })
+    .click();
+  await mentorPage.getByText("Message sent.", { exact: true }).waitFor();
+  await mentorPage
+    .locator(".lms-message")
+    .getByText("My private mentoring project question", { exact: true })
     .waitFor();
   assert.equal(
     await mentorPage.getByText("QA Mentee 2", { exact: false }).count(),

@@ -2099,3 +2099,6 @@
 .chat-workspace button:focus-visible{outline:3px solid #f59465;outline-offset:3px}.chat-workspace button:disabled{opacity:.55;cursor:wait}
 @media(max-width:760px){.chat-workspace .lms-community-layout{grid-template-columns:1fr}.chat-workspace .lms-community-channels{max-height:230px;overflow:auto}.chat-workspace .lms-message-list{height:460px;padding:12px}.chat-workspace .lms-message{padding:12px}.chat-search{padding:12px}.chat-compose-tools{align-items:stretch}.chat-compose-tools>.lms-button{width:100%;justify-content:center}.chat-workspace .lms-community-chat>header{flex-wrap:wrap}.chat-pins,.chat-reports{padding:12px}.chat-workspace .lms-message>div:first-child{flex-wrap:wrap}}
 .chat-workspace .lms-community-channels>button>span{min-width:0;overflow-wrap:anywhere}.chat-workspace .lms-community-chat>header h3{overflow-wrap:anywhere}
+
+.chat-mobile-rooms{display:none}
+@media(max-width:760px){.chat-workspace .lms-community-channels{display:none}.chat-mobile-rooms{display:block;padding:16px 20px;background:#f5f7fa;border-top:1px solid #dde3eb}.chat-mobile-rooms label{margin:0 0 8px!important}.chat-mobile-rooms .lms-text{font-size:.8rem}}
