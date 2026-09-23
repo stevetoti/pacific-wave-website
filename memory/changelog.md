@@ -344,3 +344,13 @@ User requested signup-first CTAs and immediate account access without mailbox co
 — [Codex] 2026-09-22: 45 code/SQL tests pass. Real isolated new-account signup/password sign-in and contact persistence passed; duplicate accounts and preexisting unconfirmed accounts remain unchanged. Temporary accounts/profiles cleaned, no QA course orders or emails created. Browser fixture verifies automatic signup-to-payment with no second details form. Final mobile retest/release pending.
 
 — [Codex] 2026-09-22: Final production build/lint/45 unit and SQL tests pass. Eight desktop/mobile browser checks pass, including signup-first CTAs, required fields, automatic payment handoff without a second form, closed courses and retained SEO pages. One earlier mobile run hit a transient catalog/database wait; final run passed in 9.5 seconds. Publishing the complete source to main with the existing release-route guard.
+
+## 2026-09-22 — [Codex] Simplified signup released
+
+Main af8aed3 contains the complete tested signup-first flow. Staged dpl_Gh62gMGjhEEcYmSGFbDCeF4qHcqX passed live email/Stripe/ANZ+BRED/VUV35000 verification and was promoted. Git production dpl_6LGo8aEtxhEiEh9R9RfpY4QxxHaR (pacific-wave-website-jlgswo38n-pacificwaveprojects.vercel.app) is READY. 45 unit/SQL tests, lint/build, 10 local desktop/mobile checks and six live read-only enrollment checks pass. Real isolated new-account authentication/contact persistence and existing-account protection verified; all temporary accounts/profiles removed. No QA charges, orders or emails were created. No database migration or project-wide auth setting change. Final handoff notes are local; all application source is committed/pushed.
+
+## 2026-09-23 — [Codex] Registration visibility in admin
+
+Read-only investigation confirmed the reported October student is in LMS orders with bank proof and review status; owner was viewing legacy /admin/training enquiries. No payment approved or record modified. Adding explicit Registrations & payments sidebar/deep link, legacy-page banner and refreshed labels. Verification/release pending.
+
+— [Codex] 2026-09-23: Lint and production build passed, including release route guard. Added /admin/training-center/registrations opening the existing protected payments interface, renamed legacy enquiries, linked sidebar and legacy banner, and added refresh/status explanation. No database/payment mutations.

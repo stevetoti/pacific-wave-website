@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import { authFetch } from "@/lib/auth-fetch";
 import {
   attendance,
@@ -86,13 +87,18 @@ export default function TrainingAdmin() {
   }
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-8">
+      <section className="mb-6 rounded-xl border border-blue-200 bg-blue-50 p-6">
+        <h2 className="text-xl font-bold text-deep-blue">Looking for a student who registered or paid?</h2>
+        <p className="my-3 text-gray-700">New course registrations, uploaded bank receipts, payment approvals and student exports are managed in the Training Centre LMS.</p>
+        <Link className="inline-flex rounded-lg bg-deep-blue px-5 py-3 font-semibold text-white" href="/admin/training-center/registrations">View student registrations & payments →</Link>
+      </section>
       <div className="flex flex-wrap justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-deep-blue">
-            Training registrations
+            Earlier registration enquiries
           </h1>
           <p className="text-gray-600 mt-2">
-            Manual follow-up and payment. A registration is not a paid place.
+            Records from the earlier interest form. New course signups and bank-payment proofs are in Registrations & payments.
           </p>
         </div>
         <button

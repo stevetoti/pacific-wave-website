@@ -27,8 +27,8 @@ const emptyCourse = {
   published: false,
   enrollment_open: true,
 };
-export default function TrainingAdmin() {
-  const [tab, setTab] = useState("courses"),
+export default function TrainingAdmin({ initialTab = "courses" }: { initialTab?: "courses" | "payments" }) {
+  const [tab, setTab] = useState<string>(initialTab),
     [courses, setCourses] = useState<Course[]>([]),
     [lessons, setLessons] = useState<Lesson[]>([]),
     [orders, setOrders] = useState<Order[]>([]),
@@ -131,7 +131,7 @@ export default function TrainingAdmin() {
               }}
               className={tab === t ? "selected" : ""}
             >
-              {t[0].toUpperCase() + t.slice(1)}
+              {t === "payments" ? "Registrations & payments" : t[0].toUpperCase() + t.slice(1)}
             </button>
           ))}
         </nav>
@@ -768,6 +768,9 @@ export default function TrainingAdmin() {
         )}
         {tab === "payments" && (
           <>
+            <h2>Student registrations & payments</h2>
+            <p>All course registrations appear here. “Review” means bank proof has been uploaded and is waiting for you to check the deposit and approve it.</p>
+            <button className="lms-text" disabled={busy} onClick={() => load().catch((e) => setError(e.message))}>Refresh registrations</button>
             <label>
               Payment status
               <select

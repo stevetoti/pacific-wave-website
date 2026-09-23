@@ -1,5 +1,9 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## Latest release — 2026-09-22 [Codex] simplified enrollment
+
+Main `af8aed3`, production `dpl_6LGo8aEtxhEiEh9R9RfpY4QxxHaR`: new training signup collects contact/location/attendance, creates a pending enrollment, signs in immediately without email confirmation, then opens payment. Only NEW training accounts bypass confirmation; never update an existing user or global Supabase auth settings. Paid lesson protection remains. See `docs/TRAINING-CENTER-HANDOFF.md` and memory for tests and release evidence.
+
 ## Resume here — 2026-09-22 [Codex] training outage recovery
 
 The Sept 21 SEO Git deployment removed the LMS because the previously deployed LMS source was uncommitted. Production was immediately restored to `dpl_Eu5HccX8AogwF9wDrQpv5u4YSiyv`. This recovery branch combines the full live application with all SEO PR #2/#3 changes, excluding unrelated marketing branch history. Recovery is committed/pushed to `main` at `560681e`; Git production `dpl_GZHG67KGEDywDwuB9htiNzPorv97` is READY and owns pacificwavedigital.com. All eight live desktop/mobile smoke checks passed. Details are in `memory/changelog.md`.

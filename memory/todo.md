@@ -103,3 +103,5 @@
 ## 2026-09-22 — [Codex] Training deployment recovery
 
 - [x] Publish and verify combined LMS + SEO source on main; update final release evidence. — [Codex] 2026-09-22: main 560681e and Git production dpl_GZHG67KGEDywDwuB9htiNzPorv97 verified READY; all eight live browser checks passed. No database changes.
+
+- [x] Simplify enrollment to details → signup/contact/attendance → payment → learning dashboard; remove confirmation gate for new training accounts and add sticky October CTA — [Codex] 2026-09-22: released on main af8aed3, live desktop/mobile checks pass.
