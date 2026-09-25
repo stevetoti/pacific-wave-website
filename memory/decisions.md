@@ -70,3 +70,7 @@ User requested signup-first CTAs and immediate account access without mailbox co
 ## 2026-09-25 — [Codex] Course-wide video tutors
 
 All paid/granted courses automatically expose onboarding, class assistant, business-development and branding roles. Reuse authorized Digiassist Anam personas only as avatar/voice/model sources; build PWD-specific ephemeral prompts with verified student/course context. No shared persona edits. Student/course notes are editable and shared across roles; recent device transcripts are explicitly unverified context, never grades. Private lessons stay enrollment-scoped, no answer keys/payment/identity documents enter prompts. Per-user atomic reservation: one active 15-minute session, eight starts per rolling day. Minimize within a course; leaving it ends the session. Wait for the Anam data channel before enabling typed questions (stream readiness alone drops early input).
+
+## 2026-09-25 — [Codex] Specialist coaching roles
+
+User authorized the three recommended additions. Seven roles use the existing private context and shared eight-session allowance. Sales and marketing reuse the strategy avatar; project review reuses the technical tutor avatar. Sales role-play is fictional practice, marketing cannot publish, and project feedback is formative based on shared text rather than unseen files or URLs. No new provider credentials required.

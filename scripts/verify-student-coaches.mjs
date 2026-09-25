@@ -187,6 +187,14 @@ try {
       "--use-fake-device-for-media-stream",
     ],
   });
+  for (const role of ["sales_practice", "marketing_content", "project_review"]) {
+    const started = await api(users[0], courses[0].id, {action:"start",course_id:courses[0].id,role,consent:true});
+    assert.equal(started.status, 200, role + " starts");
+    assert.ok(started.data.session_token || started.data.token);
+    const ended = await api(users[0], courses[0].id, {action:"end",course_id:courses[0].id,session_id:started.data.session_id,transcript:[]});
+    assert.equal(ended.status, 200);
+    assert.equal(ended.data.saved, true);
+  }
   for (const width of [1280, 390]) {
     const ctx = await browser.newContext({
       viewport: { width, height: 900 },
@@ -214,7 +222,7 @@ try {
       await page
         .getByRole("button", { name: "Start video conversation" })
         .count(),
-      4,
+      7,
     );
     await page
       .getByLabel("Coaching notes")

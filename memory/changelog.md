@@ -384,3 +384,11 @@ Additive private coach tables applied. Fifty unit/SQL tests, TypeScript, lint/bu
 ## 2026-09-25 — [Codex] Student video coaches live
 
 Promoted dpl_hrAquD7amYg2fmtGyYigk83kaLsR (application fe3e6d2). Production authenticated context confirms all four roles; Anam token creation/end passed. Eight live desktop/mobile release tests passed, matching local 50 tests, lint and build plus real video/personalization/transcript integration. Live payment/email configuration, two VUV banks and October 35,000 fee preserved. All temporary fixtures removed. Complete source published to main; canonical recovery checkout remains deployment source.
+
+## 2026-09-25 — [Codex] Three specialist coaches in progress
+
+User authorized all recommended roles: sales practice, marketing/content and project review. Extending the existing catalog and database role constraint with tailored prompts; reuse configured avatars, private student/course context and shared session allowance. Memory CLI still fails because numpy is unavailable; shared markdown used.
+
+## 2026-09-25 — [Codex] Specialist coach verification complete
+
+All three new roles created real Anam tokens and persisted ended sessions. Seven cards verified at desktop/mobile widths; real video, personalized response and transcript regression passed. Fifty unit/database tests, lint, full build with route guards and eight public desktop/mobile checks passed. Role constraint migration applied; temporary students/courses removed. Preparing staged production release.

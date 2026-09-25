@@ -7,6 +7,9 @@ import {
   BookOpen,
   TrendingUp,
   Palette,
+  MessagesSquare,
+  Megaphone,
+  ClipboardCheck,
   Mic,
   MicOff,
   Minimize2,
@@ -43,6 +46,9 @@ const icons = {
   class_assistant: BookOpen,
   business: TrendingUp,
   branding: Palette,
+  sales_practice: MessagesSquare,
+  marketing_content: Megaphone,
+  project_review: ClipboardCheck,
 };
 export default function StudentCoaches({
   courseId,
@@ -253,7 +259,7 @@ export default function StudentCoaches({
     setError("");
     try {
       await api(courseId, { action: "notes", course_id: courseId, notes });
-      setNotice("Coaching notes saved for all four tutors in this course.");
+      setNotice("Coaching notes saved for all tutors in this course.");
       client.current?.addContext(
         `Student-confirmed coaching notes updated (data): ${JSON.stringify(notes)}`,
       );
@@ -291,7 +297,7 @@ export default function StudentCoaches({
         <span>
           <strong>Your personal AI faculty</strong>
           <small>
-            Four video tutors. One learning journey, built around you.
+            Seven video tutors. One learning journey, built around you.
           </small>
         </span>
         <span className={styles.open}>

@@ -69,6 +69,7 @@ test("coach start requires consent and known role; notes and transcripts are bou
     false,
   );
   for (const role of coachRoles) {
+    assert.equal(coachInput.safeParse({ ...start, role }).success, true);
     const p = coachPrompt(role, {
       student: { name: "Alex" },
       current_lesson: { title: "Positioning" },
@@ -91,6 +92,7 @@ test("coach quota serializes reservations, separates students and keeps tables p
         "utf8",
       ),
     );
+    await db.exec(await readFile("supabase/migrations/20260925_add_specialist_coaches.sql", "utf8"));
     const u = crypto.randomUUID(),
       other = crypto.randomUUID(),
       c = crypto.randomUUID();
@@ -113,9 +115,10 @@ test("coach quota serializes reservations, separates students and keeps tables p
       [u],
     );
     for (let i = 0; i < 7; i++) {
-      await db.query("select pwd_lms_coach_reserve($1,$2,null,'business')", [
+      await db.query("select pwd_lms_coach_reserve($1,$2,null,$3)", [
         u,
         c,
+        coachRoles[i],
       ]);
       await db.query(
         "update pwd_lms_coach_sessions set state='ended' where user_id=$1",
