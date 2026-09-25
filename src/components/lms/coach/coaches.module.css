@@ -1,0 +1,285 @@
+.section {
+  margin: 1rem 0 1.5rem;
+}
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  text-align: left;
+  padding: 1.35rem !important;
+  border: 1px solid #cbd7e6 !important;
+  border-radius: 18px !important;
+  background: linear-gradient(115deg, #edf3ff, #fff9f3) !important;
+  color: #233c6f !important;
+  box-shadow: 0 6px 20px #233c6f08;
+}
+.banner strong {
+  display: block;
+  font-size: 1.16rem;
+}
+.banner small {
+  display: block;
+  margin-top: 0.3rem;
+  font-weight: 400;
+  color: #53637b;
+}
+.badge {
+  display: grid;
+  place-items: center;
+  background: #233c6f;
+  color: white;
+  border-radius: 14px;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+.open {
+  margin-left: auto;
+  white-space: nowrap;
+  font-size: 0.85rem;
+}
+.content {
+  padding: 1.5rem;
+  border: 1px solid #e3e9f1;
+  border-radius: 0 0 18px 18px;
+  background: #fff;
+}
+.context {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem !important;
+  color: #8f4629 !important;
+  font-weight: 700;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e1e7ef;
+  padding: 1.3rem;
+  border-radius: 14px;
+  background: #fcfdff;
+}
+.card svg {
+  color: #ef5e33;
+}
+.card h3 {
+  margin: 0.8rem 0 0.5rem !important;
+  font-size: 1rem !important;
+}
+.card p {
+  font-size: 0.87rem !important;
+  line-height: 1.6 !important;
+  flex: 1;
+  color: #53637b;
+}
+.card button,
+.memory button {
+  margin-top: 0.8rem;
+  background: #233c6f !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 9px;
+  padding: 0.7rem 0.9rem !important;
+  font-size: 0.82rem;
+}
+.card button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.preferences {
+  display: grid;
+  gap: 0.8rem;
+  font-size: 0.85rem;
+  color: #53637b;
+  border-bottom: 1px solid #e3e9f1;
+  padding-bottom: 1.4rem;
+}
+.preferences label {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  line-height: 1.5;
+}
+.preferences input {
+  width: 17px !important;
+  height: 17px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.memory {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding-top: 1.5rem;
+}
+.memory p {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #53637b;
+}
+.memory textarea {
+  width: 100%;
+  border: 1px solid #cbd7e6;
+  border-radius: 10px;
+  padding: 0.8rem;
+}
+.memory details {
+  border-bottom: 1px solid #e3e9f1;
+  padding: 0.7rem 0;
+}
+.memory summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.error {
+  padding: 1rem;
+  background: #fff0ef;
+  color: #a92e26;
+  border-radius: 10px;
+}
+.notice {
+  padding: 1rem;
+  background: #eef8f1;
+  color: #236341;
+  border-radius: 10px;
+}
+.call {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 390px;
+  max-width: calc(100vw - 24px);
+  z-index: 100;
+  background: #101e35;
+  color: #fff;
+  border: 1px solid #34455e;
+  border-radius: 18px;
+  box-shadow: 0 20px 70px #0005;
+  overflow: hidden;
+}
+.call header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.8rem;
+}
+.call header strong {
+  flex: 1;
+  font-size: 0.9rem;
+}
+.call header button {
+  padding: 0.4rem !important;
+  background: transparent !important;
+  color: white !important;
+  border: 0;
+}
+.call video {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  background: #091222;
+}
+.callStatus {
+  font-size: 0.75rem !important;
+  padding: 0.5rem 1rem;
+  color: #c9d6e8 !important;
+}
+.transcript {
+  max-height: 120px;
+  overflow: auto;
+  padding: 0 1rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.transcript p {
+  color: #e3eaf3 !important;
+  font-size: 0.8rem !important;
+}
+.call form {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.8rem;
+}
+.call input {
+  min-width: 0;
+  flex: 1;
+  color: #14243b;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.6rem;
+}
+.call form button {
+  background: #ef5e33 !important;
+  color: white !important;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.6rem;
+}
+.mic {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0.8rem 0.8rem;
+  background: transparent !important;
+  color: white !important;
+  border: 1px solid #54647e;
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem !important;
+}
+.minimized {
+  width: 340px;
+}
+.memory button:focus-visible,
+.banner:focus-visible,
+.card button:focus-visible {
+  outline: 3px solid #ef5e33;
+  outline-offset: 3px;
+}
+@media (max-width: 1000px) {
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .content {
+    padding: 1rem;
+  }
+  .banner {
+    gap: 0.65rem;
+    padding: 1rem !important;
+  }
+  .banner small {
+    font-size: 0.75rem;
+  }
+  .open {
+    display: none;
+  }
+  .cards,
+  .memory {
+    grid-template-columns: 1fr;
+  }
+  .card {
+    padding: 1rem;
+  }
+  .call {
+    right: 12px;
+    bottom: 12px;
+  }
+  .call video {
+    height: 170px;
+  }
+  .transcript {
+    max-height: 90px;
+  }
+  .call {
+    max-height: 85dvh;
+    overflow: auto;
+  }
+}

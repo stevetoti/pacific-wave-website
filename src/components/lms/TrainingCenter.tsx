@@ -32,6 +32,7 @@ const StudentDashboard = dynamic(() => import("./StudentDashboard"));
 import LessonThumbnail from "./LessonThumbnail";
 import StudentAccountMenu from "./StudentAccountMenu";
 const CourseCommunity = dynamic(() => import("./CourseCommunity"));
+const StudentCoaches = dynamic(() => import("./coach/StudentCoaches"), { ssr: false });
 import ProgramDetail from "./ProgramDetail";
 import { programs, mentorshipSlug } from "@/lib/lms/programs";
 const base = "/training-center";
@@ -1250,6 +1251,7 @@ export default function TrainingCenter({
                           : "Community & groups"}
                       </button>
                     </nav>
+                    {["paid", "granted"].includes(courseOrder?.status || "") && <StudentCoaches key={current.id} courseId={current.id} lessonId={active?.published ? active.id : null} lessonTitle={active?.published ? active.title : null} />}
                     {courseTab === "community" && (
                       <CourseCommunity key={current.id} courseId={current.id} />
                     )}
