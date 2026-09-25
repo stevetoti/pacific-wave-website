@@ -404,3 +404,7 @@ User requested fixed timetable orientation, natural spoken times, coach usage gu
 ## 2026-09-26 — [Codex] Conference and onboarding verification passed
 
 52 unit/SQL tests, lint/build and eight public desktop/mobile tests pass. Isolated real Anam meeting answered with fixed Mondays/Thursdays/Saturdays from three p.m. to five p.m. Vanuatu time and refused rescheduling. Verified equal video tiles, fake-camera preview, native fullscreen, stopped camera track on end, minimize/lesson navigation, transcript persistence, explicit completion hiding onboarding on another viewport/context, other-student isolation, notes preserving completion, repeat onboarding 409 and ended-course starts 403. All fixtures removed. Seven 52–72 KB WebP illustrations inspected. Staging release next.
+
+## 2026-09-26 — [Codex] Conference coaching released
+
+Promoted dpl_9d75LYBQnc2oXNUgu9UUQTn3q5bq, application d2f2162. Live synthetic student verified official spoken timetable and end date, Anam onboarding token, persistent completion and repeat rejection; all seven images load. Eight live desktop/mobile checks passed. QA fixtures removed. Complete source and handoff published to main. Shared markdown used because persistent-memory CLI still lacks numpy.

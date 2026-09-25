@@ -1,5 +1,9 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## Latest release — 2026-09-26 [Codex] structured orientation and conference video
+
+Application `d2f2162`, verified promoted deployment `dpl_9d75LYBQnc2oXNUgu9UUQTn3q5bq`. Onboarding follows official cohort timetable and shared public October outline; natural spoken time ranges. Coach cards have seven unique meeting illustrations and when-to-use guidance. Equal student/Anam video tiles, optional local-only camera, fullscreen and minimize. Explicit Complete onboarding persists once per student/course; interruptions retry. Published course window/admin date override controls new coaching sessions; notes/history remain readable afterward. Migration `20260926_coach_orientation.sql` applied. 52 tests, lint/build, real Anam fixed-time answer, camera cleanup, fullscreen, completion across contexts, privacy/expiry checks and eight live desktop/mobile checks passed; fixtures removed. See `docs/STUDENT-VIDEO-COACHES.md` and image prompt provenance. Earlier sessions are not retroactively marked complete.
+
 ## Latest release — 2026-09-25 [Codex] seven student coaches
 
 Application `6be80a8`, promoted production `dpl_H9qHeZNugrB2Y43k5mMYbt6YiJFv`. Added Sales Practice Coach, Marketing & Content Coach and Project Review Tutor to every paid/granted course alongside the original four. Migration `20260925_add_specialist_coaches.sql` applied; existing Anam settings reused, shared student quotas unchanged. All three new roles created/ended real sessions on production; seven role availability confirmed. Fifty tests, lint/build, real local video/transcript checks, seven-card desktop/mobile layout and eight live public release checks pass; temporary fixtures removed. See `docs/STUDENT-VIDEO-COACHES.md`.

@@ -118,3 +118,5 @@
 - [x] Publish the verified complete release and check production configuration — [Codex] 2026-09-25: dpl_hrAquD7amYg2fmtGyYigk83kaLsR live; authenticated coach and eight browser checks passed. Supersedes open release item above.
 
 - [x] Add and publish Sales Practice Coach, Marketing & Content Coach and Project Review Tutor — [Codex] 2026-09-25: all three production session checks and eight live browser checks passed.
+
+- [x] Ground onboarding in fixed course schedule, show coach usage guidance and unique meeting images, make onboarding once per course, and provide 50/50 video/fullscreen with local camera — [Codex] 2026-09-26: deployed and verified including production lifecycle checks.
