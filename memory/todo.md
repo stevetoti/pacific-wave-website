@@ -114,3 +114,5 @@
 
 - [x] Implement four personalized Anam video coaches for all paid/granted courses, including private mentorship; verify live video, student isolation, transcript persistence and responsive layouts.
 - [ ] Publish the verified complete release and check production configuration.
+
+- [x] Publish the verified complete release and check production configuration — [Codex] 2026-09-25: dpl_hrAquD7amYg2fmtGyYigk83kaLsR live; authenticated coach and eight browser checks passed. Supersedes open release item above.

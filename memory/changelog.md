@@ -380,3 +380,7 @@ Owner confirmed scope: every PWD training course, October/future cohorts and pri
 ## 2026-09-25 — [Codex] Video coach verification
 
 Additive private coach tables applied. Fifty unit/SQL tests, TypeScript, lint/build and eight desktop/mobile public LMS/SEO release checks pass. Isolated real API tests verify authentication, private lesson/course isolation, note ownership and consent. Browser test confirmed actual Anam video, personalized name/tourism-goal answer, lesson navigation without disconnection, and saved transcript. Fixed early-message drop by awaiting DATA_CHANNEL_OPEN. Checking explicit typed-message retention before staged release. Temporary student/course fixtures cleaned after every run; no existing student/payments changed.
+
+## 2026-09-25 — [Codex] Student video coaches live
+
+Promoted dpl_hrAquD7amYg2fmtGyYigk83kaLsR (application fe3e6d2). Production authenticated context confirms all four roles; Anam token creation/end passed. Eight live desktop/mobile release tests passed, matching local 50 tests, lint and build plus real video/personalization/transcript integration. Live payment/email configuration, two VUV banks and October 35,000 fee preserved. All temporary fixtures removed. Complete source published to main; canonical recovery checkout remains deployment source.
