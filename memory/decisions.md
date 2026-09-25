@@ -74,3 +74,7 @@ All paid/granted courses automatically expose onboarding, class assistant, busin
 ## 2026-09-25 — [Codex] Specialist coaching roles
 
 User authorized the three recommended additions. Seven roles use the existing private context and shared eight-session allowance. Sales and marketing reuse the strategy avatar; project review reuses the technical tutor avatar. Sales role-play is fictional practice, marketing cannot publish, and project feedback is formative based on shared text rather than unseen files or URLs. No new provider credentials required.
+
+## 2026-09-26 — [Codex] Structured onboarding and meeting lifecycle
+
+Fixed cohort schedules come from the linked cohort config; October curriculum reuses the public outline. Personal practice does not reschedule classes. Explicit Complete onboarding is once per student/course and only accepts a nonempty two-sided dialogue; ordinary ending/interruption permits retry. No retroactive completion of earlier sessions. Coaching availability follows published course end boundaries, with an admin date override and unknown-end courses retaining paid/granted access. Student camera is optional local-only preview alongside Anam in equal tiles, never uploaded or recorded. Seven distinct generated meeting illustrations use the actual configured avatar references; prompts retained.

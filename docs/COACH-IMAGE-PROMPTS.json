@@ -1,0 +1,40 @@
+{
+  "method": "Built-in image_gen with authorized Anam avatar references",
+  "images": [
+    {
+      "role": "onboarding",
+      "file": "public/images/coaches/onboarding.webp",
+      "prompt": "Use case: photorealistic-natural. Create one polished landscape 16:9 photographic course card image. Show a young adult Pacific Islander woman at a sunny home desk, notebook open for her course orientation, meeting an AI coach on a laptop. Close three-quarter view of laptop screen as the main subject, with student's shoulder or hands at the edge. The laptop shows a clean professional video conference with exactly two equally sized side-by-side video tiles: the reference coach's recognizable face on the left, and the student's attractive natural camera portrait on the right. Preserve reference coach identity and outfit. Both faces large and clear. Restrained navy meeting controls below tiles, subtle warm daylight, believable screen perspective, professional welcoming atmosphere, no text, no logos, no watermarks. This is a unique image for the onboarding coach, not a collage of different meetings."
+    },
+    {
+      "role": "class_assistant",
+      "file": "public/images/coaches/class_assistant.webp",
+      "prompt": "Use case: photorealistic-natural. Create one polished landscape 16:9 photographic course card image. Show an adult Pacific Islander man in a bright coworking space with a lesson notebook, meeting an AI coach on a laptop. Close three-quarter view of laptop screen as the main subject, with student's shoulder or hands at the edge. The laptop shows a clean professional video conference with exactly two equally sized side-by-side video tiles: the reference coach's recognizable face on the left, and the student's attractive natural camera portrait on the right. Preserve reference coach identity and outfit. Both faces large and clear. Restrained navy meeting controls below tiles, subtle warm daylight, believable screen perspective, professional welcoming atmosphere, no text, no logos, no watermarks. This is a unique image for the class_assistant coach, not a collage of different meetings."
+    },
+    {
+      "role": "business",
+      "file": "public/images/coaches/business.webp",
+      "prompt": "Use case: photorealistic-natural. Create one polished landscape 16:9 photographic course card image. Show an adult Melanesian woman entrepreneur in a small shop office with a business planning notebook, meeting an AI coach on a laptop. Close three-quarter view of laptop screen as the main subject, with student's shoulder or hands at the edge. The laptop shows a clean professional video conference with exactly two equally sized side-by-side video tiles: the reference coach's recognizable face on the left, and the student's attractive natural camera portrait on the right. Preserve reference coach identity and outfit. Both faces large and clear. Restrained navy meeting controls below tiles, subtle warm daylight, believable screen perspective, professional welcoming atmosphere, no text, no logos, no watermarks. This is a unique image for the business coach, not a collage of different meetings."
+    },
+    {
+      "role": "branding",
+      "file": "public/images/coaches/branding.webp",
+      "prompt": "Use case: photorealistic-natural. Create one polished landscape 16:9 photographic course card image. Show an adult Southeast Asian woman designer in a creative studio with color swatches, meeting an AI coach on a laptop. Close three-quarter view of laptop screen as the main subject, with student's shoulder or hands at the edge. The laptop shows a clean professional video conference with exactly two equally sized side-by-side video tiles: the reference coach's recognizable face on the left, and the student's attractive natural camera portrait on the right. Preserve reference coach identity and outfit. Both faces large and clear. Restrained navy meeting controls below tiles, subtle warm daylight, believable screen perspective, professional welcoming atmosphere, no text, no logos, no watermarks. This is a unique image for the branding coach, not a collage of different meetings."
+    },
+    {
+      "role": "sales_practice",
+      "file": "public/images/coaches/sales_practice.webp",
+      "prompt": "Use case: photorealistic-natural. Create one polished landscape 16:9 photographic course card image. Show an adult Black man entrepreneur at a modern desk rehearsing a sales pitch with a headset, meeting an AI coach on a laptop. Close three-quarter view of laptop screen as the main subject, with student's shoulder or hands at the edge. The laptop shows a clean professional video conference with exactly two equally sized side-by-side video tiles: the reference coach's recognizable face on the left, and the student's attractive natural camera portrait on the right. Preserve reference coach identity and outfit. Both faces large and clear. Restrained navy meeting controls below tiles, subtle warm daylight, believable screen perspective, professional welcoming atmosphere, no text, no logos, no watermarks. This is a unique image for the sales_practice coach, not a collage of different meetings."
+    },
+    {
+      "role": "marketing_content",
+      "file": "public/images/coaches/marketing_content.webp",
+      "prompt": "Use case: photorealistic-natural. Create one polished landscape 16:9 photographic course card image. Show an adult Pacific Islander woman at a cafe workspace planning social content with a calendar notebook, meeting an AI coach on a laptop. Close three-quarter view of laptop screen as the main subject, with student's shoulder or hands at the edge. The laptop shows a clean professional video conference with exactly two equally sized side-by-side video tiles: the reference coach's recognizable face on the left, and the student's attractive natural camera portrait on the right. Preserve reference coach identity and outfit. Both faces large and clear. Restrained navy meeting controls below tiles, subtle warm daylight, believable screen perspective, professional welcoming atmosphere, no text, no logos, no watermarks. This is a unique image for the marketing_content coach, not a collage of different meetings."
+    },
+    {
+      "role": "project_review",
+      "file": "public/images/coaches/project_review.webp",
+      "prompt": "Use case: photorealistic-natural. Create one polished landscape 16:9 photographic course card image. Show an adult Southeast Asian man student at a laptop with a project notebook in a quiet study room, meeting an AI coach on a laptop. Close three-quarter view of laptop screen as the main subject, with student's shoulder or hands at the edge. The laptop shows a clean professional video conference with exactly two equally sized side-by-side video tiles: the reference coach's recognizable face on the left, and the student's attractive natural camera portrait on the right. Preserve reference coach identity and outfit. Both faces large and clear. Restrained navy meeting controls below tiles, subtle warm daylight, believable screen perspective, professional welcoming atmosphere, no text, no logos, no watermarks. This is a unique image for the project_review coach, not a collage of different meetings."
+    }
+  ]
+}

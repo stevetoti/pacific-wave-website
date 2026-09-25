@@ -17,6 +17,7 @@ export type Course = {
   enrollment_open: boolean;
   private_sessions?: boolean;
   cohort_id: string | null;
+  coaching_ends_on?: string | null;
 };
 export type Lesson = {
   order_id?: string | null;

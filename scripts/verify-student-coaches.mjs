@@ -79,6 +79,7 @@ try {
             currency: "VUV",
             published: false,
             private_sessions: priv,
+            cohort_id: priv ? null : "vanuatu-2026-10",
           })
           .select()
           .single(),
@@ -198,7 +199,7 @@ try {
   for (const width of [1280, 390]) {
     const ctx = await browser.newContext({
       viewport: { width, height: 900 },
-      permissions: ["microphone"],
+      permissions: ["microphone", "camera"],
     });
     await ctx.addInitScript(
       ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
@@ -212,7 +213,7 @@ try {
       .getByRole("button", { name: /Your personal AI faculty/ })
       .click();
     await page
-      .getByRole("heading", { name: "Onboarding Tutor", exact: true })
+      .getByRole("heading", { name: width === 1280 ? "Onboarding Tutor" : "Class Student Assistant", exact: true })
       .waitFor();
     await page
       .getByRole("button", { name: "Start video conversation" })
@@ -222,7 +223,7 @@ try {
       await page
         .getByRole("button", { name: "Start video conversation" })
         .count(),
-      7,
+      width === 1280 ? 7 : 6,
     );
     await page
       .getByLabel("Coaching notes")
@@ -263,6 +264,14 @@ try {
         { timeout: 60000 },
       );
       console.log("Real Anam video frame received.");
+      await page.getByRole("button",{name:"Turn camera on",exact:true}).click();
+      await page.waitForFunction(()=>{const v=document.querySelector('video[aria-label="Your camera preview"]');return v?.srcObject?.active && v.videoWidth>0;});
+      await page.evaluate(()=>{window.qaCameraTrack=document.querySelector('video[aria-label="Your camera preview"]').srcObject.getVideoTracks()[0];});
+      const a=await page.getByLabel("AI tutor video").boundingBox(),b=await page.getByLabel("Your camera preview").boundingBox();assert.ok(Math.abs(a.width-b.width)<2);assert.ok(b.x>a.x);
+      await page.getByRole("button",{name:"Full screen",exact:true}).click();
+      await page.getByRole("button",{name:"Exit full screen",exact:true}).waitFor();
+      await page.screenshot({path:".deployment/student-coach-fullscreen.png"});
+      await page.getByRole("button",{name:"Exit full screen",exact:true}).click();
       await page
         .getByLabel("Message your tutor")
         .fill("Please greet me by name and tell me what my learning goal is.");
@@ -271,6 +280,10 @@ try {
         .getByLabel("Live transcript")
         .getByText(/tourism/i)
         .waitFor({ timeout: 45000 });
+      await page.getByLabel("Message your tutor").fill("What are my official class days and times? Should I choose my own class schedule?");
+      await page.getByRole("button",{name:"Send",exact:true}).click();
+      await page.getByLabel("Live transcript").getByText(/(?:three|3).*?(?:five|5)/i).last().waitFor({timeout:45000});
+      console.log("Timetable response:",await page.getByLabel("Live transcript").innerText());
       await page.getByRole("button", { name: "Minimize video" }).click();
       await page
         .getByRole("button", { name: /Positioning your offer/ })
@@ -284,13 +297,18 @@ try {
         path: ".deployment/student-coach-video.png",
         fullPage: true,
       });
-      await page.getByRole("button", { name: "End video session" }).click();
+      await page.getByRole("button", { name: "Complete onboarding", exact:true }).click();
       await page
         .getByRole("status")
-        .filter({ hasText: "Session saved" })
+        .filter({ hasText: "Onboarding complete" })
         .waitFor();
       const saved = await api(users[0], courses[0].id);
       assert.ok(saved.data.history[0].transcript.length > 0);
+      assert.equal(saved.data.onboarding_completed,true);
+      assert.equal((await api(users[1],courses[0].id)).data.onboarding_completed,false);
+      assert.equal(await page.evaluate(()=>window.qaCameraTrack.readyState),"ended");
+      const repeat=await api(users[0],courses[0].id,{action:"start",course_id:courses[0].id,role:"onboarding",consent:true});assert.equal(repeat.status,409);
+      await api(users[0],courses[0].id,{action:"notes",course_id:courses[0].id,notes:"After onboarding"});assert.equal((await api(users[0],courses[0].id)).data.onboarding_completed,true);
       assert.ok(
         saved.data.history[0].transcript.some(
           (l) => l.role === "user" && l.content.includes("learning goal"),
@@ -300,6 +318,9 @@ try {
     assert.deepEqual(errors, []);
     await ctx.close();
   }
+  await check(db.from("pwd_lms_courses").update({coaching_ends_on:"2020-01-01"}).eq("id",courses[0].id));
+  assert.equal((await api(users[0],courses[0].id)).data.access.active,false);
+  assert.equal((await api(users[0],courses[0].id,{action:"start",course_id:courses[0].id,role:"business",consent:true})).status,403);
   console.log(
     "PASS: authentication, course/private lesson isolation, consent, notes privacy, desktop/mobile, real Anam video and personalized response, lesson navigation, transcript persistence.",
   );

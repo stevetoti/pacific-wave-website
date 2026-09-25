@@ -12,7 +12,7 @@ export async function GET(req: Request) {
   try {
     const q = new URL(req.url).searchParams,
       course = z.uuid().parse(q.get("course"));
-    const { context, notes, history } = await coachContext(
+    const { context, notes, history, onboardingCompleted, access } = await coachContext(
       req,
       course,
       q.get("lesson") ? z.uuid().parse(q.get("lesson")) : null,
@@ -21,10 +21,12 @@ export async function GET(req: Request) {
       context,
       notes,
       history,
+      onboarding_completed: onboardingCompleted,
+      access,
       available: Object.fromEntries(
         Object.entries(coaches).map(([k, v]) => [
           k,
-          !!process.env.ANAM_API_KEY && !!process.env[v.personaEnv],
+          access.active && !(k === "onboarding" && onboardingCompleted) && !!process.env.ANAM_API_KEY && !!process.env[v.personaEnv],
         ]),
       ),
     });
@@ -37,23 +39,11 @@ export async function POST(req: Request) {
     const input = await readJson(req, coachInput);
     if (input.action === "end") {
       const { db, user } = await student(req);
-      const updated = checked(
-        await db
-          .from("pwd_lms_coach_sessions")
-          .update({
-            state: "ended",
-            ended_at: new Date().toISOString(),
-            transcript: input.transcript,
-          })
-          .eq("id", input.session_id)
-          .eq("course_id", input.course_id)
-          .eq("user_id", user.id)
-          .in("state", ["starting", "active"])
-          .select("id"),
-      );
-      return json({ saved: !!updated?.length });
+      const result = await db.rpc("pwd_lms_coach_finish", {p_user:user.id,p_course:input.course_id,p_session:input.session_id,p_transcript:input.transcript,p_complete:input.complete_onboarding || false});
+      if (result.error?.message.includes("onboarding_not_ready")) throw new HttpError(400, "Discuss your course with the tutor before completing onboarding.");
+      return json({saved: !!checked(result), onboarding_completed: !!result.data && !!input.complete_onboarding});
     }
-    const { db, user, context } = await coachContext(
+    const { db, user, context, access, onboardingCompleted } = await coachContext(
       req,
       input.course_id,
       input.action === "start" ? input.lesson_id : null,
@@ -76,6 +66,8 @@ export async function POST(req: Request) {
       );
       return json({ saved: true });
     }
+    if (!access.active) throw new HttpError(403, "The AI coaching period for this course has ended. Your saved notes and conversations remain available.");
+    if (input.role === "onboarding" && onboardingCompleted) throw new HttpError(409, "You have already completed onboarding for this course.");
     const reservation = await db.rpc("pwd_lms_coach_reserve", {
       p_user: user.id,
       p_course: input.course_id,
@@ -83,6 +75,7 @@ export async function POST(req: Request) {
       p_role: input.role,
     });
     if (reservation.error) {
+      if (reservation.error.message.includes("onboarding_completed")) throw new HttpError(409, "You have already completed onboarding for this course.");
       if (reservation.error.message.includes("active_session"))
         throw new HttpError(
           409,
@@ -104,7 +97,7 @@ export async function POST(req: Request) {
           .update({ state: "active" })
           .eq("id", id),
       );
-      return json({ session_id: id, token, max_seconds: 900 });
+      return json({ session_id: id, token, max_seconds: 900, expires_at: new Date(Date.now() + 900000).toISOString() });
     } catch (e) {
       await db
         .from("pwd_lms_coach_sessions")

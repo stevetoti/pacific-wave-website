@@ -1,3 +1,4 @@
+import { octoberOutline as paths } from "@/lib/training/outline";
 import Link from "next/link";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -53,24 +54,7 @@ const builds = [
   "A simple system to manage leads and follow up",
   "Launch content and a plan to approach your first customers",
 ];
-const paths = [
-  [
-    "Choose & build",
-    "Choose your customer, validate your idea, create your offer and first website.",
-  ],
-  [
-    "Connect & automate",
-    "Set up bookings or orders, customer enquiries, chatbot and follow-up.",
-  ],
-  [
-    "Prepare your launch",
-    "Create launch content, promote your offer and practise sales conversations.",
-  ],
-  [
-    "Launch & improve",
-    "Test delivery, improve your business and present your launch project.",
-  ],
-];
+
 export default async function TrainingPage() {
   let c = initialCohort;
   let available = true;

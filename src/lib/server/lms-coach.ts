@@ -1,4 +1,7 @@
 import "server-only";
+import { spokenTime, coachingWindow, programOutline } from "@/lib/lms/coach/schedule";
+import { octoberOutline } from "@/lib/training/outline";
+import type { Cohort } from "@/lib/training/config";
 import { student, checked } from "./lms";
 import { HttpError } from "./http";
 import {
@@ -33,11 +36,12 @@ export async function coachContext(
   const course = checked(
     await db
       .from("pwd_lms_courses")
-      .select("id,title,description,introduction,private_sessions")
+      .select("id,slug,title,description,introduction,private_sessions,cohort_id,coaching_ends_on")
       .eq("id", courseId)
       .single(),
   );
   if (!course) throw new HttpError(404, "Course not found.");
+  const cohort = course.cohort_id ? checked(await db.from("pwd_training_cohorts").select("config").eq("id", course.cohort_id).single())?.config as Cohort | null : null;
   const [p, l, g, n, h] = await Promise.all([
     db
       .from("pwd_lms_profiles")
@@ -48,7 +52,7 @@ export async function coachContext(
       .maybeSingle(),
     db
       .from("pwd_lms_lessons")
-      .select("id,title,content,position,published,order_id,starts_at")
+      .select("id,title,content,position,published,order_id,starts_at,section_title")
       .eq("course_id", courseId)
       .eq("published", true)
       .or(
@@ -63,7 +67,7 @@ export async function coachContext(
       .eq("user_id", user.id),
     db
       .from("pwd_lms_coach_notes")
-      .select("notes,updated_at")
+      .select("notes,updated_at,onboarding_completed_at")
       .eq("user_id", user.id)
       .eq("course_id", courseId)
       .maybeSingle(),
@@ -92,9 +96,12 @@ export async function coachContext(
     as_of: new Date().toISOString(),
     student: { name: profile?.full_name || order.name, ...profile },
     course,
+    schedule: cohort ? { timezone: cohort.timezone, days: cohort.daysLabel, time: cohort.timeLabel, spoken_time: spokenTime(cohort.timeLabel), starts_at: cohort.start, teaching_ends_at: cohort.teachingEnd, action_period_ends: cohort.actionEnd, session_dates: cohort.dates, teaching_hours: cohort.hours, venue: cohort.venue, fixed_timetable: true } : { fixed_timetable: !course.private_sessions, note: "Use published lesson appointments; ask the instructor for any missing dates." },
+    course_outline: course.slug === "vanuatu-october-2026" ? octoberOutline.map(([title, body], i) => ({title: `Week ${i + 1}: ${title}`, body})) : programOutline(course.slug),
     lessons: lessons.map((x) => ({
       id: x.id,
       title: x.title,
+      module: x.section_title,
       starts_at: x.starts_at,
     })),
     current_lesson: current
@@ -114,7 +121,7 @@ export async function coachContext(
         })),
     })),
   };
-  return { db, user, context, notes: notes?.notes || "", history };
+  return { db, user, context, notes: notes?.notes || "", history, onboardingCompleted: !!notes?.onboarding_completed_at, access: coachingWindow(course, cohort, lessons.map(x => x.starts_at)) };
 }
 export async function mintCoach(
   role: CoachRole,
@@ -154,7 +161,7 @@ export async function mintCoach(
         voiceId,
         llmId,
         systemPrompt: coachPrompt(role, context),
-        initialMessage: `Hello ${String(context.student.name || "there").split(" ")[0]}! I'm your ${coaches[role].title}. ${role === "class_assistant" && context.current_lesson ? `Let's work on ${context.current_lesson.title}. What would you like to understand better?` : "What would you like to work on together today?"}`,
+        initialMessage: `Hello ${String(context.student.name || "there").split(" ")[0]}! I'm your ${coaches[role].title}. ${role === "onboarding" ? "Welcome to your course. Let’s walk through the course outline, the published class timetable, and how to use your coaches. Shall we start with the course journey?" : role === "class_assistant" && context.current_lesson ? `Let's work on ${context.current_lesson.title}. What would you like to understand better?` : "What would you like to work on together today?"}`,
         maxSessionLengthSeconds: 900,
         ...(p.avatarModel ? { avatarModel: p.avatarModel } : {}),
       },

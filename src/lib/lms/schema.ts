@@ -24,6 +24,7 @@ export const courseSchema = z.object({
   published: z.boolean(),
   enrollment_open: z.boolean(),
   private_sessions: z.boolean().optional(),
+  coaching_ends_on: z.iso.date().nullable().optional(),
 });
 export const questionSchema = z
   .object({

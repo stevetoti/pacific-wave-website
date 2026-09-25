@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import type { AnamClient } from "@anam-ai/js-sdk";
 import {
   Video,
@@ -15,6 +16,10 @@ import {
   Minimize2,
   Maximize2,
   PhoneOff,
+  Camera,
+  CameraOff,
+  Expand,
+  Shrink,
 } from "lucide-react";
 import { authFetch } from "@/lib/auth-fetch";
 import { coaches, coachRoles, type CoachRole } from "@/lib/lms/coach/catalog";
@@ -78,6 +83,27 @@ export default function StudentCoaches({
     [text, setText] = useState(""),
     [remaining, setRemaining] = useState(900),
     [saving, setSaving] = useState(false);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
+  const [access, setAccess] = useState<{active:boolean;ends_on:string|null}>({active:true,ends_on:null});
+  const [cameraOn, setCameraOn] = useState(false), [cameraBusy, setCameraBusy] = useState(false), [cameraError,setCameraError]=useState("");
+  const [fullscreen,setFullscreen]=useState(false);
+  const cameraStream=useRef<MediaStream|null>(null), cameraRun=useRef(0), selfVideo=useRef<HTMLVideoElement|null>(null), meeting=useRef<HTMLElement|null>(null), deadline=useRef(0);
+  const stopCamera=useCallback(()=>{cameraRun.current++;cameraStream.current?.getTracks().forEach(t=>t.stop());cameraStream.current=null;if(selfVideo.current)selfVideo.current.srcObject=null;setCameraOn(false);setCameraBusy(false);},[]);
+  async function toggleCamera(){
+    if(cameraOn){stopCamera();return;}
+    const run=++cameraRun.current;setCameraBusy(true);setCameraError("");
+    try{const media=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false});
+      if(run!==cameraRun.current){media.getTracks().forEach(t=>t.stop());return;}
+      cameraStream.current=media;if(selfVideo.current)selfVideo.current.srcObject=media;setCameraOn(true);
+    }catch{setCameraError("Camera unavailable. You can keep talking or typing with your camera off.");}
+    finally{if(run===cameraRun.current)setCameraBusy(false);}
+  }
+  async function toggleFullscreen(){
+    if(fullscreen){if(document.fullscreenElement)await document.exitFullscreen();setFullscreen(false);return;}
+    setFullscreen(true);
+    try{await meeting.current?.requestFullscreen?.();}catch{/* Expanded viewport layout remains available when native fullscreen is unsupported. */}
+  }
+  useEffect(()=>{const changed=()=>setFullscreen(!!document.fullscreenElement);const key=(e:KeyboardEvent)=>{if(e.key==="Escape")setFullscreen(false);};document.addEventListener("fullscreenchange",changed);document.addEventListener("keydown",key);return()=>{document.removeEventListener("fullscreenchange",changed);document.removeEventListener("keydown",key);};},[]);
   const ledger = useRef(new Map<string, Line>());
   const client = useRef<AnamClient | null>(null),
     session = useRef<string | null>(null),
@@ -85,7 +111,10 @@ export default function StudentCoaches({
     generation = useRef(0),
     locked = useRef(false),
     notesLoaded = useRef(false);
-  const end = useCallback(async () => {
+  const end = useCallback(async (completeOnboarding = false) => {
+    stopCamera();
+    if (document.fullscreenElement === meeting.current) void document.exitFullscreen().catch(()=>{});
+    setFullscreen(false);
     generation.current++;
     locked.current = false;
     const c = client.current;
@@ -103,21 +132,24 @@ export default function StudentCoaches({
       }
     if (id)
       try {
-        await api(courseId, {
+        const result = await api(courseId, {
           action: "end",
           course_id: courseId,
           session_id: id,
           transcript: transcript.current.slice(-160),
+          complete_onboarding: completeOnboarding,
         });
+        if (!result.saved) throw Error("Session was not saved");
+        if(result.onboarding_completed)setOnboardingCompleted(true);
         setNotice(
-          "Session saved. Add any goals or next steps to your coaching notes.",
+          result.onboarding_completed ? "Onboarding complete. Your other coaches are ready whenever you need them during the course." : "Session saved. Add any goals or next steps to your coaching notes.",
         );
       } catch {
         setError(
           "Session ended, but the transcript could not be saved. Please keep your key points in your notes.",
         );
       }
-  }, [courseId]);
+  }, [courseId, stopCamera]);
   useEffect(() => {
     let cancelled = false;
     if (!expanded && phase === "idle") return;
@@ -125,6 +157,9 @@ export default function StudentCoaches({
       .then((d) => {
         if (cancelled) return;
         setAvailable(d.available);
+        setOnboardingCompleted(d.onboarding_completed);
+        setAccess(d.access);
+        if(!d.access.active && client.current) void end();
         setContextLoaded(true);
         setHistory(d.history);
         if (!notesLoaded.current) {
@@ -155,12 +190,12 @@ export default function StudentCoaches({
   useEffect(() => {
     if (phase !== "live") return;
     const timer = setInterval(
-      () => setRemaining((n) => Math.max(0, n - 1)),
+      () => setRemaining(Math.max(0,Math.ceil((deadline.current-Date.now())/1000))),
       1000,
     );
-    const expiry = setTimeout(() => void end(), 900000);
+    const expiry = setTimeout(() => void end(), Math.max(0,deadline.current-Date.now()));
     const access = setInterval(() => {
-      api(courseId, undefined, lessonId).catch(() => void end());
+      api(courseId, undefined, lessonId).then(d=>{if(!d.access.active)void end();}).catch(() => void end());
     }, 60000);
     return () => {
       clearInterval(timer);
@@ -200,6 +235,7 @@ export default function StudentCoaches({
         return;
       }
       session.current = d.session_id;
+      deadline.current=Date.parse(d.expires_at);
       const { createClient, AnamEvent } = await import("@anam-ai/js-sdk");
       if (run !== generation.current) return;
       const c = createClient(d.token, { disableInputAudio: typing });
@@ -297,7 +333,7 @@ export default function StudentCoaches({
         <span>
           <strong>Your personal AI faculty</strong>
           <small>
-            Seven video tutors. One learning journey, built around you.
+            {onboardingCompleted ? "Your coaching team, throughout your course." : "Start with orientation. Meet the right coach for each step."}
           </small>
         </span>
         <span className={styles.open}>
@@ -309,12 +345,19 @@ export default function StudentCoaches({
           <p className={styles.context}>
             Learning together · {lessonTitle || "Course introduction"}
           </p>
+          <p className={styles.guide}>{!access.active ? "Your coaching period has ended. You can still review your notes and recent conversations." : onboardingCompleted ? "You’ve completed onboarding. Choose a specialist below for the task you’re working on." : "New to this course? Meet your Onboarding Tutor once, then choose a specialist whenever you need help."}</p>
+          {access.ends_on && <p className={styles.until}>AI coaching available through {access.ends_on}.</p>}
           <div className={styles.cards}>
-            {coachRoles.map((k) => {
+            {coachRoles.filter(k=>k!=="onboarding" || !onboardingCompleted).map((k) => {
               const Icon = icons[k];
               return (
                 <article key={k} className={styles.card}>
-                  <Icon size={25} />
+                  <div className={styles.cardImage}>
+                    <Image src={`/images/coaches/${k}.webp`} alt={`Illustration of a student meeting the ${coaches[k].title} on a laptop`} fill sizes="(max-width: 600px) 90vw, (max-width: 1000px) 44vw, 30vw" />
+                    <span><Icon size={15} /> AI video coach</span>
+                  </div>
+                  <div className={styles.cardBody}>
+                  <span className={styles.when}>{coaches[k].when}</span>
                   <h3>{coaches[k].title}</h3>
                   <p>{coaches[k].description}</p>
                   <button
@@ -326,9 +369,10 @@ export default function StudentCoaches({
                       : available[k]
                         ? "Start video conversation"
                         : contextLoaded
-                          ? "Temporarily unavailable"
+                          ? access.active ? "Temporarily unavailable" : "Course coaching ended"
                           : "Checking availability…"}
                   </button>
+                  </div>
                 </article>
               );
             })}
@@ -417,14 +461,16 @@ export default function StudentCoaches({
       )}
       {role && (
         <aside
-          className={`${styles.call} ${minimized ? styles.minimized : ""}`}
+          ref={meeting}
+          className={`${styles.call} ${minimized ? styles.minimized : ""} ${fullscreen ? styles.fullscreen : ""}`}
           aria-label="Active video tutor"
         >
           <header>
             <strong>{coaches[role].title}</strong>
+            {!minimized && <button aria-label={fullscreen ? "Exit full screen" : "Full screen"} onClick={()=>void toggleFullscreen()}>{fullscreen ? <Shrink size={18}/> : <Expand size={18}/>}</button>}
             <button
               aria-label={minimized ? "Expand video" : "Minimize video"}
-              onClick={() => setMinimized(!minimized)}
+              onClick={() => {if(document.fullscreenElement)void document.exitFullscreen();setFullscreen(false);setMinimized(!minimized);}}
             >
               {minimized ? <Maximize2 size={18} /> : <Minimize2 size={18} />}
             </button>
@@ -433,13 +479,23 @@ export default function StudentCoaches({
             </button>
           </header>
           <div style={{ display: minimized ? "none" : undefined }}>
-            <video
-              id="pwd-coach-video"
-              autoPlay
-              playsInline
-              controls
-              aria-label="AI tutor video"
-            />
+            <div className={styles.videoGrid}>
+              <div className={styles.videoTile}>
+                <video id="pwd-coach-video" autoPlay playsInline aria-label="AI tutor video" />
+                <span className={styles.tileLabel}>{coaches[role].title} · AI</span>
+              </div>
+              <div className={styles.videoTile}>
+                <video ref={selfVideo} autoPlay playsInline muted aria-label="Your camera preview" style={{visibility:cameraOn ? "visible":"hidden"}} />
+                {!cameraOn && <div className={styles.cameraPlaceholder}><CameraOff size={30}/><strong>Your camera is off</strong><small>You can still speak or type.</small></div>}
+                <span className={styles.tileLabel}>You · local preview</span>
+              </div>
+            </div>
+            <div className={styles.controls}>
+              <button className={styles.mic} disabled={cameraBusy} onClick={()=>void toggleCamera()}>{cameraOn ? <CameraOff size={16}/> : <Camera size={16}/>} {cameraBusy ? "Opening camera…" : cameraOn ? "Turn camera off" : "Turn camera on"}</button>
+              {role === "onboarding" && <button className={styles.complete} disabled={phase !== "live" || !lines.some(l=>l.role==="user") || !lines.some(l=>l.role==="persona")} onClick={()=>void end(true)}>Complete onboarding</button>}
+            </div>
+            <p className={styles.cameraNote}>Your camera is a local preview only. The AI does not see or record it.</p>
+            {cameraError && <p role="alert" className={styles.cameraNote}>{cameraError}</p>}
             <p className={styles.callStatus} role="status">
               {phase === "connecting"
                 ? "Connecting to your tutor…"

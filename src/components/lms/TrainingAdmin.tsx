@@ -197,6 +197,7 @@ export default function TrainingAdmin({
                     currency: f.get("currency"),
                     published: f.get("published") === "on",
                     enrollment_open: f.get("enrollment_open") === "on",
+                    coaching_ends_on: f.get("coaching_ends_on") || null,
                   },
                 });
               }}
@@ -219,6 +220,11 @@ export default function TrainingAdmin({
                     pattern="[a-z0-9]+(-[a-z0-9]+)*"
                     defaultValue={editCourse.slug}
                   />
+                </label>
+                <label>
+                  AI coaching last day (Vanuatu date)
+                  <input type="date" name="coaching_ends_on" defaultValue={editCourse.coaching_ends_on || ""} />
+                  <small>Optional override. Otherwise uses the cohort action-period end or the mentorship’s three-month window. Leave blank for ongoing courses without a published end.</small>
                 </label>
                 <label>
                   Course format

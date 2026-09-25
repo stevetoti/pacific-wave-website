@@ -137,3 +137,34 @@ test("coach quota serializes reservations, separates students and keeps tables p
     await db.close();
   }
 });
+
+test("spoken timetable and coaching dates respect the published course window", async () => {
+  const { spokenTime, coachingWindow } = await import("../src/lib/lms/coach/schedule");
+  assert.equal(spokenTime("3–5 pm Vanuatu time (UTC+11)"), "from three p.m. to five p.m. Vanuatu time (UTC+11)");
+  assert.equal(spokenTime("9:30 am–12 pm"), "from nine 30 a.m. to twelve p.m.");
+  const cohort = { actionEnd: "2026-11-03", timezone: "Pacific/Efate" };
+  assert.equal(coachingWindow({slug:"course"},cohort,[],new Date("2026-11-03T12:59:59Z")).active,true);
+  assert.equal(coachingWindow({slug:"course"},cohort,[],new Date("2026-11-03T13:00:00Z")).active,false);
+  assert.equal(coachingWindow({slug:"course",coaching_ends_on:"2026-10-30"},cohort,[],new Date("2026-11-01")).active,false);
+});
+
+test("onboarding completion is private, explicit, atomic and retains notes", async () => {
+ const db = new PGlite();
+ try {
+  await db.exec("create role anon;create role authenticated;create role service_role;create schema auth;create table auth.users(id uuid primary key);create table pwd_lms_courses(id uuid primary key);create table pwd_lms_lessons(id uuid primary key);");
+  for(const file of ["20260925_student_video_coaches.sql","20260925_add_specialist_coaches.sql","20260926_coach_orientation.sql"])await db.exec(await readFile("supabase/migrations/"+file,"utf8"));
+  const u=crypto.randomUUID(),other=crypto.randomUUID(),c=crypto.randomUUID();
+  await db.query("insert into auth.users values($1),($2)",[u,other]);await db.query("insert into pwd_lms_courses values($1)",[c]);
+  await db.query("insert into pwd_lms_coach_notes(user_id,course_id,notes) values($1,$2,'Keep my goals')",[u,c]);
+  const reserve=async()=> (await db.query<{id:string}>("select pwd_lms_coach_reserve($1,$2,null,'onboarding') id",[u,c])).rows[0].id;
+  const end=async(id:string,who:string,done:boolean,t='[]')=>(await db.query<{ok:boolean}>("select pwd_lms_coach_finish($1,$2,$3,$4::jsonb,$5) ok",[who,c,id,t,done])).rows[0].ok;
+  let sid=await reserve();assert.equal(await end(sid,other,false),false);
+  await assert.rejects(end(sid,u,true),/onboarding_not_ready/);
+  assert.equal(await end(sid,u,false),true); // interrupted session can retry
+  sid=await reserve();assert.equal(await end(sid,u,true,JSON.stringify([{role:'user',content:'I understand the timetable'},{role:'persona',content:'You are ready for your course'}])),true);
+  await assert.rejects(reserve(),/onboarding_completed/);
+  const row=(await db.query<{notes:string;onboarding_completed_at:string}>("select * from pwd_lms_coach_notes where user_id=$1",[u])).rows[0];assert.equal(row.notes,'Keep my goals');assert.ok(row.onboarding_completed_at);
+  await db.query("select pwd_lms_coach_reserve($1,$2,null,'business')",[u,c]);
+  const perm=await db.query<{ok:boolean}>("select not has_function_privilege('authenticated','pwd_lms_coach_finish(uuid,uuid,uuid,jsonb,boolean)','EXECUTE') ok");assert.equal(perm.rows[0].ok,true);
+ } finally { await db.close(); }
+});

@@ -396,3 +396,11 @@ All three new roles created real Anam tokens and persisted ended sessions. Seven
 ## 2026-09-25 — [Codex] Seven-coach release verified live
 
 Application 6be80a8 promoted as dpl_H9qHeZNugrB2Y43k5mMYbt6YiJFv. Live API advertises all seven roles; sales_practice, marketing_content and project_review each create Anam token and end/save successfully. Eight live desktop/mobile tests passed. Fixtures removed and complete source published to main. Existing payment flags, VUV banks and October price verified unchanged.
+
+## 2026-09-26 — [Codex] Course-grounded onboarding and conference design
+
+User requested fixed timetable orientation, natural spoken times, coach usage guidance, unique meeting artwork, one-time onboarding and a 50/50 video meeting. Implementing explicit per-course completion (interrupted sessions retry), authoritative cohort config/public curriculum, course-duration access and optional local-only camera/fullscreen. Generated seven distinct images using authorized Anam avatar references. No release yet.
+
+## 2026-09-26 — [Codex] Conference and onboarding verification passed
+
+52 unit/SQL tests, lint/build and eight public desktop/mobile tests pass. Isolated real Anam meeting answered with fixed Mondays/Thursdays/Saturdays from three p.m. to five p.m. Vanuatu time and refused rescheduling. Verified equal video tiles, fake-camera preview, native fullscreen, stopped camera track on end, minimize/lesson navigation, transcript persistence, explicit completion hiding onboarding on another viewport/context, other-student isolation, notes preserving completion, repeat onboarding 409 and ended-course starts 403. All fixtures removed. Seven 52–72 KB WebP illustrations inspected. Staging release next.
