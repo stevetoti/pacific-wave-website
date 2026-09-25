@@ -392,3 +392,7 @@ User authorized all recommended roles: sales practice, marketing/content and pro
 ## 2026-09-25 — [Codex] Specialist coach verification complete
 
 All three new roles created real Anam tokens and persisted ended sessions. Seven cards verified at desktop/mobile widths; real video, personalized response and transcript regression passed. Fifty unit/database tests, lint, full build with route guards and eight public desktop/mobile checks passed. Role constraint migration applied; temporary students/courses removed. Preparing staged production release.
+
+## 2026-09-25 — [Codex] Seven-coach release verified live
+
+Application 6be80a8 promoted as dpl_H9qHeZNugrB2Y43k5mMYbt6YiJFv. Live API advertises all seven roles; sales_practice, marketing_content and project_review each create Anam token and end/save successfully. Eight live desktop/mobile tests passed. Fixtures removed and complete source published to main. Existing payment flags, VUV banks and October price verified unchanged.

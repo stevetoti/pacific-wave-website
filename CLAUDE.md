@@ -1,5 +1,9 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## Latest release — 2026-09-25 [Codex] seven student coaches
+
+Application `6be80a8`, promoted production `dpl_H9qHeZNugrB2Y43k5mMYbt6YiJFv`. Added Sales Practice Coach, Marketing & Content Coach and Project Review Tutor to every paid/granted course alongside the original four. Migration `20260925_add_specialist_coaches.sql` applied; existing Anam settings reused, shared student quotas unchanged. All three new roles created/ended real sessions on production; seven role availability confirmed. Fifty tests, lint/build, real local video/transcript checks, seven-card desktop/mobile layout and eight live public release checks pass; temporary fixtures removed. See `docs/STUDENT-VIDEO-COACHES.md`.
+
 ## Latest release — 2026-09-25 [Codex] student video coaches
 
 Application commit `fe3e6d2`; verified production `dpl_hrAquD7amYg2fmtGyYigk83kaLsR` promoted to pacificwavedigital.com. Every paid/granted course now includes **Your personal AI faculty**: Onboarding Tutor, Class Student Assistant, Business Development Coach and Branding Coach. Applies automatically to October/future cohorts and private mentorship. Additive migration `20260925_student_video_coaches.sql` applied. Anam settings reused from authorized Digiassist configuration; shared personas unchanged. Relevant student/course context, private notes and recent transcripts, consent, 15-minute sessions and eight starts per rolling 24 hours. See `docs/STUDENT-VIDEO-COACHES.md` for architecture and memory limits. Verified 50 tests, lint, TypeScript/build, real local video/personalization/transcript flow, eight live desktop/mobile checks and production authenticated context/token creation; fixtures removed.
