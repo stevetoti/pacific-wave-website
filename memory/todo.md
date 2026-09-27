@@ -123,4 +123,4 @@
 
 
 ## 2026-09-27 — [Codex] Voice coaching and student learning hub
-In progress: saved profile approval, voice/video meetings, live verified research, private session history and researched email/PDF reports; course imagery/navigation and cohort recording uploads. Implementation is not yet deployed or verified.
+- [x] Saved profile approval, voice/video meetings, live verified research, private session history and researched email/PDF reports; course imagery/navigation and cohort recording uploads — [Codex] 2026-09-27: deployed and verified at `dpl_AEkNSt6dUMawBjWqAaD7wiBJDZXu`.

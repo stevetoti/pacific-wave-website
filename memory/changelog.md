@@ -420,3 +420,8 @@ Additive report/cohort-recording migration applied to `rndegttgwtpkbjtvjgnc`. Li
 ### 2026-09-27 — [Codex] End-to-end acceptance
 
 Full real Anam speech → awaited live research → ended-session report → private renamed dashboard page → authenticated PDF flow passed. Cross-student reads return 404; saved consent persists across courses; desktop/mobile faculty and equal camera/coach tiles pass. All synthetic fixtures removed. Exact October welcome layout, twelve thumbnails, dates and one approval passed at 1440px and 390px. Fifty-five unit/database tests pass. Production packaging includes the PDF logo in all three relevant functions; final candidate verification/promotion pending.
+
+
+## 2026-09-27 — [Codex] Coaching learning hub released
+
+Application `1bc7246` and recovery migration `c6e86f2`; production candidate `dpl_AEkNSt6dUMawBjWqAaD7wiBJDZXu` passed private history/rename/PDF/logo/auth checks and was promoted. Eight live desktop/mobile release checks passed; payment modes, banks and course prices preserved. Source/report/public-image checks and synthetic test cleanup completed. Existing training documentation and CLAUDE resume snapshot updated; full source being synchronized to main.
