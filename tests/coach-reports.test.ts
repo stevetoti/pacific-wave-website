@@ -44,6 +44,7 @@ test("report jobs queue once, lease exclusively, retry and isolate live research
       "20260925_add_specialist_coaches.sql",
       "20260926_coach_orientation.sql",
       "20260927_coach_reports.sql",
+      "20260927_coach_report_timeouts.sql",
     ])
       await db.exec(await readFile("supabase/migrations/" + file, "utf8"));
     const u = crypto.randomUUID(),
@@ -119,6 +120,9 @@ test("report jobs queue once, lease exclusively, retry and isolate live research
         .length,
       0,
     );
+    await db.query("update pwd_lms_coach_reports set report=null,state='processing',attempts=3,locked_until=now()-interval '1 second'");
+    assert.equal((await db.query('select * from pwd_coach_claim_report($1)',[sid])).rows.length,0);
+    assert.equal((await db.query<{state:string}>('select state from pwd_lms_coach_reports')).rows[0].state,'failed');
     const access = (
       await db.query<{ ok: boolean }>(
         "select not has_table_privilege('authenticated','pwd_lms_coach_reports','SELECT') and not has_table_privilege('anon','pwd_lms_coach_preferences','SELECT') and not has_function_privilege('authenticated','pwd_coach_claim_report(uuid)','EXECUTE') ok",
