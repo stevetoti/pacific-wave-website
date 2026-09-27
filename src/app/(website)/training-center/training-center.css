@@ -2102,3 +2102,10 @@
 
 .chat-mobile-rooms{display:none}
 @media(max-width:760px){.chat-workspace .lms-community-channels{display:none}.chat-mobile-rooms{display:block;padding:16px 20px;background:#f5f7fa;border-top:1px solid #dde3eb}.chat-mobile-rooms label{margin:0 0 8px!important}.chat-mobile-rooms .lms-text{font-size:.8rem}}
+
+/* Student learning hub */
+.lms-welcome-image{position:relative;aspect-ratio:16/8;border-radius:16px;overflow:hidden;margin-bottom:26px;background:#243f73}.lms-welcome-image img{object-fit:cover}.lms-welcome-image span{position:absolute;bottom:0;left:0;right:0;padding:32px 22px 18px;color:white;background:linear-gradient(transparent,rgba(18,37,70,.9));font-size:11px;font-weight:800;letter-spacing:.13em}
+.lms-discover-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:26px 0}.lms-discover-grid>a,.lms-discover-grid>button{display:block;text-align:left;border:1px solid #dce4ee;background:white;border-radius:14px;overflow:hidden;color:#243f73;cursor:pointer;text-decoration:none;padding:0;transition:transform .2s,box-shadow .2s}.lms-discover-grid>a:hover,.lms-discover-grid>button:hover{transform:translateY(-3px);box-shadow:0 12px 25px #243f7314}.lms-discover-grid img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}.lms-discover-grid span{display:block;padding:18px}.lms-discover-grid small{font-size:9px;letter-spacing:.1em;color:#ba431b;font-weight:800}.lms-discover-grid strong{display:block;font-size:18px;margin:7px 0}.lms-discover-grid p{font-size:13px;line-height:1.6;margin:0 0 12px;color:#61718b}.lms-discover-grid b{font-size:12px}.lms-faculty-nav{border:1px solid #ebd5c9;background:#fff8f1;margin:9px 0}.lms-faculty-nav small{display:block;margin-top:4px;font-size:10px}.lms-content{min-width:0}.lms-learning>aside{align-self:start}.lms-learning>aside .lms-lesson-with-image .lms-lesson-thumbnail{min-width:82px}
+@media(max-width:600px){.lms-discover-grid{grid-template-columns:1fr}.lms-welcome-image{aspect-ratio:4/3}}
+
+.lms-shell .lms-discover-grid>a{text-decoration:none;color:#243f73}.lms-shell .lms-discover-grid>a b{color:#a84021}

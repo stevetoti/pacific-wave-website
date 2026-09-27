@@ -29,6 +29,7 @@ async function sql(query) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ query }),
+      signal: AbortSignal.timeout(45000),
     },
   );
   if (!r.ok) throw Error("SQL " + r.status);
@@ -44,7 +45,7 @@ async function api(user, course, body, lesson) {
         "Content-Type": "application/json",
       },
       body: body ? JSON.stringify(body) : undefined,
-      signal: AbortSignal.timeout(45000),
+      signal: AbortSignal.timeout(200000),
     },
   );
   return { status: r.status, data: await r.json() };
@@ -64,6 +65,7 @@ try {
       await check(auth.auth.signInWithPassword({ email, password }))
     ).session;
   }
+  console.log("Synthetic users created");
   for (const priv of [false, true])
     courses.push(
       await check(
@@ -93,6 +95,7 @@ try {
         `begin;insert into pwd_lms_orders(id,user_id,course_id,email,name,phone,amount,currency,status) values(${[id, users[i].id, c.id, users[i].email, i ? "Other Student" : "Alex Coach Test", "1234567"].map(lit).join(",")},100,'VUV','paid');delete from pwd_lms_emails where order_id=${lit(id)};commit;`,
       );
     }
+  console.log("Enrolments created");
   await check(
     db.from("pwd_lms_profiles").upsert({
       user_id: users[0].id,
@@ -181,11 +184,18 @@ try {
     ).status,
     400,
   );
+  assert.equal(context.data.consent_accepted,false);
+  assert.equal((await api(users[0],courses[0].id,{action:"start",course_id:courses[0].id,role:"business",consent:true})).status,403);
+  assert.equal((await api(users[0],courses[0].id,{action:"consent",course_id:courses[0].id})).status,200);
+  assert.equal((await api(users[0],courses[1].id)).data.consent_accepted,true);
+  assert.equal((await api(users[1],courses[0].id)).data.consent_accepted,false);
+  console.log("Context, isolation and consent passed");
   browser = await chromium.launch({
     headless: true,
     args: [
       "--use-fake-ui-for-media-stream",
       "--use-fake-device-for-media-stream",
+
     ],
   });
   for (const role of ["sales_practice", "marketing_content", "project_review"]) {
@@ -205,12 +215,21 @@ try {
       ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
       { key: "sb-rndegttgwtpkbjtvjgnc-auth-token", session: users[0].session },
     );
+    await ctx.route("**/__qa_voice.wav",route=>route.fulfill({path:"/tmp/pwd-coach-voice.wav",contentType:"audio/wav"}));
+    await ctx.addInitScript(()=>{
+      const original=navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+      navigator.mediaDevices.getUserMedia=async constraints=>{
+        const media=await original(constraints);
+        if(constraints?.audio){const audio=new AudioContext();const destination=audio.createMediaStreamDestination();const source=audio.createBufferSource();source.buffer=await audio.decodeAudioData(await (await fetch("/__qa_voice.wav")).arrayBuffer());source.connect(destination);media.getAudioTracks().forEach(t=>{t.stop();media.removeTrack(t);});media.addTrack(destination.stream.getAudioTracks()[0]);window.qaSpeak=async()=>{await audio.resume();source.start();};}
+        return media;
+      };
+    });
     const page = await ctx.newPage();
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await page.goto(`${base}/training-center/course/${courses[0].id}`);
     await page
-      .getByRole("button", { name: /Your personal AI faculty/ })
+      .getByRole("button", { name: /Meet your AI Faculty/ }).first()
       .click();
     await page
       .getByRole("heading", { name: width === 1280 ? "Onboarding Tutor" : "Class Student Assistant", exact: true })
@@ -244,13 +263,14 @@ try {
       fullPage: true,
     });
     if (width === 1280) {
-      await page.getByRole("checkbox", { name: /I agree to share/ }).check();
-      await page.getByRole("checkbox", { name: /Type instead/ }).check();
+      assert.equal(await page.getByRole("checkbox").count(),0);
+      assert.equal(await page.getByRole("button",{name:"Approve and meet my coaches"}).count(),0);
       await page
         .getByRole("button", { name: "Start video conversation" })
         .first()
         .click();
-      await page.getByLabel("Message your tutor").waitFor();
+      assert.equal(await page.getByLabel("Message your tutor").count(),0);
+      assert.equal(await page.getByLabel("Live transcript").count(),0);
       await page.waitForFunction(
         () => {
           const v = document.getElementById("pwd-coach-video");
@@ -264,6 +284,7 @@ try {
         { timeout: 60000 },
       );
       console.log("Real Anam video frame received.");
+      await page.evaluate(()=>window.qaSpeak());
       await page.getByRole("button",{name:"Turn camera on",exact:true}).click();
       await page.waitForFunction(()=>{const v=document.querySelector('video[aria-label="Your camera preview"]');return v?.srcObject?.active && v.videoWidth>0;});
       await page.evaluate(()=>{window.qaCameraTrack=document.querySelector('video[aria-label="Your camera preview"]').srcObject.getVideoTracks()[0];});
@@ -272,18 +293,16 @@ try {
       await page.getByRole("button",{name:"Exit full screen",exact:true}).waitFor();
       await page.screenshot({path:".deployment/student-coach-fullscreen.png"});
       await page.getByRole("button",{name:"Exit full screen",exact:true}).click();
-      await page
-        .getByLabel("Message your tutor")
-        .fill("Please greet me by name and tell me what my learning goal is.");
-      await page.getByRole("button", { name: "Send", exact: true }).click();
-      await page
-        .getByLabel("Live transcript")
-        .getByText(/tourism/i)
-        .waitFor({ timeout: 45000 });
-      await page.getByLabel("Message your tutor").fill("What are my official class days and times? Should I choose my own class schedule?");
-      await page.getByRole("button",{name:"Send",exact:true}).click();
-      await page.getByLabel("Live transcript").getByText(/(?:three|3).*?(?:five|5)/i).last().waitFor({timeout:45000});
-      console.log("Timetable response:",await page.getByLabel("Live transcript").innerText());
+      await page.waitForFunction(()=>Array.from(document.querySelectorAll("button")).some(b=>b.textContent==="Complete onboarding"&&!b.disabled),{}, {timeout:100000});
+      let researchRows=[];
+      for(let i=0;i<45;i++){
+        const active=await check(db.from("pwd_lms_coach_sessions").select("id").eq("user_id",users[0].id).eq("state","active").single());
+        researchRows=await check(db.from("pwd_lms_coach_research").select("status,result").eq("session_id",active.id));
+        if(researchRows.some(r=>r.status==="ready"))break;
+        await page.waitForTimeout(3000);
+      }
+      assert.ok(researchRows.some(r=>r.status==="ready"&&r.result.sources.length>0),"Anam invokes live research with verified sources");
+      console.log("Real spoken request invoked live research with verified sources.");
       await page.getByRole("button", { name: "Minimize video" }).click();
       await page
         .getByRole("button", { name: /Positioning your offer/ })
@@ -309,11 +328,18 @@ try {
       assert.equal(await page.evaluate(()=>window.qaCameraTrack.readyState),"ended");
       const repeat=await api(users[0],courses[0].id,{action:"start",course_id:courses[0].id,role:"onboarding",consent:true});assert.equal(repeat.status,409);
       await api(users[0],courses[0].id,{action:"notes",course_id:courses[0].id,notes:"After onboarding"});assert.equal((await api(users[0],courses[0].id)).data.onboarding_completed,true);
-      assert.ok(
-        saved.data.history[0].transcript.some(
-          (l) => l.role === "user" && l.content.includes("learning goal"),
-        ),
-      );
+      assert.ok(saved.data.history[0].transcript.some(l=>l.role==="user"));
+      const sid=saved.data.history[0].id;
+      const headers={Authorization:"Bearer "+users[0].session.access_token,"Content-Type":"application/json"};
+      const privateRead=await fetch(`${base}/api/lms-coach/sessions?id=${sid}`,{headers:{Authorization:"Bearer "+users[1].session.access_token}});assert.equal(privateRead.status,404);
+      const rename=await fetch(`${base}/api/lms-coach/sessions`,{method:"PATCH",headers,body:JSON.stringify({id:sid,title:"My Vanuatu business plan"})});assert.equal(rename.status,200);
+      let report;
+      for(let i=0;i<60;i++){report=await check(db.from("pwd_lms_coach_reports").select("state,report,error,email_state").eq("session_id",sid).maybeSingle());if(report?.state==="ready")break;await page.waitForTimeout(3000);}
+      assert.equal(report?.state,"ready",report?.error);assert.ok(report.report.sources.length>0);
+      await page.goto(`${base}/training-center/sessions?session=${sid}`);await page.getByRole("heading",{name:"My Vanuatu business plan",exact:true}).waitFor();
+      await page.getByRole("heading",{name:"Additional research & learning"}).waitFor();await page.screenshot({path:".deployment/coach-report-page.png",fullPage:true});
+      const pdf=await fetch(`${base}/api/lms-coach/sessions?id=${sid}&pdf=1`,{headers});assert.equal(pdf.status,200);assert.equal(pdf.headers.get("content-type"),"application/pdf");await writeFile(".deployment/coach-report-qa.pdf",Buffer.from(await pdf.arrayBuffer()));
+      console.log("Private researched report, rename, dashboard and authenticated PDF passed.");
     }
     assert.deepEqual(errors, []);
     await ctx.close();

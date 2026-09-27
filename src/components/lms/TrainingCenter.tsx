@@ -36,6 +36,9 @@ const StudentCoaches = dynamic(() => import("./coach/StudentCoaches"), { ssr: fa
 import ProgramDetail from "./ProgramDetail";
 import { programs, mentorshipSlug } from "@/lib/lms/programs";
 const base = "/training-center";
+function classImage(course: Course, lesson: Lesson, index: number) {
+  return lesson.thumbnail_url || (course.slug === "vanuatu-october-2026" && index >= 0 && index < 12 ? `/images/training/classes/class-${String(index+1).padStart(2,"0")}.webp` : undefined);
+}
 async function api(path: string, body?: unknown) {
   const r = await authFetch(
     `/api/lms/${path}`,
@@ -72,6 +75,7 @@ export default function TrainingCenter({
   const router = useRouter();
   const view = path[0] || "catalog";
   const coursePathId = path[1];
+  const [showFaculty, setShowFaculty] = useState(false);
   const [courseTab, setCourseTab] = useState(
     query.tab === "community" ? "community" : "lessons",
   );
@@ -1251,7 +1255,7 @@ export default function TrainingCenter({
                           : "Community & groups"}
                       </button>
                     </nav>
-                    {["paid", "granted"].includes(courseOrder?.status || "") && <StudentCoaches key={current.id} courseId={current.id} lessonId={active?.published ? active.id : null} lessonTitle={active?.published ? active.title : null} />}
+
                     {courseTab === "community" && (
                       <CourseCommunity key={current.id} courseId={current.id} />
                     )}
@@ -1266,19 +1270,21 @@ export default function TrainingCenter({
                       <aside className="lms-panel">
                         <h2>Course journey</h2>
                         <button
-                          className={`lms-lesson ${!active ? "selected" : ""}`}
-                          onClick={() => setActive(null)}
+                          className={`lms-lesson ${!active && !showFaculty ? "selected" : ""}`}
+                          onClick={() => {setActive(null);setShowFaculty(false);}}
                         >
                           <BookOpen size={18} />
                           Start here: introduction
                         </button>
+                        <button className={`lms-lesson lms-faculty-nav ${showFaculty ? "selected" : ""}`} onClick={()=>setShowFaculty(true)}><GraduationCap size={20}/><span>Meet your AI Faculty<small>Start with your onboarding tutor</small></span></button>
+                        <Link className="lms-lesson" href={`/training-center/sessions?course=${current.id}`}><BookOpen size={18}/>My coaching conversations</Link>
                         {lessons.map((l, i) => (
                           <button
-                            className={`lms-lesson lms-lesson-with-image ${active?.id === l.id ? "selected" : ""}`}
+                            className={`lms-lesson lms-lesson-with-image ${!showFaculty && active?.id === l.id ? "selected" : ""}`}
                             key={l.id}
-                            onClick={() => setActive(l)}
+                            onClick={() => {setActive(l);setShowFaculty(false);}}
                           >
-                            <LessonThumbnail url={l.thumbnail_url} />
+                            <LessonThumbnail url={classImage(current,l,i)} />
                             <span className="lms-lesson-copy">
                               {l.section_title && (
                                 <small>{l.section_title}</small>
@@ -1305,12 +1311,21 @@ export default function TrainingCenter({
                         )}
                       </aside>
                       <section className="lms-panel lms-content">
+                        {["paid", "granted"].includes(courseOrder?.status || "") && <StudentCoaches key={current.id} visible={showFaculty} courseId={current.id} lessonId={active?.published ? active.id : null} lessonTitle={active?.published ? active.title : null} />}
+                        <div hidden={showFaculty}>
                         {!active ? (
                           <>
+                            <div className="lms-welcome-image"><Image src="/images/training/hero.webp" alt="Students learning together in a live Pacific Wave Digital training session" fill sizes="(max-width: 700px) 90vw, 65vw" priority/><span>YOUR NEXT CHAPTER STARTS HERE</span></div>
                             <p className="lms-eyebrow">START HERE</p>
                             <h2>Welcome to your course</h2>
                             <div className="lms-prose">
                               {current.introduction}
+                            </div>
+                            <div className="lms-discover-grid">
+                              <button onClick={()=>setShowFaculty(true)}><Image src="/images/coaches/onboarding.webp" alt="A student meeting an AI tutor" width={640} height={360}/><span><small>YOUR FIRST STEP</small><strong>Meet your AI Faculty</strong><p>Get oriented, ask questions and turn your learning into practical action.</p><b>Choose your coach →</b></span></button>
+                              <Link href={`/training-center/sessions?course=${current.id}`}><Image src="/images/coaches/project_review.webp" alt="Reviewing a project with a coach" width={640} height={360}/><span><small>YOUR PERSONAL LIBRARY</small><strong>Conversations & research</strong><p>Revisit sessions, rename them and download your researched learning guides.</p><b>Open your session library →</b></span></Link>
+                              <button onClick={()=>{if(lessons[0])setActive(lessons[0]);}}><Image src={classImage(current,lessons[0]||{} as Lesson,0)||"/images/training/hero.webp"} alt="Live course training" width={640} height={360}/><span><small>LEARN & PRACTISE</small><strong>Live classes & recordings</strong><p>Follow your timetable. Find each recording and activity here after publication.</p><b>Explore your lessons →</b></span></button>
+                              <button onClick={()=>setCourseTab("community")}><Image src="/images/training/hero.webp" alt="A supportive group of learners" width={640} height={360}/><span><small>STAY CONNECTED</small><strong>{current.private_sessions?"Your mentor space":"Your learning community"}</strong><p>Ask course questions and stay connected with your training team.</p><b>Open your community →</b></span></button>
                             </div>
                             <div className="lms-bank">
                               <h3>Make the most of your learning</h3>
@@ -1328,9 +1343,9 @@ export default function TrainingCenter({
                                 ? `${when(active.starts_at)} · VANUATU TIME`
                                 : "ON-DEMAND LESSON"}
                             </p>
-                            {active.thumbnail_url && (
+                            {classImage(current,active,lessons.findIndex(l=>l.id===active.id)) && (
                               <LessonThumbnail
-                                url={active.thumbnail_url}
+                                url={classImage(current,active,lessons.findIndex(l=>l.id===active.id))}
                                 cover
                               />
                             )}
@@ -1351,8 +1366,7 @@ export default function TrainingCenter({
                                 <Clock3 size={36} />
                                 <h3>Your next class is on the way</h3>
                                 <p>
-                                  Class materials and recordings will appear
-                                  here when your trainer publishes them.
+                                  {active.starts_at ? `This class is scheduled for ${when(active.starts_at)} (Vanuatu time). Its recording will be available after the class, once published by your trainer.` : "Class materials and recordings will appear here when your trainer publishes them."}
                                 </p>
                               </div>
                             ) : (
@@ -1460,6 +1474,7 @@ export default function TrainingCenter({
                             )}
                           </>
                         )}
+                        </div>
                       </section>
                     </div>
                   </>

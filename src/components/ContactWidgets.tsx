@@ -9,7 +9,8 @@ export default function ContactWidgets() {
   if (
     pathname.replace(/\/$/, "") === "/training-center/account" ||
     pathname.startsWith("/training-center/course/") ||
-    pathname.replace(/\/$/, "") === "/training-center/dashboard"
+    pathname.replace(/\/$/, "") === "/training-center/dashboard" ||
+    pathname.replace(/\/$/, "") === "/training-center/sessions"
   )
     return null;
   return (

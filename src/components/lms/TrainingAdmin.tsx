@@ -591,16 +591,14 @@ export default function TrainingAdmin({
                           ))}
                       </select>
                     </label>
-                    {editLesson.order_id && (
+                    {(editLesson.order_id || !courses.find(c=>c.id===selected)?.private_sessions) && (
                       <div className="lms-bank">
-                        <h3>Private session recording</h3>
+                        <h3>{editLesson.order_id ? "Private session recording" : "Class recording"}</h3>
                         <p>
-                          Upload MP4 or WebM (up to 500 MB). Only this student
-                          can request playback after payment. Save the lesson
-                          after uploading.
+                          Upload MP4 or WebM (up to 500 MB). Playback is restricted to the enrolled student or course members. Save the lesson and publish it when ready.
                         </p>
                         <input
-                          aria-label="Upload private session recording"
+                          aria-label="Upload class recording"
                           type="file"
                           accept="video/mp4,video/webm"
                           disabled={busy}
@@ -628,7 +626,8 @@ export default function TrainingAdmin({
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify({
                                   action: "recording_upload",
-                                  order_id: editLesson.order_id,
+                                  order_id: editLesson.order_id || null,
+                                  course_id: selected,
                                   extension,
                                 }),
                               });

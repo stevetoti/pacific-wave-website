@@ -78,3 +78,7 @@ User authorized the three recommended additions. Seven roles use the existing pr
 ## 2026-09-26 — [Codex] Structured onboarding and meeting lifecycle
 
 Fixed cohort schedules come from the linked cohort config; October curriculum reuses the public outline. Personal practice does not reschedule classes. Explicit Complete onboarding is once per student/course and only accepts a nonempty two-sided dialogue; ordinary ending/interruption permits retry. No retroactive completion of earlier sessions. Coaching availability follows published course end boundaries, with an admin date override and unknown-end courses retaining paid/granted access. Student camera is optional local-only preview alongside Anam in equal tiles, never uploaded or recorded. Seven distinct generated meeting illustrations use the actual configured avatar references; prompts retained.
+
+## 2026-09-27 — [Codex] Voice-only coaching and private report delivery
+
+Use one account-level saved consent across courses; preserve per-course onboarding completion. Anam tools are ephemeral per-session, with awaited authenticated live research. GPT-5.4 hosted web search and DNS-pinned link verification support current sourced guidance. Keep transcript-only summaries separate from supplementary research. Queue reports in Supabase with leased retries and idempotent Resend delivery to the student's account only. All reports/PDFs remain private. Reuse the private recording bucket for course-owned cohort uploads while retaining assigned-student mentorship guards.

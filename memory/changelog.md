@@ -408,3 +408,15 @@ User requested fixed timetable orientation, natural spoken times, coach usage gu
 ## 2026-09-26 — [Codex] Conference coaching released
 
 Promoted dpl_9d75LYBQnc2oXNUgu9UUQTn3q5bq, application d2f2162. Live synthetic student verified official spoken timetable and end date, Anam onboarding token, persistent completion and repeat rejection; all seven images load. Eight live desktop/mobile checks passed. QA fixtures removed. Complete source and handoff published to main. Shared markdown used because persistent-memory CLI still lacks numpy.
+
+
+## 2026-09-27 — [Codex] Voice coaching and student learning hub
+In progress: saved profile approval, voice/video meetings, live verified research, private session history and researched email/PDF reports; course imagery/navigation and cohort recording uploads. Implementation is not yet deployed or verified.
+
+### 2026-09-27 — [Codex] Verification checkpoint
+
+Additive report/cohort-recording migration applied to `rndegttgwtpkbjtvjgnc`. Live research returned verified official Vanuatu sources; real Anam speech invoked the client research tool. Branded six-page sample PDF rendered and inspected; Resend accepted a synthetic report with PDF at its test inbox. Queue/privacy/link checks, account-email routing/idempotency tests, recording isolation, complete build and eight public desktop/mobile checks pass. End-to-end session report and final deployment checks are still in progress. A transient access-check failure found during the voice test now leaves an otherwise valid meeting running instead of immediately ending it.
+
+### 2026-09-27 — [Codex] End-to-end acceptance
+
+Full real Anam speech → awaited live research → ended-session report → private renamed dashboard page → authenticated PDF flow passed. Cross-student reads return 404; saved consent persists across courses; desktop/mobile faculty and equal camera/coach tiles pass. All synthetic fixtures removed. Exact October welcome layout, twelve thumbnails, dates and one approval passed at 1440px and 390px. Fifty-five unit/database tests pass. Production packaging includes the PDF logo in all three relevant functions; final candidate verification/promotion pending.

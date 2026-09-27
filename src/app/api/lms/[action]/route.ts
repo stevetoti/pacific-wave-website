@@ -83,18 +83,13 @@ export async function GET(request: Request, context: Context) {
           .eq("published", true)
           .maybeSingle(),
       );
-      if (!lesson?.order_id || !lesson.recording_path)
+      if (!lesson?.recording_path)
         throw new HttpError(404, "Recording unavailable.");
-      const order = checked(
-        await db
-          .from("pwd_lms_orders")
-          .select("id")
-          .eq("id", lesson.order_id)
-          .eq("course_id", lesson.course_id)
-          .eq("user_id", user.id)
-          .in("status", ["paid", "granted"])
-          .maybeSingle(),
-      );
+      const course = checked(await db.from("pwd_lms_courses").select("private_sessions").eq("id",lesson.course_id).single());
+      if (!course || (course.private_sessions && !lesson.order_id)) throw new HttpError(404,"Recording unavailable.");
+      let accessQuery=db.from("pwd_lms_orders").select("id").eq("course_id",lesson.course_id).eq("user_id",user.id).in("status",["paid","granted"]);
+      if(lesson.order_id) accessQuery=accessQuery.eq("id",lesson.order_id);
+      const order = checked(await accessQuery.limit(1).maybeSingle());
       if (!order)
         throw new HttpError(
           403,
@@ -687,7 +682,8 @@ export async function POST(request: Request, context: Context) {
           z.object({ action: z.literal("email_status"), id: z.uuid() }),
           z.object({
             action: z.literal("recording_upload"),
-            order_id: z.uuid(),
+            order_id: z.uuid().nullable().optional(),
+            course_id: z.uuid(),
             extension: z.enum(["mp4", "webm"]),
           }),
           z.object({ action: z.literal("course"), value: courseSchema }),
@@ -740,15 +736,11 @@ export async function POST(request: Request, context: Context) {
         return json({ success: true });
       }
       if (input.action === "recording_upload") {
-        const order = checked(
-          await db
-            .from("pwd_lms_orders")
-            .select("id")
-            .eq("id", input.order_id)
-            .maybeSingle(),
-        );
-        if (!order) throw new HttpError(404, "Enrolment not found.");
-        const path = `${order.id}/${randomUUID()}.${input.extension}`;
+        const course = checked(await db.from("pwd_lms_courses").select("id,private_sessions").eq("id",input.course_id).maybeSingle());
+        if(!course)throw new HttpError(404,"Course not found.");
+        if(course.private_sessions&&!input.order_id)throw new HttpError(400,"Choose the student's enrolment for a private recording.");
+        if(input.order_id){const order=checked(await db.from("pwd_lms_orders").select("id").eq("id",input.order_id).eq("course_id",input.course_id).maybeSingle());if(!order)throw new HttpError(404,"Enrolment not found in this course.");}
+        const path = `${input.order_id || course.id}/${randomUUID()}.${input.extension}`;
         const upload = checked(
           await db.storage
             .from("pwd-mentorship-recordings")
@@ -799,6 +791,8 @@ export async function POST(request: Request, context: Context) {
             400,
             "Choose a student enrolment and use a private recording for mentorship.",
           );
+        if(input.value.order_id){const order=checked(await db.from("pwd_lms_orders").select("id").eq("id",input.value.order_id).eq("course_id",input.value.course_id).maybeSingle());if(!order)throw new HttpError(400,"Choose an enrolment from this course.");}
+        if(input.value.recording_path && !input.value.recording_path.startsWith(`${input.value.order_id || input.value.course_id}/`))throw new HttpError(400,"Choose a recording uploaded for this course or student.");
         checked(await db.from("pwd_lms_lessons").upsert(input.value));
       }
       if (input.action === "banks") {

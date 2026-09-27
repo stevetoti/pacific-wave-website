@@ -370,9 +370,10 @@ export default function StudentDashboard({
             aria-label="Dashboard section"
             value={section}
             onChange={(e) =>
-              router.push(`${base}/dashboard?tab=${e.target.value}`)
+              router.push(e.target.value === "sessions" ? `${base}/sessions` : `${base}/dashboard?tab=${e.target.value}`)
             }
           >
+            <option value="sessions">Coaching conversations</option>
             {sections.map(([key, title]) => (
               <option key={key} value={key}>
                 {title}
@@ -381,6 +382,7 @@ export default function StudentDashboard({
           </select>
         </label>
         <nav aria-label="Student dashboard navigation">
+          <Link href="/training-center/sessions"><MessageCircle size={18}/> Coaching conversations</Link>
           {sections.map(([key, title, Icon]) => (
             <Link
               key={key}

@@ -1,4 +1,5 @@
 import "server-only";
+import {consentVersion} from "@/lib/lms/coach/report";
 import { spokenTime, coachingWindow, programOutline } from "@/lib/lms/coach/schedule";
 import { octoberOutline } from "@/lib/training/outline";
 import type { Cohort } from "@/lib/training/config";
@@ -92,6 +93,7 @@ export async function coachContext(
     ),
     notes = checked(n),
     history = checked(h) || [];
+  const preferences = checked(await db.from("pwd_lms_coach_preferences").select("consent_version").eq("user_id",user.id).maybeSingle());
   const context = {
     as_of: new Date().toISOString(),
     student: { name: profile?.full_name || order.name, ...profile },
@@ -121,7 +123,7 @@ export async function coachContext(
         })),
     })),
   };
-  return { db, user, context, notes: notes?.notes || "", history, onboardingCompleted: !!notes?.onboarding_completed_at, access: coachingWindow(course, cohort, lessons.map(x => x.starts_at)) };
+  return { db, user, context, consentAccepted: preferences?.consent_version === consentVersion, notes: notes?.notes || "", history, onboardingCompleted: !!notes?.onboarding_completed_at, access: coachingWindow(course, cohort, lessons.map(x => x.starts_at)) };
 }
 export async function mintCoach(
   role: CoachRole,
@@ -161,6 +163,7 @@ export async function mintCoach(
         voiceId,
         llmId,
         systemPrompt: coachPrompt(role, context),
+        tools: [{type:"client",name:"live_research",description:"Search current trustworthy sources for a student's factual question, requirements or learning gap. Ask jurisdiction and relevant context first. Never include names, emails, credentials or private identifiers in a query.",parameters:{type:"object",properties:{topic:{type:"string",description:"A focused factual research question with jurisdiction where relevant"}},required:["topic"]},awaitResult:true,toolTimeoutSeconds:180}],
         initialMessage: `Hello ${String(context.student.name || "there").split(" ")[0]}! I'm your ${coaches[role].title}. ${role === "onboarding" ? "Welcome to your course. Let’s walk through the course outline, the published class timetable, and how to use your coaches. Shall we start with the course journey?" : role === "class_assistant" && context.current_lesson ? `Let's work on ${context.current_lesson.title}. What would you like to understand better?` : "What would you like to work on together today?"}`,
         maxSessionLengthSeconds: 900,
         ...(p.avatarModel ? { avatarModel: p.avatarModel } : {}),

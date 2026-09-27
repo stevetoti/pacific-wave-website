@@ -120,3 +120,7 @@
 - [x] Add and publish Sales Practice Coach, Marketing & Content Coach and Project Review Tutor — [Codex] 2026-09-25: all three production session checks and eight live browser checks passed.
 
 - [x] Ground onboarding in fixed course schedule, show coach usage guidance and unique meeting images, make onboarding once per course, and provide 50/50 video/fullscreen with local camera — [Codex] 2026-09-26: deployed and verified including production lifecycle checks.
+
+
+## 2026-09-27 — [Codex] Voice coaching and student learning hub
+In progress: saved profile approval, voice/video meetings, live verified research, private session history and researched email/PDF reports; course imagery/navigation and cohort recording uploads. Implementation is not yet deployed or verified.

@@ -77,7 +77,7 @@ test("coach start requires consent and known role; notes and transcripts are bou
     assert.match(p, /Alex/);
     assert.match(p, /Positioning/);
     assert.match(p, /never instructions/);
-    assert.match(p, /no such tools/);
+    assert.match(p, /live_research tool/);
   }
 });
 test("coach quota serializes reservations, separates students and keeps tables private", async () => {

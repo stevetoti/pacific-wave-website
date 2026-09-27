@@ -189,5 +189,11 @@ test('mentorship migration restricts assignments and keeps coming-soon enrolment
   await assert.rejects(()=>db.query("INSERT INTO pwd_lms_lessons(course_id,title,order_id,recording_path) VALUES($1,'Wrong recording',$2,$3)",[mentor.id,order,crypto.randomUUID()+'/a.mp4']));
   await db.query("INSERT INTO pwd_lms_lessons(course_id,title,order_id,recording_path) VALUES($1,'Personal session',$2,$3)",[mentor.id,order,order+'/'+crypto.randomUUID()+'.mp4']);
   assert.equal((await db.query<{public:boolean}>("SELECT public FROM storage.buckets WHERE id='pwd-mentorship-recordings'")).rows[0].public,false);
+  for(const file of ['20260925_student_video_coaches.sql','20260925_add_specialist_coaches.sql','20260926_coach_orientation.sql','20260927_coach_reports.sql'])await db.exec(await readFile('supabase/migrations/'+file,'utf8'));
+  await db.query("INSERT INTO pwd_lms_lessons(course_id,title,recording_path) VALUES($1,'Shared course recording',$2)",[soon.id,soon.id+'/'+crypto.randomUUID()+'.mp4']);
+  await assert.rejects(()=>db.query("INSERT INTO pwd_lms_lessons(course_id,title,recording_path) VALUES($1,'Cross-course recording',$2)",[soon.id,mentor.id+'/'+crypto.randomUUID()+'.mp4']));
+  await assert.rejects(()=>db.query("INSERT INTO pwd_lms_lessons(course_id,title,recording_path) VALUES($1,'Shared private recording',$2)",[mentor.id,mentor.id+'/'+crypto.randomUUID()+'.mp4']));
+  await assert.rejects(()=>db.query("INSERT INTO pwd_lms_lessons(course_id,title,order_id,recording_path) VALUES($1,'Wrong enrolment recording',$2,$3)",[mentor.id,order,mentor.id+'/'+crypto.randomUUID()+'.mp4']));
+
  } finally {await db.close();}
 });
