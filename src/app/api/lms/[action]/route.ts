@@ -325,7 +325,9 @@ export async function POST(request: Request, context: Context) {
           await attachReferral(getSupabaseAdmin(), request, registration.orderId);
         after(async () => {
           try {
-            await sendAccountEmail({ email: input.email, mode: "welcome", course: input.course });
+            // Affiliate sign-ups get the affiliate welcome email once they join instead.
+            if (input.intent !== "affiliate")
+              await sendAccountEmail({ email: input.email, mode: "welcome", course: input.course });
             await sendLmsEmails();
           } catch (error) { await reportServerError("lms/signup-welcome", error); }
         });

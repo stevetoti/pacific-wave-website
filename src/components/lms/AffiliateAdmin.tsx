@@ -33,6 +33,7 @@ type Commission = {
   pwd_lms_orders: { name: string; email: string } | null;
 };
 type Data = {
+  settings: { auto_approve: boolean };
   affiliates: Affiliate[];
   commissions: Commission[];
   referrals: { affiliate_id: string; status: string }[];
@@ -115,10 +116,32 @@ export default function AffiliateAdmin() {
       <section className="lms-panel">
         <h2>Affiliates</h2>
         <p>
-          Students apply from their dashboard. Approved affiliates share
-          /go/CODE links; a paid referred enrolment creates a pending
-          commission automatically. Refunds cancel unpaid commissions.
+          Anyone with an account can join from /affiliates or their dashboard.
+          Affiliates share /go/CODE links; a paid referred enrolment creates a
+          pending commission automatically. Refunds cancel unpaid commissions.
         </p>
+        <label className="af-check">
+          <input
+            type="checkbox"
+            checked={data.settings.auto_approve}
+            disabled={busy}
+            onChange={(e) =>
+              post(
+                { action: "settings", auto_approve: e.target.checked },
+                e.target.checked
+                  ? "Auto-approval on: new affiliates are approved instantly"
+                  : "Auto-approval off: new applications wait for your review",
+              )
+            }
+          />
+          <span>
+            <strong>Approve new affiliates automatically</strong>
+            <small className="af-muted">
+              New applicants get their links and a welcome email straight
+              away. People you previously rejected always need your review.
+            </small>
+          </span>
+        </label>
         <div className="ec-table">
           <table>
             <thead>

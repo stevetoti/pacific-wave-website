@@ -9,6 +9,7 @@ export const signupSchema = z.object({
   attendance: z.enum(['online', 'in_person', 'mixed']),
   acknowledged: z.literal(true),
   course: z.string().regex(/^[a-z0-9-]+$/).max(100).optional(),
+  intent: z.enum(['affiliate']).optional(),
 });
 export const accountSchema = z.discriminatedUnion("mode", [signupSchema, z.object({
   mode: z.literal('recovery'), email: z.email().max(254),

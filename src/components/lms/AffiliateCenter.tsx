@@ -4,6 +4,8 @@ import {
   Copy,
   Check,
   MousePointerClick,
+  Lightbulb,
+  MessageSquareText,
   UserPlus,
   BadgeCheck,
   Wallet,
@@ -12,6 +14,13 @@ import {
 import { authFetch } from "@/lib/auth-fetch";
 import { money } from "@/lib/lms/types";
 import { programs } from "@/lib/lms/programs";
+import {
+  affiliateDestination,
+  affiliateLink,
+  affiliatePractices,
+  affiliateRules,
+  shareMessage,
+} from "@/lib/lms/affiliate-guide";
 type Affiliate = {
   code: string;
   status: "pending" | "approved" | "rejected" | "suspended";
@@ -111,7 +120,7 @@ export default function AffiliateCenter({ email }: { email: string }) {
     setError("");
     setMessage("");
     try {
-      await api({
+      const result = await api({
         action,
         full_name: f.get("full_name"),
         phone: f.get("phone"),
@@ -123,9 +132,11 @@ export default function AffiliateCenter({ email }: { email: string }) {
       await load();
       setEditingPayout(false);
       setMessage(
-        action === "apply"
-          ? "Application sent. We will email you once it has been reviewed."
-          : "Payout details saved.",
+        action !== "apply"
+          ? "Payout details saved."
+          : result.status === "approved"
+            ? "You're approved! Your links are ready below, and we've emailed you a welcome guide with tips."
+            : "Application sent. We will email you once it has been reviewed.",
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Please try again.");
@@ -227,7 +238,7 @@ export default function AffiliateCenter({ email }: { email: string }) {
           )}
         </section>
         <form className="sd-panel sd-profile-form" onSubmit={(e) => submit(e, "apply")}>
-          <h2>Apply to become an affiliate</h2>
+          <h2>Join the affiliate programme</h2>
           <fieldset disabled={busy}>
             <div className="sd-form-grid">
               <label>
@@ -257,8 +268,8 @@ export default function AffiliateCenter({ email }: { email: string }) {
               courses for myself.
             </label>
             <div className="sd-form-actions">
-              <span>We review every application, usually within 2 working days.</span>
-              <button className="lms-button">Send application</button>
+              <span>{a?.status === "rejected" ? "We review re-applications, usually within 2 working days." : "Approval is instant. Your links appear as soon as you join."}</span>
+              <button className="lms-button">{a?.status === "rejected" ? "Send application" : "Join now"}</button>
             </div>
           </fieldset>
         </form>
@@ -281,8 +292,7 @@ export default function AffiliateCenter({ email }: { email: string }) {
       </section>
     );
   const origin = typeof window === "undefined" ? "" : window.location.origin;
-  const link = (to: string) =>
-    `${origin}/go/${a.code}${to === "/training-center" ? "" : `?to=${to}`}`;
+  const link = (to: string) => affiliateLink(origin, a.code, to);
   const commissions = data.commissions || [],
     referrals = data.referrals || [];
   const courseTitle = (id: string) =>
@@ -293,12 +303,7 @@ export default function AffiliateCenter({ email }: { email: string }) {
       .filter((c) => c.enrollment_open)
       .map((c) => ({
         title: c.title,
-        // Cohort courses sell from their own landing page; the catch-all 404s their programme slug.
-        to: c.cohort_id
-          ? "/vanuatu-training"
-          : programs[c.slug]
-            ? `/training-center/programs/${c.slug}`
-            : "/training-center",
+        to: affiliateDestination(c, Boolean(programs[c.slug])),
         detail: `${money(c.amount, c.currency)} · you earn ${money(Math.floor((c.amount * a.commission_rate) / 100), c.currency)}`,
       })),
   ];
@@ -370,6 +375,45 @@ export default function AffiliateCenter({ email }: { email: string }) {
           })}
         </div>
       </section>
+      <section className="sd-panel">
+        <div className="sd-section-title">
+          <div>
+            <h2>
+              <MessageSquareText size={20} className="af-inline-icon" /> Ready-to-send message
+            </h2>
+            <p>Copy this, or better still, add a line about why you recommend it.</p>
+          </div>
+        </div>
+        <blockquote className="af-message">{shareMessage(link("/training-center"))}</blockquote>
+        <div className="af-actions">
+          <button type="button" className="lms-button" onClick={() => copy(shareMessage(link("/training-center")))}>
+            {copied === shareMessage(link("/training-center")) ? <Check size={16} /> : <Copy size={16} />}
+            {copied === shareMessage(link("/training-center")) ? "Copied" : "Copy message"}
+          </button>
+          <a className="lms-text" target="_blank" rel="noreferrer" href={`https://wa.me/?text=${encodeURIComponent(shareMessage(link("/training-center")))}`}>
+            <Share2 size={15} /> Send on WhatsApp
+          </a>
+        </div>
+      </section>
+      <details className="sd-panel af-tips">
+        <summary>
+          <Lightbulb size={20} className="af-inline-icon" /> How top affiliates succeed
+        </summary>
+        <ol className="af-practices">
+          {affiliatePractices.map((p) => (
+            <li key={p.title}>
+              <strong>{p.title}</strong>
+              <span>{p.body}</span>
+            </li>
+          ))}
+        </ol>
+        <h3>Programme rules</h3>
+        <ul className="af-points">
+          {affiliateRules.map((r) => (
+            <li key={r}>{r}</li>
+          ))}
+        </ul>
+      </details>
       <section className="sd-panel">
         <div className="sd-section-title">
           <div>

@@ -670,6 +670,7 @@ export default function TrainingCenter({
                             acknowledged: f.get("privacy") === "on",
                             mode: "signup",
                             course: queryCourse || undefined,
+                            intent: forAffiliate ? "affiliate" : undefined,
                           });
                           // Sign in immediately using the supplied password; the new account
                           // and pending enrollment were created together on the server.

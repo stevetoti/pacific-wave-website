@@ -15,8 +15,8 @@ const steps = [
     Icon: Link2,
     image: "/images/affiliates/apply.webp",
     alt: "A man applying online at his laptop in a bright Port Vila office",
-    title: "Apply for free",
-    body: "Create a free account and tell us how you'll share our courses. We review applications within 2 working days.",
+    title: "Join for free",
+    body: "Create a free account and tell us how you'll share our courses. You're approved instantly, and your links are ready straight away.",
   },
   {
     Icon: Share2,
@@ -81,7 +81,7 @@ export default function AffiliatesPage() {
                 Become an affiliate <ArrowRight size={18} />
               </Link>
               <Link href={signIn} className="font-medium text-blue-100 underline-offset-4 hover:underline">
-                Already have an account? Sign in to apply
+                Already have an account? Sign in to join
               </Link>
             </div>
           </div>
@@ -174,7 +174,7 @@ export default function AffiliatesPage() {
           </div>
           <div className="mt-12 rounded-2xl bg-[#233C6F] p-8 text-center text-white">
             <ul className="mx-auto mb-6 grid max-w-md gap-2 text-left text-blue-100">
-              {["Free to join", "Your own link for every course", "Track visits, sign-ups and earnings in your dashboard"].map((t) => (
+              {["Free to join, approved instantly", "Your own link for every course", "Track visits, sign-ups and earnings in your dashboard"].map((t) => (
                 <li key={t} className="flex items-center gap-2">
                   <Check size={18} className="text-[#EF5E33]" /> {t}
                 </li>
@@ -184,7 +184,7 @@ export default function AffiliatesPage() {
               href={join}
               className="inline-flex items-center gap-2 rounded-full bg-[#EF5E33] px-8 py-4 font-semibold text-white transition hover:bg-[#d94d24]"
             >
-              Apply now — it&apos;s free <ArrowRight size={18} />
+              Join now — it&apos;s free <ArrowRight size={18} />
             </Link>
           </div>
         </div>

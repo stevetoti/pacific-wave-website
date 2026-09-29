@@ -5,7 +5,11 @@ import { authorize } from "@/lib/server/auth";
 import { checked, student } from "@/lib/server/lms";
 import { apiError, HttpError, readJson } from "@/lib/server/http";
 import { rateLimit } from "@/lib/server/rate-limit";
-import { sendAffiliateEmail } from "@/lib/server/affiliates";
+import {
+  AFFILIATE_SETTINGS,
+  affiliateSettings,
+  sendAffiliateEmail,
+} from "@/lib/server/affiliates";
 import {
   queueOwnerNotification,
   sendOwnerNotifications,
@@ -46,6 +50,7 @@ const adminAction = z.discriminatedUnion("action", [
       .regex(/^[A-Z0-9]{4,20}$/, "Code must be 4–20 letters or numbers"),
     admin_note: z.string().trim().max(1000),
   }),
+  z.object({ action: z.literal("settings"), auto_approve: z.boolean() }),
   z.object({
     action: z.literal("commissions"),
     ids: z.array(z.uuid()).min(1).max(200),
@@ -87,6 +92,7 @@ export async function GET(request: Request) {
           .limit(10000),
       ]);
       return json({
+        settings: await affiliateSettings(db),
         affiliates: checked(a) || [],
         commissions: checked(c) || [],
         referrals: checked(o) || [],
@@ -157,7 +163,7 @@ export async function POST(request: Request) {
         const current = checked(
           await db
             .from("pwd_lms_affiliates")
-            .select("status,email")
+            .select("status")
             .eq("id", input.id)
             .single(),
         );
@@ -184,7 +190,16 @@ export async function POST(request: Request) {
           }),
         );
         if (current!.status !== input.status)
-          after(() => sendAffiliateEmail(current!.email, input.status));
+          after(() => sendAffiliateEmail(input.id, input.status));
+        return json({ success: true });
+      }
+      if (input.action === "settings") {
+        checked(
+          await db.from("pwd_lms_settings").upsert({
+            id: AFFILIATE_SETTINGS,
+            value: { auto_approve: input.auto_approve },
+          }),
+        );
         return json({ success: true });
       }
       const updated = checked(
@@ -233,13 +248,18 @@ export async function POST(request: Request) {
     }
     if (existing && existing.status !== "rejected")
       throw new HttpError(409, "You have already applied.");
+    // New applicants are approved instantly when auto-approval is on;
+    // someone an admin previously rejected always goes back to manual review.
+    const approve = !existing && (await affiliateSettings(db)).auto_approve;
     const application = {
       ...details,
       full_name: input.full_name,
       promotion_plan: input.promotion_plan,
       email: user.email!,
-      status: "pending",
+      status: approve ? "approved" : "pending",
+      ...(approve ? { reviewed_at: new Date().toISOString() } : {}),
     };
+    let affiliateId = existing?.id as string | undefined;
     if (existing) {
       checked(
         await db
@@ -250,22 +270,32 @@ export async function POST(request: Request) {
     } else {
       // Retry on the rare code collision.
       for (let attempt = 0; ; attempt++) {
-        const { error } = await db.from("pwd_lms_affiliates").insert({
-          ...application,
-          user_id: user.id,
-          code: newCode(input.full_name),
-        });
-        if (!error) break;
+        const { data, error } = await db
+          .from("pwd_lms_affiliates")
+          .insert({
+            ...application,
+            user_id: user.id,
+            code: newCode(input.full_name),
+          })
+          .select("id")
+          .single();
+        if (!error) {
+          affiliateId = data.id;
+          break;
+        }
         if (error.code !== "23505" || attempt === 4) throw error;
       }
     }
     await queueOwnerNotification(
       `affiliate-application-${user.id}-${Date.now()}`,
-      "New course affiliate application",
-      `Name: ${input.full_name}\nEmail: ${user.email}\nPhone: ${input.phone}\nPromotion plan: ${input.promotion_plan}\n\nReview it in Admin → Training centre → Affiliates.`,
+      approve ? "New course affiliate joined (auto-approved)" : "New course affiliate application",
+      `Name: ${input.full_name}\nEmail: ${user.email}\nPhone: ${input.phone}\nPromotion plan: ${input.promotion_plan}\n\n${approve ? "Their links are active. Manage or suspend them" : "Review it"} in Admin → Training centre → Affiliates.`,
     );
-    after(sendOwnerNotifications);
-    return json({ success: true });
+    after(async () => {
+      if (approve && affiliateId) await sendAffiliateEmail(affiliateId, "approved");
+      await sendOwnerNotifications();
+    });
+    return json({ success: true, status: application.status });
   } catch (e) {
     if (e instanceof z.ZodError)
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
