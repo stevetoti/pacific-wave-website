@@ -439,3 +439,7 @@ Application `1bc7246` and recovery migration `c6e86f2`; production candidate `dp
 - Verified locally: 57/57 tests, lint, TypeScript, `npm run build` with release route guard.
 - Migration `20260929_course_affiliates` applied to rndegttgwtpkbjtvjgnc; RLS on, anon has no access, trigger present, existing 6 orders untouched.
 - **Released** — [Claude Code] 2026-09-29: commit `c8d281b` on main → production `dpl_cjecVin47Ysx1mdxiwr7rJ9Fosom` aliased to pacificwavedigital.com. Live checks: /affiliates 200, affiliate signup 200, /training-center + /vanuatu-training 200, /go/UNKNOWN → 307 to safe path (external `to` rejected), /api/lms-affiliates 401 unauthenticated. End-to-end apply → approve → link → paid commission flow left for owner testing on live (no production test accounts created).
+
+## 2026-09-29 — [Claude Code] Affiliate page imagery
+- Owner requested a more professional /affiliates page. Split hero with photo, floating "15% commission" and "30-day tracking" badges; the three step cards now have photos, step labels and overlapping icon badges.
+- Four new photoreal Port Vila images (Higgsfield Nano Banana 2, 2K) optimised to WebP in `public/images/affiliates/` (hero 148 KB, cards ~90 KB). Desktop 1440 and mobile 390 screenshots checked, no horizontal overflow.
