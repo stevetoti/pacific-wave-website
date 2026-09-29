@@ -11,6 +11,7 @@ const footerLinks = {
     { href: '/products', label: 'Products' },
     { href: '/portfolio', label: 'Portfolio' },
     { href: '/blog', label: 'Blog' },
+    { href: '/affiliates', label: 'Affiliate Programme' },
     { href: '/contact', label: 'Contact' },
   ],
   services: [

@@ -5,6 +5,7 @@ import CourseAdministration from "./CourseAdministration";
 import QuizBuilder from "./QuizBuilder";
 import EmailCampaigns from "./EmailCampaigns";
 import CourseCommunity from "./CourseCommunity";
+import AffiliateAdmin from "./AffiliateAdmin";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { authFetch } from "@/lib/auth-fetch";
@@ -30,7 +31,7 @@ const emptyCourse = {
 export default function TrainingAdmin({
   initialTab = "courses",
 }: {
-  initialTab?: "courses" | "payments" | "community";
+  initialTab?: "courses" | "payments" | "community" | "affiliates";
 }) {
   const [tab, setTab] = useState<string>(initialTab),
     [courses, setCourses] = useState<Course[]>([]),
@@ -119,6 +120,7 @@ export default function TrainingAdmin({
             "lessons",
             "access",
             "coupons",
+            "affiliates",
             "grading",
             "community",
             "campaigns",
@@ -157,6 +159,7 @@ export default function TrainingAdmin({
           <CourseAdministration courses={courses} section={tab} />
         )}
         {tab === "campaigns" && <EmailCampaigns courses={courses} />}
+        {tab === "affiliates" && <AffiliateAdmin />}
         {tab === "courses" && (
           <div className="lms-two">
             <section className="lms-panel">

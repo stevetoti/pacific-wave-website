@@ -124,3 +124,11 @@
 
 ## 2026-09-27 — [Codex] Voice coaching and student learning hub
 - [x] Saved profile approval, voice/video meetings, live verified research, private session history and researched email/PDF reports; course imagery/navigation and cohort recording uploads — [Codex] 2026-09-27: deployed and verified at `dpl_AEkNSt6dUMawBjWqAaD7wiBJDZXu`.
+
+## 2026-09-29 — [Claude Code] Course affiliate programme
+- [x] Build affiliate applications, /go links, attribution, trigger-based 15% commissions, admin review/payout tracking, student dashboard; tests/lint/build pass.
+- [x] Apply `20260929_course_affiliates.sql` to Supabase (additive) BEFORE deploying the frontend. — [Claude Code] 2026-09-29
+- [ ] Browser-check student apply → admin approve → /go link → signup → paid → commission on a preview.
+- [ ] Commit, push to main, deploy, verify live, record release here.
+- [x] Public "Become an affiliate" landing page for non-students — [Claude Code] 2026-09-29: /affiliates.
+- [ ] Optional later: formal affiliate terms page.

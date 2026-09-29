@@ -2109,3 +2109,16 @@
 @media(max-width:600px){.lms-discover-grid{grid-template-columns:1fr}.lms-welcome-image{aspect-ratio:4/3}}
 
 .lms-shell .lms-discover-grid>a{text-decoration:none;color:#243f73}.lms-shell .lms-discover-grid>a b{color:#a84021}
+
+/* Course affiliate programme */
+.af-points{margin:0 0 8px;padding-left:20px;display:grid;gap:6px;}
+.af-wide{grid-column:1/-1;}
+.af-check{display:flex;gap:10px;align-items:flex-start;margin:16px 0;font-size:14px;}.af-check input{width:auto;margin-top:3px;}
+.af-links{display:grid;gap:12px;}
+.af-link{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:16px;border:1px solid var(--sd-border,#e2e7ef);border-radius:12px;}
+.af-link>div:first-child{min-width:0;display:grid;gap:4px;}.af-link small{color:#64718a;}
+.af-link code{font-size:12px;color:#233c6f;overflow-wrap:anywhere;}
+.af-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;flex-shrink:0;}.af-actions a,.af-actions button{display:inline-flex;gap:6px;align-items:center;}
+.af-muted{display:block;color:#64718a;}
+.af-filters{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:12px 0;border:0;padding:0;}.af-filters input,.af-filters select{width:auto;}
+@media(max-width:700px){.af-link{flex-direction:column;align-items:stretch;}}

@@ -425,3 +425,16 @@ Full real Anam speech → awaited live research → ended-session report → pri
 ## 2026-09-27 — [Codex] Coaching learning hub released
 
 Application `1bc7246` and recovery migration `c6e86f2`; production candidate `dpl_AEkNSt6dUMawBjWqAaD7wiBJDZXu` passed private history/rename/PDF/logo/auth checks and was promoted. Eight live desktop/mobile release checks passed; payment modes, banks and course prices preserved. Source/report/public-image checks and synthetic test cleanup completed. Existing training documentation and CLAUDE resume snapshot updated; full source being synchronized to main.
+
+## 2026-09-29 — [Claude Code] Course affiliate programme
+
+- Students apply from Dashboard → **Affiliate programme**; admin approves in Admin → Training centre → **Affiliates** (`?tab=affiliates`). Default commission 15% of the amount the student actually paid (after coupons), overridable per affiliate.
+- Share links: `/go/CODE` (optionally `?to=/training-center/programs/<slug>`) log a click and set a 30-day httpOnly `pwd_aff` cookie (last click wins). `to` is restricted to training paths (no open redirect).
+- Referral attaches once to a pending/rejected order at signup, `/api/lms/order`, checkout and bank-proof upload via `pwd_lms_attach_affiliate` (self-referral and non-approved codes ignored).
+- Commission rows are created by trigger `pwd_lms_affiliate_commission` on order status → paid (covers Stripe, bank review and coupon paths; zero-amount orders skipped). Refund/revoke voids unpaid commissions; already-paid ones are flagged "recover manually".
+- Payouts are manual: admin approves → marks paid with reference. Affiliates get status emails (approve/reject/suspend); owner gets an alert on new applications.
+- Files: migration `20260929_course_affiliates.sql`, `src/app/go/[code]/route.ts`, `src/app/api/lms-affiliates/route.ts`, `src/lib/server/affiliates.ts`, `AffiliateCenter.tsx`, `AffiliateAdmin.tsx`, hooks in `api/lms/[action]/route.ts` and `lms-signup.ts`, test `tests/affiliates.test.ts`.
+- Non-students can join: public `/affiliates` landing page (footer link + sitemap) → `/training-center/account?mode=signup&next=affiliate` (free account, no course, attendance question hidden) → dashboard Affiliate tab. Signed-in users with `next=affiliate` go straight to the tab.
+- Cohort courses link to `/vanuatu-training` (catch-all 404s `programs/vanuatu-october-2026`).
+- Verified locally: 57/57 tests, lint, TypeScript, `npm run build` with release route guard.
+- Migration `20260929_course_affiliates` applied to rndegttgwtpkbjtvjgnc; RLS on, anon has no access, trigger present, existing 6 orders untouched.

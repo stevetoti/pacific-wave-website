@@ -13,6 +13,7 @@ const staticPages: MetadataRoute.Sitemap = [
   { url: `${baseUrl}/training-center/programs/how-to-start-a-profitable-business`, changeFrequency: 'monthly', priority: 0.7 },
   { url: `${baseUrl}/training-center`, changeFrequency: 'weekly', priority: 0.9 },
   { url: `${baseUrl}/vanuatu-training`, changeFrequency: 'weekly', priority: 0.9 },
+  { url: `${baseUrl}/affiliates`, changeFrequency: 'monthly', priority: 0.6 },
   {
     url: baseUrl,
     lastModified: new Date(),

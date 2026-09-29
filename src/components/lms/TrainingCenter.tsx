@@ -181,6 +181,15 @@ export default function TrainingCenter({
     if (
       view === "account" &&
       email &&
+      query.next === "affiliate" &&
+      !query.course &&
+      !query.verify &&
+      !["reset", "update"].includes(authMode)
+    ) {
+      router.replace(`${base}/dashboard?tab=affiliate`);
+    } else if (
+      view === "account" &&
+      email &&
       query.course &&
       !query.verify &&
       !["reset", "update"].includes(authMode)
@@ -208,6 +217,7 @@ export default function TrainingCenter({
     email,
     ready,
     query.course,
+    query.next,
     query.verify,
     authMode,
     router,
@@ -234,6 +244,13 @@ export default function TrainingCenter({
     (queryCourse ? undefined : courses[0]);
   const order = orders.find((o) => o.course_id === checkout?.id);
   const courseOrder = orders.find((o) => o.course_id === current?.id);
+  // Affiliate sign-ups need no course; they land on the application after signing in.
+  const forAffiliate = query.next === "affiliate" && !queryCourse;
+  const afterAuth = queryCourse
+    ? `${base}/checkout?course=${encodeURIComponent(queryCourse)}`
+    : forAffiliate
+      ? `${base}/dashboard?tab=affiliate`
+      : `${base}/dashboard`;
   const authUrl = `${base}/account?mode=signup${queryCourse ? `&course=${encodeURIComponent(queryCourse)}` : ""}`;
   function calendar() {
     const lines = [
@@ -537,7 +554,9 @@ export default function TrainingCenter({
                   )}
                   <h1>
                     {authMode === "signup"
-                      ? "Create your student account"
+                      ? forAffiliate
+                        ? "Create your free affiliate account"
+                        : "Create your student account"
                       : authMode === "reset"
                         ? "Reset your password"
                         : authMode === "update"
@@ -545,7 +564,9 @@ export default function TrainingCenter({
                           : "Welcome back"}
                   </h1>
                   <p>
-                    {authMode === "signup"
+                    {authMode === "signup" && forAffiliate
+                      ? "Free to join. You don't need to buy a course. Next, you'll apply to the affiliate programme."
+                      : authMode === "signup"
                       ? "Register once, then choose how to pay. No email confirmation needed."
                       : "Your courses, class recordings and learning progress in one place."}
                   </p>
@@ -596,11 +617,7 @@ export default function TrainingCenter({
                             setMessage(
                               "Email verified. Your student account is ready.",
                             );
-                            router.push(
-                              queryCourse
-                                ? `${base}/checkout?course=${encodeURIComponent(queryCourse)}`
-                                : `${base}/dashboard`,
-                            );
+                            router.push(afterAuth);
                           }
                         })
                       }
@@ -646,7 +663,7 @@ export default function TrainingCenter({
                             name: f.get("name"),
                             phone: f.get("phone"),
                             location: f.get("location"),
-                            attendance: f.get("attendance"),
+                            attendance: f.get("attendance") || "online",
                             acknowledged: f.get("privacy") === "on",
                             mode: "signup",
                             course: queryCourse || undefined,
@@ -665,11 +682,7 @@ export default function TrainingCenter({
                           );
                           return;
                         }
-                        router.push(
-                          queryCourse
-                            ? `${base}/checkout?course=${queryCourse}`
-                            : `${base}/dashboard`,
-                        );
+                        router.push(afterAuth);
                       });
                     }}
                   >
@@ -709,6 +722,7 @@ export default function TrainingCenter({
                               required
                             />
                           </label>
+                          {!forAffiliate && (
                           <label>
                             How would you like to attend?
                             <select name="attendance" required defaultValue="">
@@ -722,6 +736,7 @@ export default function TrainingCenter({
                               <option value="mixed">A mix of both</option>
                             </select>
                           </label>
+                          )}
                         </>
                       )}
                       {authMode !== "update" && (

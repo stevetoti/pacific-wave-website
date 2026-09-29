@@ -32,6 +32,7 @@ import {
   orderSchema,
 } from "@/lib/lms/schema";
 import { csvCell } from "@/lib/training/csv";
+import { attachReferral } from "@/lib/server/affiliates";
 import type { Bank, Lesson } from "@/lib/lms/types";
 export const dynamic = "force-dynamic";
 const json = (data: unknown) =>
@@ -320,6 +321,8 @@ export async function POST(request: Request, context: Context) {
       await rateLimit(request, accountEmailBucket(input.email), 4);
       if (input.mode === "signup") {
         const registration = await createTrainingAccount(input);
+        if (registration.orderId)
+          await attachReferral(getSupabaseAdmin(), request, registration.orderId);
         after(async () => {
           try {
             await sendAccountEmail({ email: input.email, mode: "welcome", course: input.course });
@@ -385,6 +388,7 @@ export async function POST(request: Request, context: Context) {
           .eq("course_id", course.id)
           .single(),
       );
+      await attachReferral(db, request, order.id);
       after(sendLmsEmails);
       return json({ order });
     }
@@ -442,6 +446,7 @@ export async function POST(request: Request, context: Context) {
         user,
         order: initialOrder,
       } = await ownedOrder(request, input.id);
+      await attachReferral(db, request, initialOrder.id);
       await lock(initialOrder.id);
       const order = checked(
         await db
@@ -534,6 +539,7 @@ export async function POST(request: Request, context: Context) {
       const id = z.uuid().parse(url.searchParams.get("id"));
       const bank = z.enum(["ANZ", "BRED"]).parse(url.searchParams.get("bank"));
       const { db, user, order: initialOrder } = await ownedOrder(request, id);
+      await attachReferral(db, request, initialOrder.id);
       await lock(initialOrder.id);
       const order = checked(
         await db

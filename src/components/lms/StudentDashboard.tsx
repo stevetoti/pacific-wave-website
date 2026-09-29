@@ -21,7 +21,9 @@ import {
   RefreshCw,
   ClipboardCheck,
   Download,
+  HandCoins,
 } from "lucide-react";
+import AffiliateCenter from "./AffiliateCenter";
 import { authFetch } from "@/lib/auth-fetch";
 import { supabase } from "@/lib/supabase";
 import { money, type Course, type Order, type Progress } from "@/lib/lms/types";
@@ -40,6 +42,7 @@ const sections = [
   ["quizzes", "Quiz results", ClipboardCheck],
   ["purchases", "Purchase history", ReceiptText],
   ["community", "Community & groups", MessageCircle],
+  ["affiliate", "Affiliate programme", HandCoins],
   ["profile", "My profile", UserRound],
   ["settings", "Account settings", Settings],
 ] as const;
@@ -757,6 +760,7 @@ export default function StudentDashboard({
                 )}
               </section>
             )}
+            {section === "affiliate" && <AffiliateCenter email={email} />}
             {section === "community" && (
               <section className="sd-panel">
                 <h2>Your learning communities</h2>

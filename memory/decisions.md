@@ -82,3 +82,6 @@ Fixed cohort schedules come from the linked cohort config; October curriculum re
 ## 2026-09-27 — [Codex] Voice-only coaching and private report delivery
 
 Use one account-level saved consent across courses; preserve per-course onboarding completion. Anam tools are ephemeral per-session, with awaited authenticated live research. GPT-5.4 hosted web search and DNS-pinned link verification support current sourced guidance. Keep transcript-only summaries separate from supplementary research. Queue reports in Supabase with leased retries and idempotent Resend delivery to the student's account only. All reports/PDFs remain private. Reuse the private recording bucket for course-owned cohort uploads while retaining assigned-student mentorship guards.
+
+## 2026-09-29 — [Claude Code] Affiliate commissions via database trigger
+**Context:** Orders become paid in four places (Stripe `fulfill`, admin bank review, 100% coupon RPC, grants). **Decision:** Create commissions in an AFTER UPDATE OF status trigger on `pwd_lms_orders`, with attribution stored on the order (`affiliate_id`) from a server-set httpOnly cookie. **Reason:** One place covers every payment path and future ones; referral cannot be forged client-side and never blocks checkout (best-effort attach). Owner chose: application + approval, 15% of amount paid, manual payouts, no buyer discount.
