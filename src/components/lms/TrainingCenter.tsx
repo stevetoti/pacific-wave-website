@@ -181,12 +181,13 @@ export default function TrainingCenter({
     if (
       view === "account" &&
       email &&
-      query.next === "affiliate" &&
+      query.next &&
+      /^[a-z_]{2,30}$/.test(query.next) &&
       !query.course &&
       !query.verify &&
       !["reset", "update"].includes(authMode)
     ) {
-      router.replace(`${base}/dashboard?tab=affiliate`);
+      router.replace(`${base}/dashboard?tab=${query.next}`);
     } else if (
       view === "account" &&
       email &&
@@ -246,10 +247,12 @@ export default function TrainingCenter({
   const courseOrder = orders.find((o) => o.course_id === current?.id);
   // Affiliate sign-ups need no course; they land on the application after signing in.
   const forAffiliate = query.next === "affiliate" && !queryCourse;
+  // `next` names the dashboard tab to return to after signing in.
+  const nextTab = query.next && /^[a-z_]{2,30}$/.test(query.next) ? query.next : null;
   const afterAuth = queryCourse
     ? `${base}/checkout?course=${encodeURIComponent(queryCourse)}`
-    : forAffiliate
-      ? `${base}/dashboard?tab=affiliate`
+    : nextTab
+      ? `${base}/dashboard?tab=${nextTab}`
       : `${base}/dashboard`;
   const authUrl = `${base}/account?mode=signup${queryCourse ? `&course=${encodeURIComponent(queryCourse)}` : ""}`;
   function calendar() {
@@ -308,10 +311,10 @@ export default function TrainingCenter({
               href={
                 email
                   ? `${base}/dashboard`
-                  : authUrl.replace("mode=signup", "mode=signin")
+                  : `${base}/account?mode=signin`
               }
             >
-              {email ? "My learning" : "Student sign in"}
+              {email ? "My dashboard" : "Sign in"}
             </Link>
           </div>
           {email && (
@@ -1183,12 +1186,27 @@ export default function TrainingCenter({
             {view === "dashboard" &&
               (!email ? (
                 <div className="lms-panel">
-                  <h1>Your learning space is waiting</h1>
+                  <h1>
+                    {query.tab === "affiliate"
+                      ? "Sign in to your affiliate dashboard"
+                      : "Your learning space is waiting"}
+                  </h1>
                   <p>
-                    Sign in to see your courses, profile and purchase history.
+                    {query.tab === "affiliate"
+                      ? "Sign in with the email and password you used to apply. You don't need to be enrolled in a course."
+                      : "Sign in to see your courses, affiliate earnings, profile and purchase history."}
                   </p>
-                  <Link className="lms-button" href={authUrl}>
+                  <Link
+                    className="lms-button"
+                    href={`${base}/account?mode=signin&next=${query.tab && /^[a-z_]{2,30}$/.test(query.tab) ? query.tab : "overview"}`}
+                  >
                     Sign in to your dashboard
+                  </Link>{" "}
+                  <Link
+                    className="lms-text"
+                    href={`${base}/account?mode=signup&next=${query.tab === "affiliate" ? "affiliate" : "overview"}`}
+                  >
+                    New here? Create a free account
                   </Link>
                 </div>
               ) : (

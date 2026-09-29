@@ -362,7 +362,7 @@ export default function StudentDashboard({
         <div className="sd-identity">
           {avatar()}
           <strong>{name}</strong>
-          <span>Student account</span>
+          <span>{paid.length ? "Student account" : "Your account"}</span>
           <Link href={`${base}/dashboard?tab=profile`}>
             Edit profile <ArrowRight size={13} />
           </Link>

@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { LogOut, Settings } from "lucide-react";
+import { LayoutDashboard, HandCoins, LogOut, Settings } from "lucide-react";
 import { authFetch } from "@/lib/auth-fetch";
 
 export default function StudentAccountMenu({ email, onLogout }: { email: string; onLogout: () => void }) {
@@ -42,6 +42,8 @@ export default function StudentAccountMenu({ email, onLogout }: { email: string;
     </summary>
     <div className="lms-account-dropdown">
       <div className="lms-account-identity"><strong>{profile.full_name || "Your account"}</strong><span>{email}</span></div>
+      <Link href="/training-center/dashboard" onClick={close}><LayoutDashboard size={18} /> My dashboard</Link>
+      <Link href="/training-center/dashboard?tab=affiliate" onClick={close}><HandCoins size={18} /> Affiliate programme</Link>
       <Link href="/training-center/dashboard?tab=settings" onClick={close}><Settings size={18} /> Settings</Link>
       <button type="button" onClick={() => { close(); onLogout(); }}><LogOut size={18} /> Log out</button>
     </div>

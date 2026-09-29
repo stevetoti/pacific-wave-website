@@ -79,7 +79,7 @@ export async function sendAffiliateEmail(
     title: copy.title,
     intro: copy.intro,
     action: "Open my affiliate dashboard",
-    url: `${origin}/training-center/dashboard?tab=affiliate`,
+    url: `${origin}/training-center/account?mode=signin&next=affiliate`,
     details: copy.details,
   });
   try {
