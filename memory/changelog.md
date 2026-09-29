@@ -442,4 +442,5 @@ Application `1bc7246` and recovery migration `c6e86f2`; production candidate `dp
 
 ## 2026-09-29 — [Claude Code] Affiliate page imagery
 - Owner requested a more professional /affiliates page. Split hero with photo, floating "15% commission" and "30-day tracking" badges; the three step cards now have photos, step labels and overlapping icon badges.
+- Released 4c97ff6 → dpl_9Cx3gSK9vv9iTzpnnPWR1zgudGG7 (live, page + images return 200).
 - Four new photoreal Port Vila images (Higgsfield Nano Banana 2, 2K) optimised to WebP in `public/images/affiliates/` (hero 148 KB, cards ~90 KB). Desktop 1440 and mobile 390 screenshots checked, no horizontal overflow.
