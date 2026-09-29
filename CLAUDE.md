@@ -1,5 +1,9 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## Latest release — 2026-09-29 [Claude Code] course affiliate programme
+
+Commit `c8d281b`, production `dpl_cjecVin47Ysx1mdxiwr7rJ9Fosom`. Anyone (student or not) applies via public `/affiliates` or Dashboard → Affiliate programme; admin approves in Admin → Training centre → Affiliates. `/go/CODE?to=<training path>` sets a 30-day httpOnly `pwd_aff` cookie; referral attaches once to unpaid orders; trigger `pwd_lms_affiliate_commission` creates 15% (per-affiliate override) commission on paid, voids on refund. Payouts manual (approve → mark paid with reference). Migration `20260929_course_affiliates.sql` applied. See memory/changelog.md and decisions.md.
+
 ## Latest release — 2026-09-27 [Codex] voice coaching research and learning hub
 
 Application `1bc7246`, timeout recovery `c6e86f2`; verified production `dpl_AEkNSt6dUMawBjWqAaD7wiBJDZXu` promoted to pacificwavedigital.com. One saved account-level consent, voice/video-only meetings without live transcript, Anam awaited live web research, private researched session library with renaming, branded PDF and automatic student email. Transcript-only summaries are generated separately from supplementary research. Durable leased report jobs recover through the existing five-minute cron; interrupted/exhausted workers become visible failures. Both `20260927_coach_reports.sql` and `20260927_coach_report_timeouts.sql` are applied. Course dashboard has visual navigation, AI Faculty after Start here, twelve October thumbnails and scheduled coming-soon dates. Backend MP4/WebM uploads now support enrolled cohorts while retaining private mentorship isolation. Learning pages omit marketing footer/widgets. See `docs/STUDENT-VIDEO-COACHES.md` for implementation, limits and recording workflow.

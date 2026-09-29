@@ -438,3 +438,4 @@ Application `1bc7246` and recovery migration `c6e86f2`; production candidate `dp
 - Cohort courses link to `/vanuatu-training` (catch-all 404s `programs/vanuatu-october-2026`).
 - Verified locally: 57/57 tests, lint, TypeScript, `npm run build` with release route guard.
 - Migration `20260929_course_affiliates` applied to rndegttgwtpkbjtvjgnc; RLS on, anon has no access, trigger present, existing 6 orders untouched.
+- **Released** — [Claude Code] 2026-09-29: commit `c8d281b` on main → production `dpl_cjecVin47Ysx1mdxiwr7rJ9Fosom` aliased to pacificwavedigital.com. Live checks: /affiliates 200, affiliate signup 200, /training-center + /vanuatu-training 200, /go/UNKNOWN → 307 to safe path (external `to` rejected), /api/lms-affiliates 401 unauthenticated. End-to-end apply → approve → link → paid commission flow left for owner testing on live (no production test accounts created).

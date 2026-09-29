@@ -128,7 +128,7 @@
 ## 2026-09-29 — [Claude Code] Course affiliate programme
 - [x] Build affiliate applications, /go links, attribution, trigger-based 15% commissions, admin review/payout tracking, student dashboard; tests/lint/build pass.
 - [x] Apply `20260929_course_affiliates.sql` to Supabase (additive) BEFORE deploying the frontend. — [Claude Code] 2026-09-29
-- [ ] Browser-check student apply → admin approve → /go link → signup → paid → commission on a preview.
-- [ ] Commit, push to main, deploy, verify live, record release here.
+- [ ] Owner tests live: apply → admin approve → /go link → signup → paid → commission.
+- [x] Commit, push to main, deploy, verify live, record release here. — [Claude Code] 2026-09-29: c8d281b → dpl_cjecVin47Ysx1mdxiwr7rJ9Fosom.
 - [x] Public "Become an affiliate" landing page for non-students — [Claude Code] 2026-09-29: /affiliates.
 - [ ] Optional later: formal affiliate terms page.
