@@ -8,6 +8,8 @@ import CourseCommunity from "./CourseCommunity";
 import AffiliateAdmin from "./AffiliateAdmin";
 import InstructorAdmin from "./InstructorAdmin";
 import InstructorProfileForm from "./InstructorProfileForm";
+import MessagesCenter from "./MessagesCenter";
+import MessageReports from "./MessageReports";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { authFetch } from "@/lib/auth-fetch";
@@ -39,18 +41,20 @@ const adminTabs = [
   "affiliates",
   "grading",
   "community",
+  "reports",
   "campaigns",
   "emails",
   "payments",
   "banks",
 ];
 // Instructors get only the teaching tabs, scoped server-side to their assigned courses.
-const teachTabs = ["lessons", "students", "grading", "community", "profile"];
+const teachTabs = ["lessons", "students", "grading", "community", "messages", "profile"];
 const tabLabel: Record<string, string> = {
   payments: "Registrations & payments",
   community: "Course communication",
   students: "My students",
   profile: "My instructor profile",
+  reports: "Message reports",
 };
 export default function TrainingAdmin({
   initialTab = "courses",
@@ -185,6 +189,8 @@ export default function TrainingAdmin({
         {tab === "affiliates" && <AffiliateAdmin />}
         {tab === "instructors" && !teaching && <InstructorAdmin courses={courses} />}
         {tab === "profile" && teaching && <InstructorProfileForm />}
+        {tab === "messages" && teaching && <div className="student-dashboard-embed"><MessagesCenter /></div>}
+        {tab === "reports" && !teaching && <MessageReports />}
         {tab === "students" && teaching && (
           <section className="lms-panel">
             <h2>My students</h2>

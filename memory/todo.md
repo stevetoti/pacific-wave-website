@@ -136,5 +136,6 @@
 ## 2026-09-30 — [Claude Code] Instructors + student messaging
 - [x] Phase 1: per-course instructors, admin Instructors tab, Teaching workspace, instructor profiles on course pages; Stephen on all courses.
 - [ ] Owner: add photo/bio in Teaching workspace → My instructor profile (shows on course pages); invite other instructors from Admin → Training centre → Instructors.
-- [ ] Phase 2: student directory (visible by default, hide option), connection requests (accept/ignore, 30-day resend block, daily cap), 1:1 DMs on chat engine, instructor↔own-students DMs without request, Messages tab + badges, email for requests + 1h unread reminder (opt-out), block/report, admins see only reported DMs.
+- [x] Phase 2 — [Claude Code] 2026-09-30: released; see changelog. Original scope: student directory (visible by default, hide option), connection requests (accept/ignore, 30-day resend block, daily cap), 1:1 DMs on chat engine, instructor↔own-students DMs without request, Messages tab + badges, email for requests + 1h unread reminder (opt-out), block/report, admins see only reported DMs.
 - [ ] Later: instructor "view course as student" preview.
+- [ ] Later (messaging): reactions/replies in DMs, realtime instead of 8s polling if volume grows.

@@ -6,20 +6,9 @@ import { access, channelAccess } from "./community";
 import { checked } from "./lms";
 import { HttpError } from "./http";
 import { rateLimit } from "./rate-limit";
-const bucket = "pwd-community-files";
-export async function uploadCommunityFile(
-  request: Request,
-  course: string,
-  channelId: string,
-) {
-  const ctx = await access(request, course),
-    channel = await channelAccess(ctx, course, channelId);
-  if (
-    channel.archived ||
-    (!ctx.instructor && (channel.locked || channel.announcements))
-  )
-    throw new HttpError(403, "Posting is closed in this conversation.");
-  await rateLimit(request, `community-upload-${ctx.user.id}`, 12);
+export const bucket = "pwd-community-files";
+// Reads and validates an uploaded chat file: JPG/PNG/WebP (converted to WebP), PDF or UTF-8 text, max 4 MB.
+export async function readChatFile(request: Request) {
   const reader = request.body?.getReader();
   if (!reader) throw new HttpError(400, "Choose a file.");
   const chunks: Uint8Array[] = [];
@@ -79,6 +68,22 @@ export async function uploadCommunityFile(
       413,
       "Choose a smaller image (maximum 4 MB after conversion).",
     );
+  return { bytes, mime, extension, original };
+}
+export async function uploadCommunityFile(
+  request: Request,
+  course: string,
+  channelId: string,
+) {
+  const ctx = await access(request, course),
+    channel = await channelAccess(ctx, course, channelId);
+  if (
+    channel.archived ||
+    (!ctx.instructor && (channel.locked || channel.announcements))
+  )
+    throw new HttpError(403, "Posting is closed in this conversation.");
+  await rateLimit(request, `community-upload-${ctx.user.id}`, 12);
+  const { bytes, mime, extension, original } = await readChatFile(request);
   const id = randomUUID(),
     path = `${channelId}/${ctx.user.id}/${id}.${extension}`,
     name = original.replace(/\.[^.]+$/, "") + "." + extension;

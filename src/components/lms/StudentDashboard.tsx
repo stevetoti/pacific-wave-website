@@ -23,7 +23,10 @@ import {
   Download,
   HandCoins,
   Presentation,
+  MessagesSquare,
 } from "lucide-react";
+import MessagesCenter from "./MessagesCenter";
+import { useMessageCounts } from "./useMessageCounts";
 import AffiliateCenter from "./AffiliateCenter";
 import { authFetch } from "@/lib/auth-fetch";
 import { supabase } from "@/lib/supabase";
@@ -42,6 +45,7 @@ const sections = [
   ["schedule", "My schedule", CalendarDays],
   ["quizzes", "Quiz results", ClipboardCheck],
   ["purchases", "Purchase history", ReceiptText],
+  ["messages", "Messages", MessagesSquare],
   ["community", "Community & groups", MessageCircle],
   ["affiliate", "Affiliate programme", HandCoins],
   ["profile", "My profile", UserRound],
@@ -103,6 +107,8 @@ export default function StudentDashboard({
     [message, setMessage] = useState(""),
     [filter, setFilter] = useState("all");
   const [teaches, setTeaches] = useState(false);
+  const messageCounts = useMessageCounts();
+  const messageBadge = messageCounts.unread + messageCounts.requests;
   useEffect(() => {
     authFetch("/api/lms-instructors?scope=me")
       .then(async (r) => {
@@ -411,6 +417,9 @@ export default function StudentDashboard({
             >
               <Icon size={19} />
               {title}
+              {key === "messages" && messageBadge > 0 && (
+                <span className="msg-badge sd-nav-badge">{messageBadge}</span>
+              )}
             </Link>
           ))}
         </nav>
@@ -778,6 +787,7 @@ export default function StudentDashboard({
               </section>
             )}
             {section === "affiliate" && <AffiliateCenter email={email} />}
+            {section === "messages" && <MessagesCenter />}
             {section === "community" && (
               <section className="sd-panel">
                 <h2>Your learning communities</h2>
