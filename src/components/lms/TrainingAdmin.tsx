@@ -6,6 +6,10 @@ import QuizBuilder from "./QuizBuilder";
 import EmailCampaigns from "./EmailCampaigns";
 import CourseCommunity from "./CourseCommunity";
 import AffiliateAdmin from "./AffiliateAdmin";
+import InstructorAdmin from "./InstructorAdmin";
+import InstructorProfileForm from "./InstructorProfileForm";
+import MessagesCenter from "./MessagesCenter";
+import MessageReports from "./MessageReports";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { authFetch } from "@/lib/auth-fetch";
@@ -28,12 +32,39 @@ const emptyCourse = {
   published: false,
   enrollment_open: true,
 };
+const adminTabs = [
+  "courses",
+  "lessons",
+  "instructors",
+  "access",
+  "coupons",
+  "affiliates",
+  "grading",
+  "community",
+  "reports",
+  "campaigns",
+  "emails",
+  "payments",
+  "banks",
+];
+// Instructors get only the teaching tabs, scoped server-side to their assigned courses.
+const teachTabs = ["lessons", "students", "grading", "community", "messages", "profile"];
+const tabLabel: Record<string, string> = {
+  payments: "Registrations & payments",
+  community: "Course communication",
+  students: "My students",
+  profile: "My instructor profile",
+  reports: "Message reports",
+};
 export default function TrainingAdmin({
   initialTab = "courses",
+  mode = "admin",
 }: {
-  initialTab?: "courses" | "payments" | "community" | "affiliates";
+  initialTab?: "courses" | "payments" | "community" | "affiliates" | "instructors" | "lessons";
+  mode?: "admin" | "teach";
 }) {
-  const [tab, setTab] = useState<string>(initialTab),
+  const teaching = mode === "teach";
+  const [tab, setTab] = useState<string>(teaching ? "lessons" : initialTab),
     [courses, setCourses] = useState<Course[]>([]),
     [lessons, setLessons] = useState<Lesson[]>([]),
     [orders, setOrders] = useState<Order[]>([]),
@@ -78,6 +109,10 @@ export default function TrainingAdmin({
   useEffect(() => {
     load().catch((e) => setError(e.message));
   }, []);
+  // An instructor with a single course starts with it selected.
+  useEffect(() => {
+    if (teaching && courses.length === 1 && !selected) setSelected(courses[0].id);
+  }, [teaching, courses, selected]);
   async function save(body: unknown) {
     setBusy(true);
     setError("");
@@ -106,28 +141,24 @@ export default function TrainingAdmin({
   return (
     <div className="lms">
       <div className="lms-shell">
-        <p className="lms-eyebrow">PACIFIC WAVE DIGITAL / ADMIN</p>
-        <h1>Training centre</h1>
-        <p>
-          Build courses, publish class materials and manage student payments.
+        <p className="lms-eyebrow">
+          {teaching ? "PACIFIC WAVE DIGITAL / TEACHING" : "PACIFIC WAVE DIGITAL / ADMIN"}
         </p>
-        <Link href="/training-center" target="_blank">
-          View student experience →
-        </Link>
+        <h1>{teaching ? "Teaching workspace" : "Training centre"}</h1>
+        <p>
+          {teaching
+            ? "Manage lessons, recordings, quizzes, grading and conversations for the courses you teach."
+            : "Build courses, publish class materials and manage student payments."}
+        </p>
+        {teaching ? (
+          <Link href="/training-center/dashboard">← My dashboard</Link>
+        ) : (
+          <Link href="/training-center" target="_blank">
+            View student experience →
+          </Link>
+        )}
         <nav className="lms-admin-tabs" aria-label="Training admin sections">
-          {[
-            "courses",
-            "lessons",
-            "access",
-            "coupons",
-            "affiliates",
-            "grading",
-            "community",
-            "campaigns",
-            "emails",
-            "payments",
-            "banks",
-          ].map((t) => (
+          {(teaching ? teachTabs : adminTabs).map((t) => (
             <button
               key={t}
               onClick={() => {
@@ -137,11 +168,7 @@ export default function TrainingAdmin({
               }}
               className={tab === t ? "selected" : ""}
             >
-              {t === "payments"
-                ? "Registrations & payments"
-                : t === "community"
-                  ? "Course communication"
-                  : t[0].toUpperCase() + t.slice(1)}
+              {tabLabel[t] || t[0].toUpperCase() + t.slice(1)}
             </button>
           ))}
         </nav>
@@ -160,6 +187,59 @@ export default function TrainingAdmin({
         )}
         {tab === "campaigns" && <EmailCampaigns courses={courses} />}
         {tab === "affiliates" && <AffiliateAdmin />}
+        {tab === "instructors" && !teaching && <InstructorAdmin courses={courses} />}
+        {tab === "profile" && teaching && <InstructorProfileForm />}
+        {tab === "messages" && teaching && <div className="student-dashboard-embed"><MessagesCenter /></div>}
+        {tab === "reports" && !teaching && <MessageReports />}
+        {tab === "students" && teaching && (
+          <section className="lms-panel">
+            <h2>My students</h2>
+            <p>Students with confirmed access to the courses you teach.</p>
+            <label>
+              Course
+              <select value={selected} onChange={(e) => setSelected(e.target.value)}>
+                <option value="">All my courses</option>
+                {courses.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="ec-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Contact</th>
+                    <th>Course</th>
+                    <th>Attendance</th>
+                    <th>Enrolled</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders
+                    .filter((o) => !selected || o.course_id === selected)
+                    .map((o) => (
+                      <tr key={o.id}>
+                        <td>{o.name}</td>
+                        <td>
+                          {o.email}
+                          <small className="af-muted">{o.phone}</small>
+                        </td>
+                        <td>{courses.find((c) => c.id === o.course_id)?.title}</td>
+                        <td>{o.attendance.replace("_", " ")}</td>
+                        <td>{new Date(o.created_at).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+              {!orders.filter((o) => !selected || o.course_id === selected).length && (
+                <p>No enrolled students yet.</p>
+              )}
+            </div>
+          </section>
+        )}
         {tab === "courses" && (
           <div className="lms-two">
             <section className="lms-panel">

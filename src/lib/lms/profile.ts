@@ -18,6 +18,9 @@ export const profileSchema = z.object({
         "Use an HTTPS website address.",
       ),
   ]),
+  // Instructor-only fields; optional so the student profile form never clears them.
+  instructor_title: z.string().trim().max(120).optional(),
+  expertise: z.string().trim().max(300).optional(),
   timezone: z
     .string()
     .max(80)

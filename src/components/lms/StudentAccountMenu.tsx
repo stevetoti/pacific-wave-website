@@ -2,11 +2,15 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { LayoutDashboard, HandCoins, LogOut, Settings } from "lucide-react";
+import { LayoutDashboard, HandCoins, LogOut, Settings, Presentation, MessagesSquare } from "lucide-react";
+import { useMessageCounts } from "./useMessageCounts";
 import { authFetch } from "@/lib/auth-fetch";
 
 export default function StudentAccountMenu({ email, onLogout }: { email: string; onLogout: () => void }) {
   const [profile, setProfile] = useState({ full_name: "", avatar_url: "" });
+  const [teaches, setTeaches] = useState(false);
+  const counts = useMessageCounts();
+  const badge = counts.unread + counts.requests;
   const menu = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     let active = true;
@@ -16,6 +20,9 @@ export default function StudentAccountMenu({ email, onLogout }: { email: string;
       }).catch(() => {});
     };
     refresh();
+    authFetch("/api/lms-instructors?scope=me").then(async r => {
+      if (r.ok && active) { const d = await r.json(); setTeaches(Boolean(d.instructor || d.admin)); }
+    }).catch(() => {});
     window.addEventListener("student-profile-updated", refresh);
     const outside = (event: PointerEvent) => {
       if (menu.current && !menu.current.contains(event.target as Node)) menu.current.open = false;
@@ -38,11 +45,14 @@ export default function StudentAccountMenu({ email, onLogout }: { email: string;
   const close = () => { if (menu.current) menu.current.open = false; };
   return <details className="lms-account-menu" ref={menu}>
     <summary aria-label="Open account menu" title="Your account">
+      {badge > 0 && <span className="msg-badge lms-account-badge" aria-label={`${badge} new`}>{badge}</span>}
       {profile.avatar_url ? <Image src={profile.avatar_url} alt="Your account photo" width={44} height={44} unoptimized /> : <span>{(profile.full_name || email).slice(0, 1).toUpperCase()}</span>}
     </summary>
     <div className="lms-account-dropdown">
       <div className="lms-account-identity"><strong>{profile.full_name || "Your account"}</strong><span>{email}</span></div>
       <Link href="/training-center/dashboard" onClick={close}><LayoutDashboard size={18} /> My dashboard</Link>
+      <Link href="/training-center/dashboard?tab=messages" onClick={close}><MessagesSquare size={18} /> Messages{badge > 0 && <span className="msg-badge">{badge}</span>}</Link>
+      {teaches && <Link href="/training-center/teach" onClick={close}><Presentation size={18} /> Teaching workspace</Link>}
       <Link href="/training-center/dashboard?tab=affiliate" onClick={close}><HandCoins size={18} /> Affiliate programme</Link>
       <Link href="/training-center/dashboard?tab=settings" onClick={close}><Settings size={18} /> Settings</Link>
       <button type="button" onClick={() => { close(); onLogout(); }}><LogOut size={18} /> Log out</button>

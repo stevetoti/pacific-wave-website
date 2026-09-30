@@ -22,7 +22,11 @@ import {
   ClipboardCheck,
   Download,
   HandCoins,
+  Presentation,
+  MessagesSquare,
 } from "lucide-react";
+import MessagesCenter from "./MessagesCenter";
+import { useMessageCounts } from "./useMessageCounts";
 import AffiliateCenter from "./AffiliateCenter";
 import { authFetch } from "@/lib/auth-fetch";
 import { supabase } from "@/lib/supabase";
@@ -41,6 +45,7 @@ const sections = [
   ["schedule", "My schedule", CalendarDays],
   ["quizzes", "Quiz results", ClipboardCheck],
   ["purchases", "Purchase history", ReceiptText],
+  ["messages", "Messages", MessagesSquare],
   ["community", "Community & groups", MessageCircle],
   ["affiliate", "Affiliate programme", HandCoins],
   ["profile", "My profile", UserRound],
@@ -101,6 +106,19 @@ export default function StudentDashboard({
     [error, setError] = useState(""),
     [message, setMessage] = useState(""),
     [filter, setFilter] = useState("all");
+  const [teaches, setTeaches] = useState(false);
+  const messageCounts = useMessageCounts();
+  const messageBadge = messageCounts.unread + messageCounts.requests;
+  useEffect(() => {
+    authFetch("/api/lms-instructors?scope=me")
+      .then(async (r) => {
+        if (r.ok) {
+          const d = await r.json();
+          setTeaches(Boolean(d.instructor || d.admin));
+        }
+      })
+      .catch(() => {});
+  }, []);
   const load = useCallback(async () => {
     const d = await profileApi();
     setProfile(d.profile);
@@ -385,6 +403,11 @@ export default function StudentDashboard({
           </select>
         </label>
         <nav aria-label="Student dashboard navigation">
+          {teaches && (
+            <Link href="/training-center/teach">
+              <Presentation size={18} /> Teaching workspace
+            </Link>
+          )}
           <Link href="/training-center/sessions"><MessageCircle size={18}/> Coaching conversations</Link>
           {sections.map(([key, title, Icon]) => (
             <Link
@@ -394,6 +417,9 @@ export default function StudentDashboard({
             >
               <Icon size={19} />
               {title}
+              {key === "messages" && messageBadge > 0 && (
+                <span className="msg-badge sd-nav-badge">{messageBadge}</span>
+              )}
             </Link>
           ))}
         </nav>
@@ -761,6 +787,7 @@ export default function StudentDashboard({
               </section>
             )}
             {section === "affiliate" && <AffiliateCenter email={email} />}
+            {section === "messages" && <MessagesCenter />}
             {section === "community" && (
               <section className="sd-panel">
                 <h2>Your learning communities</h2>

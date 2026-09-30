@@ -28,6 +28,7 @@ import {
 } from "@/lib/training/config";
 import { getTrainingCohort } from "@/lib/server/training";
 import "./training.css";
+import CourseInstructors from "@/components/lms/CourseInstructors";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: { absolute: "Vanuatu AI Business Training | Pacific Wave Digital" },
@@ -402,6 +403,7 @@ export default async function TrainingPage() {
           </div>
         </div>
       </section>
+      <CourseInstructors slug="vanuatu-october-2026" />
       <section className="training-section max-w-4xl">
         <p className="training-eyebrow text-[#b73d19] mb-4">
           Before you register

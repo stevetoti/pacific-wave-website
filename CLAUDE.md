@@ -1,5 +1,9 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## Latest release — 2026-09-30 [Claude Code] per-course instructors + student messaging
+
+Anyone can be assigned as instructor per course (`pwd_lms_course_instructors`); admins still manage everything. Instructors use the normal Training Centre login and `/training-center/teach` (lessons, recordings, quizzes, grading, chat, students, profile) for assigned courses only — enforced server-side by `teachingAccess()` in `src/lib/server/teaching.ts`. Admin → Training centre → Instructors invites/assigns. Migration `20260930_course_instructors.sql` applied. Phase 2 is live too: student directory, LinkedIn-style connection requests and private 1:1 messages (instructors ↔ their students without a request), Messages tab, request/unread emails via the 5-minute cron, admin Message reports. See `docs/STUDENT-MESSAGING.md`. Migrations `20260930_course_instructors.sql` and `20260930_student_messaging.sql` applied.
+
 ## Latest release — 2026-09-29 [Claude Code] course affiliate programme
 
 Commit `c8d281b`, production `dpl_cjecVin47Ysx1mdxiwr7rJ9Fosom`. Anyone (student or not) applies via public `/affiliates` or Dashboard → Affiliate programme; admin approves in Admin → Training centre → Affiliates. `/go/CODE?to=<training path>` sets a 30-day httpOnly `pwd_aff` cookie; referral attaches once to unpaid orders; trigger `pwd_lms_affiliate_commission` creates 15% (per-affiliate override) commission on paid, voids on refund. Payouts manual (approve → mark paid with reference). Migration `20260929_course_affiliates.sql` applied. See memory/changelog.md and decisions.md.

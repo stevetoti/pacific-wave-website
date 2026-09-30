@@ -4,7 +4,7 @@ import { ADMIN_SITE_ID } from "./auth";
 import { HttpError } from "./http";
 export async function access(request: Request, courseId: string) {
   const { db, user } = await student(request);
-  const [c, a, o] = await Promise.all([
+  const [c, a, o, t] = await Promise.all([
     db
       .from("pwd_lms_courses")
       .select("id,private_sessions")
@@ -22,14 +22,31 @@ export async function access(request: Request, courseId: string) {
       .eq("course_id", courseId)
       .eq("user_id", user.id)
       .maybeSingle(),
+    db
+      .from("pwd_lms_course_instructors")
+      .select("user_id")
+      .eq("course_id", courseId)
+      .eq("user_id", user.id)
+      .maybeSingle(),
   ]);
   const course = checked(c),
     admin = checked(a),
-    order = checked(o);
-  const instructor = Boolean(
-    admin?.is_active && ["admin", "super_admin"].includes(admin.role),
-  );
+    order = checked(o),
+    assigned = checked(t);
+  // Assigned course instructors and active admins both act as instructors in chat.
+  const instructor =
+    Boolean(assigned) ||
+    Boolean(admin?.is_active && ["admin", "super_admin"].includes(admin.role));
   if (!course) throw new HttpError(404, "Course not found.");
+  const profile = assigned
+    ? checked(
+        await db
+          .from("pwd_lms_profiles")
+          .select("full_name")
+          .eq("user_id", user.id)
+          .maybeSingle(),
+      )
+    : null;
   if (!instructor && !["paid", "granted"].includes(order?.status || ""))
     throw new HttpError(
       403,
@@ -40,7 +57,9 @@ export async function access(request: Request, courseId: string) {
     user,
     instructor,
     privateCourse: Boolean(course.private_sessions),
-    name: instructor ? admin?.name || "Instructor" : order?.name || "Student",
+    name: instructor
+      ? profile?.full_name || admin?.name || "Instructor"
+      : order?.name || "Student",
   };
 }
 export async function channelAccess(

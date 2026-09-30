@@ -187,7 +187,11 @@ export default function TrainingCenter({
       !query.verify &&
       !["reset", "update"].includes(authMode)
     ) {
-      router.replace(`${base}/dashboard?tab=${query.next}`);
+      router.replace(
+        query.next === "teach"
+          ? `${base}/teach`
+          : `${base}/dashboard?tab=${query.next}`,
+      );
     } else if (
       view === "account" &&
       email &&
@@ -251,7 +255,9 @@ export default function TrainingCenter({
   const nextTab = query.next && /^[a-z_]{2,30}$/.test(query.next) ? query.next : null;
   const afterAuth = queryCourse
     ? `${base}/checkout?course=${encodeURIComponent(queryCourse)}`
-    : nextTab
+    : query.next === "teach"
+      ? `${base}/teach`
+      : nextTab
       ? `${base}/dashboard?tab=${nextTab}`
       : `${base}/dashboard`;
   const authUrl = `${base}/account?mode=signup${queryCourse ? `&course=${encodeURIComponent(queryCourse)}` : ""}`;
