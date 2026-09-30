@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { TurnstileWidget } from '@/components/security/TurnstileWidget';
+import { HoneypotField, useFormBotFields } from '@/components/security/FormBotFields';
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '';
 
 
 type ProjectType = 'website' | 'webapp' | 'mobile' | 'ai' | 'social' | 'full-package' | '';
@@ -127,6 +130,9 @@ export default function GetStartedPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const bot = useFormBotFields();
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [captchaAttempt, setCaptchaAttempt] = useState(0);
 
   const totalSteps = 6;
   const progress = (step / totalSteps) * 100;
@@ -158,6 +164,7 @@ export default function GetStartedPage() {
 
   const handleSubmit = async () => {
     if (isSubmitting || !canProceed()) return;
+    if (TURNSTILE_SITE_KEY && !turnstileToken) { setError('Please complete the human verification check below.'); return; }
     setIsSubmitting(true);
     setError('');
 
@@ -202,6 +209,7 @@ export default function GetStartedPage() {
           best_time_to_call: formData.bestTimeToCall,
           additional_notes: formData.additionalNotes,
           ai_summary: summary,
+          website: bot.honeypot, form_started_at: bot.formStartedAt ?? undefined, turnstile_token: turnstileToken ?? undefined,
       };
       const response = await fetch('/api/submissions', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
@@ -215,6 +223,8 @@ export default function GetStartedPage() {
       setError(err instanceof Error ? err.message : 'Unable to save your inquiry. Please try again.');
     } finally {
       setIsSubmitting(false);
+      setTurnstileToken(null);
+      setCaptchaAttempt((n) => n + 1);
     }
   };
 
@@ -770,6 +780,12 @@ export default function GetStartedPage() {
           )}
 
           {/* Navigation Buttons */}
+          <HoneypotField value={bot.honeypot} onChange={bot.setHoneypot} />
+          {step === totalSteps && TURNSTILE_SITE_KEY && (
+            <div className="mt-6">
+              <TurnstileWidget key={captchaAttempt} siteKey={TURNSTILE_SITE_KEY} onVerify={setTurnstileToken} theme="light" />
+            </div>
+          )}
           <div className="flex justify-between mt-8 pt-6 border-t border-gray-100">
             <button
               onClick={() => setStep(s => s - 1)}
@@ -798,7 +814,7 @@ export default function GetStartedPage() {
             ) : (
               <button
                 onClick={handleSubmit}
-                disabled={!canProceed() || isSubmitting}
+                disabled={!canProceed() || isSubmitting || (Boolean(TURNSTILE_SITE_KEY) && !turnstileToken)}
                 className={`px-8 py-3 rounded-xl font-bold transition-colors flex items-center gap-2 ${
                   canProceed() && !isSubmitting
                     ? 'bg-vibrant-orange text-white hover:bg-soft-orange'

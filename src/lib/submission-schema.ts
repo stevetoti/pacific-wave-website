@@ -13,5 +13,7 @@ export const submissionSchema = z.object({
   ai_summary: z.string().max(20000).optional(),
   website_details: details, ai_automation: details, social_media: details,
   website: z.string().max(200).optional(), // Honeypot, not a customer URL.
+  form_started_at: z.number().optional(), // Client render time (bot fill-time signal).
+  turnstile_token: z.string().max(2048).optional(),
 });
 export type SubmissionInput = z.infer<typeof submissionSchema>;

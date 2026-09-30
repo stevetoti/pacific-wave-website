@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { TurnstileWidget } from '@/components/security/TurnstileWidget';
+import { HoneypotField, useFormBotFields } from '@/components/security/FormBotFields';
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '';
 
 const contactInfo = [
   {
@@ -60,9 +63,13 @@ export default function ContactPage() {
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const bot = useFormBotFields();
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [captchaAttempt, setCaptchaAttempt] = useState(0);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitting) return;
+    if (TURNSTILE_SITE_KEY && !turnstileToken) { setError('Please complete the human verification check below.'); return; }
     setSubmitting(true);
     setError('');
     try {
@@ -70,13 +77,14 @@ export default function ContactPage() {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contact_name: formData.name, contact_email: formData.email,
           company_name: formData.company, project_type: 'contact', budget_range: formData.budget,
-          project_description: formData.message, additional_notes: `Service: ${formData.service}` }),
+          project_description: formData.message, additional_notes: `Service: ${formData.service}`,
+          website: bot.honeypot, form_started_at: bot.formStartedAt ?? undefined, turnstile_token: turnstileToken ?? undefined }),
       });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.error || 'Unable to save your message');
       setSubmitted(true);
     } catch (err) { setError(err instanceof Error ? err.message : 'Please try again.'); }
-    finally { setSubmitting(false); }
+    finally { setSubmitting(false); setTurnstileToken(null); setCaptchaAttempt((n) => n + 1); }
   };
 
   return (
@@ -263,6 +271,12 @@ export default function ContactPage() {
                       placeholder="Tell us about your project, goals, and timeline..."
                     ></textarea>
                   </div>
+                  <HoneypotField value={bot.honeypot} onChange={bot.setHoneypot} />
+                  {TURNSTILE_SITE_KEY && (
+                    <div className="mb-4">
+                      <TurnstileWidget key={captchaAttempt} siteKey={TURNSTILE_SITE_KEY} onVerify={setTurnstileToken} theme="light" />
+                    </div>
+                  )}
                   {error && <p role="alert" className="text-red-700 mb-4">{error}</p>}
                   <button type="submit" disabled={submitting} aria-busy={submitting} className="btn-primary w-full text-lg !py-4">
                     Send Message

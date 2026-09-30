@@ -1,14 +1,25 @@
 'use client';
 
 import { useState } from 'react';
+import { TurnstileWidget } from '@/components/security/TurnstileWidget';
+import { HoneypotField, useFormBotFields } from '@/components/security/FormBotFields';
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '';
 
 export default function NewsletterCTA() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
+  const bot = useFormBotFields();
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [captchaAttempt, setCaptchaAttempt] = useState(0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (TURNSTILE_SITE_KEY && !turnstileToken) {
+      setStatus('error');
+      setMessage('Please complete the human verification check.');
+      return;
+    }
 
     if (!email) {
       setStatus('error');
@@ -20,7 +31,7 @@ export default function NewsletterCTA() {
 
     try {
       const response = await fetch('/api/newsletter', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }),
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, website: bot.honeypot, form_started_at: bot.formStartedAt ?? undefined, turnstile_token: turnstileToken ?? undefined }),
       });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error('Subscription could not be saved');
@@ -30,6 +41,9 @@ export default function NewsletterCTA() {
     } catch {
       setStatus('error');
       setMessage('Something went wrong. Please try again.');
+    } finally {
+      setTurnstileToken(null);
+      setCaptchaAttempt((n) => n + 1);
     }
   };
 
@@ -66,6 +80,16 @@ export default function NewsletterCTA() {
               {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
             </button>
           </form>
+        )}
+        {status !== 'success' && (
+          <>
+            <HoneypotField value={bot.honeypot} onChange={bot.setHoneypot} />
+            {TURNSTILE_SITE_KEY && (
+              <div className="mt-4 flex justify-center">
+                <TurnstileWidget key={captchaAttempt} siteKey={TURNSTILE_SITE_KEY} onVerify={setTurnstileToken} theme="dark" />
+              </div>
+            )}
+          </>
         )}
 
         {status === 'error' && (
