@@ -21,7 +21,15 @@ honeypot empty and submitted digit-only messages in under a second. Applied the
 Verified locally on the built app: honeypot → 200 swallow; 0.5 s fill → 400; digit-only
 message → 400; no CAPTCHA token → 400 on both routes. Local build + typecheck of changed
 files clean (pre-existing unrelated tsc errors remain in the old checkout's node_modules).
-Branch `form-bot-defence` from origin/main; NOT merged to main yet — Stephen must add
+**Released:** Stephen added the hostnames to the shared widget; branch merged into main
+(`ce6f337`, clean merge over the messaging release), pushed, Git production
+`pacific-wave-website-rje04m5bi` READY on pacificwavedigital.com. Live checks: `/`, `/contact`,
+`/get-started`, `/blog` 200; contact page renders the Turnstile widget (Cloudflare challenge
+responses 200, screenshot); honeypot → silent 200; digit-only message → 400; no CAPTCHA token
+→ 400 on `/api/submissions` and `/api/newsletter`. No rows written, no emails sent by the
+probes. Preview probes via `vercel curl --deployment` (deployment protection) matched.
+Branch and worktree removed. Stephen's one real enquiry is the final inbox proof.
+(Earlier note, superseded:) Branch `form-bot-defence` from origin/main; NOT merged to main yet — Stephen must add
 `pacificwavedigital.com`, `www.pacificwavedigital.com` and
 `pacific-wave-website-git-form-bot-defence-pacificwaveprojects.vercel.app` to the shared
 Turnstile widget, then the preview widget check and merge follow.

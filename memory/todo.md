@@ -3,8 +3,10 @@
 ## 2026-09-30 — [Claude Code] Form bot defence
 
 - [x] Guard `/api/submissions` + `/api/newsletter` and their three forms (branch `form-bot-defence`, local verification passed).
-- [ ] **Stephen:** add the three hostnames above to the shared Turnstile widget (Cloudflare → Turnstile → "Digiassist AI signup" → hostnames).
-- [ ] Preview widget check + the four refusal probes on the preview URL, then merge to main (auto-deploys production) and one real enquiry by Stephen.
+- [x] Hostnames added to the shared Turnstile widget. — [Claude Code] 2026-09-30.
+- [x] Preview + production probes, merge to main, production `pacific-wave-website-rje04m5bi` verified. — [Claude Code] 2026-09-30.
+- [ ] **Stephen:** send one real enquiry from https://pacificwavedigital.com/contact and confirm it reaches the inbox.
+- [ ] Set the Preview environment's Supabase/Resend variables properly (previews had none; only the two public ones were added, branch-scoped).
 
 ## 2026-09-15 — [Codex] Readiness blockers
 
