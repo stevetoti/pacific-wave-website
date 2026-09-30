@@ -1,5 +1,16 @@
 # Changelog — pacific-wave-website
 
+## 2026-10-01 — [Claude Code] Shared table: anon insert policy on project_submissions closed
+
+Dropped `"Enable insert for everyone"` (anon INSERT, `with check true`) on
+`public.project_submissions` in the shared Supabase project `rndegttgwtpkbjtvjgnc`.
+It was the last open write path into the table: rapidentrepreneurs.com's Get started
+wizard inserted from the browser with the anon key until 2026-10-01 (it now posts to a
+guarded server route with the service role, like this site). Remaining policies:
+authenticated read/update, the `pwd_*` restrictive guards, and `pwd_write_allow` for
+PWD admins. Every site writes through its own server route now; the anon key can no
+longer insert enquiries from anywhere. Verified by listing `pg_policies` afterwards.
+
 ## 2026-09-30 — [Claude Code] Bot defence on the contact form, project wizard and newsletter
 
 Spam enquiries (e.g. name `IAZbdEISQtLfatghMgdRBA`, message `3283763479`, 29 Sep 19:43) were
