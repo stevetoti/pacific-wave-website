@@ -33,6 +33,7 @@ import {
 } from "@/lib/lms/schema";
 import { csvCell } from "@/lib/training/csv";
 import { attachReferral } from "@/lib/server/affiliates";
+import { teachingAccess } from "@/lib/server/teaching";
 import type { Bank, Lesson } from "@/lib/lms/types";
 export const dynamic = "force-dynamic";
 const json = (data: unknown) =>
@@ -277,8 +278,29 @@ export async function GET(request: Request, context: Context) {
       });
     }
     if (action === "admin") {
-      const auth = await authorize(request);
-      if (auth.response) return auth.response;
+      const teach = await teachingAccess(request);
+      if (!teach.admin) {
+        // Instructors: only their courses, lessons and enrolled students; no payment data.
+        const ids = teach.courseIds!;
+        const [courses, lessons, orders] = await Promise.all([
+          db.from("pwd_lms_courses").select("*").in("id", ids).order("created_at"),
+          db.from("pwd_lms_lessons").select("*").in("course_id", ids).order("position"),
+          db
+            .from("pwd_lms_orders")
+            .select("id,user_id,course_id,name,email,phone,attendance,status,created_at")
+            .in("course_id", ids)
+            .in("status", ["paid", "granted"])
+            .order("created_at", { ascending: false })
+            .limit(1000),
+        ]);
+        return json({
+          role: "instructor",
+          courses: checked(courses),
+          lessons: await withLessonThumbnails(checked(lessons) || []),
+          orders: checked(orders),
+          banks: [],
+        });
+      }
       const [courses, lessons, orders, banks] = await Promise.all([
         db.from("pwd_lms_courses").select("*").order("created_at"),
         db.from("pwd_lms_lessons").select("*").order("position"),
@@ -290,6 +312,7 @@ export async function GET(request: Request, context: Context) {
         db.from("pwd_lms_settings").select("value").eq("id", "banks").single(),
       ]);
       return json({
+        role: "admin",
         courses: checked(courses),
         lessons: await withLessonThumbnails(checked(lessons) || []),
         orders: checked(orders),
@@ -680,9 +703,8 @@ export async function POST(request: Request, context: Context) {
       return json({ passed: true, score });
     }
     if (action === "admin") {
-      const auth = await authorize(request);
-      if (auth.response) return auth.response;
-      const { db, user } = auth;
+      const teach = await teachingAccess(request);
+      const { db, user } = teach;
       const input = await readJson(
         request,
         z.discriminatedUnion("action", [
@@ -709,6 +731,25 @@ export async function POST(request: Request, context: Context) {
           z.object({ action: z.literal("proof"), id: z.uuid() }),
         ]),
       );
+      if (!teach.admin) {
+        // Instructors may only edit lessons and upload recordings for their own courses.
+        if (input.action !== "lesson" && input.action !== "recording_upload")
+          throw new HttpError(403, "Only admins can do this.");
+        const courseId =
+          input.action === "lesson" ? input.value.course_id : input.course_id;
+        teach.assertCourse(courseId);
+        if (input.action === "lesson" && input.value.id) {
+          const existing = checked(
+            await db
+              .from("pwd_lms_lessons")
+              .select("course_id")
+              .eq("id", input.value.id)
+              .maybeSingle(),
+          );
+          if (existing && existing.course_id !== courseId)
+            throw new HttpError(403, "You are not an instructor on this course.");
+        }
+      }
       if (input.action === "email_status") {
         const log = checked(
           await db

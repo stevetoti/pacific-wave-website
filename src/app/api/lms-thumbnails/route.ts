@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
-import { authorize } from "@/lib/server/auth";
+import { teachingAccess } from "@/lib/server/teaching";
 import { checked } from "@/lib/server/lms";
 import { HttpError, apiError } from "@/lib/server/http";
 import { rateLimit } from "@/lib/server/rate-limit";
@@ -11,14 +11,14 @@ import {
 } from "@/lib/server/lesson-thumbnails";
 export async function POST(request: Request) {
   try {
-    const auth = await authorize(request);
-    if (auth.response) return auth.response;
-    const { db, user } = auth;
+    const teach = await teachingAccess(request);
+    const { db, user } = teach;
     await rateLimit(request, `lesson-thumbnail-${user.id}`, 30);
     const course = z
       .uuid()
       .safeParse(new URL(request.url).searchParams.get("course"));
     if (!course.success) throw new HttpError(400, "Select a course first.");
+    teach.assertCourse(course.data);
     const row = checked(
       await db
         .from("pwd_lms_courses")

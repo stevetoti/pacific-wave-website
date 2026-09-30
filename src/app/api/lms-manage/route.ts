@@ -1,6 +1,6 @@
 import { NextResponse, after } from "next/server";
 import { z } from "zod";
-import { authorize } from "@/lib/server/auth";
+import { teachingAccess } from "@/lib/server/teaching";
 import { checked } from "@/lib/server/lms";
 import { apiError, HttpError, readJson } from "@/lib/server/http";
 import { sendLmsEmails } from "@/lib/server/lms-email";
@@ -36,9 +36,30 @@ const coupon = z
   );
 export async function GET(request: Request) {
   try {
-    const auth = await authorize(request);
-    if (auth.response) return auth.response;
-    const { db } = auth;
+    const teach = await teachingAccess(request);
+    const { db } = teach;
+    // Instructors see only the grading queue for lessons in their own courses.
+    const lessonIds = teach.admin
+      ? null
+      : (
+          checked(
+            await db
+              .from("pwd_lms_lessons")
+              .select("id")
+              .in("course_id", teach.courseIds!),
+          ) || []
+        ).map((l) => l.id as string);
+    let attemptQuery = db
+      .from("pwd_lms_quiz_attempts")
+      .select("*,pwd_lms_lessons(title)")
+      .eq("state", "review")
+      .order("submitted_at")
+      .limit(100);
+    if (lessonIds)
+      attemptQuery = attemptQuery.in(
+        "lesson_id",
+        lessonIds.length ? lessonIds : ["00000000-0000-0000-0000-000000000000"],
+      );
     const [c, g, a] = await Promise.all([
       db
         .from("pwd_lms_coupons")
@@ -50,12 +71,7 @@ export async function GET(request: Request) {
         .eq("method", "grant")
         .order("created_at", { ascending: false })
         .limit(500),
-      db
-        .from("pwd_lms_quiz_attempts")
-        .select("*,pwd_lms_lessons(title)")
-        .eq("state", "review")
-        .order("submitted_at")
-        .limit(100),
+      attemptQuery,
     ]);
     const pending = checked(a) || [];
     const studentIds = Array.from(new Set(pending.map((row) => row.user_id)));
@@ -68,8 +84,8 @@ export async function GET(request: Request) {
         )
       : [];
     return json({
-      coupons: checked(c),
-      grants: checked(g),
+      coupons: teach.admin ? checked(c) : [],
+      grants: teach.admin ? checked(g) : [],
       attempts: pending.map((row) => ({
         ...row,
         student_email:
@@ -86,9 +102,8 @@ export async function GET(request: Request) {
 }
 export async function POST(request: Request) {
   try {
-    const auth = await authorize(request);
-    if (auth.response) return auth.response;
-    const { db, user } = auth;
+    const teach = await teachingAccess(request);
+    const { db, user } = teach;
     const input = await readJson(
       request,
       z.discriminatedUnion("action", [
@@ -108,6 +123,19 @@ export async function POST(request: Request) {
         }),
       ]),
     );
+    if (!teach.admin) {
+      // Instructors may only grade attempts from their own courses.
+      if (input.action !== "grade")
+        throw new HttpError(403, "Only admins can do this.");
+      const attempt = checked(
+        await db
+          .from("pwd_lms_quiz_attempts")
+          .select("pwd_lms_lessons(course_id)")
+          .eq("id", input.id)
+          .maybeSingle(),
+      ) as { pwd_lms_lessons: { course_id: string } | null } | null;
+      teach.assertCourse(attempt?.pwd_lms_lessons?.course_id || "");
+    }
     if (input.action === "coupon") {
       const course = checked(
         await db

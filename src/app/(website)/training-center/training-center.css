@@ -2130,3 +2130,16 @@
 .af-practices li{counter-increment:tip;position:relative;padding:14px 14px 14px 52px;border:1px solid var(--sd-border,#e2e7ef);border-radius:12px;display:grid;align-content:start;gap:4px;font-size:14px;color:#586980;}
 .af-practices li::before{content:counter(tip);position:absolute;left:14px;top:14px;width:26px;height:26px;border-radius:50%;background:#ef5e33;color:#fff;font-weight:700;display:grid;place-items:center;font-size:13px;}
 .af-practices strong{color:#233c6f;}
+
+/* Instructors */
+.in-list{display:grid;gap:14px;margin-top:16px;}
+.in-card{display:flex;gap:16px;padding:16px;border:1px solid #e2e7ef;border-radius:14px;}
+.in-avatar,.in-profile-photo>span{flex-shrink:0;width:56px;height:56px;border-radius:50%;overflow:hidden;background:#233c6f;color:#fff;display:grid;place-items:center;font-weight:700;font-size:20px;}
+.in-avatar img{width:56px;height:56px;object-fit:cover;}
+.in-body{display:grid;gap:4px;min-width:0;flex:1;}.in-body small{color:#586980;}
+.in-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0;}.in-tags span{background:#eef2f9;color:#233c6f;border-radius:20px;padding:4px 10px;font-size:12px;font-weight:600;}
+.in-actions{display:flex;flex-wrap:wrap;gap:14px;}
+.in-courses{display:grid;gap:4px;margin:8px 0 16px;}
+.in-profile-photo{display:flex;align-items:center;gap:16px;margin:12px 0 20px;}.in-profile-photo img{width:72px;height:72px;border-radius:50%;object-fit:cover;}.in-profile-photo>span{width:72px;height:72px;}
+@media(max-width:560px){.in-card{flex-direction:column;}}
+.in-courses .af-check{margin:4px 0;align-items:center;}

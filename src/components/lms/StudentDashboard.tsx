@@ -22,6 +22,7 @@ import {
   ClipboardCheck,
   Download,
   HandCoins,
+  Presentation,
 } from "lucide-react";
 import AffiliateCenter from "./AffiliateCenter";
 import { authFetch } from "@/lib/auth-fetch";
@@ -101,6 +102,17 @@ export default function StudentDashboard({
     [error, setError] = useState(""),
     [message, setMessage] = useState(""),
     [filter, setFilter] = useState("all");
+  const [teaches, setTeaches] = useState(false);
+  useEffect(() => {
+    authFetch("/api/lms-instructors?scope=me")
+      .then(async (r) => {
+        if (r.ok) {
+          const d = await r.json();
+          setTeaches(Boolean(d.instructor || d.admin));
+        }
+      })
+      .catch(() => {});
+  }, []);
   const load = useCallback(async () => {
     const d = await profileApi();
     setProfile(d.profile);
@@ -385,6 +397,11 @@ export default function StudentDashboard({
           </select>
         </label>
         <nav aria-label="Student dashboard navigation">
+          {teaches && (
+            <Link href="/training-center/teach">
+              <Presentation size={18} /> Teaching workspace
+            </Link>
+          )}
           <Link href="/training-center/sessions"><MessageCircle size={18}/> Coaching conversations</Link>
           {sections.map(([key, title, Icon]) => (
             <Link

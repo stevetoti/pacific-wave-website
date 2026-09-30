@@ -132,3 +132,9 @@
 - [x] Commit, push to main, deploy, verify live, record release here. — [Claude Code] 2026-09-29: c8d281b → dpl_cjecVin47Ysx1mdxiwr7rJ9Fosom.
 - [x] Public "Become an affiliate" landing page for non-students — [Claude Code] 2026-09-29: /affiliates.
 - [ ] Optional later: formal affiliate terms page.
+
+## 2026-09-30 — [Claude Code] Instructors + student messaging
+- [x] Phase 1: per-course instructors, admin Instructors tab, Teaching workspace, instructor profiles on course pages; Stephen on all courses.
+- [ ] Owner: add photo/bio in Teaching workspace → My instructor profile (shows on course pages); invite other instructors from Admin → Training centre → Instructors.
+- [ ] Phase 2: student directory (visible by default, hide option), connection requests (accept/ignore, 30-day resend block, daily cap), 1:1 DMs on chat engine, instructor↔own-students DMs without request, Messages tab + badges, email for requests + 1h unread reminder (opt-out), block/report, admins see only reported DMs.
+- [ ] Later: instructor "view course as student" preview.

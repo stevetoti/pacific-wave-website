@@ -2,11 +2,12 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { LayoutDashboard, HandCoins, LogOut, Settings } from "lucide-react";
+import { LayoutDashboard, HandCoins, LogOut, Settings, Presentation } from "lucide-react";
 import { authFetch } from "@/lib/auth-fetch";
 
 export default function StudentAccountMenu({ email, onLogout }: { email: string; onLogout: () => void }) {
   const [profile, setProfile] = useState({ full_name: "", avatar_url: "" });
+  const [teaches, setTeaches] = useState(false);
   const menu = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     let active = true;
@@ -16,6 +17,9 @@ export default function StudentAccountMenu({ email, onLogout }: { email: string;
       }).catch(() => {});
     };
     refresh();
+    authFetch("/api/lms-instructors?scope=me").then(async r => {
+      if (r.ok && active) { const d = await r.json(); setTeaches(Boolean(d.instructor || d.admin)); }
+    }).catch(() => {});
     window.addEventListener("student-profile-updated", refresh);
     const outside = (event: PointerEvent) => {
       if (menu.current && !menu.current.contains(event.target as Node)) menu.current.open = false;
@@ -43,6 +47,7 @@ export default function StudentAccountMenu({ email, onLogout }: { email: string;
     <div className="lms-account-dropdown">
       <div className="lms-account-identity"><strong>{profile.full_name || "Your account"}</strong><span>{email}</span></div>
       <Link href="/training-center/dashboard" onClick={close}><LayoutDashboard size={18} /> My dashboard</Link>
+      {teaches && <Link href="/training-center/teach" onClick={close}><Presentation size={18} /> Teaching workspace</Link>}
       <Link href="/training-center/dashboard?tab=affiliate" onClick={close}><HandCoins size={18} /> Affiliate programme</Link>
       <Link href="/training-center/dashboard?tab=settings" onClick={close}><Settings size={18} /> Settings</Link>
       <button type="button" onClick={() => { close(); onLogout(); }}><LogOut size={18} /> Log out</button>
