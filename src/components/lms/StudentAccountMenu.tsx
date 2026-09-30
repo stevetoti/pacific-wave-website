@@ -45,7 +45,6 @@ export default function StudentAccountMenu({ email, onLogout }: { email: string;
   const close = () => { if (menu.current) menu.current.open = false; };
   return <details className="lms-account-menu" ref={menu}>
     <summary aria-label="Open account menu" title="Your account">
-      {badge > 0 && <span className="msg-badge lms-account-badge" aria-label={`${badge} new`}>{badge}</span>}
       {profile.avatar_url ? <Image src={profile.avatar_url} alt="Your account photo" width={44} height={44} unoptimized /> : <span>{(profile.full_name || email).slice(0, 1).toUpperCase()}</span>}
     </summary>
     <div className="lms-account-dropdown">

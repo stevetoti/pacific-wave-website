@@ -30,6 +30,7 @@ import dynamic from "next/dynamic";
 const QuizPlayer = dynamic(() => import("./QuizPlayer"));
 const StudentDashboard = dynamic(() => import("./StudentDashboard"));
 import LessonThumbnail from "./LessonThumbnail";
+import NotificationBell from "./NotificationBell";
 import StudentAccountMenu from "./StudentAccountMenu";
 const CourseCommunity = dynamic(() => import("./CourseCommunity"));
 const StudentCoaches = dynamic(() => import("./coach/StudentCoaches"), { ssr: false });
@@ -324,6 +325,8 @@ export default function TrainingCenter({
             </Link>
           </div>
           {email && (
+            <div className="lms-nav-actions">
+            <NotificationBell />
             <StudentAccountMenu
               email={email}
               onLogout={() =>
@@ -335,6 +338,7 @@ export default function TrainingCenter({
                 })
               }
             />
+            </div>
           )}
         </nav>
         {sandbox && (

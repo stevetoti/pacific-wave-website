@@ -152,6 +152,7 @@ export default function MessagesCenter() {
         const params = new URLSearchParams(window.location.search);
         const withUser = params.get("with");
         const thread = params.get("thread");
+        if (params.get("view") === "requests") setView("requests");
         if (thread) setActive(thread);
         else if (withUser) {
           const d = await api("", { action: "open", user_id: withUser });
@@ -160,6 +161,14 @@ export default function MessagesCenter() {
       })
       .catch((e) => setError(e.message));
   }, [loadOverview]);
+  // Lets the notification bell skip pop-ups for the conversation already on screen.
+  useEffect(() => {
+    if (active) document.body.dataset.activeThread = active;
+    else delete document.body.dataset.activeThread;
+    return () => {
+      delete document.body.dataset.activeThread;
+    };
+  }, [active]);
   useEffect(() => {
     if (!active) return;
     setMessages([]);
@@ -554,8 +563,8 @@ export default function MessagesCenter() {
           <label className="af-check">
             <input type="checkbox" name="emails" defaultChecked={overview.settings.message_emails} />
             <span>
-              <strong>Email me about connection requests and unread messages</strong>
-              <small className="af-muted">One reminder when a message is still unread after an hour.</small>
+              <strong>Email me about new messages, mentions, announcements and connection requests</strong>
+              <small className="af-muted">Quick bursts of messages arrive as one email, and we don&apos;t email you while you&apos;re reading the chat.</small>
             </span>
           </label>
           <button className="lms-button" disabled={busy}>Save settings</button>

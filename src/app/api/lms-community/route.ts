@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { checked } from "@/lib/server/lms";
+import { markNotificationsRead, notify } from "@/lib/server/notifications";
 import { access, channelAccess } from "@/lib/server/community";
 import {
   uploadCommunityFile,
@@ -394,6 +395,31 @@ export async function POST(request: Request) {
             p_files: Array.from(new Set(input.files)),
           }),
         );
+        // Mentions and instructor announcements notify people in-app and by (batched) email.
+        const link = `/training-center/course/${input.course}?tab=community`;
+        const preview = mention.body
+          .replace(/@\[([^\]]+)\]\([0-9a-f-]{36}\)/g, "@$1")
+          .slice(0, 600);
+        if (channel.announcements) {
+          const roster = await people(ctx, input.course, channel.private ? channel.id : null);
+          // Announcements go to enrolled students, not to other instructors and admins.
+          await notify(db, roster.filter((p) => !p.instructor).map((p) => p.user_id), {
+            kind: "announcement",
+            actor: user.id,
+            group: `announce:${channel.id}`,
+            title: `New announcement from ${name}`,
+            body: preview,
+            link,
+          });
+        } else if (mention.ids.length)
+          await notify(db, mention.ids, {
+            kind: "mention",
+            actor: user.id,
+            group: `mention:${channel.id}`,
+            title: `${name} mentioned you in ${channel.name}`,
+            body: preview,
+            link,
+          });
       }
       return json({ success: true });
     }
@@ -406,6 +432,7 @@ export async function POST(request: Request) {
           p_message: input.id,
         }),
       );
+      await markNotificationsRead(db, user.id, [`mention:${channel.id}`, `announce:${channel.id}`]);
       return json({ success: true });
     }
     if (input.action === "delete") {

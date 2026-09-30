@@ -147,3 +147,4 @@
 - [x] Phase 2 — [Claude Code] 2026-09-30: released; see changelog. Original scope: student directory (visible by default, hide option), connection requests (accept/ignore, 30-day resend block, daily cap), 1:1 DMs on chat engine, instructor↔own-students DMs without request, Messages tab + badges, email for requests + 1h unread reminder (opt-out), block/report, admins see only reported DMs.
 - [ ] Later: instructor "view course as student" preview.
 - [ ] Later (messaging): reactions/replies in DMs, realtime instead of 8s polling if volume grows.
+- [ ] Update `tests/api.test.ts` submission tests for the form-bot-defence fields (4 failing on main since 4ed0cca) — noted by [Claude Code] 2026-10-01; owner of that change should fix.

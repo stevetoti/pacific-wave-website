@@ -9,6 +9,7 @@ import AffiliateAdmin from "./AffiliateAdmin";
 import InstructorAdmin from "./InstructorAdmin";
 import InstructorProfileForm from "./InstructorProfileForm";
 import MessagesCenter from "./MessagesCenter";
+import NotificationBell from "./NotificationBell";
 import MessageReports from "./MessageReports";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
@@ -151,7 +152,10 @@ export default function TrainingAdmin({
             : "Build courses, publish class materials and manage student payments."}
         </p>
         {teaching ? (
-          <Link href="/training-center/dashboard">← My dashboard</Link>
+          <div className="lms-nav-actions">
+            <Link href="/training-center/dashboard">← My dashboard</Link>
+            <NotificationBell />
+          </div>
         ) : (
           <Link href="/training-center" target="_blank">
             View student experience →

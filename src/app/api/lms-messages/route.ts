@@ -1,4 +1,4 @@
-import { NextResponse, after } from "next/server";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { authorize } from "@/lib/server/auth";
@@ -6,7 +6,8 @@ import { checked, student } from "@/lib/server/lms";
 import { apiError, HttpError, readJson } from "@/lib/server/http";
 import { rateLimit } from "@/lib/server/rate-limit";
 import { bucket, readChatFile } from "@/lib/server/community-files";
-import { notifyByEmail, people } from "@/lib/server/messages";
+import { people } from "@/lib/server/messages";
+import { markNotificationsRead, notify } from "@/lib/server/notifications";
 import { instructorCourseIds, isAdmin } from "@/lib/server/teaching";
 import type { SupabaseClient } from "@supabase/supabase-js";
 export const dynamic = "force-dynamic";
@@ -14,6 +15,7 @@ const json = (d: unknown) =>
   NextResponse.json(d, { headers: { "Cache-Control": "no-store" } });
 type Thread = { id: string; user_a: string; user_b: string; last_message_at: string | null };
 type Message = { id: number; thread_id: string; sender: string; body: string; file_id: string | null; deleted: boolean; created_at: string };
+const pairKey = (a: string, b: string) => `conn:${[a, b].sort().join(":")}`;
 const other = (t: Thread, me: string) => (t.user_a === me ? t.user_b : t.user_a);
 async function canMessage(db: SupabaseClient, a: string, b: string) {
   return Boolean(checked(await db.rpc("pwd_lms_can_message", { p_a: a, p_b: b })));
@@ -282,10 +284,25 @@ export async function POST(request: Request) {
         if (/limit|not available|yourself/i.test(message)) throw new HttpError(400, message);
         throw e;
       }
-      if (state === "sent") {
-        const name = (await people(db, [me])).get(me)?.full_name || "A classmate";
-        after(() => notifyByEmail(input.user_id, "connection_request", [name]));
-      }
+      const name = (await people(db, [me])).get(me)?.full_name || "A classmate";
+      if (state === "sent")
+        await notify(db, [input.user_id], {
+          kind: "connection_request",
+          actor: me,
+          group: pairKey(me, input.user_id),
+          title: `${name} wants to connect`,
+          body: input.note,
+          link: "/training-center/dashboard?tab=messages&view=requests",
+        });
+      if (state === "connected")
+        await notify(db, [input.user_id], {
+          kind: "connection_accepted",
+          actor: me,
+          group: pairKey(me, input.user_id) + ":accepted",
+          title: `${name} accepted your connection request`,
+          body: "",
+          link: `/training-center/dashboard?tab=messages&with=${me}`,
+        });
       return json({ state });
     }
     if (input.action === "respond") {
@@ -293,6 +310,19 @@ export async function POST(request: Request) {
         await db.from("pwd_lms_connections").update({ status: input.accept ? "accepted" : "ignored", responded_at: new Date().toISOString() }).eq("id", input.id).eq("addressee", me).eq("status", "pending").select("requester"),
       );
       if (!updated?.length) throw new HttpError(409, "This request is no longer pending.");
+      const requester = updated[0].requester as string;
+      await markNotificationsRead(db, me, [pairKey(me, requester)]);
+      if (input.accept) {
+        const name = (await people(db, [me])).get(me)?.full_name || "A classmate";
+        await notify(db, [requester], {
+          kind: "connection_accepted",
+          actor: me,
+          group: pairKey(me, requester) + ":accepted",
+          title: `${name} accepted your connection request`,
+          body: "",
+          link: `/training-center/dashboard?tab=messages&with=${me}`,
+        });
+      }
       return json({ success: true });
     }
     if (input.action === "remove_connection") {
@@ -325,6 +355,15 @@ export async function POST(request: Request) {
         db.from("pwd_lms_dm_threads").update({ last_message_at: message.created_at }).eq("id", t.id),
         db.from("pwd_lms_dm_reads").upsert({ thread_id: t.id, user_id: me, last_read_id: message.id }, { onConflict: "thread_id,user_id" }),
       ]);
+      const name = (await people(db, [me])).get(me)?.full_name || "Someone";
+      await notify(db, [other(t, me)], {
+        kind: "message",
+        actor: me,
+        group: `dm:${t.id}`,
+        title: name,
+        body: input.body || "📎 Sent an attachment",
+        link: `/training-center/dashboard?tab=messages&thread=${t.id}`,
+      });
       return json({ message: { ...message, mine: true } });
     }
     if (input.action === "delete") {
@@ -337,6 +376,8 @@ export async function POST(request: Request) {
       const current = checked(await db.from("pwd_lms_dm_reads").select("last_read_id").eq("thread_id", input.thread_id).eq("user_id", me).maybeSingle());
       if (!current || current.last_read_id < input.last_id)
         checked(await db.from("pwd_lms_dm_reads").upsert({ thread_id: input.thread_id, user_id: me, last_read_id: input.last_id }, { onConflict: "thread_id,user_id" }));
+      // Reading the chat clears its notification, which also cancels any pending email.
+      await markNotificationsRead(db, me, [`dm:${input.thread_id}`]);
       return json({ success: true });
     }
     if (input.action === "block" || input.action === "unblock") {
