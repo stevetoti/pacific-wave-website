@@ -1,5 +1,13 @@
 # Decisions
 
+## 2026-09-30 — [Claude Code] Public forms use the shared PWD bot-defence layers
+
+CAPTCHA alone is porous (tokens are purchasable) and honeypots are skipped by current bots,
+so every public form runs cheap signals (honeypot, fill time, content sanity) first, then
+server-verified Turnstile that fails closed, then the durable per-IP limit, and only then
+saves and emails the owner. One Cloudflare widget is shared across PWD sites; hostnames are
+added per site. Soft signals are flagged in the notification, never auto-deleted.
+
 ## 2026-09-15 — [Codex] Review scope
 
 Readiness assessment only: preserve application code, branches, and production data. Fix authorization and lead capture before launch sign-off. Verify target Supabase/Vercel environment before changes; historical project references conflict.

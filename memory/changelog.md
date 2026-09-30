@@ -1,5 +1,31 @@
 # Changelog — pacific-wave-website
 
+## 2026-09-30 — [Claude Code] Bot defence on the contact form, project wizard and newsletter
+
+Spam enquiries (e.g. name `IAZbdEISQtLfatghMgdRBA`, message `3283763479`, 29 Sep 19:43) were
+reaching Steve's inbox. The route already had a honeypot and a per-IP limit; bots left the
+honeypot empty and submitted digit-only messages in under a second. Applied the
+`form-bot-defence` skill (built from the Digiassist AI signup incident):
+- `src/lib/security/{bot-signals,turnstile,form-guard}.ts` + `src/components/security/
+  {TurnstileWidget,FormBotFields}.tsx` (skill templates).
+- `/api/submissions` and `/api/newsletter` run `guardPublicForm` BEFORE the rate limit, the
+  database insert and the owner email: honeypot (silent 200), minimum 3 s fill time,
+  digit/link-only message refusal, server-verified Cloudflare Turnstile (fail-closed when
+  keys are missing). A generated-looking name adds "Review signals" to the notification.
+- Contact page, get-started wizard (final step) and NewsletterCTA send the three fields and
+  render the Turnstile widget; tokens are re-issued after every attempt.
+- Test: `tests/form-bot-defence.test.ts` (node:test) pins the signals and message sanity.
+- Turnstile keys (shared PWD widget) added to Vercel Production + Preview(form-bot-defence)
+  by stdin pipe. Preview env also received the two public Supabase vars (previews had none).
+
+Verified locally on the built app: honeypot → 200 swallow; 0.5 s fill → 400; digit-only
+message → 400; no CAPTCHA token → 400 on both routes. Local build + typecheck of changed
+files clean (pre-existing unrelated tsc errors remain in the old checkout's node_modules).
+Branch `form-bot-defence` from origin/main; NOT merged to main yet — Stephen must add
+`pacificwavedigital.com`, `www.pacificwavedigital.com` and
+`pacific-wave-website-git-form-bot-defence-pacificwaveprojects.vercel.app` to the shared
+Turnstile widget, then the preview widget check and merge follow.
+
 ## 2026-08-21 — [Claude Code] Diagnosed "site unreachable" report
 
 - Symptom: pacificwavedigital.com and all subdomains unreachable from Stephen's current network (TLS connection reset on 443).

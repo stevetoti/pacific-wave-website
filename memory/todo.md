@@ -1,5 +1,11 @@
 # Todo
 
+## 2026-09-30 — [Claude Code] Form bot defence
+
+- [x] Guard `/api/submissions` + `/api/newsletter` and their three forms (branch `form-bot-defence`, local verification passed).
+- [ ] **Stephen:** add the three hostnames above to the shared Turnstile widget (Cloudflare → Turnstile → "Digiassist AI signup" → hostnames).
+- [ ] Preview widget check + the four refusal probes on the preview URL, then merge to main (auto-deploys production) and one real enquiry by Stephen.
+
 ## 2026-09-15 — [Codex] Readiness blockers
 
 - [ ] Require authenticated, active, site-scoped admin permissions for privileged APIs; protect paid AI/SEO calls.
