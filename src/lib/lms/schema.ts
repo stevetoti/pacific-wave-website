@@ -19,13 +19,15 @@ export const courseSchema = z.object({
   description: z.string().max(2000),
   introduction: z.string().max(12000),
   kind: z.enum(["live", "recorded"]),
-  amount: z.number().int().min(1).max(100000000),
+  amount: z.number().int().min(0).max(100000000),
   currency: z.enum(["VUV", "USD", "AUD"]),
   published: z.boolean(),
   enrollment_open: z.boolean(),
   private_sessions: z.boolean().optional(),
+  is_private: z.boolean().optional(),
+  requires_approval: z.boolean().optional(),
   coaching_ends_on: z.iso.date().nullable().optional(),
-});
+}).refine(c => c.amount > 0 || c.requires_approval === true, "A zero-fee workshop requires administrator approval.").refine(c => !c.requires_approval || c.amount === 0, "Approval-based workshops must have a zero participant fee.");
 export const questionSchema = z
   .object({
     question: z.string().min(3).max(600),

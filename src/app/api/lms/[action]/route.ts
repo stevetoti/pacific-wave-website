@@ -43,12 +43,20 @@ export async function GET(request: Request, context: Context) {
   try {
     const { action } = await context.params;
     const db = getSupabaseAdmin();
+    if (action === "registration_course") {
+      const key = z.string().regex(/^[a-z0-9-]{1,100}$/).parse(new URL(request.url).searchParams.get("course"));
+      const field = z.uuid().safeParse(key).success ? "id" : "slug";
+      const course = checked(await db.from("pwd_lms_courses").select("*").eq(field, key).eq("published", true).maybeSingle());
+      if (!course) throw new HttpError(404, "Course unavailable.");
+      return json({ course });
+    }
     if (action === "catalog") {
       const courses = checked(
         await db
           .from("pwd_lms_courses")
           .select("*")
           .eq("published", true)
+          .eq("is_private", false)
           .order("created_at"),
       );
       const banks = checked(
@@ -401,6 +409,7 @@ export async function POST(request: Request, context: Context) {
             attendance: input.attendance,
             amount: course.amount,
             currency: course.currency,
+            ...(course.requires_approval ? { status: "pending", method: "grant", package_label: "Awaiting workshop approval" } : course.amount === 0 ? { status: "granted", method: "grant", package_label: "Workshop participant access" } : {}),
           },
           { onConflict: "user_id,course_id", ignoreDuplicates: true },
         ),

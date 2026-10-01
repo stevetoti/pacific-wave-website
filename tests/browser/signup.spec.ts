@@ -12,7 +12,8 @@ test('one signup form opens payment with contact and attendance already saved', 
  await page.route('**/api/lms/**', async r=>{
   const action=new URL(r.request().url()).pathname.split('/').at(-1);
   if(action==='account') {payload=r.request().postDataJSON();return r.fulfill({json:{success:true,courseId:course.id}});}
-  if(action==='catalog')return r.fulfill({json:catalog});
+  if(action==='catalog')return r.fulfill({json:{...catalog,stripe:true}});
+  if(action==='registration_course')return r.fulfill({json:{course}});
   if(action==='dashboard')return r.fulfill({json:{orders:[{id:'33333333-3333-4333-8333-333333333333',course_id:course.id,status:'pending',amount:35000,currency:'VUV',name:'Test Student',phone:'+678 5551234',attendance:'online'}],progress:[]}});
   return r.fulfill({status:400,json:{error:'Unexpected operation in read-only test'}});
  });
@@ -27,7 +28,7 @@ test('one signup form opens payment with contact and attendance already saved', 
  await page.locator('input[name=privacy]').check();
  await page.getByRole('button',{name:'Register & continue to payment'}).click();
  await expect(page).toHaveURL(/\/checkout\?course=vanuatu-october-2026/);
- await expect(page.getByRole('button',{name:'Pay securely by card'})).toBeVisible();
+ await expect(page.getByRole('button',{name:/Pay .* by card/})).toBeVisible();
  await expect(page.getByRole('heading',{name:'Your registration details'})).toHaveCount(0);
  expect(payload).toMatchObject({name:'Test Student',phone:'+678 5551234',location:'Port Vila',attendance:'online',acknowledged:true,mode:'signup'});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);

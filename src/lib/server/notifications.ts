@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdmin } from "./clients";
 import { checked } from "./lms";
 import { reportServerError } from "./report-error";
+import { allowedPeers, isPeerNotification } from "./messaging-scope";
 import { people } from "./messages";
 import { notificationTemplate } from "../email/notification-template";
 export type NotificationKind =
@@ -25,6 +26,10 @@ export async function notify(
   users: string[],
   n: { kind: NotificationKind; actor: string; group: string; title: string; body: string; link: string },
 ) {
+  if (isPeerNotification(n.kind)) {
+    const allowed = await allowedPeers(db, n.actor, users);
+    users = users.filter(id => allowed.has(id));
+  }
   if (!users.length) return;
   const { error } = await db.rpc("pwd_lms_notify", {
     p_users: Array.from(new Set(users)),
@@ -98,7 +103,7 @@ export async function processNotificationEmails() {
   ) || [];
   for (const n of rows) {
     try {
-      if (n.read_at || prefs.find((p) => p.user_id === n.user_id)?.message_emails === false) {
+      if ((isPeerNotification(n.kind) && (!n.actor || !(await allowedPeers(db, n.user_id, [n.actor])).has(n.actor))) || n.read_at || prefs.find((p) => p.user_id === n.user_id)?.message_emails === false) {
         await set(n.id, { email_state: "skipped" });
         continue;
       }

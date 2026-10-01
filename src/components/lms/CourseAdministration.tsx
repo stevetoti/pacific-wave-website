@@ -19,6 +19,7 @@ type Coupon = {
 };
 type Grant = {
   id: string;
+  name: string;
   email: string;
   course_id: string;
   status: string;
@@ -95,6 +96,12 @@ export default function CourseAdministration({
       )}
       {section === "access" && (
         <>
+          <section className="lms-panel">
+            <h2>Workshop registrations awaiting approval</h2>
+            <p>Check each person is part of your workshop, then approve their free access. They receive the existing course-access email.</p>
+            {grants.filter(g => g.status === "pending" && courses.find(c => c.id === g.course_id)?.requires_approval).map(g => <article key={g.id} className="lms-notice"><h3>{g.name}</h3><p>{g.email} · {courses.find(c => c.id === g.course_id)?.title}</p><button className="lms-button" disabled={busy} onClick={() => save({action: "approve_workshop", id: g.id})}>Approve participant</button></article>)}
+            {!grants.some(g => g.status === "pending" && courses.find(c => c.id === g.course_id)?.requires_approval) && <p>No workshop registrations awaiting approval.</p>}
+          </section>
           <div className="lms-two">
             <form
               className="lms-panel"

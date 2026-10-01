@@ -108,7 +108,7 @@ export async function GET(request: Request) {
       db
         .from("pwd_lms_courses")
         .select("id,slug,title,amount,currency,enrollment_open,cohort_id")
-        .eq("published", true)
+        .eq("published", true).eq("is_private", false)
         .order("created_at"),
     ]);
     const affiliate = checked(a);

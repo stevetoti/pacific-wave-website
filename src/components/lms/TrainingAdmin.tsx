@@ -285,6 +285,8 @@ export default function TrainingAdmin({
                     amount: Number(f.get("amount")),
                     currency: f.get("currency"),
                     published: f.get("published") === "on",
+                    is_private: f.get("is_private") === "on",
+                    requires_approval: f.get("requires_approval") === "on",
                     enrollment_open: f.get("enrollment_open") === "on",
                     coaching_ends_on: f.get("coaching_ends_on") || null,
                   },
@@ -350,7 +352,7 @@ export default function TrainingAdmin({
                     name="amount"
                     type="number"
                     required
-                    min="1"
+                    min="0"
                     defaultValue={editCourse.amount}
                   />
                 </label>
@@ -364,7 +366,7 @@ export default function TrainingAdmin({
                     type="checkbox"
                     defaultChecked={editCourse.published}
                   />
-                  Publish in course catalogue
+                  Publish course (make its registration link available)
                 </label>
                 <label className="lms-check">
                   <input
@@ -374,6 +376,10 @@ export default function TrainingAdmin({
                   />
                   Accept new enrolments
                 </label>
+                <label className="lms-check"><input name="is_private" type="checkbox" defaultChecked={editCourse.is_private} />Private workshop — hide from public listings and isolate student messaging</label>
+                <p className="lms-muted">A price of 0 means no participant fee. Approval is required for a zero-fee workshop to check participants before granting access. Private-course participants can connect with classmates and their instructors.</p>
+                {editCourse.id && editCourse.is_private && <p>Private registration link: <a href={`/training-center/account?mode=signup&course=${editCourse.slug}`}>/training-center/account?mode=signup&amp;course={editCourse.slug}</a></p>}
+                <label className="lms-check"><input name="requires_approval" type="checkbox" defaultChecked={editCourse.requires_approval} />Admin approval required before learning and chat access</label>
                 <button className="lms-button">Save course</button>
               </fieldset>
             </form>

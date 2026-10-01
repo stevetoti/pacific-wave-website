@@ -52,7 +52,7 @@ export async function sendAccountEmail(input: {
     await db
       .from("pwd_lms_courses")
       .select("*")
-      .eq("published", true)
+      .eq("published", true).eq("is_private", false)
       .order("created_at")
       .limit(10),
   ) as Course[];
@@ -62,7 +62,7 @@ export async function sendAccountEmail(input: {
       : input.mode === "signup"
         ? "Welcome to your next chapter"
         : "Reset your student password",
-    intro: input.mode === "welcome" ? "Your student account is ready. You can sign in immediately, complete your course payment and find your learning space. No email confirmation is needed." : existing
+    intro: input.mode === "welcome" ? "Your student account is ready. You can sign in immediately and find your course in your dashboard. No email confirmation is needed." : existing
       ? "You already have a verified account with this email address. Use your existing password to sign in to the Pacific Wave Digital Training Centre. There is no need to create another account."
       : input.mode === "signup"
         ? "Welcome to Pacific Wave Digital. Confirm your email address to activate your student account and start your learning journey."
@@ -73,7 +73,7 @@ export async function sendAccountEmail(input: {
         ? "Verify my email address"
         : "Reset my password",
     url: link,
-    details: input.mode === "welcome" ? ["Learn practical AI, business, website and software skills with instructor support.", "Your dashboard brings together your courses, lesson recordings, community and progress. Course access follows your payment or administrator approval.", "Pay securely by card or use our ANZ/BRED VUV bank accounts and upload your payment proof at checkout."] : existing
+    details: input.mode === "welcome" ? ["Learn practical AI, business, website and software skills with instructor support.", "Your dashboard brings together your courses, lesson recordings, community and progress. Course access follows your payment or administrator approval.", "If your course has a fee, complete payment at checkout. Private workshops may require administrator approval before learning and chat access opens."] : existing
       ? [
           "Forgot your password? Choose “Forgot password?” on the sign-in page to receive a secure reset link.",
           "Your account brings together your enrolled courses, class recordings, learning progress and instructor support.",

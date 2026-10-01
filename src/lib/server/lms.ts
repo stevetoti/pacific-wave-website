@@ -44,6 +44,8 @@ export async function ownedOrder(request: Request, id: string) {
       .maybeSingle(),
   );
   if (!order) throw new HttpError(404, "Order not found");
+  const course = checked(await db.from("pwd_lms_courses").select("requires_approval").eq("id", order.course_id).single());
+  if (course?.requires_approval) throw new HttpError(403, "This workshop requires administrator approval. No payment is needed.");
   return { db, user, order };
 }
 export async function fulfill(session: Stripe.Checkout.Session) {

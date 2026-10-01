@@ -115,6 +115,7 @@ export async function POST(request: Request) {
           label: z.string().trim().min(3).max(300),
         }),
         z.object({ action: z.literal("revoke"), id: z.uuid() }),
+        z.object({ action: z.literal("approve_workshop"), id: z.uuid() }),
         z.object({
           action: z.literal("grade"),
           id: z.uuid(),
@@ -158,6 +159,14 @@ export async function POST(request: Request) {
         p_actor: user.id,
       });
       if (result.error) throw new HttpError(400, result.error.message);
+      after(sendLmsEmails);
+    }
+    if (input.action === "approve_workshop") {
+      const order = checked(await db.from("pwd_lms_orders").select("course_id").eq("id", input.id).single());
+      const course = checked(await db.from("pwd_lms_courses").select("requires_approval,amount").eq("id", order!.course_id).single());
+      if (!course?.requires_approval || course.amount !== 0) throw new HttpError(400, "This is not a free approval-based workshop.");
+      const changed = checked(await db.from("pwd_lms_orders").update({ status: "granted", method: "grant", amount: 0, granted_by: user.id, reviewed_by: user.id, package_label: "Approved workshop participant" }).eq("id", input.id).eq("status", "pending").select("id"));
+      if (!changed?.length) throw new HttpError(409, "This registration is no longer awaiting approval.");
       after(sendLmsEmails);
     }
     if (input.action === "revoke") {

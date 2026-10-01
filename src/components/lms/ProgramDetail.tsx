@@ -1,3 +1,5 @@
+import BlpWorkshop from "./BlpWorkshop";
+import { blpSlug } from "@/lib/lms/blp-workshop";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
@@ -5,6 +7,7 @@ import { money, type Course } from "@/lib/lms/types";
 import { programs, mentorshipSlug } from "@/lib/lms/programs";
 import CourseInstructors from "./CourseInstructors";
 export default function ProgramDetail({ course }: { course: Course }) {
+  if (course.slug === blpSlug) return <BlpWorkshop course={course} />;
   const p = programs[course.slug];
   if (!p) return null;
   const mentor = course.slug === mentorshipSlug;

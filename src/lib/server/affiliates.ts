@@ -32,6 +32,9 @@ export async function attachReferral(
   request: Request,
   orderId: string,
 ) {
+  const { data: order } = await db.from("pwd_lms_orders").select("pwd_lms_courses(is_private)").eq("id", orderId).single();
+  const course = order?.pwd_lms_courses as unknown as { is_private?: boolean } | null;
+  if (!course || course.is_private) return;
   const code = referralCode(request);
   if (!code) return;
   const { error } = await db.rpc("pwd_lms_attach_affiliate", {
@@ -84,7 +87,7 @@ export async function sendAffiliateEmail(
       const { data: courses } = await db
         .from("pwd_lms_courses")
         .select("slug,title,amount,currency,cohort_id")
-        .eq("published", true)
+        .eq("published", true).eq("is_private", false)
         .eq("enrollment_open", true)
         .order("created_at");
       const rate = Number(a.commission_rate);

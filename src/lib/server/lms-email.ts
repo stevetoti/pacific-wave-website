@@ -23,10 +23,11 @@ export async function sendLmsEmails() {
     try {
       const { data: order, error } = await db
         .from("pwd_lms_orders")
-        .select("*,pwd_lms_courses(title)")
+        .select("*,pwd_lms_courses(title,requires_approval)")
         .eq("id", job.order_id)
         .single();
       if (error || !order) throw new Error("Email order unavailable");
+      const approval = order.pwd_lms_courses.requires_approval;
       const status: Record<string, string> = {
         pending:
           "Your course registration is saved. Use the payment button below to complete enrolment by card or bank transfer. For bank transfer, upload your proof and allow our team to verify the deposit.",
@@ -42,6 +43,7 @@ export async function sendLmsEmails() {
         refunded:
           "Your course payment has been refunded. Paid lesson access is no longer active.",
       };
+      if (approval) status.pending = "Your free workshop registration is saved and awaiting administrator approval. We will confirm you are a participant before opening lessons, resources, AI coaches and private chat. No payment is required.";
       const response = await fetch("https://api.resend.com/emails", {
         method: "POST",
         signal: AbortSignal.timeout(10000),
@@ -64,10 +66,10 @@ export async function sendLmsEmails() {
                 ? "Your course access is ready"
                 : `Your training ${job.status === "paid" ? "payment is confirmed" : "registration update"}`,
             intro: `Hello ${order.name}. ${order.method === "coupon" && job.status === "paid" ? "Your full discount is applied. Published lessons are now available in your dashboard." : status[job.status] || "Your registration has been updated."}`,
-            action: ["pending", "rejected"].includes(job.status)
+            action: !approval && ["pending", "rejected"].includes(job.status)
               ? "Complete or review my payment"
               : "Open my course",
-            url: ["pending", "rejected"].includes(job.status)
+            url: !approval && ["pending", "rejected"].includes(job.status)
               ? `https://pacificwavedigital.com/training-center/checkout?course=${encodeURIComponent(order.course_id)}`
               : `https://pacificwavedigital.com/training-center/course/${encodeURIComponent(order.course_id)}`,
             secondary: {
@@ -76,8 +78,8 @@ export async function sendLmsEmails() {
             },
             details: [
               `Course: ${order.pwd_lms_courses.title}`,
-              `Fee: ${money(order.amount, order.currency)} · Payment reference: ${paymentReference(order.id)}`,
-              ...(["pending", "rejected"].includes(job.status)
+              approval ? "Free workshop registration · Access subject to administrator approval" : `Fee: ${money(order.amount, order.currency)} · Payment reference: ${paymentReference(order.id)}`,
+              ...(!approval && ["pending", "rejected"].includes(job.status)
                 ? [
                     "To pay: Option 1, transfer the fee to our ANZ or BRED account shown on the payment page, write your payment reference in the transfer description, then upload a photo of your receipt. Option 2, pay instantly by Visa or Mastercard.",
                   ]

@@ -34,11 +34,13 @@ import PaymentOptions from "./PaymentOptions";
 import StudentAccountMenu from "./StudentAccountMenu";
 const CourseCommunity = dynamic(() => import("./CourseCommunity"));
 const StudentCoaches = dynamic(() => import("./coach/StudentCoaches"), { ssr: false });
+import WorkshopResources from "./WorkshopResources";
 import ProgramDetail from "./ProgramDetail";
+import { blpSlug, blpModules } from "@/lib/lms/blp-workshop";
 import { programs, mentorshipSlug } from "@/lib/lms/programs";
 const base = "/training-center";
 function classImage(course: Course, lesson: Lesson, index: number) {
-  return lesson.thumbnail_url || (course.slug === "vanuatu-october-2026" && index >= 0 && index < 12 ? `/images/training/classes/class-${String(index+1).padStart(2,"0")}.webp` : undefined);
+  return lesson.thumbnail_url || (course.slug === blpSlug && blpModules[index] ? `/images/training/blp/scene-0${blpModules[index].image}.webp` : undefined) || (course.slug === "vanuatu-october-2026" && index >= 0 && index < 12 ? `/images/training/classes/class-${String(index+1).padStart(2,"0")}.webp` : undefined);
 }
 async function api(path: string, body?: unknown) {
   const r = await authFetch(
@@ -126,11 +128,14 @@ export default function TrainingCenter({
 
   const refresh = useCallback(async () => {
     const publicPage = view === "catalog" || view === "programs";
+    if (publicPage && initialCourses) setCourses(initialCourses);
     const needsCatalog =
       !["account", "course"].includes(view) && (!publicPage || !initialCourses);
-    const [catalog, auth] = await Promise.all([
+    const [catalog, auth, selected] = await Promise.all([
       needsCatalog ? api("catalog") : Promise.resolve(null),
       supabase.auth.getSession(),
+      query.course && ["account", "checkout"].includes(view)
+        ? api(`registration_course?course=${encodeURIComponent(query.course)}`) : Promise.resolve(null),
     ]);
     if (catalog) {
       setCourses(catalog.courses);
@@ -138,6 +143,7 @@ export default function TrainingCenter({
       setBanks(catalog.banks);
       setCard(catalog.stripe);
     }
+    if (selected) setCourses(previous => [...previous.filter(c => c.id !== selected.course.id), selected.course]);
     const {
       data: { session },
     } = auth;
@@ -156,7 +162,7 @@ export default function TrainingCenter({
         setLessons(detail.lessons);
       }
     }
-  }, [view, coursePathId, initialCourses]);
+  }, [view, coursePathId, initialCourses, query.course]);
   useEffect(() => {
     let alive = true;
     refresh()
@@ -249,6 +255,10 @@ export default function TrainingCenter({
     (queryCourse ? undefined : courses[0]);
   const order = orders.find((o) => o.course_id === checkout?.id);
   const courseOrder = orders.find((o) => o.course_id === current?.id);
+  useEffect(() => {
+    if (view === "checkout" && checkout?.amount === 0 && order && (checkout.requires_approval || ["paid", "granted"].includes(order.status)))
+      router.replace(`${base}/course/${checkout.id}`);
+  }, [view, checkout?.id, checkout?.amount, checkout?.requires_approval, order, router]);
   // Affiliate sign-ups need no course; they land on the application after signing in.
   const forAffiliate = query.next === "affiliate" && !queryCourse;
   // `next` names the dashboard tab to return to after signing in.
@@ -418,7 +428,7 @@ export default function TrainingCenter({
                     <p>Real skills. A clear path forward.</p>
                   </div>
                   <div className="lms-grid lms-catalog-grid">
-                    {courses.map((c) => (
+                    {courses.filter(c => !c.is_private).map((c) => (
                       <article className="lms-course-card" key={c.id}>
                         <div className="lms-card-art">
                           <Image
@@ -559,8 +569,7 @@ export default function TrainingCenter({
                     <div className="lms-notice">
                       <strong>{checkout.title}</strong>
                       <p>
-                        {money(checkout.amount, checkout.currency)} · One-time
-                        course fee
+                        {checkout.requires_approval ? "Free registration · Admin approval required" : checkout.amount === 0 ? "Participant access included" : `${money(checkout.amount, checkout.currency)} · One-time course fee`}
                       </p>
                     </div>
                   )}
@@ -579,7 +588,7 @@ export default function TrainingCenter({
                     {authMode === "signup" && forAffiliate
                       ? "Free to join. You don't need to buy a course. Next, you'll apply to the affiliate programme."
                       : authMode === "signup"
-                      ? "Register once, then choose how to pay. No email confirmation needed."
+                      ? checkout?.requires_approval ? "Register for free. Our team will approve your workshop access after checking participant eligibility." : "Register once, then choose how to pay. No email confirmation needed."
                       : "Your courses, class recordings and learning progress in one place."}
                   </p>
                   {accountEmail && (
@@ -798,7 +807,7 @@ export default function TrainingCenter({
                           ? "Please wait…"
                           : authMode === "signup"
                             ? queryCourse
-                              ? "Register & continue to payment"
+                              ? checkout?.requires_approval ? "Register for approval" : "Register & continue to payment"
                               : "Create my account"
                             : authMode === "reset"
                               ? "Send reset email"
@@ -847,7 +856,7 @@ export default function TrainingCenter({
                   <header className="lms-page-head">
                     <p className="lms-eyebrow">YOUR NEXT STEP</p>
                     <h1>Join the course</h1>
-                    <p>Pay by bank transfer or card to complete your enrolment. We&apos;ll guide you step by step.</p>
+                    <p>{checkout.requires_approval ? "Register for free. Our team will confirm you are a workshop participant before opening learning and chat access." : "Pay by bank transfer or card to complete your enrolment. We’ll guide you step by step."}</p>
                   </header>
                   <div className="lms-two lms-checkout">
                     <section className="lms-panel lms-checkout-course">
@@ -860,7 +869,7 @@ export default function TrainingCenter({
                         )}
                       </div>
                       <p>
-                        {checkout.private_sessions
+                        {checkout.requires_approval ? "No payment required · Administrator approval needed" : checkout.private_sessions
                           ? "One-time fee for all 3 months"
                           : "One-time course fee"}
                       </p>
@@ -968,8 +977,7 @@ export default function TrainingCenter({
                                 </select>
                               </label>
                               <label className="lms-check">
-                                <input type="checkbox" required />I understand
-                                the course fee and have read the{" "}
+                                <input type="checkbox" required />{checkout.requires_approval ? "I understand that workshop access requires approval and have read the" : "I understand the course fee and have read the"}{" "}
                                 <Link href="/privacy#training-registrations">
                                   privacy notice
                                 </Link>
@@ -1112,6 +1120,7 @@ export default function TrainingCenter({
                           ? "YOUR LIVE COHORT"
                           : "YOUR RECORDED COURSE"}
                       </p>
+                      {current.slug === blpSlug && <Image src="/images/training/blp/logo.png" alt="Business Link Pacific" width={180} height={115} />}
                       <h1>{current.title}</h1>
                       <p>
                         {
@@ -1137,13 +1146,14 @@ export default function TrainingCenter({
                       <div className="lms-notice">
                         {courseOrder?.status === "review"
                           ? "Your bank transfer is awaiting verification."
-                          : "Complete payment to unlock published lessons."}{" "}
+                          : current.requires_approval ? (courseOrder?.status === "revoked" ? "Your workshop access has been removed. Contact the team if you need help." : "Awaiting approval. Our team will confirm you are a workshop participant before opening lessons, resources, AI coaches and chat. No payment is required.") : "Complete payment to unlock published lessons."}{" "}
                         Your introduction and timetable are available now.{" "}
                         <Link href={`${base}/checkout?course=${current.id}`}>
-                          Payment details →
+                          {current.requires_approval ? "Registration details →" : "Payment details →"}
                         </Link>
                       </div>
                     )}
+                    {current.slug === blpSlug && ["paid", "granted"].includes(courseOrder?.status || "") && <WorkshopResources />}
                     <nav
                       className="lms-admin-tabs"
                       aria-label="Course sections"
@@ -1223,7 +1233,7 @@ export default function TrainingCenter({
                         <div hidden={showFaculty}>
                         {!active ? (
                           <>
-                            <div className="lms-welcome-image"><Image src="/images/training/hero.webp" alt="Students learning together in a live Pacific Wave Digital training session" fill sizes="(max-width: 700px) 90vw, 65vw" priority/><span>YOUR NEXT CHAPTER STARTS HERE</span></div>
+                            <div className="lms-welcome-image"><Image src={programs[current.slug]?.image || "/images/training/hero.webp"} alt="Students learning together in a live Pacific Wave Digital training session" fill sizes="(max-width: 700px) 90vw, 65vw" priority/><span>YOUR NEXT CHAPTER STARTS HERE</span></div>
                             <p className="lms-eyebrow">START HERE</p>
                             <h2>Welcome to your course</h2>
                             <div className="lms-prose">

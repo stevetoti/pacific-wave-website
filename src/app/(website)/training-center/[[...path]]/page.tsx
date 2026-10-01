@@ -1,4 +1,4 @@
-import { publicTrainingCourses } from "@/lib/server/lms-catalog";
+import { publicTrainingCourses, registrationCourse } from "@/lib/server/lms-catalog";
 import { programs } from "@/lib/lms/programs";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -11,6 +11,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { path = [] } = await params;
   const program = path[0] === "programs" ? programs[path[1]] : undefined;
+  if (path[0] === "programs" && path[1] === "blp-digital-skills-workshop")
+    return { title: "Bring your business online | Business Link Pacific", robots: { index: false, follow: false }, alternates: { canonical: null } };
   if (program)
     return {
       title: `${path[1] === "one-on-one-mentorship" ? "One on One Mentorship Program" : "How To Start A Profitable Business"} | Pacific Wave Digital`,
@@ -60,6 +62,9 @@ export default async function Page({
     ]),
   );
   const publicPage = !path.length || path[0] === "programs" || (path[0] === "account" && Boolean(query.course));
-  const initialCourses = publicPage ? await publicTrainingCourses().catch(() => undefined) : undefined;
+  const directKey = path[0] === "programs" ? path[1] : ["account", "checkout"].includes(path[0]) ? query.course : undefined;
+  const direct = directKey ? await registrationCourse(directKey) : null;
+  if (path[0] === "programs" && !direct) notFound();
+  const initialCourses = direct ? [direct] : publicPage ? await publicTrainingCourses().catch(() => undefined) : undefined;
   return <TrainingCenter path={path} query={query} initialCourses={initialCourses} />;
 }

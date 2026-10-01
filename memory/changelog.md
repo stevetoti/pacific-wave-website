@@ -543,3 +543,10 @@ Application `1bc7246` and recovery migration `c6e86f2`; production candidate `dp
 - `/api/lms-messages`: thread returns `seen_up_to` and per-message `seen`; overview returns `last_seen`. UI in `MessagesCenter.tsx`; bold ticks (#4ade80 on navy bubbles) in training-center.css. Course group chats unchanged.
 - Released a62416d → dpl_3nW5e7smJaoAZiJJ9ZXfLqTBbRoS (live CSS includes receipt styles).
 - Verified: tsc, lint, build, 60/64 tests (same 4 pre-existing contact-form failures); local build vs live DB with two temp users (instructors of a hidden QA course + accepted connection, no orders/emails): single ticks before read → green double ticks + "Seen by" after the other opened the chat, reply auto-seen while chat open, list tick; desktop + 390px screenshots. Fixtures deleted.
+
+## 2026-10-01 — [Codex] Private BLP workshop implementation
+
+In progress: unlisted workshop registration and full LMS reuse, private-cohort messaging boundaries, BLP branding and existing workshop curriculum. Working in canonical clean training-recovery checkout at 57af418. No deployment/database mutation yet. Persistent-memory CLI remains unavailable (numpy missing); shared markdown is current.
+
+### 2026-10-01 — [Codex] Approved workshop files and acceptance checkpoint
+Owner supplied approved v4 PDFs in original checkout BLP Logos/BLP Workshop Manuals and Outlines and explicitly requested all three (outline, facilitator/course guide, participant workbook) for students. Replacing v3 resources with v4, adding guide. Live schema applied; BLP course remains unpublished. Local real participant/admin approval, access revocation, resources and messaging isolation passed; cleanup found auto-generated mentorship lessons on a public test enrollment and is being repaired. No real participants enrolled.

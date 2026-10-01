@@ -30,7 +30,7 @@ export async function createTrainingAccount(input: z.infer<typeof signupSchema>)
   let orderId: string | null = null;
   try {
     checked(await db.from('pwd_lms_profiles').insert({ user_id: user.id, full_name: input.name, phone: input.phone, city: input.location }));
-    if (course) orderId = checked(await db.from('pwd_lms_orders').insert({ user_id: user.id, course_id: course.id, email: input.email, name: input.name, phone: input.phone, attendance: input.attendance, amount: course.amount, currency: course.currency }).select('id').single())!.id as string;
+    if (course) orderId = checked(await db.from('pwd_lms_orders').insert({ user_id: user.id, course_id: course.id, email: input.email, name: input.name, phone: input.phone, attendance: input.attendance, amount: course.amount, currency: course.currency, ...(course.requires_approval ? { status: "pending", method: "grant", package_label: "Awaiting workshop approval" } : course.amount === 0 ? { status: "granted", method: "grant", package_label: "Workshop participant access" } : {}) }).select('id').single())!.id as string;
   } catch {
     // Keep the new account recoverable. Never delete it or override existing records.
     throw new HttpError(503, 'Your account was created, but registration could not finish. Please sign in to complete your course registration.');

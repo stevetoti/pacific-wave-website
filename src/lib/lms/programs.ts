@@ -1,3 +1,4 @@
+import { blpSlug, blpModules } from "./blp-workshop";
 export const mentorshipSlug = "one-on-one-mentorship";
 export const businessSlug = "how-to-start-a-profitable-business";
 export const programs: Record<
@@ -13,6 +14,11 @@ export const programs: Record<
     modules: { title: string; body: string }[];
   }
 > = {
+  [blpSlug]: {
+    image: "/images/training/blp/scene-01.webp", alt: "Illustration of Ni-Vanuatu business owners learning together",
+    label: "PRIVATE BLP WORKSHOP", duration: "21 October 2026 · 9 am–4 pm", headline: "Bring your business online.",
+    audience: "Invited Business Link Pacific participants", outcomes: [], modules: blpModules,
+  },
   "vanuatu-october-2026": {
     image: "/images/training/hero.webp",
     alt: "Pacific learners building digital skills together",

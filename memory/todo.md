@@ -148,3 +148,8 @@
 - [ ] Later: instructor "view course as student" preview.
 - [ ] Later (messaging): reactions/replies in DMs, realtime instead of 8s polling if volume grows.
 - [ ] Update `tests/api.test.ts` submission tests for the form-bot-defence fields (4 failing on main since 4ed0cca) — noted by [Claude Code] 2026-10-01; owner of that change should fix.
+
+## 2026-10-01 — [Codex] Private BLP workshop
+- [ ] Implement unlisted course, registration, branded page and workshop modules.
+- [ ] Enforce directory/connection/DM/notification privacy and verify public-course interoperability.
+- [ ] Verify full build and participant/admin flows before release.

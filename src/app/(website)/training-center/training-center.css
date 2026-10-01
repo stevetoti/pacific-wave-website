@@ -2360,3 +2360,18 @@
 .lms .msg-seen{color:#16a34a;font-size:12px;}
 .lms .msg-seen svg{display:inline-block;stroke-width:2.6;}
 .msg-preview-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+
+/* Business Link Pacific private workshop */
+.blp-logo{width:180px;height:auto;max-width:100%;margin-bottom:12px}
+.blp-facts{margin:24px 0}.blp-facts p{display:flex;gap:10px;align-items:center}
+.blp-workshop .lms-program-intro>.lms-muted{display:flex;gap:8px;align-items:flex-start;margin-top:18px}
+.blp-workshop .lms-program-photo{min-height:520px}
+.blp-modules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:28px 0}
+.blp-modules .lms-panel{padding:0;overflow:hidden}.blp-modules img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}.blp-modules article>div{padding:24px}
+.blp-image-note{padding:24px 0;font-size:12px}
+@media(max-width:900px){.blp-modules{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.blp-modules{grid-template-columns:1fr}.blp-workshop .lms-program-photo{min-height:280px}.blp-facts p{align-items:flex-start}.blp-facts svg{flex-shrink:0}}
+
+.blp-resource-actions{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}.blp-resource-actions button{white-space:normal;text-align:left}
+.blp-resource-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.blp-resource-grid article{padding:18px;background:#f4f7fa;border-radius:14px}.blp-resource-grid h3{margin-top:0}.blp-resource-actions .lms-text{display:inline-flex;align-items:center;gap:6px}
+@media(max-width:800px){.blp-resource-grid{grid-template-columns:1fr}}

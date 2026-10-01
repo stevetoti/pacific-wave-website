@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { checked, student } from "@/lib/server/lms";
 import { apiError, readJson } from "@/lib/server/http";
+import { allowedPeers, isPeerNotification } from "@/lib/server/messaging-scope";
 import { people } from "@/lib/server/messages";
 export const dynamic = "force-dynamic";
 const json = (d: unknown) =>
@@ -18,15 +19,18 @@ export async function GET(request: Request) {
         .limit(30),
       db
         .from("pwd_lms_notifications")
-        .select("id", { count: "exact", head: true })
+        .select("id,kind,actor")
         .eq("user_id", user.id)
         .is("read_at", null),
     ]);
     if (unread.error) throw unread.error;
-    const items = checked(rows) || [];
+    const all = [...(checked(rows) || []), ...(checked(unread) || [])];
+    const scope = await allowedPeers(db, user.id, all.filter(i => isPeerNotification(i.kind) && i.actor).map(i => i.actor));
+    const visible = (i: {kind: string; actor: string | null}) => !isPeerNotification(i.kind) || Boolean(i.actor && scope.has(i.actor));
+    const items = (checked(rows) || []).filter(visible);
     const actors = await people(db, items.map((i) => i.actor).filter(Boolean) as string[]);
     return json({
-      unread: unread.count || 0,
+      unread: (checked(unread) || []).filter(visible).length,
       items: items.map((i) => ({ ...i, actor: i.actor ? actors.get(i.actor) || null : null })),
     });
   } catch (e) {

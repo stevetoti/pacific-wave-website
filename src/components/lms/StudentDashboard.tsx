@@ -318,7 +318,7 @@ export default function StudentDashboard({
                   sizes="(max-width:700px) 100vw, 400px"
                 />
                 <span className="sd-status" data-status={o.status}>
-                  {statusLabel(o.status)}
+                  {c?.requires_approval && o.status === "pending" ? "Awaiting approval" : statusLabel(o.status)}
                 </span>
               </div>
               <div className="sd-course-body">
@@ -352,7 +352,7 @@ export default function StudentDashboard({
                     className="lms-text"
                     href={`${base}/checkout?course=${o.course_id}`}
                   >
-                    View payment details
+                    {c?.requires_approval ? "View registration status" : "View payment details"}
                   </Link>
                 )}
               </div>

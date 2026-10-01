@@ -6,6 +6,7 @@ import { checked, student } from "@/lib/server/lms";
 import { apiError, HttpError, readJson } from "@/lib/server/http";
 import { rateLimit } from "@/lib/server/rate-limit";
 import { bucket, readChatFile } from "@/lib/server/community-files";
+import { allowedPeers } from "@/lib/server/messaging-scope";
 import { people } from "@/lib/server/messages";
 import { markNotificationsRead, notify } from "@/lib/server/notifications";
 import { instructorCourseIds, isAdmin } from "@/lib/server/teaching";
@@ -39,6 +40,7 @@ async function thread(db: SupabaseClient, id: string, me: string) {
   ) as Thread | null;
   if (!t || (t.user_a !== me && t.user_b !== me))
     throw new HttpError(404, "Conversation not found.");
+  if (!(await allowedPeers(db, me, [other(t, me)])).has(other(t, me))) throw new HttpError(404, "Conversation not found.");
   return t;
 }
 const action = z.discriminatedUnion("action", [
@@ -177,8 +179,9 @@ export async function GET(request: Request) {
       db.from("pwd_lms_blocks").select("blocked").eq("blocker", me),
     ]);
     const threads = (checked(threadRows) || []) as Thread[];
+    const scope = await allowedPeers(db, me, [...threads.map(t => other(t, me)), ...(checked(incoming) || []).map(r => r.requester), ...(checked(sent) || []).map(r => r.addressee), ...(checked(blocks) || []).map(r => r.blocked)]);
     const blockedIds = (checked(blocks) || []).map((b) => b.blocked as string);
-    const visibleThreads = threads.filter((t) => !blockedIds.includes(other(t, me)));
+    const visibleThreads = threads.filter((t) => !blockedIds.includes(other(t, me)) && scope.has(other(t, me)));
     const ids = visibleThreads.map((t) => t.id);
     const [lastRows, readRows] = ids.length
       ? await Promise.all([
@@ -202,14 +205,14 @@ export async function GET(request: Request) {
       for (const s of enrolled) if (s.user_id !== me) contactsRaw.push({ user_id: s.user_id, role: "student" });
     }
     const contactIds = Array.from(new Map(contactsRaw.filter((c) => !blockedIds.includes(c.user_id)).map((c) => [c.user_id, c])).values());
-    const incomingRows = checked(incoming) || [];
-    const sentRows = checked(sent) || [];
+    const incomingRows = (checked(incoming) || []).filter(r => scope.has(r.requester));
+    const sentRows = (checked(sent) || []).filter(r => scope.has(r.addressee));
     const who = await people(db, [
       ...visibleThreads.map((t) => other(t, me)),
       ...incomingRows.map((r) => r.requester),
       ...sentRows.map((r) => r.addressee),
       ...contactIds.map((c) => c.user_id),
-      ...blockedIds,
+      ...blockedIds.filter(id => scope.has(id)),
     ]);
     const s = checked(settings);
     return json({
@@ -233,7 +236,7 @@ export async function GET(request: Request) {
       requests: incomingRows.map((r) => ({ id: r.id, note: r.note, created_at: r.created_at, person: who.get(r.requester) })),
       sent: sentRows.map((r) => ({ id: r.id, created_at: r.created_at, person: who.get(r.addressee) })),
       contacts: contactIds.map((c) => ({ role: c.role, person: who.get(c.user_id) })),
-      blocked: blockedIds.map((id) => who.get(id)),
+      blocked: blockedIds.filter(id => scope.has(id)).map((id) => who.get(id)),
     });
   } catch (e) {
     if (e instanceof z.ZodError) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
@@ -312,6 +315,8 @@ export async function POST(request: Request) {
       return json({ state });
     }
     if (input.action === "respond") {
+      const pending = checked(await db.from("pwd_lms_connections").select("requester").eq("id", input.id).eq("addressee", me).eq("status", "pending").maybeSingle());
+      if (!pending || !(await allowedPeers(db, me, [pending.requester])).has(pending.requester)) throw new HttpError(404, "Request not available.");
       const updated = checked(
         await db.from("pwd_lms_connections").update({ status: input.accept ? "accepted" : "ignored", responded_at: new Date().toISOString() }).eq("id", input.id).eq("addressee", me).eq("status", "pending").select("requester"),
       );

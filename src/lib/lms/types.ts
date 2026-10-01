@@ -16,6 +16,8 @@ export type Course = {
   published: boolean;
   enrollment_open: boolean;
   private_sessions?: boolean;
+  is_private?: boolean;
+  requires_approval?: boolean;
   cohort_id: string | null;
   coaching_ends_on?: string | null;
 };
