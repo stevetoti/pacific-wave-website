@@ -2267,3 +2267,78 @@
 @keyframes nb-in{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
 @media(max-width:600px){.nb-toast{right:16px;left:16px;bottom:16px;width:auto;}.nb-panel{position:fixed;right:12px;left:12px;top:72px;width:auto;}}
 .lms-nav-actions{display:flex;align-items:center;gap:10px;}
+
+/* Checkout: step-by-step payment */
+.pay-title{margin:0 0 14px;}
+.pay{display:grid;gap:18px;}
+.pay-summary{display:grid;gap:4px;padding:20px;border-radius:16px;background:#233c6f;color:#fff;}
+.pay-summary>span{font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#c9d4ea;}
+.pay-summary>strong{font-size:34px;line-height:1.1;}
+.pay-summary>small{color:#dbe3f2;font-size:14px;}
+.pay-coupon-applied{display:inline-flex;gap:6px;align-items:center;color:#ffd2c2!important;}
+.pay-ref{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.1);}
+.pay-ref span{display:grid;gap:2px;font-size:12px;color:#c9d4ea;}
+.pay-ref strong{font-size:20px;letter-spacing:1px;color:#fff;font-family:ui-monospace,Menlo,monospace;}
+.pay-ref .pay-copy{background:#ef5e33;color:#fff;border-color:#ef5e33;}
+.pay-intro{margin:0;color:#3d4c63;line-height:1.6;}
+.pay-option{border:2px solid #e2e7ef;border-radius:18px;padding:18px;background:#fff;}
+.pay-option header{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:14px;}
+.pay-option-number{background:#ef5e33;color:#fff;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:5px 10px;border-radius:20px;}
+.pay-option h3{display:flex;align-items:center;gap:8px;margin:0;font-size:20px;color:#233c6f;flex:1 1 auto;}
+.pay-brands{display:flex;gap:6px;align-items:center;}
+.pay-mark{width:52px;height:32px;display:block;}
+.pay-bank-badge{display:inline-flex;align-items:center;gap:5px;color:#fff;font-weight:800;font-size:13px;letter-spacing:.5px;padding:6px 10px;border-radius:8px;}
+.pay-bank-badge.large{font-size:16px;padding:8px 14px;}
+.pay-steps{list-style:none;margin:0;padding:0;display:grid;gap:16px;counter-reset:paystep;}
+.pay-steps>li{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;}
+.pay-step-icon{position:relative;width:40px;height:40px;border-radius:50%;background:#eef2f9;color:#233c6f;display:grid;place-items:center;counter-increment:paystep;}
+.pay-step-icon::after{content:counter(paystep);position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:#233c6f;color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;border:2px solid #fff;}
+.pay-steps strong{color:#233c6f;font-size:16px;line-height:1.4;}
+.pay-steps p{margin:4px 0 0;color:#586980;font-size:14px;line-height:1.55;}
+.pay-ref-inline{font-family:ui-monospace,Menlo,monospace;background:#fff1eb;color:#ab3c18;padding:1px 6px;border-radius:6px;white-space:nowrap;}
+.pay-accounts{display:grid;gap:10px;margin-top:12px;}
+.pay-account{border:1px solid #e2e7ef;border-radius:14px;padding:14px;background:#fafbfd;}
+.pay-account dl{margin:10px 0 0;display:grid;gap:8px;}
+.pay-account dl>div{display:grid;gap:1px;}
+.pay-account dt{font-size:12px;color:#6b7891;text-transform:uppercase;letter-spacing:.5px;}
+.pay-account dd{margin:0;color:#233c6f;font-weight:700;font-size:15px;overflow-wrap:anywhere;}
+.pay-account-number{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:19px!important;font-family:ui-monospace,Menlo,monospace;letter-spacing:.5px;}
+.pay-copy{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:8px;border:1px solid #ccd4e0;background:#fff;color:#233c6f;font-size:13px;font-weight:700;font-family:inherit;letter-spacing:0;cursor:pointer;}
+.lms .pay-upload label{margin:0;}
+.pay-label{margin:12px 0 8px;font-weight:700;color:#233c6f;font-size:14px;}
+.pay-bank-choice{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;}
+.lms .pay-bank-choice label{display:flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #d8dfea;border-radius:12px;cursor:pointer;background:#fff;}
+.lms .pay-bank-choice label.selected{border-color:#ef5e33;background:#fff5f1;}
+.lms .pay-file{position:relative;display:grid;justify-items:center;gap:4px;padding:20px 14px;border:2px dashed #b9c4d6;border-radius:14px;background:#f6f8fc;text-align:center;color:#233c6f;cursor:pointer;margin-bottom:12px;}
+.lms .pay-file span{font-weight:700;overflow-wrap:anywhere;}
+.lms .pay-file small{color:#6b7891;font-weight:400;}
+.lms .pay-file input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0;min-height:0;}
+.pay-submit,.pay-card-button{width:100%;justify-content:center;font-size:16px;min-height:52px;}
+.pay-unavailable{margin:0;padding:12px 14px;border-radius:12px;background:#fff8e6;color:#7a5600;}
+.pay-coupon{border:1px solid #e2e7ef;border-radius:14px;padding:12px 16px;}
+.pay-coupon summary{cursor:pointer;color:#233c6f;font-weight:700;display:flex;align-items:center;gap:6px;}
+.pay-coupon form{display:flex;gap:8px;margin-top:10px;}
+.lms .pay-coupon input{margin:0;}
+.pay-help{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:14px;background:#e9f9ef;color:#13703a!important;font-weight:700;text-decoration:none!important;}
+@media(max-width:800px){
+ .lms-checkout{display:flex;flex-direction:column;}
+ .lms-checkout .lms-checkout-pay{order:-1;}
+ .lms-checkout .lms-panel{padding:18px;}
+ .pay-option{padding:14px;}
+ .pay-summary>strong{font-size:30px;}
+ .pay-ref strong{font-size:17px;}
+}
+/* Bell + photo stay top-right on phones; links wrap below the brand */
+@media (max-width: 760px) {
+  .lms-nav > .lms-nav-actions { grid-column: 2; grid-row: 1; justify-self: end; margin-left: 0; }
+  .lms-nav > div:not(.lms-nav-actions) { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+}
+.lms-checkout-pay .pay + a { display: inline-block; margin-top: 18px; }
+@media (max-width: 600px) {
+  .pay-steps > li { display: block; }
+  .pay-step-icon { float: left; width: 34px; height: 34px; margin: 0 12px 6px 0; }
+  .pay-steps > li > div > strong { display: block; min-height: 34px; padding-top: 5px; }
+  .pay-accounts, .pay-upload, .pay-steps p { clear: both; }
+  .pay-account { padding: 12px; }
+  .pay-option h3 { font-size: 18px; }
+}

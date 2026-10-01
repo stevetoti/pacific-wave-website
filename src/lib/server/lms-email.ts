@@ -2,7 +2,7 @@ import "server-only";
 import { trainingTemplate } from "../email/training-template";
 import { getSupabaseAdmin } from "./clients";
 import { reportServerError } from "./report-error";
-import { money } from "../lms/types";
+import { money, paymentReference } from "../lms/types";
 export async function sendLmsEmails() {
   // Isolated local QA must not claim messages from the shared production queue.
   if (
@@ -76,7 +76,12 @@ export async function sendLmsEmails() {
             },
             details: [
               `Course: ${order.pwd_lms_courses.title}`,
-              `Fee: ${money(order.amount, order.currency)} · Reference: ${order.id}`,
+              `Fee: ${money(order.amount, order.currency)} · Payment reference: ${paymentReference(order.id)}`,
+              ...(["pending", "rejected"].includes(job.status)
+                ? [
+                    "To pay: Option 1, transfer the fee to our ANZ or BRED account shown on the payment page, write your payment reference in the transfer description, then upload a photo of your receipt. Option 2, pay instantly by Visa or Mastercard.",
+                  ]
+                : []),
               "Your course space brings together lessons, recordings, practical activities and instructor support. Reply to this email if you need help with your enrolment.",
             ],
           }),

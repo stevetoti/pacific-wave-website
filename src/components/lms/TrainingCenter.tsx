@@ -13,7 +13,6 @@ import {
   GraduationCap,
   PlayCircle,
   ShieldCheck,
-  Upload,
   LockKeyhole,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -31,6 +30,7 @@ const QuizPlayer = dynamic(() => import("./QuizPlayer"));
 const StudentDashboard = dynamic(() => import("./StudentDashboard"));
 import LessonThumbnail from "./LessonThumbnail";
 import NotificationBell from "./NotificationBell";
+import PaymentOptions from "./PaymentOptions";
 import StudentAccountMenu from "./StudentAccountMenu";
 const CourseCommunity = dynamic(() => import("./CourseCommunity"));
 const StudentCoaches = dynamic(() => import("./coach/StudentCoaches"), { ssr: false });
@@ -99,7 +99,6 @@ export default function TrainingCenter({
     [lessons, setLessons] = useState<Lesson[]>([]),
     [active, setActive] = useState<Lesson | null>(null),
     [current, setCurrent] = useState<Course | null>(null),
-    [selectedBank, setSelectedBank] = useState(""),
     [authMode, setAuthMode] = useState(
       query.mode === "reset"
         ? "reset"
@@ -848,10 +847,10 @@ export default function TrainingCenter({
                   <header className="lms-page-head">
                     <p className="lms-eyebrow">YOUR NEXT STEP</p>
                     <h1>Join the course</h1>
-                    <p>Choose your payment option to complete enrollment.</p>
+                    <p>Pay by bank transfer or card to complete your enrolment. We&apos;ll guide you step by step.</p>
                   </header>
-                  <div className="lms-two">
-                    <section className="lms-panel">
+                  <div className="lms-two lms-checkout">
+                    <section className="lms-panel lms-checkout-course">
                       <h2>{checkout.title}</h2>
                       <p>{checkout.description}</p>
                       <div className="lms-price">
@@ -904,7 +903,7 @@ export default function TrainingCenter({
                         </p>
                       )}
                     </section>
-                    <section className="lms-panel">
+                    <section className="lms-panel lms-checkout-pay">
                       {!email ? (
                         <>
                           <h2>Start with your student account</h2>
@@ -1010,59 +1009,23 @@ export default function TrainingCenter({
                         </>
                       ) : (
                         <>
-                          <h2>Choose how to pay</h2>
-                          {order.coupon_code ? (
-                            <p className="lms-notice">
-                              Coupon {order.coupon_code} applied · Saved{" "}
-                              {money(
-                                order.discount_amount || 0,
-                                order.currency,
-                              )}
-                            </p>
-                          ) : (
-                            <form
-                              className="lms-bank"
-                              onSubmit={(e) => {
-                                e.preventDefault();
-                                const f = new FormData(e.currentTarget);
-                                run(async () => {
-                                  await api("coupon", {
-                                    id: order.id,
-                                    code: f.get("coupon"),
-                                  });
-                                  setMessage(
-                                    "Coupon applied. Your payment total has been updated.",
-                                  );
-                                  await refresh();
-                                });
-                              }}
-                            >
-                              <label>
-                                Have a coupon code?
-                                <input
-                                  name="coupon"
-                                  required
-                                  maxLength={40}
-                                  placeholder="Enter your code"
-                                />
-                              </label>
-                              <button className="lms-button" disabled={busy}>
-                                Apply coupon
-                              </button>
-                            </form>
-                          )}
-
-                          <p>
-                            Registration saved. Reference:{" "}
-                            <strong>{order.id}</strong>
-                          </p>
-                          {order.review_note && (
-                            <p className="lms-alert">{order.review_note}</p>
-                          )}
-                          <button
-                            className="lms-button lms-wide"
-                            disabled={busy || !card}
-                            onClick={() =>
+                          <h2 className="pay-title">How to pay</h2>
+                          <PaymentOptions
+                            order={order}
+                            courseTitle={checkout.title}
+                            banks={banks}
+                            cardEnabled={card}
+                            busy={busy}
+                            onCoupon={(code) =>
+                              run(async () => {
+                                await api("coupon", { id: order.id, code });
+                                setMessage(
+                                  "Coupon applied. Your payment total has been updated.",
+                                );
+                                await refresh();
+                              })
+                            }
+                            onCard={() =>
                               run(async () => {
                                 const data = await api("checkout", {
                                   id: order.id,
@@ -1070,121 +1033,22 @@ export default function TrainingCenter({
                                 window.location.assign(data.url);
                               })
                             }
-                          >
-                            Pay securely by card <ShieldCheck size={18} />
-                          </button>
-                          <p className="lms-muted">
-                            Card payments are processed by Global Digital Prime,
-                            Inc. for Pacific Wave Digital training.
-                          </p>
-                          {!card && (
-                            <p className="lms-muted">
-                              Card payments are being set up.
-                            </p>
-                          )}
-                          <div className="lms-divider">or bank transfer</div>
-                          {banks.filter((b) => b.currency === order.currency)
-                            .length ? (
-                            <form
-                              onSubmit={(e) => {
-                                e.preventDefault();
-                                const f = new FormData(e.currentTarget);
-                                run(async () => {
-                                  const file = f.get("proof") as File;
-                                  if (file.size > 3145728)
-                                    throw new Error(
-                                      "Choose a file smaller than 3 MB.",
-                                    );
-                                  const r = await authFetch(
-                                    `/api/lms/proof?id=${order.id}&bank=${encodeURIComponent(selectedBank)}`,
-                                    { method: "POST", body: file },
+                            onProof={(bank, file) =>
+                              run(async () => {
+                                if (file.size > 3145728)
+                                  throw new Error(
+                                    "Choose a file smaller than 3 MB.",
                                   );
-                                  const data = await r.json();
-                                  if (!r.ok) throw new Error(data.error);
-                                  router.push(`${base}/course/${checkout.id}`);
-                                });
-                              }}
-                            >
-                              <fieldset disabled={busy}>
-                                <label>
-                                  Choose your bank
-                                  <select
-                                    required
-                                    value={selectedBank}
-                                    onChange={(e) =>
-                                      setSelectedBank(e.target.value)
-                                    }
-                                  >
-                                    <option value="">Select a bank</option>
-                                    {banks
-                                      .filter(
-                                        (b) => b.currency === order.currency,
-                                      )
-                                      .map((b) => (
-                                        <option key={b.bank}>{b.bank}</option>
-                                      ))}
-                                  </select>
-                                </label>
-                                {banks
-                                  .filter((b) => b.bank === selectedBank)
-                                  .map((b) => (
-                                    <div className="lms-bank" key={b.bank}>
-                                      <strong>{b.account_name}</strong>
-                                      <p>
-                                        Account: {b.account_number}
-                                        <br />
-                                        Branch: {b.branch}
-                                        <br />
-                                        Currency: {b.currency}
-                                        {b.swift_code && (
-                                          <>
-                                            <br />
-                                            SWIFT: {b.swift_code}
-                                          </>
-                                        )}
-                                        {b.bank_address && (
-                                          <>
-                                            <br />
-                                            Bank address: {b.bank_address}
-                                          </>
-                                        )}
-                                      </p>
-                                      <p>
-                                        Use your registration reference with
-                                        your transfer.
-                                      </p>
-                                    </div>
-                                  ))}
-                                <label>
-                                  Upload payment proof (PDF, JPG or PNG · max 3
-                                  MB)
-                                  <input
-                                    name="proof"
-                                    type="file"
-                                    required
-                                    accept="application/pdf,image/jpeg,image/png"
-                                  />
-                                </label>
-                                <p className="lms-muted">
-                                  Your proof is private. We verify the transfer
-                                  before unlocking paid lessons.
-                                </p>
-                                <button className="lms-button">
-                                  <Upload size={18} />
-                                  Submit proof & open dashboard
-                                </button>
-                              </fieldset>
-                            </form>
-                          ) : (
-                            <p>
-                              Bank instructions will be available shortly. Your
-                              registration is saved. Contact{" "}
-                              <a href="https://wa.me/6785288141">
-                                our training team
-                              </a>{" "}
-                              for help.
-                            </p>
-                          )}
+                                const r = await authFetch(
+                                  `/api/lms/proof?id=${order.id}&bank=${encodeURIComponent(bank)}`,
+                                  { method: "POST", body: file },
+                                );
+                                const data = await r.json();
+                                if (!r.ok) throw new Error(data.error);
+                                router.push(`${base}/course/${checkout.id}`);
+                              })
+                            }
+                          />
                           <Link href={`${base}/course/${checkout.id}`}>
                             View introduction and schedule →
                           </Link>

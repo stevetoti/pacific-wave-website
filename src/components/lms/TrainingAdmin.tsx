@@ -16,6 +16,7 @@ import Link from "next/link";
 import { authFetch } from "@/lib/auth-fetch";
 import {
   money,
+  paymentReference,
   type Course,
   type Lesson,
   type Order,
@@ -78,6 +79,7 @@ export default function TrainingAdmin({
     [message, setMessage] = useState(""),
     [filter, setFilter] = useState("");
   const [exportCourse, setExportCourse] = useState("");
+  const [paymentSearch, setPaymentSearch] = useState("");
   const [emailLogs, setEmailLogs] = useState<
     {
       id: string;
@@ -882,6 +884,14 @@ export default function TrainingAdmin({
               Refresh registrations
             </button>
             <label>
+              Search by name, email, phone or payment reference
+              <input
+                value={paymentSearch}
+                onChange={(e) => setPaymentSearch(e.target.value)}
+                placeholder="e.g. PWD-1A2B3C4D or Mary"
+              />
+            </label>
+            <label>
               Payment status
               <select
                 value={filter}
@@ -969,7 +979,12 @@ export default function TrainingAdmin({
                 .filter(
                   (o) =>
                     (!filter || o.status === filter) &&
-                    (!exportCourse || o.course_id === exportCourse),
+                    (!exportCourse || o.course_id === exportCourse) &&
+                    (!paymentSearch.trim() ||
+                      [o.name, o.email, o.phone, paymentReference(o.id), o.id]
+                        .join(" ")
+                        .toLowerCase()
+                        .includes(paymentSearch.trim().toLowerCase())),
                 )
                 .map((o) => (
                   <article className="lms-panel" key={o.id}>
@@ -987,7 +1002,9 @@ export default function TrainingAdmin({
                       {o.bank || o.method || "No payment yet"}
                     </strong>
                     <p className="lms-muted">
-                      Reference: {o.id}
+                      Payment reference: <strong>{paymentReference(o.id)}</strong>
+                      <br />
+                      Registration ID: {o.id}
                       <br />
                       {new Date(o.created_at).toLocaleString()}
                     </p>

@@ -8,6 +8,7 @@ export default function ContactWidgets() {
   const pathname = usePathname();
   if (
     pathname.replace(/\/$/, "") === "/training-center/account" ||
+    pathname.replace(/\/$/, "") === "/training-center/checkout" ||
     pathname.startsWith("/training-center/course/") ||
     pathname.replace(/\/$/, "") === "/training-center/dashboard" ||
     pathname.replace(/\/$/, "") === "/training-center/sessions" ||

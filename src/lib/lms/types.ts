@@ -81,3 +81,6 @@ export function money(amount: number, currency: string) {
     maximumFractionDigits: currency === "VUV" ? 0 : 2,
   }).format(amount / (currency === "VUV" ? 1 : 100));
 }
+// Short reference students write on bank transfers; it is the start of the registration id.
+export const paymentReference = (orderId: string) =>
+  `PWD-${orderId.replace(/-/g, "").slice(0, 8).toUpperCase()}`;
