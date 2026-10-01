@@ -1,5 +1,11 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## Latest release — 2026-10-01 [Codex] Private BLP workshop
+
+Application `ee6ecc2` + signup-session fix `eb24ee7`, production `dpl_4EHmChDX33NZxsidsangmBhDDuxU`. Private shared page `/training-center/programs/blp-digital-skills-workshop`; no public catalogue/sitemap/affiliate discovery. Free signup saves pending access; Admin → Training centre → Access → Approve participant grants access. Migration `20261001_private_workshops.sql` applied. Approved v4 outline, participant workbook and facilitator/course guide are privately available to approved students with View/Download. Nine modules for 21 October, BLP logo and workshop artwork. Private-course participants cannot use public-course enrollment to bridge direct-message boundaries; existing threads/files/notifications also checked. Public-only students retain cross-public-course messaging. See `docs/PRIVATE-WORKSHOPS.md` for operation and acceptance evidence.
+
+Build/lint, database/privacy tests, real staged multi-user approval/resources/chat/revocation, new/returning signup and desktop/mobile release checks passed. Final signup exposed and fixed checkout redirecting before auth hydration. Four pre-existing contact-form fixture failures remain documented. Recordings await trainer upload; no recording was invented.
+
 ## Latest release — 2026-09-30 [Claude Code] per-course instructors + student messaging
 
 Anyone can be assigned as instructor per course (`pwd_lms_course_instructors`); admins still manage everything. Instructors use the normal Training Centre login and `/training-center/teach` (lessons, recordings, quizzes, grading, chat, students, profile) for assigned courses only — enforced server-side by `teachingAccess()` in `src/lib/server/teaching.ts`. Admin → Training centre → Instructors invites/assigns. Migration `20260930_course_instructors.sql` applied. Phase 2 is live too: student directory, LinkedIn-style connection requests and private 1:1 messages (instructors ↔ their students without a request), Messages tab, request/unread emails via the 5-minute cron, admin Message reports. See `docs/STUDENT-MESSAGING.md`. Migrations `20260930_course_instructors.sql` and `20260930_student_messaging.sql` applied.

@@ -150,6 +150,6 @@
 - [ ] Update `tests/api.test.ts` submission tests for the form-bot-defence fields (4 failing on main since 4ed0cca) — noted by [Claude Code] 2026-10-01; owner of that change should fix.
 
 ## 2026-10-01 — [Codex] Private BLP workshop
-- [ ] Implement unlisted course, registration, branded page and workshop modules.
-- [ ] Enforce directory/connection/DM/notification privacy and verify public-course interoperability.
-- [ ] Verify full build and participant/admin flows before release.
+- [x] Implement unlisted course, registration, branded page and workshop modules. — [Codex] 2026-10-01: live BLP page with nine modules and approved v4 PDFs.
+- [x] Enforce directory/connection/DM/notification privacy and verify public-course interoperability. — [Codex] 2026-10-01: real multi-identity staged checks and SQL tests passed.
+- [x] Verify full build and participant/admin flows before release. — [Codex] 2026-10-01: full build, approval/resources/revocation, new and returning signup and desktop/mobile checks passed; auth-readiness race corrected.

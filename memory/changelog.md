@@ -550,3 +550,18 @@ In progress: unlisted workshop registration and full LMS reuse, private-cohort m
 
 ### 2026-10-01 — [Codex] Approved workshop files and acceptance checkpoint
 Owner supplied approved v4 PDFs in original checkout BLP Logos/BLP Workshop Manuals and Outlines and explicitly requested all three (outline, facilitator/course guide, participant workbook) for students. Replacing v3 resources with v4, adding guide. Live schema applied; BLP course remains unpublished. Local real participant/admin approval, access revocation, resources and messaging isolation passed; cleanup found auto-generated mentorship lessons on a public test enrollment and is being repaired. No real participants enrolled.
+
+### 2026-10-01 — [Codex] Final v4 resource checks
+All three owner-approved PDFs uploaded privately; browser View/Download and three PDF response checks pass. Local admin approval → refresh → participant access, revoke, private/public directories, accepted DM, unrelated historical thread/attachment denial passed. All six synthetic accounts and auto-generated mentor lessons/orders, temporary private course, admin row, conversations and fixture email guard removed. Twelve desktop/mobile public regressions pass. Application ee6ecc2 pushed to codex/private-blp-workshop; staged production candidate building.
+
+## 2026-10-01 — [Codex] Private BLP workshop live
+Application ee6ecc2 promoted as dpl_HV9QtyTsu7Ck9CCaWvyPYA6w75VA. Applied 20261001_private_workshops.sql; published only after privacy-aware code owned production. Shared unlisted link /training-center/programs/blp-digital-skills-workshop. Free pending signup, admin Access approval queue; full LMS after approval; direct-message private cohort boundaries apply to existing threads/files/notifications too. Nine approved-outline modules, BLP branding and three owner-approved v4 PDFs (including facilitator guide as explicitly requested) with private View/Download.
+Staged real six-identity approval/resources/chat/revocation checks passed; fixtures removed. Eight live public desktop/mobile release checks pass plus BLP-specific desktop/mobile page/signup/public-exclusion checks. Independent anonymous live mobile reviewer passed, no new findings. All PDF storage objects SHA256 match supplied originals. New-account and returning sign-in checks passed against the production build; the session-readiness correction is deployed as eb24ee7 → dpl_4EHmChDX33NZxsidsangmBhDDuxU. Four pre-existing contact-form tests remain unrelated failures.
+
+### 2026-10-01 — [Codex] New-account race found and corrected
+Final real signup exposed a checkout/account redirect loop: newly server-rendered direct-course checkout had course readiness before auth readiness. Added a separate authReady guard before redirecting anonymous checkout visitors. Account and pending order creation were already correct; route transition fix under verification. Synthetic signup accounts/guards cleaned after each attempt.
+
+### 2026-10-01 — [Codex] Final production verification
+Signup session fix is live; eight production desktop/mobile public release tests passed again. Local real new account and returning sign-in both persist pending approval and open the course; no fee or duplicate registration. QA mail is disabled and exact fixture queue guards are cleaned up. Live UI verification uses only localhost account creation to avoid test welcome mail; production sign-in and dashboard requests are real.
+
+Live mobile signup/sign-in transition and pending dashboard verification completed PASS on dpl_4EHmChDX33NZxsidsangmBhDDuxU; all fixtures removed. Final source synchronized to main after verification.

@@ -101,3 +101,6 @@ Use one account-level saved consent across courses; preserve per-course onboardi
 
 ## 2026-10-01 — [Codex] Private BLP workshop approval
 Owner confirmed no participant fee and admin approval before access; forwarded links must not grant access. Use existing pending → granted/revoked enrollment records with an explicit requires_approval flag, admin participant queue, and no payment/coupon bypass. No OTP is needed for this approval-based path. Private participant eligibility controls discovery/DM/read/download/notification access, even for old connections. Active private participation takes priority over a public enrollment; assigned instructors retain access.
+
+## 2026-10-01 — [Codex] Approved BLP student resources
+Owner explicitly requested all three approved v4 PDFs, including facilitator/course guide, in the student dashboard. Store in private bucket and stream only to approved BLP enrollees, with View/Download. Admin approval is the selected eligibility mechanism; no OTP issued. The shared page is unlisted/noindex, while actual learning/chat/resources remain enrollment-protected.

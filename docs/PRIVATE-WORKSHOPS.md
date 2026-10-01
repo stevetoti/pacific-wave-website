@@ -34,8 +34,20 @@ Tenant: PWD / `rndegttgwtpkbjtvjgnc`. Synthetic roles: applicant, approved BLP s
 | New signup records free pending approval; cannot silently grant | PASS — `tests/signup.test.ts` |
 | Course validation prevents paid-approval dead end | PASS — workshop schema test |
 | Independent cold review | PASS — separate acceptance agent; payment copy issue found and corrected |
-| Registration/approval/reload/resources in browser | Pending execution |
-| Private/public messaging via real API identities | Pending execution |
-| Desktop/mobile branding and public exclusion on deployed release | Pending execution |
+| Registration/approval/reload/resources in browser | PASS — real staged participant/admin UI approval, reload, three PDF downloads, inline guide, revocation; pending protections |
+| Private/public messaging via real API identities | PASS — six synthetic identities; public cross-course peers, private isolation, accepted DM, third-party and stale-thread/file denial, revocation |
+| Desktop/mobile branding and public exclusion on deployed release | PASS — live 1440/390px landing/signup/catalogue, noindex, sitemap exclusion; independent anonymous mobile check; eight live public release checks |
 
-Engineering: TypeScript/lint/build pass. Full suite: 61 pass and four previously documented contact-form fixture failures (`tests/api.test.ts`, missing bot-defense fields). Later added approval schema test is also passing. Build in sandbox lacked database network access during blog pre-render; release build must run with network.
+Engineering: TypeScript/lint/build pass. Full suite: 61 pass and four previously documented contact-form fixture failures (`tests/api.test.ts`, missing bot-defense fields). Later added approval schema test is also passing. The network-enabled Vercel release build includes all 86 routes and 14 blog slugs.
+
+## Live release
+
+Application `ee6ecc2` plus signup transition fix `eb24ee7`; initial promoted deployment `dpl_HV9QtyTsu7Ck9CCaWvyPYA6w75VA`. Migration applied, then verified code promoted, then unlisted course published. Course ID `2baed8ea-ddcc-49af-80fa-13fa8c23e546`. All three private v4 objects were compared byte-for-byte (SHA256) with owner files. Synthetic approval/messaging fixtures and email guards removed.
+
+The independent reviewer could not use a staged protection cookie because automatic approval review denied that artifact; it completed the final anonymous live checks successfully without authentication artifacts. Root staged authenticated coverage passed before promotion.
+
+Fresh mobile account creation and returning sign-in passed against the production build with emails disabled; pending status persists after reload and on the dashboard. Final signup verification found and fixed an auth-readiness redirect race; twelve desktop/mobile signup and public release regressions pass after the fix. `verify-blp-signup.mjs` always creates the synthetic account through a mail-disabled localhost server; optional `BLP_SIGNUP_UI_URL` checks the live UI/login while proxying only account creation locally. All temporary users and queue suppression triggers are removed.
+
+Final verified signup fix deployed as `dpl_4EHmChDX33NZxsidsangmBhDDuxU` (application `eb24ee7`).
+
+Live mobile new/returning sign-in, pending course reload and dashboard: PASS on final production. Account creation was proxied to the same-code local server with mail disabled; real production auth/navigation/dashboard were exercised. Test-only localhost traffic used a reserved documentation IP bucket after repeated QA hit the local signup limit; production limits/settings were unchanged. Fixture user, order and email guard removed.

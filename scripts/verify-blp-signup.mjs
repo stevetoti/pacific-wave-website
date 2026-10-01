@@ -1,12 +1,15 @@
-// Run only against a localhost server with TRAINING_EMAIL_MODE=disabled and VERCEL_ENV=preview.
-import {createClient} from '@supabase/supabase-js';import {randomUUID} from 'node:crypto';import {chromium} from '@playwright/test';import assert from 'node:assert/strict';
-const base='http://localhost:3103',url=process.env.NEXT_PUBLIC_SUPABASE_URL,ref=new URL(url).hostname.split('.')[0];assert.equal(ref,'rndegttgwtpkbjtvjgnc');
+// Account creation always uses localhost with TRAINING_EMAIL_MODE=disabled and VERCEL_ENV=preview.
+// BLP_SIGNUP_UI_URL optionally verifies the live UI while proxying only account creation to that local server.
+import {createClient} from '@supabase/supabase-js';import {randomUUID,createHash} from 'node:crypto';import {chromium} from '@playwright/test';import assert from 'node:assert/strict';
+const local='http://localhost:3103',base=process.env.BLP_SIGNUP_UI_URL || local,url=process.env.NEXT_PUBLIC_SUPABASE_URL,ref=new URL(url).hostname.split('.')[0];assert.equal(ref,'rndegttgwtpkbjtvjgnc');
 const db=createClient(url,process.env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false}}),check=async p=>{const r=await p;if(r.error)throw r.error;return r.data;};
+const qaIp='192.0.2.91'; // Reserved documentation IP, used only by localhost fixture traffic.
 const email=`blp-qa-signup-${randomUUID()}@example.com`,password=`BLP-${randomUUID()}!`;let browser,page,guard=false;
 const sql=async query=>{const r=await fetch(`https://api.supabase.com/v1/projects/${ref}/database/query`,{method:'POST',headers:{Authorization:`Bearer ${process.env.SUPABASE_ACCESS_TOKEN}`,'Content-Type':'application/json'},body:JSON.stringify({query})});if(!r.ok)throw Error(await r.text());return r.json();};
 try{
 await sql(`create or replace function public.pwd_blp_signup_qa_guard() returns trigger language plpgsql as $$ begin if exists(select 1 from public.pwd_lms_orders where id=new.order_id and email='${email}') then return null; end if; return new; end $$; create trigger pwd_blp_signup_qa_guard before insert on public.pwd_lms_emails for each row execute function public.pwd_blp_signup_qa_guard();`);guard=true;
 browser=await chromium.launch();page=await browser.newPage({viewport:{width:390,height:844}});page.setDefaultTimeout(45000);
+if(base!==local)await page.route('**/api/lms/account',async route=>{const response=await page.request.post(local+'/api/lms/account',{data:route.request().postDataJSON(),headers:{'x-forwarded-for':qaIp,'x-vercel-forwarded-for':qaIp}});await route.fulfill({status:response.status(),contentType:'application/json',body:await response.text()});});
 await page.goto(base+'/training-center/account?mode=signup&course=blp-digital-skills-workshop');await page.getByRole('heading',{name:'Create your student account'}).waitFor();
 await page.getByLabel('Full name',{exact:true}).fill('BLP QA Signup');await page.getByLabel('Phone / WhatsApp').fill('+6785550101');await page.getByLabel('Location (town, island or country)').fill('Port Vila');await page.getByLabel('How would you like to attend?').selectOption('in_person');await page.getByLabel('Email address',{exact:true}).fill(email);await page.getByLabel('Password',{exact:true}).fill(password);await page.locator('input[name=privacy]').check();await page.getByRole('button',{name:'Register for approval',exact:true}).click();await page.getByText(/Awaiting approval\. Our team/).waitFor();await page.reload();await page.getByText(/Awaiting approval\. Our team/).waitFor();
 const order=await check(db.from('pwd_lms_orders').select('*').eq('email',email).single());assert.equal(order.status,'pending');assert.equal(order.amount,0);assert.equal(order.method,'grant');
@@ -15,4 +18,5 @@ const returning=await browser.newPage({viewport:{width:390,height:844}});returni
 console.log('PASS: real mobile signup and returning sign-in, no payment, saved pending approval, reload and dashboard approval status.');
 }catch(error){if(page){console.log('Signup stopped at:',page.url());console.log((await page.locator('main').innerText()).slice(-2200));await page.screenshot({path:'/tmp/blp-signup-failure.png',fullPage:true});}throw error;}finally{
 if(browser)await browser.close();const found=await sql(`select id from auth.users where email='${email}'`);for(const u of found){await check(db.from('pwd_lms_orders').delete().eq('user_id',u.id));await check(db.auth.admin.deleteUser(u.id));}
+if(base!==local)await check(db.from('pwd_request_limits').delete().eq('key',createHash('sha256').update('lms-account:'+qaIp).digest('hex')));
 if(guard)await sql('drop trigger if exists pwd_blp_signup_qa_guard on public.pwd_lms_emails;drop function if exists public.pwd_blp_signup_qa_guard();');console.log('Removed signup fixture and its email guard.');}
