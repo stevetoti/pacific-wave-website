@@ -107,3 +107,6 @@ Owner explicitly requested all three approved v4 PDFs, including facilitator/cou
 
 ## 2026-10-01 — [Codex] Private-course email scope
 Owner requested no other-course promotions or generic payment language for private BLP participants. Private-course account emails skip the catalogue entirely; BLP welcome and approval updates use its branding, schedule, workshop dashboard and eligibility instructions. Public-course recommendations remain unchanged. No old emails are resent.
+
+## 2026-10-01 — [Codex] Locked BLP topic previews
+BLP topics without a linked/uploaded recording display a darkened image with lock icon and “Recording coming after training”. Selecting a topic shows the instructor upload notice, without the workbook activity or completion button. Uploading/linking the recording restores the normal player and completion flow. Progress API rejects completing an unrecorded BLP topic; other courses retain their existing behavior. Two targeted tests (including API denial/no progress write), lint/type/build, all nine topic views on desktop/mobile and eight required public release checks passed. No migration or existing progress deletion.

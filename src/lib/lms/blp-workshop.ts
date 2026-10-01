@@ -10,3 +10,8 @@ export const blpModules = [
   { title: 'Protect your digital business', time: '14:45', image: 7, body: 'Choose practical account security actions and rehearse how to respond to a suspicious message. Keep passwords, codes and customer information private.', task: 'Write your account-protection checklist and a response plan for a suspicious message.' },
   { title: 'Review and keep learning', time: '15:30', image: 8, body: 'Review your work and choose a realistic 30-day action plan. Return to your course dashboard for published recordings, workbook activities and instructor questions.', task: 'Choose three next actions, give each a date and identify the support you need.' },
 ];
+
+// Published workshop topics stay previews until an instructor attaches a recording.
+export function workshopRecordingPending(course: { slug: string }, lesson: { has_recording?: boolean; recording_path?: string | null; youtube_id?: string | null }) {
+  return course.slug === blpSlug && !lesson.has_recording && !lesson.recording_path && !lesson.youtube_id;
+}

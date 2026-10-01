@@ -36,7 +36,7 @@ const CourseCommunity = dynamic(() => import("./CourseCommunity"));
 const StudentCoaches = dynamic(() => import("./coach/StudentCoaches"), { ssr: false });
 import WorkshopResources from "./WorkshopResources";
 import ProgramDetail from "./ProgramDetail";
-import { blpSlug, blpModules } from "@/lib/lms/blp-workshop";
+import { blpSlug, blpModules, workshopRecordingPending } from "@/lib/lms/blp-workshop";
 import { programs, mentorshipSlug } from "@/lib/lms/programs";
 const base = "/training-center";
 function classImage(course: Course, lesson: Lesson, index: number) {
@@ -1270,6 +1270,7 @@ export default function TrainingCenter({
                               <LessonThumbnail
                                 url={classImage(current,active,lessons.findIndex(l=>l.id===active.id))}
                                 cover
+                                locked={workshopRecordingPending(current, active)}
                               />
                             )}
                             <h2>{active.title}</h2>
@@ -1280,9 +1281,14 @@ export default function TrainingCenter({
                                 <LockKeyhole size={36} />
                                 <h3>Unlock your learning</h3>
                                 <p>
-                                  This lesson becomes available after payment is
-                                  verified.
+                                  {current.requires_approval ? "Your workshop learning access opens after administrator approval." : "This lesson becomes available after payment is verified."}
                                 </p>
+                              </div>
+                            ) : workshopRecordingPending(current, active) ? (
+                              <div className="lms-workshop-recording-notice">
+                                <h3>Video available after training</h3>
+                                <p>Your instructor will upload the video after the training. Return to this topic once the recording has been published.</p>
+                                <p className="lms-muted">You can explore the workshop outline and participant workbook in your course dashboard while you wait.</p>
                               </div>
                             ) : !active.published ? (
                               <div className="lms-empty">

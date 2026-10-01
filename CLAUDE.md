@@ -2,6 +2,8 @@
 
 ## Latest release — 2026-10-01 [Codex] Private BLP workshop
 
+Topic previews: BLP lessons without a recording show a locked video image and instructor-upload-after-training notice. Completion UI and API are blocked until a recording is attached. Other courses are unchanged.
+
 Email follow-up: private-course welcome emails skip course recommendations entirely. BLP-specific welcome and approval updates include its logo/schedule/resources and direct approval instructions, without generic fee/payment guidance. Three email regression tests plus lint/type/build and mobile email rendering pass. No existing messages resent.
 
 Application `ee6ecc2` + signup-session fix `eb24ee7`, production `dpl_4EHmChDX33NZxsidsangmBhDDuxU`. Private shared page `/training-center/programs/blp-digital-skills-workshop`; no public catalogue/sitemap/affiliate discovery. Free signup saves pending access; Admin → Training centre → Access → Approve participant grants access. Migration `20261001_private_workshops.sql` applied. Approved v4 outline, participant workbook and facilitator/course guide are privately available to approved students with View/Download. Nine modules for 21 October, BLP logo and workshop artwork. Private-course participants cannot use public-course enrollment to bridge direct-message boundaries; existing threads/files/notifications also checked. Public-only students retain cross-public-course messaging. See `docs/PRIVATE-WORKSHOPS.md` for operation and acceptance evidence.

@@ -2375,3 +2375,9 @@
 .blp-resource-actions{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}.blp-resource-actions button{white-space:normal;text-align:left}
 .blp-resource-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.blp-resource-grid article{padding:18px;background:#f4f7fa;border-radius:14px}.blp-resource-grid h3{margin-top:0}.blp-resource-actions .lms-text{display:inline-flex;align-items:center;gap:6px}
 @media(max-width:800px){.blp-resource-grid{grid-template-columns:1fr}}
+
+.lms .lms-recording-lock { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:20px; background:linear-gradient(180deg,rgba(20,37,69,.42),rgba(20,37,69,.8)); color:#fff; text-align:center; font-weight:700; font-size:clamp(13px,2vw,18px); }
+.lms .lms-recording-lock svg { width:64px; height:64px; padding:16px; border:1px solid rgba(255,255,255,.5); border-radius:50%; background:rgba(255,255,255,.12); }
+.lms .lms-workshop-recording-notice { padding:22px; border:1px solid #dce4ee; border-radius:12px; background:#f5f7fb; }
+.lms .lms-workshop-recording-notice h3 { margin-top:0; }
+.lms .lms-workshop-recording-notice p:last-child { margin-bottom:0; }

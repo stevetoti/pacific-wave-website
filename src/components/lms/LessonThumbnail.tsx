@@ -1,11 +1,13 @@
 import Image from "next/image";
-import { PlayCircle } from "lucide-react";
+import { LockKeyhole, PlayCircle } from "lucide-react";
 export default function LessonThumbnail({
   url,
   cover = false,
+  locked = false,
 }: {
   url?: string;
   cover?: boolean;
+  locked?: boolean;
 }) {
   return (
     <span className={cover ? "lms-lesson-cover" : "lms-lesson-thumb"}>
@@ -21,6 +23,7 @@ export default function LessonThumbnail({
       ) : (
         <PlayCircle aria-hidden="true" size={26} />
       )}
+      {locked && <span className="lms-recording-lock"><LockKeyhole aria-hidden="true" size={cover ? 36 : 18}/>{cover && <span>Recording coming after training</span>}</span>}
     </span>
   );
 }

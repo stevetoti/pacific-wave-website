@@ -1,3 +1,4 @@
+import { workshopRecordingPending } from "@/lib/lms/blp-workshop";
 import { accountSchema } from "@/lib/lms/signup";
 import { createTrainingAccount } from "@/lib/server/lms-signup";
 import { reportServerError } from "@/lib/server/report-error";
@@ -673,7 +674,7 @@ export async function POST(request: Request, context: Context) {
       const lesson = checked(
         await db
           .from("pwd_lms_lessons")
-          .select("*")
+          .select("*,pwd_lms_courses(slug)")
           .eq("id", input.lesson_id)
           .eq("published", true)
           .single(),
@@ -689,6 +690,8 @@ export async function POST(request: Request, context: Context) {
       );
       if (!order || (lesson.order_id && lesson.order_id !== order.id))
         throw new HttpError(403, "Paid course access required.");
+      if (workshopRecordingPending(lesson.pwd_lms_courses, lesson))
+        throw new HttpError(409, "Your instructor will upload the video after the training. This topic cannot be marked complete yet.");
       if (lesson.quiz.length)
         throw new HttpError(
           400,

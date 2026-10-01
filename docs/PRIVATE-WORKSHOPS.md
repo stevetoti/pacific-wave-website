@@ -54,3 +54,6 @@ Live mobile new/returning sign-in, pending course reload and dashboard: PASS on 
 
 ## Private workshop emails — 2026-10-01 [Codex]
 Private-course account emails omit all other-course recommendations. BLP welcome, verification/reset and registration/approval updates use workshop-specific subjects, branding and dashboard links. Free registration and pending approval are explained directly; approved notices confirm access without generic payment wording. Three email regressions cover HTML/plain-text content, status transitions, generic private workshops and retained public recommendations. Rendered BLP logo/mobile layout verified; no email resend.
+
+## 2026-10-01 — [Codex] Locked BLP topic previews
+BLP topics without a linked/uploaded recording display a darkened image with lock icon and “Recording coming after training”. Selecting a topic shows the instructor upload notice, without the workbook activity or completion button. Uploading/linking the recording restores the normal player and completion flow. Progress API rejects completing an unrecorded BLP topic; other courses retain their existing behavior. Two targeted tests (including API denial/no progress write), lint/type/build, all nine topic views on desktop/mobile and eight required public release checks passed. No migration or existing progress deletion.

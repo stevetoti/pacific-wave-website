@@ -570,3 +570,9 @@ Live mobile signup/sign-in transition and pending dashboard verification complet
 Owner screenshot identified generic welcome upsells/payment guidance in BLP signup mail. Removing catalogue recommendations for private-course account emails and tailoring BLP welcome and approval status emails to its schedule, resources and private class community. No existing emails resent. Verification in progress.
 
 [Codex] 2026-10-01: Email correction verified with three targeted content tests, TypeScript/lint/full production build, BLP image loading/mobile fit and required desktop/mobile release checks. New private-workshop email helper is used by account and enrollment-status senders. No database migration or real-email test delivery.
+
+## 2026-10-01 — [Codex] BLP pre-training video previews
+Owner requested locked topic video previews and no premature completion. BLP topics without instructor recordings now show a locked image and after-training upload notice, withholding activities/completion until video is attached. Progress API rejects premature completion too. Verification in progress.
+
+## 2026-10-01 — [Codex] Locked BLP topic previews
+BLP topics without a linked/uploaded recording display a darkened image with lock icon and “Recording coming after training”. Selecting a topic shows the instructor upload notice, without the workbook activity or completion button. Uploading/linking the recording restores the normal player and completion flow. Progress API rejects completing an unrecorded BLP topic; other courses retain their existing behavior. Two targeted tests (including API denial/no progress write), lint/type/build, all nine topic views on desktop/mobile and eight required public release checks passed. No migration or existing progress deletion.
