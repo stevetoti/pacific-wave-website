@@ -92,6 +92,7 @@ export default function TrainingCenter({
     [banks, setBanks] = useState<Bank[]>([]),
     [card, setCard] = useState(false),
     [email, setEmail] = useState<string | null>(null),
+    [authReady, setAuthReady] = useState(false),
     [ready, setReady] = useState(Boolean(initialCourses) || view === "account"),
     [error, setError] = useState(""),
     [message, setMessage] = useState(""),
@@ -148,6 +149,7 @@ export default function TrainingCenter({
       data: { session },
     } = auth;
     setEmail(session?.user.email || null);
+    setAuthReady(true);
     if (session && ["dashboard", "checkout", "course"].includes(view)) {
       const [dash, detail] = await Promise.all([
         api("dashboard"),
@@ -176,6 +178,7 @@ export default function TrainingCenter({
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setEmail(session?.user.email || null);
+      setAuthReady(true);
       if (_event === "PASSWORD_RECOVERY") setAuthMode("update");
     });
     return () => {
@@ -211,6 +214,7 @@ export default function TrainingCenter({
     } else if (
       view === "checkout" &&
       ready &&
+      authReady &&
       !email &&
       query.course &&
       courses.some(
@@ -227,6 +231,7 @@ export default function TrainingCenter({
     view,
     email,
     ready,
+    authReady,
     query.course,
     query.next,
     query.verify,

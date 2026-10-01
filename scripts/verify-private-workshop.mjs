@@ -1,4 +1,5 @@
 import {createClient} from '@supabase/supabase-js';
+import {readFile} from 'node:fs/promises';
 import {randomUUID} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {chromium} from '@playwright/test';
@@ -10,8 +11,8 @@ const users=[],orders=[],tempCourses=[];let browser,guard=false;
 const check=async p=>{const r=await p;if(r.error)throw r.error;return r.data;};
 const lit=v=>"'"+String(v).replaceAll("'","''")+"'";
 async function sql(query){const r=await fetch(`https://api.supabase.com/v1/projects/${ref}/database/query`,{method:'POST',headers:{Authorization:`Bearer ${process.env.SUPABASE_ACCESS_TOKEN}`,'Content-Type':'application/json'},body:JSON.stringify({query})});if(!r.ok)throw Error(await r.text());return r.json();}
-async function api(u,path,body){const r=await fetch(base+path,{method:body?'POST':'GET',headers:{Authorization:`Bearer ${u?.session.access_token||''}`,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});return {status:r.status,data:r.headers.get('content-type')?.includes('json')?await r.json():Buffer.from(await r.arrayBuffer())};}
-async function pageFor(u,width=1440){const page=await browser.newPage({viewport:{width,height:1000},acceptDownloads:true});await page.addInitScript(({key,session})=>localStorage.setItem(key,JSON.stringify(session)),{key:`sb-${ref}-auth-token`,session:u.session});return page;}
+async function api(u,path,body){const r=await fetch(base+path,{method:body?'POST':'GET',headers:{Authorization:`Bearer ${u?.session.access_token||''}`,'Content-Type':'application/json',...(process.env.BLP_TEST_COOKIE?{Cookie:process.env.BLP_TEST_COOKIE}:{})},body:body?JSON.stringify(body):undefined});return {status:r.status,data:r.headers.get('content-type')?.includes('json')?await r.json():Buffer.from(await r.arrayBuffer())};}
+async function pageFor(u,width=1440){const state=process.env.PLAYWRIGHT_STORAGE_STATE ? JSON.parse(await readFile(process.env.PLAYWRIGHT_STORAGE_STATE,'utf8')) : undefined;const page=await browser.newPage({viewport:{width,height:1000},acceptDownloads:true,storageState:state});page.setDefaultTimeout(25000);await page.addInitScript(({key,session})=>localStorage.setItem(key,JSON.stringify(session)),{key:`sb-${ref}-auth-token`,session:u.session});return page;}
 try{
  const blp=await check(db.from('pwd_lms_courses').select('*').eq('slug','blp-digital-skills-workshop').single());
  const publicCourses=await check(db.from('pwd_lms_courses').select('id').eq('is_private',false).eq('published',true).limit(2));assert.equal(publicCourses.length,2);
