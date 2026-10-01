@@ -51,3 +51,6 @@ Fresh mobile account creation and returning sign-in passed against the productio
 Final verified signup fix deployed as `dpl_4EHmChDX33NZxsidsangmBhDDuxU` (application `eb24ee7`).
 
 Live mobile new/returning sign-in, pending course reload and dashboard: PASS on final production. Account creation was proxied to the same-code local server with mail disabled; real production auth/navigation/dashboard were exercised. Test-only localhost traffic used a reserved documentation IP bucket after repeated QA hit the local signup limit; production limits/settings were unchanged. Fixture user, order and email guard removed.
+
+## Private workshop emails — 2026-10-01 [Codex]
+Private-course account emails omit all other-course recommendations. BLP welcome, verification/reset and registration/approval updates use workshop-specific subjects, branding and dashboard links. Free registration and pending approval are explained directly; approved notices confirm access without generic payment wording. Three email regressions cover HTML/plain-text content, status transitions, generic private workshops and retained public recommendations. Rendered BLP logo/mobile layout verified; no email resend.

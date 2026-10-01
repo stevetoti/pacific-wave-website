@@ -565,3 +565,8 @@ Final real signup exposed a checkout/account redirect loop: newly server-rendere
 Signup session fix is live; eight production desktop/mobile public release tests passed again. Local real new account and returning sign-in both persist pending approval and open the course; no fee or duplicate registration. QA mail is disabled and exact fixture queue guards are cleaned up. Live UI verification uses only localhost account creation to avoid test welcome mail; production sign-in and dashboard requests are real.
 
 Live mobile signup/sign-in transition and pending dashboard verification completed PASS on dpl_4EHmChDX33NZxsidsangmBhDDuxU; all fixtures removed. Final source synchronized to main after verification.
+
+## 2026-10-01 — [Codex] Private workshop email correction
+Owner screenshot identified generic welcome upsells/payment guidance in BLP signup mail. Removing catalogue recommendations for private-course account emails and tailoring BLP welcome and approval status emails to its schedule, resources and private class community. No existing emails resent. Verification in progress.
+
+[Codex] 2026-10-01: Email correction verified with three targeted content tests, TypeScript/lint/full production build, BLP image loading/mobile fit and required desktop/mobile release checks. New private-workshop email helper is used by account and enrollment-status senders. No database migration or real-email test delivery.

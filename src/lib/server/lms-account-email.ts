@@ -1,4 +1,5 @@
 import "server-only";
+import { privateWorkshopAccountEmail } from "../email/private-workshop";
 import { queueOwnerNotification, sendOwnerNotifications } from "./owner-notifications";
 import { after } from "next/server";
 import { createHash } from "node:crypto";
@@ -48,7 +49,10 @@ export async function sendAccountEmail(input: {
     : existing
     ? `${origin}/training-center/account${query ? "?" + query : ""}`
     : `${origin}/training-center/account?verify=${encodeURIComponent(result.data!.properties!.hashed_token)}&type=${input.mode}${query ? "&" + query : ""}`;
-  const courses = checked(
+  const selectedCourse = input.course ? checked(await db.from("pwd_lms_courses").select("*")
+    .eq(/^[0-9a-f-]{36}$/.test(input.course) ? "id" : "slug", input.course).maybeSingle()) as Course | null : null;
+  const privateContent = selectedCourse?.is_private ? privateWorkshopAccountEmail(selectedCourse, input.mode, existing, link) : null;
+  const courses = privateContent ? [] : checked(
     await db
       .from("pwd_lms_courses")
       .select("*")
@@ -56,7 +60,7 @@ export async function sendAccountEmail(input: {
       .order("created_at")
       .limit(10),
   ) as Course[];
-  const content = trainingTemplate({
+  const content = privateContent || trainingTemplate({
     title: input.mode === "welcome" ? "Welcome to Pacific Wave Digital Training" : existing
       ? "Your training account is ready"
       : input.mode === "signup"
@@ -117,11 +121,11 @@ export async function sendAccountEmail(input: {
               "Pacific Wave Digital <noreply@pacificwavedigital.com>",
             to: live ? input.email : "delivered@resend.dev",
             reply_to: "steve@pacificwavedigital.com",
-            subject: input.mode === "welcome" ? "Welcome — your Pacific Wave Digital student account is ready" : existing
+            subject: privateContent?.subject || (input.mode === "welcome" ? "Welcome — your Pacific Wave Digital student account is ready" : existing
               ? "Your Pacific Wave Digital training account and course guide"
               : input.mode === "signup"
                 ? "Welcome to Pacific Wave Digital — verify your student account"
-                : "Reset your Pacific Wave Digital student password",
+                : "Reset your Pacific Wave Digital student password"),
             ...content,
           }),
         });

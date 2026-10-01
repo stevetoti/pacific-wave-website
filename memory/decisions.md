@@ -104,3 +104,6 @@ Owner confirmed no participant fee and admin approval before access; forwarded l
 
 ## 2026-10-01 — [Codex] Approved BLP student resources
 Owner explicitly requested all three approved v4 PDFs, including facilitator/course guide, in the student dashboard. Store in private bucket and stream only to approved BLP enrollees, with View/Download. Admin approval is the selected eligibility mechanism; no OTP issued. The shared page is unlisted/noindex, while actual learning/chat/resources remain enrollment-protected.
+
+## 2026-10-01 — [Codex] Private-course email scope
+Owner requested no other-course promotions or generic payment language for private BLP participants. Private-course account emails skip the catalogue entirely; BLP welcome and approval updates use its branding, schedule, workshop dashboard and eligibility instructions. Public-course recommendations remain unchanged. No old emails are resent.

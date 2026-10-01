@@ -1,4 +1,5 @@
 import "server-only";
+import { privateWorkshopUpdateEmail } from "../email/private-workshop";
 import { trainingTemplate } from "../email/training-template";
 import { getSupabaseAdmin } from "./clients";
 import { reportServerError } from "./report-error";
@@ -23,7 +24,7 @@ export async function sendLmsEmails() {
     try {
       const { data: order, error } = await db
         .from("pwd_lms_orders")
-        .select("*,pwd_lms_courses(title,requires_approval)")
+        .select("*,pwd_lms_courses(title,slug,is_private,requires_approval)")
         .eq("id", job.order_id)
         .single();
       if (error || !order) throw new Error("Email order unavailable");
@@ -60,7 +61,7 @@ export async function sendLmsEmails() {
           ...(live ? { bcc: "steve@pacificwavedigital.com" } : {}),
           reply_to: "steve@pacificwavedigital.com",
           subject: `Training update: ${order.pwd_lms_courses.title}`,
-          ...trainingTemplate({
+          ...(approval && order.pwd_lms_courses.is_private ? privateWorkshopUpdateEmail(order.pwd_lms_courses, job.status, order.name, `https://pacificwavedigital.com/training-center/course/${encodeURIComponent(order.course_id)}`) : trainingTemplate({
             title:
               order.method === "coupon"
                 ? "Your course access is ready"
@@ -86,7 +87,7 @@ export async function sendLmsEmails() {
                 : []),
               "Your course space brings together lessons, recordings, practical activities and instructor support. Reply to this email if you need help with your enrolment.",
             ],
-          }),
+          })),
         }),
       });
       if (!response.ok)
