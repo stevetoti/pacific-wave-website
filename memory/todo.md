@@ -153,3 +153,5 @@
 - [x] Implement unlisted course, registration, branded page and workshop modules. — [Codex] 2026-10-01: live BLP page with nine modules and approved v4 PDFs.
 - [x] Enforce directory/connection/DM/notification privacy and verify public-course interoperability. — [Codex] 2026-10-01: real multi-identity staged checks and SQL tests passed.
 - [x] Verify full build and participant/admin flows before release. — [Codex] 2026-10-01: full build, approval/resources/revocation, new and returning signup and desktop/mobile checks passed; auth-readiness race corrected.
+
+- [x] Prepare BLP session upload administration. — [Codex] 2026-10-01: nine dated sessions ready, upload guide/status indicators, real private upload/playback/authorization tests passed; no test videos attached to BLP.

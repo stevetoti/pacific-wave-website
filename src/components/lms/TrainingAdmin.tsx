@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import LessonThumbnail from "./LessonThumbnail";
+import { blpSlug, blpModules, workshopRecordingPending } from "@/lib/lms/blp-workshop";
 import CourseAdministration from "./CourseAdministration";
 import QuizBuilder from "./QuizBuilder";
 import EmailCampaigns from "./EmailCampaigns";
@@ -141,6 +142,9 @@ export default function TrainingAdmin({
       setBusy(false);
     }
   }
+  const selectedCourse = courses.find(c => c.id === selected);
+  const blpWorkshop = selectedCourse?.slug === blpSlug;
+  const selectedLessons = lessons.filter(l => l.course_id === selected);
   return (
     <div className="lms">
       <div className="lms-shell">
@@ -460,6 +464,17 @@ export default function TrainingAdmin({
                 ))}
               </select>
             </label>
+            {blpWorkshop && <section className="lms-bank" aria-label="BLP recording upload guide">
+              <h2>BLP session recordings</h2>
+              <p><strong>{selectedLessons.filter(l => l.published && !workshopRecordingPending(selectedCourse!, l)).length} of {selectedLessons.length} session recordings available</strong></p>
+              <ol>
+                <li>Select the matching session below. Its title, date, time and lesson notes are already prepared.</li>
+                <li>Upload the session video in the Class recording section: MP4 or WebM, up to 500 MB. Compress or split larger recordings.</li>
+                <li>Keep Student enrolment set to Shared course lesson so every approved BLP participant can watch.</li>
+                <li>Keep Publish lesson materials checked and click Save lesson. Uploading alone does not attach the video.</li>
+              </ol>
+              <p>Topics without recordings stay as locked previews. Saving a recording to a published session replaces its preview with playback for approved participants only.</p>
+            </section>}
             {selected && (
               <div className="lms-two">
                 <section className="lms-panel">
@@ -473,7 +488,7 @@ export default function TrainingAdmin({
                         key={l.id}
                         onClick={() => chooseLesson(l)}
                       >
-                        <LessonThumbnail url={l.thumbnail_url} />
+                        <LessonThumbnail url={l.thumbnail_url || (blpWorkshop && blpModules[l.position - 1] ? `/images/training/blp/scene-0${blpModules[l.position - 1].image}.webp` : undefined)} />
                         <span className="lms-lesson-copy">
                           {l.section_title && <small>{l.section_title}</small>}
                           {l.position}. {l.title}
@@ -481,7 +496,8 @@ export default function TrainingAdmin({
                             {l.order_id
                               ? `${orders.find((o) => o.id === l.order_id)?.email || "Assigned student"} · `
                               : ""}
-                            {l.published ? "Published" : "Draft"}
+                            {blpWorkshop ? workshopRecordingPending(selectedCourse!, l) ? "Awaiting recording · Student preview locked" : l.published ? "Recording available to participants" : "Recording attached · Draft" : l.published ? "Published" : "Draft"}
+                            {blpWorkshop && l.starts_at && <span>{new Date(l.starts_at).toLocaleString("en-GB", {timeZone:"Pacific/Efate",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})} · Vanuatu time</span>}
                           </small>
                         </span>
                       </button>
@@ -543,7 +559,7 @@ export default function TrainingAdmin({
                       });
                     }}
                   >
-                    <h2>Lesson editor</h2>
+                    <h2>{blpWorkshop ? `Session ${editLesson.position}: ${editLesson.title}` : "Lesson editor"}</h2>
                     <section className="lms-bank">
                       <h3>Lesson thumbnail</h3>
                       <p>
@@ -864,7 +880,7 @@ export default function TrainingAdmin({
                           name="published"
                           defaultChecked={editLesson.published}
                         />
-                        Publish lesson materials for paid students
+                        {blpWorkshop ? "Publish lesson materials for approved participants" : "Publish lesson materials for paid students"}
                       </label>
                       <button className="lms-button">Save lesson</button>
                     </fieldset>

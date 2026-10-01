@@ -110,3 +110,6 @@ Owner requested no other-course promotions or generic payment language for priva
 
 ## 2026-10-01 — [Codex] Locked BLP topic previews
 BLP topics without a linked/uploaded recording display a darkened image with lock icon and “Recording coming after training”. Selecting a topic shows the instructor upload notice, without the workbook activity or completion button. Uploading/linking the recording restores the normal player and completion flow. Progress API rejects completing an unrecorded BLP topic; other courses retain their existing behavior. Two targeted tests (including API denial/no progress write), lint/type/build, all nine topic views on desktop/mobile and eight required public release checks passed. No migration or existing progress deletion.
+
+## 2026-10-01 — [Codex] BLP session recording administration
+Use the existing private recording uploader and shared lesson editor for all nine BLP sessions. Add explicit upload/save/publish instructions and per-session pending/available/draft status; leave shared course enrollment selected for all approved participants. Actual private storage limit verified at 500 MB with MP4/WebM MIME types. Instructor assignment exists; no separate BLP upload subsystem or migration needed.

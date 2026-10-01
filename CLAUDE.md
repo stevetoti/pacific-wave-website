@@ -2,6 +2,8 @@
 
 ## Latest release — 2026-10-01 [Codex] Private BLP workshop
 
+Recording administration: Admin → Training centre → Lessons → BLP (or instructor Teaching workspace) shows all nine prepared sessions, upload/save/publish instructions and per-session recording status. Existing private MP4/WebM uploader supports up to 500 MB. Real instructor upload/save/reload and enrolled-student playback verified with isolated fixtures; authorization/unpublish denial verified and fixtures cleaned.
+
 Topic previews: BLP lessons without a recording show a locked video image and instructor-upload-after-training notice. Completion UI and API are blocked until a recording is attached. Other courses are unchanged.
 
 Email follow-up: private-course welcome emails skip course recommendations entirely. BLP-specific welcome and approval updates include its logo/schedule/resources and direct approval instructions, without generic fee/payment guidance. Three email regression tests plus lint/type/build and mobile email rendering pass. No existing messages resent.

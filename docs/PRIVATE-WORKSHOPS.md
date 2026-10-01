@@ -57,3 +57,15 @@ Private-course account emails omit all other-course recommendations. BLP welcome
 
 ## 2026-10-01 — [Codex] Locked BLP topic previews
 BLP topics without a linked/uploaded recording display a darkened image with lock icon and “Recording coming after training”. Selecting a topic shows the instructor upload notice, without the workbook activity or completion button. Uploading/linking the recording restores the normal player and completion flow. Progress API rejects completing an unrecorded BLP topic; other courses retain their existing behavior. Two targeted tests (including API denial/no progress write), lint/type/build, all nine topic views on desktop/mobile and eight required public release checks passed. No migration or existing progress deletion.
+
+## Upload recordings after the workshop
+
+Admin → Training centre → Lessons → choose **Bring your business online — BLP Workshop**. Assigned instructors can use Training centre → Teaching workspace instead. All nine dated sessions already exist, with shared-course enrollment, lesson notes and thumbnails.
+
+1. Select the matching session; check the topic title and Vanuatu date/time.
+2. Under **Class recording**, upload MP4 or WebM, up to 500 MB. Compress or split larger videos.
+3. Leave **Student enrolment → Shared course lesson** selected so every approved BLP participant can watch.
+4. Keep **Publish lesson materials for approved participants** checked and click **Save lesson**. Uploading alone does not save the attachment.
+5. The list changes from **Awaiting recording · Student preview locked** to **Recording available to participants**. A draft with an attached recording is labelled separately.
+
+The BLP editor shows the number of available recordings, each session's date/time, and the steps above. Students retain locked previews until a recording is attached to a published lesson. No real session videos have been uploaded by Codex.
