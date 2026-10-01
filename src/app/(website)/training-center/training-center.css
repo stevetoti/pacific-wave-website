@@ -2342,3 +2342,21 @@
   .pay-account { padding: 12px; }
   .pay-option h3 { font-size: 18px; }
 }
+/* Read receipts: one tick = sent, two green ticks = read */
+.msg-tick{flex-shrink:0;opacity:.75;vertical-align:-2px;}
+.msg-tick.seen{color:#22c55e;opacity:1;}
+.msg-bubble-row.mine .msg-tick.seen{color:#4ade80;}
+.msg-item-body small .msg-tick{margin-right:4px;}
+.msg-seen{display:flex;justify-content:flex-end;align-items:center;gap:4px;margin:2px 4px 6px;font-size:11px;font-weight:600;color:#16a34a;}
+/* Read receipts: make ticks bold and easy to see */
+.msg-bubble small{opacity:1;}
+.msg-bubble small > :not(.msg-tick){opacity:.75;}
+.msg-tick{display:inline-block;width:17px;height:17px;stroke-width:2.6;}
+.msg-bubble-row.mine .msg-tick{color:#c9d4ea;opacity:1;}
+.msg-bubble-row.mine .msg-tick.seen{color:#4ade80;}
+.msg-item-body small{display:flex;align-items:center;gap:3px;}
+.msg-item-body small .msg-tick{width:15px;height:15px;margin:0;color:#8793a8;}
+.msg-item-body small .msg-tick.seen{color:#16a34a;}
+.lms .msg-seen{color:#16a34a;font-size:12px;}
+.lms .msg-seen svg{display:inline-block;stroke-width:2.6;}
+.msg-preview-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}

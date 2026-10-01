@@ -16,10 +16,11 @@ import {
   Trash2,
   Settings as SettingsIcon,
   Inbox,
+  CheckCheck,
 } from "lucide-react";
 import { authFetch } from "@/lib/auth-fetch";
 type Person = { user_id: string; full_name: string; headline: string; city: string; avatar_url: string };
-type ThreadSummary = { id: string; person: Person; last_message_at: string; preview: string; last_mine: boolean; unread: number };
+type ThreadSummary = { id: string; person: Person; last_message_at: string; preview: string; last_mine: boolean; last_seen: boolean; unread: number };
 type Overview = {
   me: string;
   settings: { directory_visible: boolean; message_emails: boolean };
@@ -31,7 +32,7 @@ type Overview = {
   blocked: Person[];
 };
 type FileMeta = { id: string; name: string; mime: string; size: number };
-type Message = { id: number; sender: string; body: string; deleted: boolean; created_at: string; mine: boolean; file: FileMeta | null; client_id?: string; pending?: boolean };
+type Message = { id: number; sender: string; body: string; deleted: boolean; created_at: string; mine: boolean; file: FileMeta | null; client_id?: string; pending?: boolean; seen?: boolean };
 type ThreadDetail = { id: string; person: Person; can_message: boolean; blocked_by_me: boolean };
 type DirectoryPerson = Person & { courses: string[]; connection: "none" | "sent" | "received" | "connected"; bio: string };
 async function api(path = "", body?: unknown) {
@@ -263,6 +264,8 @@ export default function MessagesCenter() {
       <section className="sd-panel">{error ? <div className="lms-alert" role="alert">{error}</div> : "Loading your messages…"}</section>
     );
   const unread = overview.threads.reduce((n, t) => n + t.unread, 0);
+  // "Seen" appears once, under my most recent message the other person has read.
+  const lastSeenMine = messages.reduce((id, x) => (x.mine && x.seen ? x.id : id), 0);
   const staffContacts = overview.contacts.filter((c) => !overview.threads.some((t) => t.person?.user_id === c.person?.user_id));
   return (
     <section className="sd-panel msg-shell">
@@ -289,7 +292,18 @@ export default function MessagesCenter() {
                 <Avatar person={t.person} />
                 <span className="msg-item-body">
                   <strong>{t.person?.full_name}</strong>
-                  <small>{t.last_mine ? "You: " : ""}{t.preview}</small>
+                  <small>
+                    {t.last_mine &&
+                      (t.last_seen ? (
+                        <CheckCheck size={14} className="msg-tick seen" aria-label="Read" />
+                      ) : (
+                        <Check size={14} className="msg-tick" aria-label="Sent" />
+                      ))}
+                    <span className="msg-preview-text">
+                      {t.last_mine ? "You: " : ""}
+                      {t.preview}
+                    </span>
+                  </small>
                 </span>
                 <span className="msg-item-meta">
                   <small>{t.last_message_at && time(t.last_message_at)}</small>
@@ -398,7 +412,13 @@ export default function MessagesCenter() {
                               </>
                             )}
                             <small>
-                              {m.pending ? "Sending…" : time(m.created_at)}
+                              <span>{m.pending ? "Sending…" : time(m.created_at)}</span>
+                              {m.mine && !m.pending && !m.deleted &&
+                                (m.seen ? (
+                                  <CheckCheck size={17} className="msg-tick seen" aria-label="Read" />
+                                ) : (
+                                  <Check size={17} className="msg-tick" aria-label="Sent" />
+                                ))}
                               {m.mine && !m.deleted && !m.pending && (
                                 <button type="button" aria-label="Delete message" onClick={() => {
                                   if (confirm("Delete this message?"))
@@ -410,6 +430,11 @@ export default function MessagesCenter() {
                             </small>
                           </div>
                         </div>
+                        {m.mine && m.id === lastSeenMine && (
+                          <p className="msg-seen">
+                            <CheckCheck size={15} /> Seen{detail ? ` by ${detail.person.full_name.split(" ")[0]}` : ""}
+                          </p>
+                        )}
                       </div>
                     );
                   })}

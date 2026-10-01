@@ -148,18 +148,22 @@ export async function GET(request: Request) {
         ? checked(await db.from("pwd_lms_dm_files").select("id,name,mime,size").in("id", fileIds)) || []
         : [];
       const otherId = other(t, me);
-      const [who, allowed, blocked] = await Promise.all([
+      const [who, allowed, blocked, theirRead] = await Promise.all([
         people(db, [otherId]),
         canMessage(db, me, otherId),
         db.from("pwd_lms_blocks").select("blocker").eq("blocker", me).eq("blocked", otherId).maybeSingle(),
+        db.from("pwd_lms_dm_reads").select("last_read_id").eq("thread_id", t.id).eq("user_id", otherId).maybeSingle(),
       ]);
+      // Read receipts: my messages up to the other person's read marker have been seen.
+      const seenUpTo = Number(checked(theirRead)?.last_read_id || 0);
       return json({
-        thread: { id: t.id, person: who.get(otherId), can_message: allowed, blocked_by_me: Boolean(checked(blocked)) },
+        thread: { id: t.id, person: who.get(otherId), can_message: allowed, blocked_by_me: Boolean(checked(blocked)), seen_up_to: seenUpTo },
         messages: rows.map((m) => ({
           ...m,
           body: m.deleted ? "" : m.body,
           file: m.deleted ? null : files.find((f) => f.id === m.file_id) || null,
           mine: m.sender === me,
+          seen: m.sender === me && m.id <= seenUpTo,
         })),
         more: rows.length === 50,
       });
@@ -179,7 +183,7 @@ export async function GET(request: Request) {
     const [lastRows, readRows] = ids.length
       ? await Promise.all([
           db.from("pwd_lms_dm_messages").select("id,thread_id,sender,body,file_id,deleted,created_at").in("thread_id", ids).order("id", { ascending: false }).limit(1000),
-          db.from("pwd_lms_dm_reads").select("thread_id,last_read_id").eq("user_id", me).in("thread_id", ids),
+          db.from("pwd_lms_dm_reads").select("thread_id,user_id,last_read_id").in("thread_id", ids),
         ])
       : [{ data: [], error: null }, { data: [], error: null }];
     const last = (checked(lastRows) || []) as Message[];
@@ -214,13 +218,15 @@ export async function GET(request: Request) {
       can_browse: ctx.isStudent || ctx.teaches.length > 0 || ctx.admin,
       threads: visibleThreads.map((t) => {
         const lastMsg = last.find((m) => m.thread_id === t.id);
-        const readId = reads.find((r) => r.thread_id === t.id)?.last_read_id || 0;
+        const readId = reads.find((r) => r.thread_id === t.id && r.user_id === me)?.last_read_id || 0;
+        const theirReadId = reads.find((r) => r.thread_id === t.id && r.user_id !== me)?.last_read_id || 0;
         return {
           id: t.id,
           person: who.get(other(t, me)),
           last_message_at: t.last_message_at,
           preview: lastMsg ? (lastMsg.deleted ? "Message removed" : lastMsg.body || (lastMsg.file_id ? "Attachment" : "")) : "",
           last_mine: lastMsg?.sender === me,
+          last_seen: Boolean(lastMsg && lastMsg.sender === me && lastMsg.id <= theirReadId),
           unread: last.filter((m) => m.thread_id === t.id && m.sender !== me && !m.deleted && m.id > readId).length,
         };
       }),
