@@ -1,6 +1,29 @@
 import { z } from "zod";
 // Keep proxied uploads/downloads below the hosting function payload limit.
 export const COMMUNITY_FILE_LIMIT = 4 * 1024 * 1024;
+// Video and audio go straight to private storage through a one-time signed upload link.
+export const MEDIA_TYPES: Record<string, { kind: "video" | "audio"; ext: string }> = {
+  "video/mp4": { kind: "video", ext: "mp4" },
+  "video/webm": { kind: "video", ext: "webm" },
+  "video/quicktime": { kind: "video", ext: "mov" },
+  "audio/mpeg": { kind: "audio", ext: "mp3" },
+  "audio/mp4": { kind: "audio", ext: "m4a" },
+  "audio/x-m4a": { kind: "audio", ext: "m4a" },
+  "audio/aac": { kind: "audio", ext: "aac" },
+  "audio/webm": { kind: "audio", ext: "webm" },
+  "audio/ogg": { kind: "audio", ext: "ogg" },
+  "audio/wav": { kind: "audio", ext: "wav" },
+};
+// Instructors can share longer videos; students can share voice notes and short clips.
+export const mediaLimit = (instructor: boolean, kind: "video" | "audio") =>
+  kind === "audio" ? 25 * 1024 * 1024 : instructor ? 200 * 1024 * 1024 : 50 * 1024 * 1024;
+export const fileKind = (mime: string) =>
+  mime.startsWith("image/") ? "image" : mime.startsWith("video/") ? "video" : mime.startsWith("audio/") ? "audio" : "file";
+// First YouTube link in a message, for an embedded player.
+export function youtubeId(text: string) {
+  const m = text.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
 export const reactions = {
   like: "👍",
   love: "❤️",
@@ -8,7 +31,7 @@ export const reactions = {
   idea: "💡",
   question: "❓",
 } as const;
-export type Person = { user_id: string; name: string; instructor: boolean };
+export type Person = { user_id: string; name: string; instructor: boolean; avatar_url?: string };
 export type ChatFile = { id: string; name: string; size: number; mime: string };
 export type ChatMessage = {
   id: number;

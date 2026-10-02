@@ -6,6 +6,10 @@ import { access, channelAccess } from "@/lib/server/community";
 import {
   uploadCommunityFile,
   downloadCommunityFile,
+  communityFileUrl,
+  createMediaUpload,
+  verifyMedia,
+  bucketFor,
 } from "@/lib/server/community-files";
 import { apiError, HttpError, readJson } from "@/lib/server/http";
 import { rateLimit } from "@/lib/server/rate-limit";
@@ -20,12 +24,28 @@ const json = (data: unknown) =>
   NextResponse.json(data, { headers: { "Cache-Control": "no-store" } });
 type Context = Awaited<ReturnType<typeof access>>;
 async function people(ctx: Context, course: string, channel: string | null) {
-  return checked(
+  const list = checked(
     await ctx.db.rpc("pwd_lms_chat_people", {
       p_course: course,
       p_channel: channel,
     }),
   ) as Person[];
+  return list;
+}
+// Participant list with profile photos for the people panel.
+async function withAvatars(ctx: Context, list: Person[]) {
+  if (!list.length) return list;
+  const rows = checked(
+    await ctx.db.from("pwd_lms_profiles").select("user_id,avatar_path").in("user_id", list.map((p) => p.user_id)),
+  ) || [];
+  const paths = rows.map((r) => r.avatar_path).filter(Boolean) as string[];
+  const signed = paths.length
+    ? checked(await ctx.db.storage.from("pwd-student-avatars").createSignedUrls(paths, 3600)) || []
+    : [];
+  return list.map((p) => {
+    const path = rows.find((r) => r.user_id === p.user_id)?.avatar_path;
+    return { ...p, avatar_url: (path && signed.find((x) => x.path === path)?.signedUrl) || "" };
+  });
 }
 async function message(ctx: Context, channel: string, id: number) {
   const m = checked(
@@ -44,6 +64,10 @@ export async function GET(request: Request) {
     const q = new URL(request.url).searchParams,
       course = z.uuid().parse(q.get("course")),
       channelId = q.get("channel");
+    if (q.has("file") && q.get("view") === "1")
+      return json(
+        await communityFileUrl(request, course, z.uuid().parse(channelId), z.uuid().parse(q.get("file"))),
+      );
     if (q.has("file"))
       return await downloadCommunityFile(
         request,
@@ -186,7 +210,7 @@ export async function GET(request: Request) {
         messages,
         has_more: rows.length === 50,
         channel,
-        people: roster,
+        people: await withAvatars(ctx, roster as Person[]),
         pinned: checked(pinned),
         reports: checked(reports),
         members: checked(members)!.map((m) => m.user_id),
@@ -232,6 +256,18 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const q = new URL(request.url).searchParams;
+    if (q.get("action") === "media")
+      return json(
+        await createMediaUpload(
+          request,
+          z.uuid().parse(q.get("course")),
+          z.uuid().parse(q.get("channel")),
+          await readJson(
+            request,
+            z.object({ name: z.string().min(1).max(200), mime: z.string().max(60), size: z.number().int().positive() }),
+          ),
+        ),
+      );
     if (q.get("action") === "upload")
       return json({
         file: await uploadCommunityFile(
@@ -315,7 +351,7 @@ export async function POST(request: Request) {
           .maybeSingle(),
       );
       if (f) {
-        checked(await db.storage.from("pwd-community-files").remove([f.path]));
+        checked(await db.storage.from(bucketFor(f.path)).remove([f.path]));
       }
       return json({ success: true });
     }
@@ -376,6 +412,7 @@ export async function POST(request: Request) {
           : chosen;
         if (chosen?.deleted || reply?.deleted)
           throw new HttpError(400, "Choose a reply that has not been removed.");
+        await verifyMedia(db, input.files, instructor);
         if (input.files.length) {
           const existing = checked(await db.from("pwd_lms_messages").select("id,channel_id").eq("user_id", user.id).eq("client_id", input.client_id).maybeSingle());
           if (existing?.channel_id === channel.id) return json({ success: true });

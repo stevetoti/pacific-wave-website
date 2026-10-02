@@ -89,7 +89,8 @@ export async function POST(request: Request) {
       ["pwd-training-proofs", removed.proofs],
       ["pwd-mentorship-recordings", removed.recordings],
       ["pwd-student-avatars", removed.avatars],
-      ["pwd-community-files", removed.chat_files],
+      ["pwd-community-files", removed.chat_files?.filter((x) => !x.startsWith("media/"))],
+      ["pwd-community-media", removed.chat_files?.filter((x) => x.startsWith("media/"))],
     ];
     for (const [bucket, paths] of buckets)
       if (paths?.length) {

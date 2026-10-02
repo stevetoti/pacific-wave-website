@@ -17,11 +17,22 @@ import {
   Search,
   Pin,
   ArrowLeft,
+  ImagePlus,
+  Video,
+  Music,
+  Megaphone,
+  X,
+  Youtube,
 } from "lucide-react";
 import { authFetch } from "@/lib/auth-fetch";
+import { supabase } from "@/lib/supabase";
+import { MediaView, VoiceRecorder, YouTubeEmbed } from "./CommunityMedia";
 import {
   reactions,
   COMMUNITY_FILE_LIMIT,
+  MEDIA_TYPES,
+  fileKind,
+  youtubeId,
   mentionPattern,
   type ChatChannel,
   type ChatMessage,
@@ -127,7 +138,10 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
       null,
     ),
     [memberIds, setMemberIds] = useState<string[]>([]),
-    [savedMembers, setSavedMembers] = useState<string[]>([]);
+    [savedMembers, setSavedMembers] = useState<string[]>([]),
+    [showPeople, setShowPeople] = useState(false),
+    [headline, setHeadline] = useState(""),
+    [uploading, setUploading] = useState("");
   const editorRef = useRef<HTMLFormElement>(null),
     reportRef = useRef<HTMLFormElement>(null);
   useEffect(() => {
@@ -368,6 +382,43 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
     setPersonSearch("");
     draftId.current = crypto.randomUUID();
   }
+  // Photos, PDFs and text go through the server (photos are optimised); video and audio upload straight to private storage.
+  async function attach(file: File) {
+    if (files.length >= 3) throw Error("Add up to 3 attachments per message.");
+    const mime = file.type || "application/octet-stream";
+    setUploading(file.name);
+    try {
+      if (MEDIA_TYPES[mime]) {
+        const d = await api(`?${new URLSearchParams({ action: "media", course: courseId, channel: selected })}`, { name: file.name, mime, size: file.size });
+        const { error: uploadError } = await supabase.storage
+          .from("pwd-community-media")
+          .uploadToSignedUrl(d.path, d.token, file, { contentType: mime });
+        if (uploadError) throw Error("Upload failed. Please check your connection and try again.");
+        setFiles((old) => [...old, d.file]);
+        return;
+      }
+      if (file.size > COMMUNITY_FILE_LIMIT) throw Error("Choose a photo or document smaller than 4 MB.");
+      const r = await authFetch(
+        `/api/lms-community?${new URLSearchParams({ action: "upload", course: courseId, channel: selected, name: file.name })}`,
+        { method: "POST", headers: { "Content-Type": mime }, body: file },
+      );
+      const d = await r.json();
+      if (!r.ok) throw Error(d.error);
+      setFiles((old) => [...old, d.file]);
+    } finally {
+      setUploading("");
+    }
+  }
+  function pickFile(accept: string) {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = accept;
+    input.onchange = () => {
+      const file = input.files?.[0];
+      if (file) void run(() => attach(file));
+    };
+    input.click();
+  }
   async function download(file: ChatFile) {
     const r = await authFetch(
       `/api/lms-community?${new URLSearchParams({ course: courseId, channel: selected, file: file.id })}`,
@@ -383,6 +434,228 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
+  function renderComposer() {
+    if (!active) return null;
+    if (!canPost && active.announcements && !active.archived)
+      return (
+        <p className="cm-readonly">
+          <Megaphone size={15} /> Announcements from your instructors. Questions? Ask in the Course lounge.
+        </p>
+      );
+    return (
+canPost ? (
+                <form
+                  className="lms-message-compose"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!text.trim()) return;
+                    void run(async () => {
+                      await api(
+                        "",
+                        edit
+                          ? {
+                              action: "edit",
+                              course: courseId,
+                              channel: selected,
+                              id: edit.id,
+                              body: text.trim(),
+                            }
+                          : {
+                              action: "send",
+                              course: courseId,
+                              channel: selected,
+                              // Announcement headlines are stored as a first line starting with "# ".
+                              body:
+                                (active.announcements && headline.trim()
+                                  ? `# ${headline.trim().replace(/\n/g, " ")}\n`
+                                  : "") + text.trim(),
+                              client_id: draftId.current,
+                              reply_to: reply?.id || thread,
+                              files: files.map((f) => f.id),
+                            },
+                      );
+                      setText("");
+                      setHeadline("");
+                      if (!edit) {
+                        setFiles([]);
+                        draftFiles.current = [];
+                      }
+                      setReply(null);
+                      setEdit(null);
+                      draftId.current = crypto.randomUUID();
+                      firstFeed.current = true;
+                      await refreshMessages();
+                      await load();
+                      setNotice(edit ? "Message updated." : active.announcements ? "Announcement posted. Students have been notified." : "Message sent.");
+                    });
+                  }}
+                >
+                  {(reply || edit) && (
+                    <div className="chat-composing-context">
+                      <span>
+                        {edit
+                          ? "Editing your message"
+                          : `Replying to ${reply?.author_name}`}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setReply(null);
+                          if (edit) setText("");
+                          setEdit(null);
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                  {active.announcements && !edit ? (
+                    <div className="cm-announce-head">
+                      <strong><Megaphone size={18} /> New announcement</strong>
+                      <small>Every student in the course is notified in the app and by email.</small>
+                      <input
+                        aria-label="Announcement headline"
+                        value={headline}
+                        maxLength={120}
+                        disabled={busy}
+                        onChange={(e) => setHeadline(e.target.value)}
+                        placeholder="Headline (optional), e.g. Class moves to 4pm on Thursday"
+                      />
+                    </div>
+                  ) : (
+                    <label htmlFor={`message-${courseId}`}>
+                      {edit ? "Edit message" : `Message ${roomTitle(active)}`}
+                    </label>
+                  )}
+                  <textarea
+                    id={`message-${courseId}`}
+                    maxLength={2000}
+                    required
+                    value={text}
+                    disabled={busy}
+                    onChange={(e) => {
+                      setText(e.target.value);
+                      draftId.current = crypto.randomUUID();
+                    }}
+                    placeholder={
+                      active.announcements
+                        ? "Write your announcement… type @ to tag a student"
+                        : "Write a message… type @ to tag a student or instructor"
+                    }
+                  />
+                  {(picker || mentionQuery) && (
+                    <div
+                      className="chat-mention-picker"
+                      aria-label="Tag a participant"
+                    >
+                      {picker && (
+                        <input
+                          aria-label="Find a person to tag"
+                          value={personSearch}
+                          onChange={(e) => setPersonSearch(e.target.value)}
+                          placeholder="Find a participant…"
+                        />
+                      )}
+                      {matches.map((p) => (
+                        <button
+                          type="button"
+                          key={p.user_id}
+                          onClick={() => tag(p)}
+                        >
+                          {p.name}
+                          {p.instructor && <small>Instructor</small>}
+                        </button>
+                      ))}
+                      {!matches.length && (
+                        <p>No matching participants in this conversation.</p>
+                      )}
+                    </div>
+                  )}
+                  {!!files.length && (
+                    <div className="chat-files">
+                      {files.map((f) => (
+                        <div className="chat-file" key={f.id}>
+                          {fileKind(f.mime) === "image" ? <ImagePlus size={15} /> : fileKind(f.mime) === "video" ? <Video size={15} /> : fileKind(f.mime) === "audio" ? <Music size={15} /> : <Paperclip size={15} />}
+                          {f.name}
+                          <button
+                            type="button"
+                            disabled={busy}
+                            aria-label={`Remove ${f.name}`}
+                            onClick={() =>
+                              run(async () => {
+                                await api("", {
+                                  action: "discard_file",
+                                  course: courseId,
+                                  channel: selected,
+                                  file_id: f.id,
+                                });
+                                setFiles((old) =>
+                                  old.filter((x) => x.id !== f.id),
+                                );
+                              })
+                            }
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className="chat-compose-tools">
+                    <div>
+                      <button
+                        type="button"
+                        className="lms-text"
+                        aria-label="Tag a student or instructor"
+                        onClick={() => setPicker(!picker)}
+                      >
+                        <AtSign size={18} /> Tag someone
+                      </button>
+                      {!edit && (
+                        <>
+                          <button type="button" className="lms-text" disabled={busy || files.length >= 3} onClick={() => pickFile("image/jpeg,image/png,image/webp,application/pdf,text/plain")}>
+                            <ImagePlus size={18} /> {active.announcements ? "Banner image or file" : "Photo or file"}
+                          </button>
+                          <button type="button" className="lms-text" disabled={busy || files.length >= 3} onClick={() => pickFile("video/mp4,video/webm,video/quicktime")}>
+                            <Video size={18} /> Video
+                          </button>
+                          <button type="button" className="lms-text" disabled={busy || files.length >= 3} onClick={() => pickFile("audio/mpeg,audio/mp4,audio/x-m4a,audio/aac,audio/webm,audio/ogg,audio/wav")}>
+                            <Music size={18} /> Audio
+                          </button>
+                          <VoiceRecorder disabled={busy || files.length >= 3} onRecorded={(file) => void run(() => attach(file))} />
+                        </>
+                      )}
+                    </div>
+                    <button
+                      className="lms-button"
+                      disabled={busy || !text.trim()}
+                    >
+                      <Send size={16} />
+                      {busy
+                        ? "Please wait…"
+                        : edit
+                          ? "Save edit"
+                          : active.announcements
+                            ? "Post announcement"
+                            : "Send message"}
+                    </button>
+                  </div>
+                  {uploading && <p className="cm-uploading">Uploading {uploading}… please keep this page open.</p>}
+                  <small>
+                    <Youtube size={13} /> Paste a YouTube link to show the video · Up to 3 attachments: photos or PDFs (4 MB), audio (25 MB), video ({instructor ? "200" : "50"} MB)
+                  </small>
+                </form>
+              ) : (
+                <p className="lms-notice">
+                  {active.archived
+                    ? "This conversation is archived. You can still read its history."
+                    : active.announcements
+                      ? "Only instructors can post announcements here. Ask questions in the course lounge."
+                      : "The instructor has paused new messages in this conversation."}
+                </p>
+              )
+    );
+  }
   if (loading)
     return (
       <section className="lms-panel">Loading your course community…</section>
@@ -392,21 +665,29 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
       className="lms-community chat-workspace"
       aria-label="Course community"
     >
-      <header className="lms-community-heading">
-        <div>
-          <p className="lms-eyebrow">YOUR LEARNING COMMUNITY</p>
+      <header className="cm-hero">
+        <div className="cm-hero-text">
+          <p className="cm-eyebrow">YOUR LEARNING COMMUNITY</p>
           <h2>
-            <MessageCircle size={25} /> Course conversations
+            <MessageCircle size={26} /> {privateCourse ? "Mentor conversations" : "Course community"}
           </h2>
           <p>
             {privateCourse
               ? "Your private space for questions, project feedback and session plans with your mentor."
-              : "Ask questions, share your work and stay connected with your classmates and instructors."}
+              : "Ask questions, share your work, hear announcements first and stay connected with your classmates and instructors."}
           </p>
+          <div className="cm-hero-stats">
+            <span>{channels.length} {channels.length === 1 ? "room" : "rooms"}</span>
+            {people.length > 0 && (
+              <button type="button" onClick={() => setShowPeople(true)}>
+                <Users size={15} /> {people.length} people in this room
+              </button>
+            )}
+          </div>
         </div>
         {instructor && !privateCourse && (
           <button
-            className="lms-button"
+            className="lms-button cm-hero-button"
             onClick={() => {
               setManage("create");
               setMemberIds([]);
@@ -511,15 +792,19 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
                 <div>
                   <h3>{roomTitle(active)}</h3>
                   <p>{active.description}</p>
-                  <small>
-                    {people.length
-                      ? `${people.length} participants`
-                      : "Loading participants…"}{" "}
-                    ·{" "}
-                    {active.private
-                      ? "Private conversation"
-                      : "Enrolled students & instructors"}
-                  </small>
+                  <button type="button" className="cm-people-button" onClick={() => setShowPeople((v) => !v)} aria-expanded={showPeople}>
+                    <span className="cm-stack" aria-hidden="true">
+                      {people.slice(0, 5).map((p) =>
+                        p.avatar_url ? (
+                          <img key={p.user_id} src={p.avatar_url} alt="" />
+                        ) : (
+                          <span key={p.user_id}>{p.name.slice(0, 1).toUpperCase()}</span>
+                        ),
+                      )}
+                    </span>
+                    {people.length ? `${people.length} people` : "Loading people…"} ·{" "}
+                    {active.private ? "Private conversation" : "Students & instructors"} · <u>{showPeople ? "Hide" : "See everyone"}</u>
+                  </button>
                 </div>
                 {instructor && (
                   <div className="chat-tools">
@@ -543,6 +828,41 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
                   </div>
                 )}
               </header>
+              {showPeople && (
+                <div className="cm-people" aria-label="People in this conversation">
+                  <div className="cm-people-head">
+                    <strong>People in {roomTitle(active)}</strong>
+                    <button type="button" aria-label="Close people list" onClick={() => setShowPeople(false)}><X size={18} /></button>
+                  </div>
+                  <div className="cm-people-list">
+                    {people.map((p) => (
+                      <div key={p.user_id} className="cm-person">
+                        {p.avatar_url ? (
+                          <img src={p.avatar_url} alt="" />
+                        ) : (
+                          <span className="cm-initial">{p.name.slice(0, 1).toUpperCase()}</span>
+                        )}
+                        <span className="cm-person-name">
+                          {p.name}
+                          {p.user_id === userId ? <small>You</small> : p.instructor ? <small className="cm-role">Instructor</small> : <small>Student</small>}
+                        </span>
+                        {p.user_id !== userId && (
+                          <span className="cm-person-actions">
+                            {canPost && (
+                              <button type="button" onClick={() => { tag(p); setShowPeople(false); document.getElementById(`message-${courseId}`)?.focus(); }}>
+                                <AtSign size={14} /> Mention
+                              </button>
+                            )}
+                            <a href={`/training-center/dashboard?tab=messages&with=${p.user_id}`}>
+                              <MessageCircle size={14} /> Message
+                            </a>
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <form
                 className="chat-search"
                 onSubmit={(e) => {
@@ -625,6 +945,7 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
                   ))}
                 </details>
               )}
+              {active.announcements && renderComposer()}
               <div
                 ref={scrollBox}
                 onScroll={markRead}
@@ -664,8 +985,8 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
                   </button>
                 )}
                 {!messages.length && !error && (
-                  <div className="lms-empty">
-                    <MessageCircle size={32} />
+                  <div className="lms-empty cm-empty">
+                    {active.announcements ? <Megaphone size={28} /> : <MessageCircle size={28} />}
                     <h3>
                       {search
                         ? "No matching messages"
@@ -674,7 +995,11 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
                     <p>
                       {search
                         ? "Try a different word or clear your search."
-                        : "Introduce yourself, ask a question or share what you’re building."}
+                        : active.announcements
+                          ? canPost
+                            ? "Post your first announcement above. Students are notified straight away."
+                            : "Announcements from your instructors will appear here."
+                          : "Introduce yourself, ask a question or share what you’re building. Use the message box below."}
                     </p>
                   </div>
                 )}
@@ -682,7 +1007,7 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
                   <article
                     id={`chat-message-${m.id}`}
                     key={m.id}
-                    className={`lms-message ${m.user_id === userId ? "own" : ""} ${m.body.includes(`](${userId})`) ? "chat-tagged" : ""}`}
+                    className={`lms-message ${m.user_id === userId ? "own" : ""} ${m.body.includes(`](${userId})`) ? "chat-tagged" : ""} ${active?.announcements ? "cm-announcement" : ""}`}
                   >
                     <div>
                       <span className="chat-avatar" aria-hidden="true">
@@ -712,25 +1037,39 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
                         <span>{plain(m.reply.body).slice(0, 180)}</span>
                       </button>
                     )}
-                    <p>
-                      <Body body={m.body} userId={userId} />
-                    </p>
-                    {!!m.files.length && (
-                      <div className="chat-files">
-                        {m.files.map((f) => (
-                          <button
-                            key={f.id}
-                            className="chat-file"
-                            disabled={busy}
-                            onClick={() => run(() => download(f))}
-                          >
-                            <Paperclip size={15} />
-                            {f.name}
-                            <small>{Math.ceil(f.size / 1024)} KB</small>
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    {(() => {
+                      // "# Headline" first line, banner image first on announcements, then text, media and YouTube.
+                      const nl = m.body.indexOf("\n");
+                      const hasHeading = !m.deleted && m.body.startsWith("# ");
+                      const heading = hasHeading ? m.body.slice(2, nl === -1 ? undefined : nl).trim() : "";
+                      const text = hasHeading ? (nl === -1 ? "" : m.body.slice(nl + 1)) : m.body;
+                      const images = m.files.filter((f) => fileKind(f.mime) === "image");
+                      const banner = active?.announcements ? images[0] : undefined;
+                      const yt = m.deleted ? null : youtubeId(m.body);
+                      return (
+                        <>
+                          {banner && (
+                            <MediaView file={banner} courseId={courseId} channelId={selected} banner onDownload={() => run(() => download(banner))} />
+                          )}
+                          {heading && <h4 className="cm-headline">{heading}</h4>}
+                          {text && (
+                            <p>
+                              <Body body={text} userId={userId} />
+                            </p>
+                          )}
+                          {m.files.filter((f) => f !== banner).length > 0 && (
+                            <div className="cm-media">
+                              {m.files
+                                .filter((f) => f !== banner)
+                                .map((f) => (
+                                  <MediaView key={f.id} file={f} courseId={courseId} channelId={selected} onDownload={() => run(() => download(f))} />
+                                ))}
+                            </div>
+                          )}
+                          {yt && <YouTubeEmbed id={yt} />}
+                        </>
+                      );
+                    })()}
                     {!m.deleted && (
                       <>
                         <div
@@ -822,213 +1161,7 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
                   </article>
                 ))}
               </div>
-              {canPost ? (
-                <form
-                  className="lms-message-compose"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (!text.trim()) return;
-                    void run(async () => {
-                      await api(
-                        "",
-                        edit
-                          ? {
-                              action: "edit",
-                              course: courseId,
-                              channel: selected,
-                              id: edit.id,
-                              body: text.trim(),
-                            }
-                          : {
-                              action: "send",
-                              course: courseId,
-                              channel: selected,
-                              body: text.trim(),
-                              client_id: draftId.current,
-                              reply_to: reply?.id || thread,
-                              files: files.map((f) => f.id),
-                            },
-                      );
-                      setText("");
-                      if (!edit) {
-                        setFiles([]);
-                        draftFiles.current = [];
-                      }
-                      setReply(null);
-                      setEdit(null);
-                      draftId.current = crypto.randomUUID();
-                      firstFeed.current = true;
-                      await refreshMessages();
-                      await load();
-                      setNotice(edit ? "Message updated." : "Message sent.");
-                    });
-                  }}
-                >
-                  {(reply || edit) && (
-                    <div className="chat-composing-context">
-                      <span>
-                        {edit
-                          ? "Editing your message"
-                          : `Replying to ${reply?.author_name}`}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setReply(null);
-                          if (edit) setText("");
-                          setEdit(null);
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  )}
-                  <label htmlFor={`message-${courseId}`}>
-                    {edit ? "Edit message" : `Message ${roomTitle(active)}`}
-                  </label>
-                  <textarea
-                    id={`message-${courseId}`}
-                    maxLength={2000}
-                    required
-                    value={text}
-                    disabled={busy}
-                    onChange={(e) => {
-                      setText(e.target.value);
-                      draftId.current = crypto.randomUUID();
-                    }}
-                    placeholder="Write a message… type @ to tag a student or instructor"
-                  />
-                  {(picker || mentionQuery) && (
-                    <div
-                      className="chat-mention-picker"
-                      aria-label="Tag a participant"
-                    >
-                      {picker && (
-                        <input
-                          aria-label="Find a person to tag"
-                          value={personSearch}
-                          onChange={(e) => setPersonSearch(e.target.value)}
-                          placeholder="Find a participant…"
-                        />
-                      )}
-                      {matches.map((p) => (
-                        <button
-                          type="button"
-                          key={p.user_id}
-                          onClick={() => tag(p)}
-                        >
-                          {p.name}
-                          {p.instructor && <small>Instructor</small>}
-                        </button>
-                      ))}
-                      {!matches.length && (
-                        <p>No matching participants in this conversation.</p>
-                      )}
-                    </div>
-                  )}
-                  {!!files.length && (
-                    <div className="chat-files">
-                      {files.map((f) => (
-                        <div className="chat-file" key={f.id}>
-                          <Paperclip size={15} />
-                          {f.name}
-                          <button
-                            type="button"
-                            disabled={busy}
-                            aria-label={`Remove ${f.name}`}
-                            onClick={() =>
-                              run(async () => {
-                                await api("", {
-                                  action: "discard_file",
-                                  course: courseId,
-                                  channel: selected,
-                                  file_id: f.id,
-                                });
-                                setFiles((old) =>
-                                  old.filter((x) => x.id !== f.id),
-                                );
-                              })
-                            }
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <div className="chat-compose-tools">
-                    <div>
-                      <button
-                        type="button"
-                        className="lms-text"
-                        aria-label="Tag a student or instructor"
-                        onClick={() => setPicker(!picker)}
-                      >
-                        <AtSign size={18} /> Tag someone
-                      </button>
-                      {!edit && (
-                        <label className="chat-upload">
-                          <Paperclip size={18} /> Add file
-                          <input
-                            aria-label="Attach file"
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,application/pdf,text/plain"
-                            disabled={busy || files.length >= 3}
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              e.target.value = "";
-                              if (!file) return;
-                              void run(async () => {
-                                if (file.size > COMMUNITY_FILE_LIMIT)
-                                  throw Error(
-                                    "Choose a file smaller than 4 MB.",
-                                  );
-                                const r = await authFetch(
-                                  `/api/lms-community?${new URLSearchParams({ action: "upload", course: courseId, channel: selected, name: file.name })}`,
-                                  {
-                                    method: "POST",
-                                    headers: {
-                                      "Content-Type":
-                                        file.type || "application/octet-stream",
-                                    },
-                                    body: file,
-                                  },
-                                );
-                                const d = await r.json();
-                                if (!r.ok) throw Error(d.error);
-                                setFiles((old) => [...old, d.file]);
-                              });
-                            }}
-                          />
-                        </label>
-                      )}
-                    </div>
-                    <button
-                      className="lms-button"
-                      disabled={busy || !text.trim()}
-                    >
-                      <Send size={16} />
-                      {busy
-                        ? "Please wait…"
-                        : edit
-                          ? "Save edit"
-                          : "Send message"}
-                    </button>
-                  </div>
-                  <small>
-                    Up to 2,000 characters including tags · 3 files, 4 MB each ·
-                    Photos, PDF or text
-                  </small>
-                </form>
-              ) : (
-                <p className="lms-notice">
-                  {active.archived
-                    ? "This conversation is archived. You can still read its history."
-                    : active.announcements
-                      ? "Only instructors can post announcements here. Ask questions in the course lounge."
-                      : "The instructor has paused new messages in this conversation."}
-                </p>
-              )}
+              {!active.announcements && renderComposer()}
             </>
           ) : (
             <div className="lms-empty">
