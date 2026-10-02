@@ -17,6 +17,7 @@ type Result = { user_id: string; name: string; status: string; error: string };
 export default function ContactDialog({
   recipients,
   smsEnabled,
+  smsCredits,
   live,
   initialTemplate,
   onClose,
@@ -24,6 +25,7 @@ export default function ContactDialog({
 }: {
   recipients: ContactRecipient[];
   smsEnabled: boolean;
+  smsCredits: number | null;
   live: boolean;
   initialTemplate: string;
   onClose: () => void;
@@ -111,6 +113,12 @@ export default function ContactDialog({
         </div>
         {channel === "sms" && !smsEnabled && (
           <p className="sr-warning">SMS isn&apos;t switched on yet. Add your VanuConnect API key to the website settings to start sending SMS. You can still use Email and WhatsApp.</p>
+        )}
+        {channel === "sms" && smsEnabled && smsCredits !== null && (
+          <p className={smsCredits < parts * reachable.length ? "sr-warning" : "sr-help"}>
+            VanuConnect SMS credits left: <strong>{smsCredits}</strong>. This send needs about {parts * reachable.length}.
+            {smsCredits < parts * reachable.length && " Top up in VanuConnect first, or some messages won't be sent."}
+          </p>
         )}
         {!live && channel !== "whatsapp" && (
           <p className="sr-help">Test mode: emails go to a test inbox and SMS are not sent.</p>

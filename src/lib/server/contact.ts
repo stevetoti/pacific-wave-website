@@ -3,7 +3,23 @@ import { trainingTemplate } from "../email/training-template";
 import { normalizePhone } from "../lms/contact-templates";
 export const outreachLive = () =>
   process.env.TRAINING_EMAIL_MODE === "live" && process.env.VERCEL_ENV === "production";
-export const smsConfigured = () => Boolean(process.env.VANUCONNECT_API_KEY);
+// Accept either env name (the owner's local file uses PWD_VANUCONNECT_SMS_API_KEY).
+const smsKey = () => process.env.VANUCONNECT_API_KEY || process.env.PWD_VANUCONNECT_SMS_API_KEY || "";
+export const smsConfigured = () => Boolean(smsKey());
+// Remaining VanuConnect SMS credits (null if unavailable). Read-only call; sends nothing.
+export async function smsCredits(): Promise<number | null> {
+  if (!smsConfigured()) return null;
+  try {
+    const r = await fetch("https://zqxcrvjsnunjuelmrydm.supabase.co/functions/v1/check-balance-api", {
+      headers: { Authorization: `Bearer ${smsKey()}` },
+      signal: AbortSignal.timeout(8000),
+    });
+    const d = await r.json().catch(() => null);
+    return r.ok && typeof d?.credits === "number" ? d.credits : null;
+  } catch {
+    return null;
+  }
+}
 type Result = { status: "sent" | "test_sent" | "failed" | "skipped"; provider_id: string; error: string };
 // Branded email from the Training Centre; replies go to Stephen.
 export async function sendOutreachEmail(to: string, subject: string, body: string, action: string, url: string): Promise<Result> {
@@ -42,7 +58,7 @@ export async function sendOutreachSms(phone: string, text: string): Promise<Resu
       {
         method: "POST",
         signal: AbortSignal.timeout(15000),
-        headers: { Authorization: `Bearer ${process.env.VANUCONNECT_API_KEY}`, "Content-Type": "application/json" },
+        headers: { Authorization: `Bearer ${smsKey()}`, "Content-Type": "application/json" },
         body: JSON.stringify({
           phone_number: to,
           message: text,
@@ -52,7 +68,10 @@ export async function sendOutreachSms(phone: string, text: string): Promise<Resu
       },
     );
     const data = await response.json().catch(() => null);
-    if (!response.ok) return { status: "failed", provider_id: "", error: String(data?.error || `SMS provider error (${response.status})`).slice(0, 200) };
+    if (!response.ok) {
+      const reason = response.status === 402 ? "Not enough SMS credits. Top up in VanuConnect." : response.status === 403 && data?.code === "OPTED_OUT" ? "This person has opted out of SMS." : String(data?.error || `SMS provider error (${response.status})`);
+      return { status: "failed", provider_id: "", error: reason.slice(0, 200) };
+    }
     return { status: "sent", provider_id: String(data?.message_id || data?.provider_message_id || ""), error: "" };
   } catch (e) {
     return { status: "failed", provider_id: "", error: e instanceof Error ? e.message.slice(0, 200) : "SMS failed" };

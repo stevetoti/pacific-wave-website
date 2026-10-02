@@ -4,7 +4,7 @@ import { authorize } from "@/lib/server/auth";
 import { checked } from "@/lib/server/lms";
 import { apiError, readJson } from "@/lib/server/http";
 import { rateLimit } from "@/lib/server/rate-limit";
-import { outreachLive, sendOutreachEmail, sendOutreachSms, smsConfigured } from "@/lib/server/contact";
+import { outreachLive, sendOutreachEmail, sendOutreachSms, smsConfigured, smsCredits } from "@/lib/server/contact";
 import { contactTemplates, fillTemplate } from "@/lib/lms/contact-templates";
 import { money, paymentReference } from "@/lib/lms/types";
 export const dynamic = "force-dynamic";
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     ) || [];
     const latest: Record<string, (typeof rows)[number]> = {};
     for (const r of rows) if (!latest[r.user_id] && r.status !== "failed") latest[r.user_id] = r;
-    return json({ sms_enabled: smsConfigured(), live: outreachLive(), latest });
+    return json({ sms_enabled: smsConfigured(), sms_credits: await smsCredits(), live: outreachLive(), latest });
   } catch (e) {
     return apiError(e, "lms-contact/get");
   }

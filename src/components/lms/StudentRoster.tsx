@@ -42,7 +42,7 @@ export default function StudentRoster({
   const [problem, setProblem] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
   const [contact, setContact] = useState<{ recipients: ContactRecipient[]; template: string } | null>(null);
-  const [outreach, setOutreach] = useState<{ sms_enabled: boolean; live: boolean; latest: Record<string, { channel: string; created_at: string; template: string }> }>({ sms_enabled: false, live: false, latest: {} });
+  const [outreach, setOutreach] = useState<{ sms_enabled: boolean; sms_credits: number | null; live: boolean; latest: Record<string, { channel: string; created_at: string; template: string }> }>({ sms_enabled: false, sms_credits: null, live: false, latest: {} });
   const loadOutreach = () =>
     authFetch("/api/lms-contact")
       .then(async (r) => r.ok && setOutreach(await r.json()))
@@ -161,6 +161,7 @@ export default function StudentRoster({
         <ContactDialog
           recipients={contact.recipients}
           smsEnabled={outreach.sms_enabled}
+          smsCredits={outreach.sms_credits}
           live={outreach.live}
           initialTemplate={contact.template}
           onClose={() => setContact(null)}
