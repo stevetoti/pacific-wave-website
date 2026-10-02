@@ -617,3 +617,4 @@ Owner requests full session-upload backend ready for after workshop. Auditing ex
 - Owner added `PWD_VANUCONNECT_SMS_API_KEY` to the main checkout's `.env.local`. Verified read-only via `check-balance-api`: key "PWD Vanuconnect SMS API", account Pacific Wave Digital, SMS + WhatsApp permissions, **only 2 credits** (free plan).
 - Code accepts `VANUCONNECT_API_KEY` or `PWD_VANUCONNECT_SMS_API_KEY`. Vercel production env `VANUCONNECT_API_KEY` added (piped from the file, never printed). No `VANUCONNECT_SENDER_ID` set → VanuConnect profile default sender.
 - Contact dialog shows remaining SMS credits and warns when a send needs more; clearer errors for 402 (no credits) and opted-out numbers.
+- Released ff66b77 → dpl_B9u5fxLkkwwE8VQFLjuzt6XEphEK. Live check with a temporary admin (deleted afterwards): `/api/lms-contact` → sms_enabled true, sms_credits 2, live true. No SMS sent (credits preserved). Community upgrade 670654b deployed in the same window.

@@ -157,5 +157,6 @@
 - [x] Prepare BLP session upload administration. — [Codex] 2026-10-01: nine dated sessions ready, upload guide/status indicators, real private upload/playback/authorization tests passed; no test videos attached to BLP.
 
 ## 2026-10-03 — [Claude Code] Student outreach
-- [ ] Owner: create a VanuConnect API key (Settings → API keys, SMS permission, PWD account with credits) and add `VANUCONNECT_API_KEY` (+ optional `VANUCONNECT_SENDER_ID`) to Vercel production env, then redeploy — SMS in Students → Contact switches on automatically.
+- [x] VanuConnect key added to Vercel production — [Claude Code] 2026-10-03: SMS live.
+- [ ] Owner: top up VanuConnect SMS credits (2 left on 2026-10-03; a payment reminder uses ~2 credits).
 - [ ] Optional later: automatic WhatsApp sending through VanuConnect/BulkGate WhatsApp channel (needs approved WhatsApp Business templates); today WhatsApp opens prefilled on the owner's phone.
