@@ -19,7 +19,7 @@ interface NavItem {
 const adminNav: NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: '📊', page: 'dashboard' },
   { href: '/admin/submissions', label: 'Submissions', icon: '📥', page: 'settings' },
-  { href: '/admin/training-center', label: 'Training centre LMS', icon: '📚', page: 'settings' },
+  { href: '/admin/training-center', label: 'Training centre (Students)', icon: '📚', page: 'settings' },
   { href: '/admin/training-center/registrations', label: 'Registrations & payments', icon: '🎓', page: 'settings' },
   { href: '/admin/training-center/community', label: 'Course communication', icon: '💬', page: 'settings' },
   { href: '/admin/training', label: 'Earlier training enquiries', icon: '📋', page: 'settings' },

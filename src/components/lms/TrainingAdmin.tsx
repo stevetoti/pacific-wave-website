@@ -8,6 +8,7 @@ import EmailCampaigns from "./EmailCampaigns";
 import CourseCommunity from "./CourseCommunity";
 import AffiliateAdmin from "./AffiliateAdmin";
 import InstructorAdmin from "./InstructorAdmin";
+import StudentRoster from "./StudentRoster";
 import InstructorProfileForm from "./InstructorProfileForm";
 import MessagesCenter from "./MessagesCenter";
 import NotificationBell from "./NotificationBell";
@@ -35,35 +36,27 @@ const emptyCourse = {
   published: false,
   enrollment_open: true,
 };
-const adminTabs = [
-  "courses",
-  "lessons",
-  "instructors",
-  "access",
-  "coupons",
-  "affiliates",
-  "grading",
-  "community",
-  "reports",
-  "campaigns",
-  "emails",
-  "payments",
-  "banks",
+// Admin tabs grouped by job so the right screen is easy to find.
+const adminGroups: [string, string[]][] = [
+  ["People", ["students", "instructors", "affiliates", "access"]],
+  ["Courses & content", ["courses", "lessons", "grading"]],
+  ["Communication", ["community", "reports", "campaigns", "emails"]],
+  ["Money", ["payments", "coupons", "banks"]],
 ];
 // Instructors get only the teaching tabs, scoped server-side to their assigned courses.
 const teachTabs = ["lessons", "students", "grading", "community", "messages", "profile"];
 const tabLabel: Record<string, string> = {
   payments: "Registrations & payments",
   community: "Course communication",
-  students: "My students",
+  students: "Students",
   profile: "My instructor profile",
   reports: "Message reports",
 };
 export default function TrainingAdmin({
-  initialTab = "courses",
+  initialTab = "students",
   mode = "admin",
 }: {
-  initialTab?: "courses" | "payments" | "community" | "affiliates" | "instructors" | "lessons";
+  initialTab?: "students" | "courses" | "payments" | "community" | "affiliates" | "instructors" | "lessons";
   mode?: "admin" | "teach";
 }) {
   const teaching = mode === "teach";
@@ -167,19 +160,52 @@ export default function TrainingAdmin({
             View student experience →
           </Link>
         )}
-        <nav className="lms-admin-tabs" aria-label="Training admin sections">
-          {(teaching ? teachTabs : adminTabs).map((t) => (
-            <button
-              key={t}
-              onClick={() => {
-                setTab(t);
-                if (t === "emails")
-                  loadEmailLogs().catch((e) => setError(e.message));
+        {!teaching && (
+          <label className="lms-admin-jump">
+            Go to
+            <select
+              value={tab}
+              onChange={(e) => {
+                setTab(e.target.value);
+                if (e.target.value === "emails")
+                  loadEmailLogs().catch((err) => setError(err.message));
               }}
-              className={tab === t ? "selected" : ""}
             >
-              {tabLabel[t] || t[0].toUpperCase() + t.slice(1)}
-            </button>
+              {adminGroups.map(([group, tabs]) => (
+                <optgroup key={group} label={group}>
+                  {tabs.map((t) => (
+                    <option key={t} value={t}>
+                      {tabLabel[t] || t[0].toUpperCase() + t.slice(1)}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </label>
+        )}
+        <nav className={`lms-admin-tabs ${teaching ? "" : "grouped"}`} aria-label="Training admin sections">
+          {(teaching ? [["", teachTabs] as [string, string[]]] : adminGroups).map(([group, tabs]) => (
+            <div key={group || "teach"} className="lms-admin-tab-group">
+              {group && <span className="lms-admin-tab-label">{group}</span>}
+              {tabs.map((t) => (
+                <button
+                  key={t}
+                  onClick={() => {
+                    setTab(t);
+                    if (t === "emails")
+                      loadEmailLogs().catch((e) => setError(e.message));
+                  }}
+                  className={tab === t ? "selected" : ""}
+                >
+                  {tabLabel[t] || t[0].toUpperCase() + t.slice(1)}
+                  {t === "students" && !teaching && orders.some((o) => o.status === "review") && (
+                    <span className="lms-tab-dot" aria-label="Payment proofs to check">
+                      {orders.filter((o) => o.status === "review").length}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
           ))}
         </nav>
         {error && (
@@ -201,6 +227,9 @@ export default function TrainingAdmin({
         {tab === "profile" && teaching && <InstructorProfileForm />}
         {tab === "messages" && teaching && <div className="student-dashboard-embed"><MessagesCenter /></div>}
         {tab === "reports" && !teaching && <MessageReports />}
+        {tab === "students" && !teaching && (
+          <StudentRoster orders={orders} courses={courses} busy={busy} save={save} />
+        )}
         {tab === "students" && teaching && (
           <section className="lms-panel">
             <h2>My students</h2>
