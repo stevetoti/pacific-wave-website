@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { AlertCircle, CheckCircle2, Clock3, FileText, Mail, MessageCircle, Phone, Search, Trash2, UserPlus, XCircle } from "lucide-react";
+import { AlertCircle, BellRing, CheckCircle2, Clock3, FileText, MessageCircle, Search, Send, Trash2, UserPlus, XCircle } from "lucide-react";
 import { authFetch } from "@/lib/auth-fetch";
+import ContactDialog, { type ContactRecipient } from "./ContactDialog";
 import { money, paymentReference, type Course, type Order } from "@/lib/lms/types";
 type Account = { user_id: string; email: string; name: string; phone: string; city: string; created_at: string; last_sign_in_at: string | null; role: string };
 type Group = "all" | "enrolled" | "review" | "unpaid" | "other";
@@ -19,10 +20,6 @@ const statusInfo: Record<string, { label: string; group: Group; tone: string }> 
 const ago = (iso: string) => {
   const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
   return days < 1 ? "Today" : days === 1 ? "Yesterday" : days < 30 ? `${days} days ago` : new Date(iso).toLocaleDateString();
-};
-const whatsapp = (phone: string) => {
-  const digits = phone.replace(/\D/g, "");
-  return digits.length >= 7 ? `https://wa.me/${digits.length <= 7 ? "678" + digits : digits}` : "";
 };
 export default function StudentRoster({
   orders,
@@ -43,6 +40,48 @@ export default function StudentRoster({
   const [deleting, setDeleting] = useState(false);
   const [notice, setNotice] = useState("");
   const [problem, setProblem] = useState("");
+  const [selected, setSelected] = useState<string[]>([]);
+  const [contact, setContact] = useState<{ recipients: ContactRecipient[]; template: string } | null>(null);
+  const [outreach, setOutreach] = useState<{ sms_enabled: boolean; live: boolean; latest: Record<string, { channel: string; created_at: string; template: string }> }>({ sms_enabled: false, live: false, latest: {} });
+  const loadOutreach = () =>
+    authFetch("/api/lms-contact")
+      .then(async (r) => r.ok && setOutreach(await r.json()))
+      .catch(() => {});
+  useEffect(() => {
+    loadOutreach();
+  }, []);
+  const origin = typeof window === "undefined" ? "pacificwavedigital.com" : window.location.host;
+  // Message details for one registration (or an account with no course).
+  const fromOrder = (o: Order): ContactRecipient => {
+    const c = courses.find((x) => x.id === o.course_id);
+    return {
+      user_id: o.user_id,
+      order_id: o.id,
+      name: o.name,
+      email: o.email,
+      phone: o.phone,
+      vars: {
+        first_name: o.name.trim().split(/\s+/)[0] || "there",
+        course: c?.title || "our training",
+        amount: money(o.amount, o.currency),
+        reference: paymentReference(o.id),
+        link: ["pending", "rejected"].includes(o.status) && c ? `${origin}/training-center/checkout?course=${c.slug}` : `${origin}/training-center/dashboard`,
+      },
+    };
+  };
+  const fromAccount = (a: Account): ContactRecipient => ({
+    user_id: a.user_id,
+    name: a.name || a.email,
+    email: a.email,
+    phone: a.phone,
+    vars: { first_name: (a.name || "there").split(/\s+/)[0], course: "our training", amount: "", reference: "", link: `${origin}/training-center` },
+  });
+  const lastContact = (userId: string) => {
+    const l = outreach.latest[userId];
+    if (!l) return null;
+    const label = { email: "Emailed", sms: "SMS sent", whatsapp: "WhatsApp opened" }[l.channel] || "Contacted";
+    return `${label} ${ago(l.created_at).toLowerCase()}`;
+  };
   const [course, setCourse] = useState("");
   const [group, setGroup] = useState<Group>("all");
   const [search, setSearch] = useState("");
@@ -118,6 +157,19 @@ export default function StudentRoster({
   return (
     <div className="sr">
       {notice && <p className="lms-notice" role="status">{notice}</p>}
+      {contact && (
+        <ContactDialog
+          recipients={contact.recipients}
+          smsEnabled={outreach.sms_enabled}
+          live={outreach.live}
+          initialTemplate={contact.template}
+          onClose={() => setContact(null)}
+          onSent={() => {
+            loadOutreach();
+            setSelected([]);
+          }}
+        />
+      )}
       {target && (
         <div className="sr-modal" role="dialog" aria-modal="true" aria-labelledby="sr-delete-title">
           <div className="sr-modal-card">
@@ -220,16 +272,39 @@ export default function StudentRoster({
             </button>
           ))}
         </div>
+        <div className="sr-bulk">
+          <label className="sr-check">
+            <input
+              type="checkbox"
+              checked={rows.length > 0 && rows.every((o) => selected.includes(o.id))}
+              onChange={(e) => setSelected(e.target.checked ? rows.map((o) => o.id) : [])}
+            />
+            Select all shown
+          </label>
+          {selected.length > 0 && (
+            <button type="button" className="lms-button sr-bulk-send" onClick={() => setContact({ recipients: orders.filter((o) => selected.includes(o.id)).map(fromOrder), template: "custom" })}>
+              <Send size={15} /> Contact {selected.length} selected
+            </button>
+          )}
+          {orders.filter((o) => (!course || o.course_id === course) && ["pending", "rejected"].includes(o.status)).length > 0 && (
+            <button type="button" className="sr-remind" onClick={() => setContact({ recipients: orders.filter((o) => (!course || o.course_id === course) && ["pending", "rejected"].includes(o.status)).map(fromOrder), template: "payment_reminder" })}>
+              <BellRing size={15} /> Remind everyone who hasn&apos;t paid ({orders.filter((o) => (!course || o.course_id === course) && ["pending", "rejected"].includes(o.status)).length})
+            </button>
+          )}
+        </div>
         <div className="sr-table">
           {rows.map((o) => {
             const s = statusInfo[o.status] || { label: o.status, tone: "muted" };
-            const wa = whatsapp(o.phone);
             return (
-              <article key={o.id} className="sr-row">
+              <article key={o.id} className={`sr-row ${selected.includes(o.id) ? "picked" : ""}`}>
                 <div className="sr-person">
-                  <strong>{o.name}</strong>
+                  <label className="sr-check sr-row-check" aria-label={`Select ${o.name}`}>
+                    <input type="checkbox" checked={selected.includes(o.id)} onChange={(e) => setSelected((x) => (e.target.checked ? [...x, o.id] : x.filter((i) => i !== o.id)))} />
+                    <strong>{o.name}</strong>
+                  </label>
                   <small>{o.email}</small>
                   <small>{o.phone}</small>
+                  {lastContact(o.user_id) && <small className="sr-last"><Send size={11} /> {lastContact(o.user_id)}</small>}
                 </div>
                 <div className="sr-course-cell">
                   <span>{title(o.course_id)}</span>
@@ -249,8 +324,9 @@ export default function StudentRoster({
                 </div>
                 <div className="sr-actions">
                   <a href={`/training-center/dashboard?tab=messages&with=${o.user_id}`} target="_blank" rel="noreferrer" title="Message in the Training Centre"><MessageCircle size={16} /><span>Message</span></a>
-                  <a href={`mailto:${o.email}`} title="Email"><Mail size={16} /><span>Email</span></a>
-                  {wa && <a href={wa} target="_blank" rel="noreferrer" title="WhatsApp"><Phone size={16} /><span>WhatsApp</span></a>}
+                  <button type="button" className="sr-contact" onClick={() => setContact({ recipients: [fromOrder(o)], template: ["pending", "rejected"].includes(o.status) ? "payment_reminder" : statusInfo[o.status]?.group === "enrolled" ? "enrolled_next_steps" : "custom" })}>
+                    <Send size={15} /> Contact
+                  </button>
                   {o.status === "review" && (
                     <>
                       <button type="button" className="sr-approve" disabled={busy} onClick={() => review(o, true)}><CheckCircle2 size={15} /> Approve</button>
@@ -275,7 +351,6 @@ export default function StudentRoster({
         ) : filteredAccounts.length ? (
           <div className="sr-table">
             {filteredAccounts.map((a) => {
-              const wa = whatsapp(a.phone);
               return (
                 <article key={a.user_id} className="sr-row">
                   <div className="sr-person">
@@ -289,10 +364,12 @@ export default function StudentRoster({
                   </div>
                   <div className="sr-status-cell">
                     <small>{a.last_sign_in_at ? `Last signed in ${ago(a.last_sign_in_at)}` : "Never signed in"}</small>
+                    {lastContact(a.user_id) && <small className="sr-last"><Send size={11} /> {lastContact(a.user_id)}</small>}
                   </div>
                   <div className="sr-actions">
-                    <a href={`mailto:${a.email}`} title="Email"><Mail size={16} /><span>Email</span></a>
-                    {wa && <a href={wa} target="_blank" rel="noreferrer" title="WhatsApp"><Phone size={16} /><span>WhatsApp</span></a>}
+                    <button type="button" className="sr-contact" onClick={() => setContact({ recipients: [fromAccount(a)], template: "choose_course" })}>
+                      <Send size={15} /> Contact
+                    </button>
                     <button type="button" className="sr-delete" title="Delete account" aria-label={`Delete ${a.name || a.email}`} onClick={() => askDelete({ name: a.name || a.email, email: a.email, userId: a.user_id })}>
                       <Trash2 size={15} />
                     </button>
