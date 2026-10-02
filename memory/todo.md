@@ -158,5 +158,5 @@
 
 ## 2026-10-03 — [Claude Code] Student outreach
 - [x] VanuConnect key added to Vercel production — [Claude Code] 2026-10-03: SMS live.
-- [ ] Owner: top up VanuConnect SMS credits (2 left on 2026-10-03; a payment reminder uses ~2 credits).
+- [x] Owner topped up VanuConnect SMS credits — [Claude Code] 2026-10-03: 202 credits; test SMS accepted.
 - [ ] Optional later: automatic WhatsApp sending through VanuConnect/BulkGate WhatsApp channel (needs approved WhatsApp Business templates); today WhatsApp opens prefilled on the owner's phone.
