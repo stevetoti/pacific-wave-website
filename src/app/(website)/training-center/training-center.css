@@ -2442,3 +2442,18 @@
 }
 .lms .sr-toolbar select{max-width:100%;min-width:0;}
 @media(max-width:560px){.lms .sr-toolbar select{width:100%;}.sr-list.lms-panel{padding:16px;}}
+/* Admin: delete student / registration */
+.sr-actions .sr-delete{color:#b42318!important;padding:6px 8px;}
+.sr-actions .sr-delete:hover{background:#fdecec;border-color:#f5c2c0;}
+.sr-modal{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.55);display:grid;place-items:center;padding:16px;}
+.sr-modal-card{width:min(520px,100%);max-height:calc(100vh - 32px);overflow-y:auto;background:#fff;border-radius:18px;padding:22px;display:grid;gap:12px;box-shadow:0 24px 60px rgba(15,23,42,.35);}
+.sr-modal-card h3{display:flex;align-items:center;gap:8px;margin:0;color:#b42318;}
+.lms .sr-choice{display:flex;gap:10px;align-items:flex-start;margin:0;padding:12px;border:2px solid #e2e7ef;border-radius:12px;cursor:pointer;font-weight:400;}
+.lms .sr-choice.selected{border-color:#b42318;background:#fff7f7;}
+.lms .sr-choice input{width:auto;margin-top:3px;}
+.sr-choice span{display:grid;gap:3px;}.sr-choice strong{color:#233c6f;}.sr-choice small{color:#586980;font-size:13px;line-height:1.5;}
+.sr-warning{margin:0;padding:10px 12px;border-radius:10px;background:#fff8e6;color:#7a5600;font-size:13px;}
+.lms .sr-type{margin:0;font-weight:400;font-size:14px;color:#3d4c63;}
+.sr-modal-actions{display:flex;justify-content:flex-end;gap:12px;align-items:center;}
+.sr-delete-confirm{display:inline-flex;align-items:center;gap:6px;padding:11px 16px;border-radius:10px;border:0;background:#b42318;color:#fff;font-weight:700;cursor:pointer;}
+.sr-delete-confirm:disabled{opacity:.45;cursor:not-allowed;}

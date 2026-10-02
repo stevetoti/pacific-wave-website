@@ -228,7 +228,7 @@ export default function TrainingAdmin({
         {tab === "messages" && teaching && <div className="student-dashboard-embed"><MessagesCenter /></div>}
         {tab === "reports" && !teaching && <MessageReports />}
         {tab === "students" && !teaching && (
-          <StudentRoster orders={orders} courses={courses} busy={busy} save={save} />
+          <StudentRoster orders={orders} courses={courses} busy={busy} save={save} onChanged={load} />
         )}
         {tab === "students" && teaching && (
           <section className="lms-panel">

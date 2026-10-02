@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { authorize } from "@/lib/server/auth";
 import { checked } from "@/lib/server/lms";
-import { apiError } from "@/lib/server/http";
+import { apiError, HttpError, readJson } from "@/lib/server/http";
+import { reportServerError } from "@/lib/server/report-error";
+import { z } from "zod";
 export const dynamic = "force-dynamic";
 // Admin: Training Centre accounts that exist but have no course registration yet,
 // so a new sign-up is never invisible in the Students tab.
@@ -57,5 +59,51 @@ export async function GET(request: Request) {
     );
   } catch (e) {
     return apiError(e, "lms-students/get");
+  }
+}
+
+const deleteAction = z.discriminatedUnion("action", [
+  z.object({ action: z.literal("delete_registration"), order_id: z.uuid() }),
+  z.object({ action: z.literal("delete_student"), user_id: z.uuid() }),
+]);
+type Removed = { proofs?: string[]; recordings?: string[]; avatars?: string[]; chat_files?: string[] };
+// Admin: permanently delete one registration, or a whole student account (database work is one transaction).
+export async function POST(request: Request) {
+  try {
+    const auth = await authorize(request);
+    if (auth.response) return auth.response;
+    const { db, user } = auth;
+    const input = await readJson(request, deleteAction);
+    const { data, error } =
+      input.action === "delete_registration"
+        ? await db.rpc("pwd_lms_delete_registration", { p_order: input.order_id })
+        : await db.rpc("pwd_lms_delete_student", { p_user: input.user_id });
+    if (error) {
+      // Safeguard messages from the database are shown to the admin as-is.
+      if (/cannot be deleted|not found|admin account|instructor/i.test(error.message)) throw new HttpError(409, error.message);
+      throw error;
+    }
+    const removed = (data || {}) as Removed;
+    // Files live outside the database; remove them after the records are gone. Best effort.
+    const buckets: [string, string[] | undefined][] = [
+      ["pwd-training-proofs", removed.proofs],
+      ["pwd-mentorship-recordings", removed.recordings],
+      ["pwd-student-avatars", removed.avatars],
+      ["pwd-community-files", removed.chat_files],
+    ];
+    for (const [bucket, paths] of buckets)
+      if (paths?.length) {
+        const { error: storageError } = await db.storage.from(bucket).remove(paths);
+        if (storageError) await reportServerError("lms-students/delete-files", storageError);
+      }
+    await db.from("pwd_lms_audit").insert({
+      actor_id: user.id,
+      action: input.action,
+      target_id: input.action === "delete_registration" ? input.order_id : input.user_id,
+    });
+    return NextResponse.json({ success: true }, { headers: { "Cache-Control": "no-store" } });
+  } catch (e) {
+    if (e instanceof z.ZodError) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    return apiError(e, "lms-students/delete");
   }
 }

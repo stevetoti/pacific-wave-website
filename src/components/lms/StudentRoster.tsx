@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { AlertCircle, CheckCircle2, Clock3, FileText, Mail, MessageCircle, Phone, Search, UserPlus, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle2, Clock3, FileText, Mail, MessageCircle, Phone, Search, Trash2, UserPlus, XCircle } from "lucide-react";
 import { authFetch } from "@/lib/auth-fetch";
 import { money, paymentReference, type Course, type Order } from "@/lib/lms/types";
 type Account = { user_id: string; email: string; name: string; phone: string; city: string; created_at: string; last_sign_in_at: string | null; role: string };
 type Group = "all" | "enrolled" | "review" | "unpaid" | "other";
+type DeleteTarget = { name: string; email: string; userId: string; order?: Order };
 // Plain-English status for each registration.
 const statusInfo: Record<string, { label: string; group: Group; tone: string }> = {
   paid: { label: "Enrolled (paid)", group: "enrolled", tone: "ok" },
@@ -28,21 +29,66 @@ export default function StudentRoster({
   courses,
   busy,
   save,
+  onChanged,
 }: {
   orders: Order[];
   courses: Course[];
   busy: boolean;
   save: (body: unknown) => Promise<void>;
+  onChanged: () => Promise<void>;
 }) {
+  const [target, setTarget] = useState<DeleteTarget | null>(null);
+  const [scope, setScope] = useState<"registration" | "account">("registration");
+  const [typed, setTyped] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [problem, setProblem] = useState("");
   const [course, setCourse] = useState("");
   const [group, setGroup] = useState<Group>("all");
   const [search, setSearch] = useState("");
   const [accounts, setAccounts] = useState<Account[] | null>(null);
-  useEffect(() => {
+  const loadAccounts = () =>
     authFetch("/api/lms-students")
       .then(async (r) => (r.ok ? setAccounts((await r.json()).accounts) : setAccounts([])))
       .catch(() => setAccounts([]));
+  useEffect(() => {
+    loadAccounts();
   }, []);
+  const askDelete = (t: DeleteTarget) => {
+    setTarget(t);
+    setScope(t.order ? "registration" : "account");
+    setTyped("");
+    setProblem("");
+  };
+  async function confirmDelete() {
+    if (!target || typed.trim().toUpperCase() !== "DELETE") return;
+    setDeleting(true);
+    setProblem("");
+    try {
+      const r = await authFetch("/api/lms-students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(
+          scope === "registration" && target.order
+            ? { action: "delete_registration", order_id: target.order.id }
+            : { action: "delete_student", user_id: target.userId },
+        ),
+      });
+      const d = await r.json();
+      if (!r.ok) throw Error(d.error || "Delete failed");
+      setNotice(
+        scope === "registration"
+          ? `Deleted ${target.name}'s registration for ${title(target.order!.course_id)}.`
+          : `Deleted ${target.name}'s account and everything linked to it.`,
+      );
+      setTarget(null);
+      await Promise.all([onChanged(), loadAccounts()]);
+    } catch (e) {
+      setProblem(e instanceof Error ? e.message : "Delete failed");
+    } finally {
+      setDeleting(false);
+    }
+  }
   const title = (id: string) => courses.find((c) => c.id === id)?.title || "Course";
   const counts = (list: Order[]) => ({
     enrolled: list.filter((o) => statusInfo[o.status]?.group === "enrolled").length,
@@ -68,8 +114,50 @@ export default function StudentRoster({
     if (approve && !confirm(`Approve ${o.name}'s payment of ${money(o.amount, o.currency)}? Check the deposit in your bank first.`)) return;
     save({ action: "review", id: o.id, status: approve ? "paid" : "rejected", note: note || "" });
   };
+  const otherRegs = target ? orders.filter((o) => o.user_id === target.userId) : [];
   return (
     <div className="sr">
+      {notice && <p className="lms-notice" role="status">{notice}</p>}
+      {target && (
+        <div className="sr-modal" role="dialog" aria-modal="true" aria-labelledby="sr-delete-title">
+          <div className="sr-modal-card">
+            <h3 id="sr-delete-title"><Trash2 size={20} /> Delete {target.name}?</h3>
+            <p className="sr-help">{target.email}</p>
+            {target.order && (
+              <label className={`sr-choice ${scope === "registration" ? "selected" : ""}`}>
+                <input type="radio" name="scope" checked={scope === "registration"} onChange={() => setScope("registration")} />
+                <span>
+                  <strong>Remove this registration only</strong>
+                  <small>{title(target.order.course_id)} · {statusInfo[target.order.status]?.label || target.order.status}. Removes the payment proof, progress and quiz results for this course. Their account stays.</small>
+                </span>
+              </label>
+            )}
+            <label className={`sr-choice ${scope === "account" ? "selected" : ""}`}>
+              <input type="radio" name="scope" checked={scope === "account"} onChange={() => setScope("account")} />
+              <span>
+                <strong>Delete the whole account</strong>
+                <small>
+                  Removes their login, profile, {otherRegs.length || "no"} registration{otherRegs.length === 1 ? "" : "s"}, messages, connections, notifications and uploaded files. They would need to sign up again.
+                </small>
+              </span>
+            </label>
+            {target.order && ["paid", "granted"].includes(target.order.status) && (
+              <p className="sr-warning">This student is enrolled{target.order.status === "paid" && target.order.amount > 0 ? ` and paid ${money(target.order.amount, target.order.currency)}` : ""}. Deleting does not refund any money.</p>
+            )}
+            <label className="sr-type">
+              This cannot be undone. Type <strong>DELETE</strong> to confirm.
+              <input value={typed} onChange={(e) => setTyped(e.target.value)} autoFocus aria-label="Type DELETE to confirm" />
+            </label>
+            {problem && <p className="lms-alert" role="alert">{problem}</p>}
+            <div className="sr-modal-actions">
+              <button type="button" className="lms-text" onClick={() => setTarget(null)} disabled={deleting}>Cancel</button>
+              <button type="button" className="sr-delete-confirm" disabled={deleting || typed.trim().toUpperCase() !== "DELETE"} onClick={confirmDelete}>
+                <Trash2 size={16} /> {deleting ? "Deleting…" : scope === "registration" ? "Delete registration" : "Delete account"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <section className="sr-courses">
         {courses.map((c) => {
           const n = counts(orders.filter((o) => o.course_id === c.id));
@@ -169,6 +257,9 @@ export default function StudentRoster({
                       <button type="button" className="sr-reject" disabled={busy} onClick={() => review(o, false)}><XCircle size={15} /> Reject</button>
                     </>
                   )}
+                  <button type="button" className="sr-delete" title="Delete" aria-label={`Delete ${o.name}`} onClick={() => askDelete({ name: o.name, email: o.email, userId: o.user_id, order: o })}>
+                    <Trash2 size={15} />
+                  </button>
                 </div>
               </article>
             );
@@ -202,6 +293,9 @@ export default function StudentRoster({
                   <div className="sr-actions">
                     <a href={`mailto:${a.email}`} title="Email"><Mail size={16} /><span>Email</span></a>
                     {wa && <a href={wa} target="_blank" rel="noreferrer" title="WhatsApp"><Phone size={16} /><span>WhatsApp</span></a>}
+                    <button type="button" className="sr-delete" title="Delete account" aria-label={`Delete ${a.name || a.email}`} onClick={() => askDelete({ name: a.name || a.email, email: a.email, userId: a.user_id })}>
+                      <Trash2 size={15} />
+                    </button>
                   </div>
                 </article>
               );
