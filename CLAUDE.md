@@ -1,5 +1,8 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## 2026-10-03 — [Codex] October workbook
+12-lesson interactive workbook with private revision-checked saving and blank/completed PDF exports implemented and verified. Additive migration applied. See docs/OCTOBER-WORKBOOK.md for sources, privacy and acceptance evidence. Release staging pending. Canonical checkout remains .deployment/training-recovery.
+
 ## Latest release — 2026-10-01 [Codex] Private BLP workshop
 
 Recording administration: Admin → Training centre → Lessons → BLP (or instructor Teaching workspace) shows all nine prepared sessions, upload/save/publish instructions and per-session recording status. Existing private MP4/WebM uploader supports up to 500 MB. Real instructor upload/save/reload and enrolled-student playback verified with isolated fixtures; authorization/unpublish denial verified and fixtures cleaned.

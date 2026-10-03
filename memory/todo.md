@@ -160,3 +160,9 @@
 - [x] VanuConnect key added to Vercel production — [Claude Code] 2026-10-03: SMS live.
 - [x] Owner topped up VanuConnect SMS credits — [Claude Code] 2026-10-03: 202 credits; test SMS accepted.
 - [ ] Optional later: automatic WhatsApp sending through VanuConnect/BulkGate WhatsApp channel (needs approved WhatsApp Business templates); today WhatsApp opens prefilled on the owner's phone.
+
+## 2026-10-03 — [Codex] October digital workbook implementation
+
+Added 12-lesson October workbook source, course component, authenticated save/export API and additive migration. Scope: participant-private answers with optimistic concurrency, blank PDF and workbook-with-answers PDF export. Source content and DOCX master live in Training Hub/Vanuatu October 2026/workbook-v1. Implementation is under verification; no live release claimed yet.
+
+[Codex] 2026-10-03: Workbook verification complete: real multi-user saves, reloads, failures, PDF exports and revoked access pass on desktop/mobile; temporary QA data cleaned. Three focused tests, lint/build and eight public browser checks pass. See docs/OCTOBER-WORKBOOK.md.

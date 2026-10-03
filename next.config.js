@@ -2,6 +2,7 @@
 const nextConfig = {
   agentRules: false,
   outputFileTracingIncludes: {
+    "/api/lms-workbook": ["./resources/october-workbook.pdf", "./resources/workbook-font.ttf", "./public/images/training/pwd-logo.png"],
     "/api/lms-coach": ["./public/images/training/pwd-logo.png"],
     "/api/lms-coach/sessions": ["./public/images/training/pwd-logo.png"],
     "/api/cron/training-campaigns": ["./public/images/training/pwd-logo.png"],

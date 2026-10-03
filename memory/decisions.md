@@ -113,3 +113,7 @@ BLP topics without a linked/uploaded recording display a darkened image with loc
 
 ## 2026-10-01 — [Codex] BLP session recording administration
 Use the existing private recording uploader and shared lesson editor for all nine BLP sessions. Add explicit upload/save/publish instructions and per-session pending/available/draft status; leave shared course enrollment selected for all approved participants. Actual private storage limit verified at 500 MB with MP4/WebM MIME types. Instructor assignment exists; no separate BLP upload subsystem or migration needed.
+
+## 2026-10-03 — [Codex] October digital workbook implementation
+
+Added 12-lesson October workbook source, course component, authenticated save/export API and additive migration. Scope: participant-private answers with optimistic concurrency, blank PDF and workbook-with-answers PDF export. Source content and DOCX master live in Training Hub/Vanuatu October 2026/workbook-v1. Implementation is under verification; no live release claimed yet.

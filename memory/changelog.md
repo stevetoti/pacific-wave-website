@@ -619,3 +619,9 @@ Owner requests full session-upload backend ready for after workshop. Auditing ex
 - Contact dialog shows remaining SMS credits and warns when a send needs more; clearer errors for 402 (no credits) and opted-out numbers.
 - Released ff66b77 → dpl_B9u5fxLkkwwE8VQFLjuzt6XEphEK. Live check with a temporary admin (deleted afterwards): `/api/lms-contact` → sms_enabled true, sms_credits 2, live true. No SMS sent (credits preserved). Community upgrade 670654b deployed in the same window.
 - 2026-10-03 [Claude Code]: owner topped up to 202 credits. Test SMS (92 chars, 1 credit) sent to owner's +678 528 8141 via VanuConnect send-sms-api using the site's request format: 200 success, provider message id returned, 201 credits remaining. Owner to confirm handset delivery.
+
+## 2026-10-03 — [Codex] October digital workbook implementation
+
+Added 12-lesson October workbook source, course component, authenticated save/export API and additive migration. Scope: participant-private answers with optimistic concurrency, blank PDF and workbook-with-answers PDF export. Source content and DOCX master live in Training Hub/Vanuatu October 2026/workbook-v1. Implementation is under verification; no live release claimed yet.
+
+[Codex] 2026-10-03: Workbook verification complete: real multi-user saves, reloads, failures, PDF exports and revoked access pass on desktop/mobile; temporary QA data cleaned. Three focused tests, lint/build and eight public browser checks pass. See docs/OCTOBER-WORKBOOK.md.

@@ -35,6 +35,7 @@ import StudentAccountMenu from "./StudentAccountMenu";
 const CourseCommunity = dynamic(() => import("./CourseCommunity"));
 const StudentCoaches = dynamic(() => import("./coach/StudentCoaches"), { ssr: false });
 import WorkshopResources from "./WorkshopResources";
+const DigitalWorkbook = dynamic(() => import("./DigitalWorkbook"));
 import ProgramDetail from "./ProgramDetail";
 import { blpSlug, blpModules, workshopRecordingPending } from "@/lib/lms/blp-workshop";
 import { programs, mentorshipSlug } from "@/lib/lms/programs";
@@ -1159,6 +1160,7 @@ export default function TrainingCenter({
                       </div>
                     )}
                     {current.slug === blpSlug && ["paid", "granted"].includes(courseOrder?.status || "") && <WorkshopResources />}
+                    {current.slug === "vanuatu-october-2026" && ["paid", "granted"].includes(courseOrder?.status || "") && <DigitalWorkbook key={current.id} courseId={current.id} />}
                     <nav
                       className="lms-admin-tabs"
                       aria-label="Course sections"
