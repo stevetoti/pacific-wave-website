@@ -88,7 +88,8 @@ export default function StudentProfile({
     <div className="sr-modal sp-overlay" role="dialog" aria-modal="true" aria-labelledby="sp-title" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <aside className="sp-panel">
         <header className="sp-head">
-          <div>
+          {student && <span className="sp-avatar" aria-hidden="true">{student.name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() || "").join("")}</span>}
+          <div className="sp-head-text">
             <h3 id="sp-title">{student?.name || "Loading…"}</h3>
             {student && (
               <p>
@@ -102,6 +103,11 @@ export default function StudentProfile({
           <button type="button" className="cd-close" aria-label="Close" onClick={onClose}><X size={22} /></button>
         </header>
         {error && <p className="lms-alert" role="alert">{error}</p>}
+        {!student && !error && (
+          <div className="sp-skeleton" aria-label="Loading student">
+            <span /><span /><span className="tall" /><span className="tall" />
+          </div>
+        )}
         {student && (
           <>
             <div className="sp-actions">

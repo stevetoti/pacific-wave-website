@@ -160,6 +160,7 @@
 - [x] VanuConnect key added to Vercel production — [Claude Code] 2026-10-03: SMS live.
 - [x] Owner topped up VanuConnect SMS credits — [Claude Code] 2026-10-03: 202 credits; test SMS accepted.
 - [x] Mini CRM: per-student contact history, private notes, Contact history tab, instructor outreach to own students — [Claude Code] 2026-10-03.
+- [ ] SMS delivered status — [Claude Code] 2026-10-03: needs VanuConnect work: (1) set BulkGate delivery-report webhook to `webhook-delivery` and verify BulkGate's payload format, (2) add a shared secret to `webhook-delivery` (currently unauthenticated), (3) add `message-status-api` (API-key scoped), then PWD polls it and shows Delivered/Failed in contact history.
 - [ ] Optional later: automatic WhatsApp sending through VanuConnect/BulkGate WhatsApp channel (needs approved WhatsApp Business templates); today WhatsApp opens prefilled on the owner's phone.
 
 ## 2026-10-03 — [Codex] October digital workbook implementation

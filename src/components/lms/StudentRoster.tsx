@@ -18,6 +18,7 @@ const statusInfo: Record<string, { label: string; group: Group; tone: string }> 
   refunded: { label: "Refunded", group: "other", tone: "muted" },
   revoked: { label: "Access removed", group: "other", tone: "muted" },
 };
+const initials = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() || "").join("") || "?";
 const ago = (iso: string) => {
   const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
   return days < 1 ? "Today" : days === 1 ? "Yesterday" : days < 30 ? `${days} days ago` : new Date(iso).toLocaleDateString();
@@ -337,6 +338,7 @@ export default function StudentRoster({
                   <label className="sr-check sr-row-check" aria-label={`Select ${o.name}`}>
                     <input type="checkbox" checked={selected.includes(o.id)} onChange={(e) => setSelected((x) => (e.target.checked ? [...x, o.id] : x.filter((i) => i !== o.id)))} />
                   </label>
+                  <span className={`sr-avatar tone-${(o.name.charCodeAt(0) || 0) % 4}`} aria-hidden="true">{initials(o.name)}</span>
                   <button type="button" className="sr-name" onClick={() => setProfile(o.user_id)} title="Open contact history">{o.name}</button>
                   <small>{o.email}</small>
                   <small>{o.phone}</small>
@@ -390,7 +392,8 @@ export default function StudentRoster({
             {filteredAccounts.map((a) => {
               return (
                 <article key={a.user_id} className="sr-row">
-                  <div className="sr-person">
+                  <div className="sr-person no-check">
+                    <span className={`sr-avatar tone-${((a.name || a.email).charCodeAt(0) || 0) % 4}`} aria-hidden="true">{initials(a.name || a.email)}</span>
                     <button type="button" className="sr-name" onClick={() => setProfile(a.user_id)} title="Open contact history">{a.name || "No name yet"}</button>
                     <small>{a.email}</small>
                     <small>{a.phone}</small>
