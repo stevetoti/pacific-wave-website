@@ -23,3 +23,7 @@ Application commit 6552eef; Vercel staged deployment dpl_HHAz8UH8RKoH2h2ZwAXz9jU
 Stephen explicitly authorised publishing. Promoted application 6552eef as dpl_HHAz8UH8RKoH2h2ZwAXz9jU53UHW; live domain confirmed READY. Eight public desktop/mobile release checks pass. Real live temporary-account verification passes for private saves/reloads, conflicts, identity/RLS denial, failure recovery, PDF downloads and revoked read/write/export access. All temporary QA accounts, orders, answers and email guard removed; no test emails sent. Course URL: https://pacificwavedigital.com/training-center/course/21cb833b-6e9b-4ec2-9aca-a7629dffda8a.
 
 The earlier production-promotion approval blocker is resolved. A separate automatic approval review rejected pushing HEAD to main because this branch mutation can trigger another deployment and was not explicitly authorised. Source commits remain local. Do not push main indirectly; request explicit source-push approval.
+
+## 2026-10-03 — [Codex] Source push authorised
+
+Stephen explicitly authorised pushing the saved workbook source to main. Remote history was checked: main is an ancestor, with no divergent remote changes. Prior source-push approval blocker is resolved. Publishing the already-verified application source and release notes; no new application changes.
