@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { AlertCircle, BellRing, CheckCircle2, Clock3, FileText, MessageCircle, Search, Send, Trash2, UserPlus, XCircle } from "lucide-react";
+import { AlertCircle, BellRing, CheckCircle2, Clock3, FileText, History, MessageCircle, Search, Send, Trash2, UserPlus, XCircle } from "lucide-react";
 import { authFetch } from "@/lib/auth-fetch";
 import ContactDialog, { type ContactRecipient } from "./ContactDialog";
+import StudentProfile from "./StudentProfile";
 import { money, paymentReference, type Course, type Order } from "@/lib/lms/types";
 type Account = { user_id: string; email: string; name: string; phone: string; city: string; created_at: string; last_sign_in_at: string | null; role: string };
 type Group = "all" | "enrolled" | "review" | "unpaid" | "other";
@@ -27,13 +28,27 @@ export default function StudentRoster({
   busy,
   save,
   onChanged,
+  mode = "admin",
 }: {
+  mode?: "admin" | "teach";
   orders: Order[];
   courses: Course[];
   busy: boolean;
   save: (body: unknown) => Promise<void>;
   onChanged: () => Promise<void>;
 }) {
+  const admin = mode === "admin";
+  const [profile, setProfile] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ text: string; userId?: string } | null>(null);
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 9000);
+    return () => clearTimeout(t);
+  }, [toast]);
+  const sent = (summary: string | undefined, userId?: string) => {
+    if (summary) setToast({ text: summary, userId });
+    loadOutreach();
+  };
   const [target, setTarget] = useState<DeleteTarget | null>(null);
   const [scope, setScope] = useState<"registration" | "account">("registration");
   const [typed, setTyped] = useState("");
@@ -63,7 +78,7 @@ export default function StudentRoster({
       vars: {
         first_name: o.name.trim().split(/\s+/)[0] || "there",
         course: c?.title || "our training",
-        amount: money(o.amount, o.currency),
+        amount: admin ? money(o.amount, o.currency) : "",
         reference: paymentReference(o.id),
         link: ["pending", "rejected"].includes(o.status) && c ? `${origin}/training-center/checkout?course=${c.slug}` : `${origin}/training-center/dashboard`,
       },
@@ -91,8 +106,8 @@ export default function StudentRoster({
       .then(async (r) => (r.ok ? setAccounts((await r.json()).accounts) : setAccounts([])))
       .catch(() => setAccounts([]));
   useEffect(() => {
-    loadAccounts();
-  }, []);
+    if (admin) loadAccounts();
+  }, [admin]);
   const askDelete = (t: DeleteTarget) => {
     setTarget(t);
     setScope(t.order ? "registration" : "account");
@@ -165,11 +180,31 @@ export default function StudentRoster({
           live={outreach.live}
           initialTemplate={contact.template}
           onClose={() => setContact(null)}
-          onSent={() => {
-            loadOutreach();
+          onSent={(summary) => {
+            sent(summary, contact.recipients.length === 1 ? contact.recipients[0].user_id : undefined);
             setSelected([]);
           }}
         />
+      )}
+      {profile && (
+        <StudentProfile
+          userId={profile}
+          smsEnabled={outreach.sms_enabled}
+          smsCredits={outreach.sms_credits}
+          live={outreach.live}
+          onClose={() => setProfile(null)}
+          onChanged={(summary) => sent(summary)}
+        />
+      )}
+      {toast && (
+        <div className="sr-toast" role="status" aria-live="polite">
+          <CheckCircle2 size={18} />
+          <span>{toast.text}</span>
+          {toast.userId && (
+            <button type="button" onClick={() => { setProfile(toast.userId!); setToast(null); }}>View history</button>
+          )}
+          <button type="button" className="sr-toast-close" aria-label="Dismiss" onClick={() => setToast(null)}><XCircle size={16} /></button>
+        </div>
       )}
       {target && (
         <div className="sr-modal" role="dialog" aria-modal="true" aria-labelledby="sr-delete-title">
@@ -229,7 +264,7 @@ export default function StudentRoster({
           );
         })}
       </section>
-      {toReview.length > 0 && (
+      {admin && toReview.length > 0 && (
         <section className="sr-attention">
           <h3><AlertCircle size={20} /> Needs your attention: {toReview.length} payment {toReview.length === 1 ? "proof" : "proofs"} to check</h3>
           {toReview.map((o) => (
@@ -287,7 +322,7 @@ export default function StudentRoster({
               <Send size={15} /> Contact {selected.length} selected
             </button>
           )}
-          {orders.filter((o) => (!course || o.course_id === course) && ["pending", "rejected"].includes(o.status)).length > 0 && (
+          {admin && orders.filter((o) => (!course || o.course_id === course) && ["pending", "rejected"].includes(o.status)).length > 0 && (
             <button type="button" className="sr-remind" onClick={() => setContact({ recipients: orders.filter((o) => (!course || o.course_id === course) && ["pending", "rejected"].includes(o.status)).map(fromOrder), template: "payment_reminder" })}>
               <BellRing size={15} /> Remind everyone who hasn&apos;t paid ({orders.filter((o) => (!course || o.course_id === course) && ["pending", "rejected"].includes(o.status)).length})
             </button>
@@ -301,8 +336,8 @@ export default function StudentRoster({
                 <div className="sr-person">
                   <label className="sr-check sr-row-check" aria-label={`Select ${o.name}`}>
                     <input type="checkbox" checked={selected.includes(o.id)} onChange={(e) => setSelected((x) => (e.target.checked ? [...x, o.id] : x.filter((i) => i !== o.id)))} />
-                    <strong>{o.name}</strong>
                   </label>
+                  <button type="button" className="sr-name" onClick={() => setProfile(o.user_id)} title="Open contact history">{o.name}</button>
                   <small>{o.email}</small>
                   <small>{o.phone}</small>
                   {lastContact(o.user_id) && <small className="sr-last"><Send size={11} /> {lastContact(o.user_id)}</small>}
@@ -316,27 +351,28 @@ export default function StudentRoster({
                     {s.tone === "ok" ? <CheckCircle2 size={14} /> : s.tone === "warn" ? <Clock3 size={14} /> : null}
                     {s.label}
                   </span>
-                  <small>
+                  {admin && <small>
                     {money(o.amount, o.currency)}
                     {o.coupon_code ? ` · coupon ${o.coupon_code}` : ""}
                     {o.method ? ` · ${o.method === "bank" ? `bank${o.bank ? ` (${o.bank})` : ""}` : o.method}` : ""}
-                  </small>
-                  <small>Ref {paymentReference(o.id)}</small>
+                  </small>}
+                  {admin && <small>Ref {paymentReference(o.id)}</small>}
                 </div>
                 <div className="sr-actions">
                   <a href={`/training-center/dashboard?tab=messages&with=${o.user_id}`} target="_blank" rel="noreferrer" title="Message in the Training Centre"><MessageCircle size={16} /><span>Message</span></a>
+                  <button type="button" className="lms-text sr-history" onClick={() => setProfile(o.user_id)}><History size={15} /><span>History</span></button>
                   <button type="button" className="sr-contact" onClick={() => setContact({ recipients: [fromOrder(o)], template: ["pending", "rejected"].includes(o.status) ? "payment_reminder" : statusInfo[o.status]?.group === "enrolled" ? "enrolled_next_steps" : "custom" })}>
                     <Send size={15} /> Contact
                   </button>
-                  {o.status === "review" && (
+                  {admin && o.status === "review" && (
                     <>
                       <button type="button" className="sr-approve" disabled={busy} onClick={() => review(o, true)}><CheckCircle2 size={15} /> Approve</button>
                       <button type="button" className="sr-reject" disabled={busy} onClick={() => review(o, false)}><XCircle size={15} /> Reject</button>
                     </>
                   )}
-                  <button type="button" className="sr-delete" title="Delete" aria-label={`Delete ${o.name}`} onClick={() => askDelete({ name: o.name, email: o.email, userId: o.user_id, order: o })}>
+                  {admin && <button type="button" className="sr-delete" title="Delete" aria-label={`Delete ${o.name}`} onClick={() => askDelete({ name: o.name, email: o.email, userId: o.user_id, order: o })}>
                     <Trash2 size={15} />
-                  </button>
+                  </button>}
                 </div>
               </article>
             );
@@ -344,7 +380,7 @@ export default function StudentRoster({
           {!rows.length && <p className="sr-empty">No registrations match. Try “All courses” and “All”, or check the accounts below.</p>}
         </div>
       </section>
-      <section className="lms-panel sr-list">
+      {admin && <section className="lms-panel sr-list">
         <h3><UserPlus size={19} /> Accounts with no course yet {accounts && <span className="sr-count">{filteredAccounts.length}</span>}</h3>
         <p className="sr-help">People who created a Training Centre account but haven&apos;t registered for a course (including affiliates and instructors). Message them to help them choose a course, or give access in the Access tab.</p>
         {!accounts ? (
@@ -355,7 +391,7 @@ export default function StudentRoster({
               return (
                 <article key={a.user_id} className="sr-row">
                   <div className="sr-person">
-                    <strong>{a.name || "No name yet"}</strong>
+                    <button type="button" className="sr-name" onClick={() => setProfile(a.user_id)} title="Open contact history">{a.name || "No name yet"}</button>
                     <small>{a.email}</small>
                     <small>{a.phone}</small>
                   </div>
@@ -368,6 +404,7 @@ export default function StudentRoster({
                     {lastContact(a.user_id) && <small className="sr-last"><Send size={11} /> {lastContact(a.user_id)}</small>}
                   </div>
                   <div className="sr-actions">
+                    <button type="button" className="lms-text sr-history" onClick={() => setProfile(a.user_id)}><History size={15} /><span>History</span></button>
                     <button type="button" className="sr-contact" onClick={() => setContact({ recipients: [fromAccount(a)], template: "choose_course" })}>
                       <Send size={15} /> Contact
                     </button>
@@ -382,7 +419,7 @@ export default function StudentRoster({
         ) : (
           <p className="sr-empty">Everyone with an account has registered for a course.</p>
         )}
-      </section>
+      </section>}
     </div>
   );
 }

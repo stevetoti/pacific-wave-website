@@ -14,3 +14,10 @@
 - Notifications (`pwd_lms_notifications`): every new private message, connection request/acceptance, course-chat @mention and instructor announcement creates an in-app notification (bell, pop-up, chime) and a branded email. Emails are batched: messages wait 2 minutes and merge per conversation, and are skipped if the person has already read the chat. Sent by the every-minute cron `/api/cron/notifications`. Opt-out: Messages → Settings (`message_emails`). Emails are logged in admin Emails as `notify_<kind>`.
 - Privacy: admins cannot browse DMs. Admin → Training centre → Message reports shows only conversations a participant reported; admins can remove messages in that conversation and resolve the report.
 - UI: Dashboard → Messages (Chats, Requests, Find people, Settings), badge in the sidebar and account menu; deep link `/training-center/dashboard?tab=messages&with=<user_id>`.
+
+## Contact history (mini CRM)
+- Admin → Training centre → Students (or an instructor's Teaching workspace → Students): click a student's name or **History** to open their profile drawer. It shows registrations, Email / SMS / WhatsApp buttons, private staff notes and a timeline of every manual email, SMS, WhatsApp and note plus automatic account and payment-status emails.
+- **Contact history** tab lists every send across students, filterable by channel and searchable.
+- Instructors can contact, note and view history only for students with confirmed access to their own courses (enforced in `/api/lms-contact`); they never see payment amounts.
+- When a send fully succeeds the popup closes and a toast confirms it, with **View history**.
+

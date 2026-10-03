@@ -159,6 +159,7 @@
 ## 2026-10-03 — [Claude Code] Student outreach
 - [x] VanuConnect key added to Vercel production — [Claude Code] 2026-10-03: SMS live.
 - [x] Owner topped up VanuConnect SMS credits — [Claude Code] 2026-10-03: 202 credits; test SMS accepted.
+- [x] Mini CRM: per-student contact history, private notes, Contact history tab, instructor outreach to own students — [Claude Code] 2026-10-03.
 - [ ] Optional later: automatic WhatsApp sending through VanuConnect/BulkGate WhatsApp channel (needs approved WhatsApp Business templates); today WhatsApp opens prefilled on the owner's phone.
 
 ## 2026-10-03 — [Codex] October digital workbook implementation

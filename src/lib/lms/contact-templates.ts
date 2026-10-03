@@ -51,7 +51,7 @@ export const contactTemplates: ContactTemplate[] = [
     sms: "Hi {first_name}, thanks for joining Pacific Wave Digital Training Centre! Need help choosing a course? See {link} or WhatsApp +678 5288141",
     action: "Explore courses",
   },
-  { id: "custom", label: "Write my own", subject: "", email: "Hi {first_name},\n\n", sms: "Hi {first_name}, ", action: "Open my dashboard" },
+  { id: "custom", label: "Write my own", subject: "A message from Pacific Wave Digital Training Centre", email: "Hi {first_name},\n\n", sms: "Hi {first_name}, ", action: "Open my dashboard" },
 ];
 export function fillTemplate(text: string, v: ContactVars) {
   return text.replace(/\{(first_name|course|amount|reference|link)\}/g, (_, k: keyof ContactVars) => v[k] || "");

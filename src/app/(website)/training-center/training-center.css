@@ -2487,6 +2487,66 @@
 .cd-wa-open{background:#25d366;color:#fff;}.cd-wa-done{background:#e9f9ef;color:#13703a;}
 .cd-results{display:grid;gap:6px;}.cd-results small{color:#586980;}
 
+/* Mini CRM: student profile drawer, contact history, sent toast */
+.sr-name{display:block;padding:0;border:0;background:none;text-align:left;color:#233c6f;font-weight:700;font-size:15px;cursor:pointer;overflow-wrap:anywhere;}
+.sr-name:hover{color:#ef5e33;text-decoration:underline;}
+.sr-actions .sr-history{color:#233c6f!important;}
+.sp-overlay{place-items:stretch end;padding:0;}
+.sp-panel{width:min(560px,100%);height:100%;overflow-y:auto;background:#f6f8fc;display:flex;flex-direction:column;gap:12px;padding:0 0 24px;box-shadow:-20px 0 50px rgba(15,23,42,.3);}
+.sp-head{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:20px 22px;background:#233c6f;color:#fff;}
+.sp-head h3{margin:0 0 4px;color:#fff;font-size:22px;}
+.sp-head p{margin:0;color:#dbe3f2;font-size:13px;overflow-wrap:anywhere;}
+.sp-head .cd-close{color:#fff;}
+.sp-panel>.lms-alert{margin:0 22px;}
+.sp-actions{display:flex;gap:8px;padding:0 22px;}
+.sp-actions button{flex:1;display:inline-flex;justify-content:center;align-items:center;gap:6px;padding:11px 10px;border-radius:12px;border:1px solid #233c6f;background:#fff;color:#233c6f;font-weight:700;cursor:pointer;}
+.sp-actions button:first-child{background:#233c6f;color:#fff;}
+.sp-actions button:hover{border-color:#ef5e33;}
+.sp-section{margin:0 22px;padding:16px;border-radius:14px;background:#fff;border:1px solid #e9edf3;display:grid;gap:10px;}
+.sp-section h4{margin:0;color:#233c6f;font-size:15px;}
+.lms .sp-section textarea{margin:0;min-height:64px;}
+.sp-section .lms-button{justify-self:start;}
+.sp-section .sr-chips{margin:0;}
+.sp-reg{display:grid;gap:4px;padding:10px 12px;border-radius:10px;background:#f6f8fc;}
+.sp-reg strong{color:#233c6f;font-size:14px;}.sp-reg small{color:#6b7891;font-size:12px;}
+.sp-timeline{list-style:none;margin:0;padding:0;display:grid;gap:10px;}
+.sp-entry{display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px;align-items:start;}
+.sp-entry small{display:block;color:#6b7891;font-size:12px;overflow-wrap:anywhere;}
+.sp-entry details{margin-top:4px;}
+.sp-entry summary{cursor:pointer;color:#233c6f;font-size:13px;overflow-wrap:anywhere;}
+.sp-entry details p{margin:6px 0 0;padding:10px 12px;border-radius:10px;background:#f6f8fc;white-space:pre-wrap;color:#233c6f;font-size:13px;line-height:1.55;overflow-wrap:anywhere;}
+.sp-entry-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;}
+.sp-entry-head strong{color:#233c6f;font-size:14px;}
+.sp-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#e8eef9;color:#233c6f;flex:none;}
+.sp-entry.sms .sp-icon,.sp-icon.sms{background:#fff1eb;color:#c2410c;}
+.sp-entry.whatsapp .sp-icon,.sp-icon.whatsapp{background:#e9f9ef;color:#13703a;}
+.sp-entry.note .sp-icon,.sp-icon.note{background:#fff8e6;color:#7a5600;}
+.sp-entry.auto .sp-icon{background:#eef2f9;color:#6b7891;}
+.sp-entry.failed .sp-icon{background:#fdecec;color:#b42318;}
+.sp-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;background:#eef2f9;color:#4b5a73;}
+.sp-badge.sent,.sp-badge.test_sent,.sp-badge.delivered,.sp-badge.accepted,.sp-badge.test_accepted,.sp-badge.opened{background:#e9f9ef;color:#13703a;}
+.sp-badge.failed{background:#fdecec;color:#b42318;}.sp-badge.saved{background:#fff8e6;color:#7a5600;}
+.sp-error{color:#b42318!important;}
+.sp-overlay .sr-modal{z-index:110;}
+.ch-row{grid-template-columns:32px minmax(0,1fr) minmax(0,1.6fr) auto;width:100%;text-align:left;font:inherit;cursor:pointer;}
+.ch-row.failed{border-color:#f5c2c0;}
+.ch-message,.ch-meta{display:grid;gap:2px;min-width:0;}
+.ch-message strong{color:#233c6f;font-size:14px;}
+.ch-meta{justify-items:end;text-align:right;}
+.sr-help{color:#586980;font-size:13px;}
+.sr-toast{position:fixed;right:20px;bottom:20px;z-index:120;display:flex;align-items:center;gap:10px;max-width:min(460px,calc(100vw - 32px));padding:14px 16px;border-radius:14px;background:#13703a;color:#fff;box-shadow:0 18px 40px rgba(15,23,42,.3);font-size:14px;font-weight:600;animation:sr-toast-in .25s ease-out;}
+.sr-toast span{flex:1;min-width:0;overflow-wrap:anywhere;}
+.sr-toast button{border:0;border-radius:8px;padding:7px 10px;background:#fff;color:#13703a;font-weight:700;cursor:pointer;white-space:nowrap;}
+.sr-toast .sr-toast-close{background:none;color:#fff;padding:4px;}
+@keyframes sr-toast-in{from{transform:translateY(12px);opacity:0;}to{transform:none;opacity:1;}}
+@media(max-width:700px){
+ .ch-row{grid-template-columns:32px minmax(0,1fr);}
+ .ch-message,.ch-meta{grid-column:2;}
+ .ch-meta{justify-items:start;text-align:left;}
+ .sp-head{padding:16px;}.sp-actions{padding:0 16px;}.sp-section{margin:0 16px;padding:14px;}
+ .sr-toast{left:16px;right:16px;bottom:16px;max-width:none;}
+}
+
 /* Course community upgrade: hero, people, announcements, media */
 .cm-hero{position:relative;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;min-height:220px;padding:28px;border-radius:20px 20px 0 0;overflow:hidden;color:#fff;
  background:linear-gradient(100deg,rgba(18,33,66,.94) 0%,rgba(35,60,111,.82) 45%,rgba(35,60,111,.25) 100%),url(/images/training/hero.webp) center 35%/cover no-repeat;}

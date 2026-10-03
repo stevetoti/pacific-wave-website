@@ -3,6 +3,7 @@ import { useState } from "react";
 import { CheckCircle2, Mail, MessageSquareText, Phone, Send, X } from "lucide-react";
 import { authFetch } from "@/lib/auth-fetch";
 import { contactTemplates, fillTemplate, normalizePhone, smsParts, type ContactVars } from "@/lib/lms/contact-templates";
+export type ContactChannel = "email" | "sms" | "whatsapp";
 export type ContactRecipient = {
   user_id: string;
   order_id?: string;
@@ -11,7 +12,7 @@ export type ContactRecipient = {
   phone: string;
   vars: ContactVars;
 };
-type Channel = "email" | "sms" | "whatsapp";
+type Channel = ContactChannel;
 type Result = { user_id: string; name: string; status: string; error: string };
 // Send an email, SMS or WhatsApp message to one or many students from the Students tab.
 export default function ContactDialog({
@@ -20,6 +21,7 @@ export default function ContactDialog({
   smsCredits,
   live,
   initialTemplate,
+  initialChannel = "email",
   onClose,
   onSent,
 }: {
@@ -28,14 +30,15 @@ export default function ContactDialog({
   smsCredits: number | null;
   live: boolean;
   initialTemplate: string;
+  initialChannel?: Channel;
   onClose: () => void;
-  onSent: () => void;
+  onSent: (summary?: string) => void;
 }) {
-  const [channel, setChannel] = useState<Channel>("email");
+  const [channel, setChannel] = useState<Channel>(initialChannel);
   const [templateId, setTemplateId] = useState(initialTemplate);
   const template = contactTemplates.find((t) => t.id === templateId) || contactTemplates[0];
   const [subject, setSubject] = useState(template.subject);
-  const [message, setMessage] = useState(template.email);
+  const [message, setMessage] = useState(initialChannel === "email" ? template.email : template.sms);
   const [sending, setSending] = useState(false);
   const [results, setResults] = useState<Result[] | null>(null);
   const [problem, setProblem] = useState("");
@@ -79,8 +82,20 @@ export default function ContactDialog({
     setProblem("");
     try {
       const d = await send(reachable, channel);
+      const ok = d.results.filter((r) => r.status === "sent" || r.status === "test_sent");
+      const what = channel === "email" ? "Email" : "SMS";
+      const summary =
+        ok.length === 1 && reachable.length === 1
+          ? `${what} sent to ${ok[0].name}${ok[0].status === "test_sent" ? " (test inbox)" : ""}.`
+          : `${what} sent to ${ok.length} of ${reachable.length} people.`;
+      // All good: close and confirm with a pop-up. Otherwise stay open and show what failed.
+      if (ok.length === d.results.length) {
+        onSent(summary);
+        onClose();
+        return;
+      }
       setResults(d.results);
-      onSent();
+      onSent(summary);
     } catch (e) {
       setProblem(e instanceof Error ? e.message : "Sending failed");
     } finally {
@@ -92,7 +107,7 @@ export default function ContactDialog({
   const openWhatsApp = (r: ContactRecipient) => {
     window.open(waLink(r), "_blank", "noopener");
     setOpened((o) => [...o, r.user_id]);
-    send([r], "whatsapp").then(onSent).catch(() => {});
+    send([r], "whatsapp").then(() => onSent(`WhatsApp opened for ${r.name}. Press send in WhatsApp.`)).catch(() => {});
   };
   const statusText: Record<string, string> = { sent: "Sent", test_sent: "Sent to test inbox", failed: "Failed", skipped: "Not sent", opened: "Opened" };
   return (
@@ -180,7 +195,7 @@ export default function ContactDialog({
         ) : (
           <div className="sr-modal-actions">
             <button type="button" className="lms-text" onClick={onClose} disabled={sending}>Cancel</button>
-            <button type="button" className="lms-button" disabled={sending || !reachable.length || (channel === "sms" && !smsEnabled)} onClick={sendAll}>
+            <button type="button" className="lms-button" disabled={sending || !reachable.length || (channel === "sms" && !smsEnabled) || (channel === "email" && subject.trim().length < 2)} onClick={sendAll}>
               <Send size={16} /> {sending ? "Sending…" : `Send ${channel === "email" ? "email" : "SMS"}${reachable.length > 1 ? ` to ${reachable.length}` : ""}`}
             </button>
           </div>

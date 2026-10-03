@@ -10,6 +10,7 @@ import CourseCommunity from "./CourseCommunity";
 import AffiliateAdmin from "./AffiliateAdmin";
 import InstructorAdmin from "./InstructorAdmin";
 import StudentRoster from "./StudentRoster";
+import ContactHistory from "./ContactHistory";
 import InstructorProfileForm from "./InstructorProfileForm";
 import MessagesCenter from "./MessagesCenter";
 import NotificationBell from "./NotificationBell";
@@ -39,17 +40,18 @@ const emptyCourse = {
 };
 // Admin tabs grouped by job so the right screen is easy to find.
 const adminGroups: [string, string[]][] = [
-  ["People", ["students", "instructors", "affiliates", "access"]],
+  ["People", ["students", "history", "instructors", "affiliates", "access"]],
   ["Courses & content", ["courses", "lessons", "grading", "workbooks"]],
   ["Communication", ["community", "reports", "campaigns", "emails"]],
   ["Money", ["payments", "coupons", "banks"]],
 ];
 // Instructors get only the teaching tabs, scoped server-side to their assigned courses.
-const teachTabs = ["workbooks", "lessons", "students", "grading", "community", "messages", "profile"];
+const teachTabs = ["workbooks", "lessons", "students", "history", "grading", "community", "messages", "profile"];
 const tabLabel: Record<string, string> = {
   payments: "Registrations & payments",
   community: "Course communication",
   students: "Students",
+  history: "Contact history",
   profile: "My instructor profile",
   reports: "Message reports",
 };
@@ -233,54 +235,9 @@ export default function TrainingAdmin({
           <StudentRoster orders={orders} courses={courses} busy={busy} save={save} onChanged={load} />
         )}
         {tab === "students" && teaching && (
-          <section className="lms-panel">
-            <h2>My students</h2>
-            <p>Students with confirmed access to the courses you teach.</p>
-            <label>
-              Course
-              <select value={selected} onChange={(e) => setSelected(e.target.value)}>
-                <option value="">All my courses</option>
-                {courses.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.title}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <div className="ec-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Student</th>
-                    <th>Contact</th>
-                    <th>Course</th>
-                    <th>Attendance</th>
-                    <th>Enrolled</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders
-                    .filter((o) => !selected || o.course_id === selected)
-                    .map((o) => (
-                      <tr key={o.id}>
-                        <td>{o.name}</td>
-                        <td>
-                          {o.email}
-                          <small className="af-muted">{o.phone}</small>
-                        </td>
-                        <td>{courses.find((c) => c.id === o.course_id)?.title}</td>
-                        <td>{o.attendance.replace("_", " ")}</td>
-                        <td>{new Date(o.created_at).toLocaleDateString()}</td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-              {!orders.filter((o) => !selected || o.course_id === selected).length && (
-                <p>No enrolled students yet.</p>
-              )}
-            </div>
-          </section>
+          <StudentRoster mode="teach" orders={orders} courses={courses} busy={busy} save={save} onChanged={load} />
         )}
+        {tab === "history" && <ContactHistory />}
         {tab === "courses" && (
           <div className="lms-two">
             <section className="lms-panel">
