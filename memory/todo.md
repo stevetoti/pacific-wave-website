@@ -180,3 +180,11 @@ The earlier production-promotion approval blocker is resolved. A separate automa
 ## 2026-10-03 — [Codex] Source push authorised
 
 Stephen explicitly authorised pushing the saved workbook source to main. Remote history was checked: main is an ancestor, with no divergent remote changes. Prior source-push approval blocker is resolved. Publishing the already-verified application source and release notes; no new application changes.
+
+## 2026-10-03 — [Codex] Workbook visibility and supported learning
+
+Stephen requested actual cover entry card, assigned-instructor read access and per-student AI workbook context. Implementing course-scoped read-only teaching review, bounded labelled session-start AI excerpts and clear student sharing notices. Other students remain denied; no instructor write capability. Verification in progress.
+
+## 2026-10-03 — [Codex] Workbook cover and learning support verified
+
+Actual cover card with purpose/use description added. Workbooks tab provides assigned instructors/admins read-only active-student answers. AI faculty uses authenticated student/course-scoped labelled excerpts (400 characters per activity, truncation flagged), refreshed each new session. Student notices explain sharing. No database migration. Type/lint/build and four workbook tests pass; eight public desktop/mobile checks pass (two opt-in skips). Real temporary-account tests verify instructor assignment/revocation, student switching, own-student AI context, denied outsiders/revoked enrolments, saves/failure recovery/PDF downloads. All fixtures cleaned; no test emails. Publishing under existing authorisation.

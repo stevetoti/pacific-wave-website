@@ -2,7 +2,7 @@
 
 2026-10-03 — [Codex]
 
-Course: vanuatu-october-2026. Component appears to paid/granted participants above the lesson area. Open workbook reveals all 12 dated lessons and 96 response fields with per-lesson self-checks. Answers are private to the account; no instructor/group/AI access is granted.
+Course: vanuatu-october-2026. Component appears to paid/granted participants above the lesson area. Open workbook reveals all 12 dated lessons and 96 response fields with per-lesson self-checks. Answers remain hidden from other students. Assigned course instructors and administrators have read-only review access through Workbooks. AI faculty receives only the authenticated student’s saved workbook excerpts at each new session, with labels, dates and explicit truncation markers.
 
 Data: pwd_lms_workbook_answers; server-only access, no direct authenticated/anonymous privileges. Additive 20261003_digital_workbook.sql is applied. Revision comparisons reject stale writes, including competing first saves. UI preserves failed/conflicting drafts and provides a local notes download before reload.
 
@@ -27,3 +27,7 @@ The earlier production-promotion approval blocker is resolved. A separate automa
 ## 2026-10-03 — [Codex] Source push authorised
 
 Stephen explicitly authorised pushing the saved workbook source to main. Remote history was checked: main is an ancestor, with no divergent remote changes. Prior source-push approval blocker is resolved. Publishing the already-verified application source and release notes; no new application changes.
+
+## 2026-10-03 — [Codex] Workbook cover and learning support verified
+
+Actual cover card with purpose/use description added. Workbooks tab provides assigned instructors/admins read-only active-student answers. AI faculty uses authenticated student/course-scoped labelled excerpts (400 characters per activity, truncation flagged), refreshed each new session. Student notices explain sharing. No database migration. Type/lint/build and four workbook tests pass; eight public desktop/mobile checks pass (two opt-in skips). Real temporary-account tests verify instructor assignment/revocation, student switching, own-student AI context, denied outsiders/revoked enrolments, saves/failure recovery/PDF downloads. All fixtures cleaned; no test emails. Publishing under existing authorisation.

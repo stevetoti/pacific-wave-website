@@ -34,3 +34,13 @@ test('completed export includes long Unicode responses without losing the origin
  const bytes=await workbookPdf([{lesson_key:'lesson-01',answers:{'l01-f01':('Bislama: Mi wantem statem bisnis. Café — 0\n').repeat(100),'lesson-01-check-0':true}}]);
  const pdf=await PDFDocument.load(bytes);assert.ok(pdf.getPageCount()>82);await writeFile('/tmp/pwd-workbook-export-test.pdf',bytes);
 });
+
+import {workbookContext} from '../src/lib/lms/workbook-context';
+test('AI workbook context is labelled, bounded and preserves zero without inventing missing work',()=>{
+ const context=workbookContext([{lesson_key:'lesson-01',updated_at:'2026-10-03',answers:{'l01-f01':'0','l01-f02':'x'.repeat(6000),'foreign':'hidden'}}]);
+ assert.equal(context.lessons[0].activities[0].answer,'0');
+ assert.equal(context.lessons[0].activities[1].answer.length,400);
+ assert.equal(context.lessons[0].activities[1].truncated,true);
+ assert.equal(context.lessons[1].activities[0].answer,'');
+ assert.ok(!JSON.stringify(context).includes('hidden'));
+});

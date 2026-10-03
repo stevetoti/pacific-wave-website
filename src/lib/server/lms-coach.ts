@@ -1,4 +1,6 @@
 import "server-only";
+import { workbook } from "@/lib/lms/workbook-schema";
+import { workbookContext } from "@/lib/lms/workbook-context";
 import {consentVersion} from "@/lib/lms/coach/report";
 import { spokenTime, coachingWindow, programOutline } from "@/lib/lms/coach/schedule";
 import { octoberOutline } from "@/lib/training/outline";
@@ -94,7 +96,9 @@ export async function coachContext(
     notes = checked(n),
     history = checked(h) || [];
   const preferences = checked(await db.from("pwd_lms_coach_preferences").select("consent_version").eq("user_id",user.id).maybeSingle());
+  const savedWorkbook = course.slug === workbook.courseSlug ? checked(await db.from("pwd_lms_workbook_answers").select("lesson_key,answers,updated_at").eq("course_id", courseId).eq("user_id", user.id)) : [];
   const context = {
+    workbook: course.slug === workbook.courseSlug ? workbookContext(savedWorkbook || []) : null,
     as_of: new Date().toISOString(),
     student: { name: profile?.full_name || order.name, ...profile },
     course,

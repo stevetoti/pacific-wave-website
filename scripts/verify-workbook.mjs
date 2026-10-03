@@ -28,11 +28,37 @@ try{
  assert.equal((await api(b,'/api/lms-workbook',{...payload,user_id:a.id})).status,400);
  const anonClient=createClient(url,process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,{global:{headers:{Authorization:`Bearer ${b.session.access_token}`}},auth:{persistSession:false}});
  assert.ok((await anonClient.from('pwd_lms_workbook_answers').select('*')).error);
+ const review=`/api/lms-workbook/review?course=${course.id}`;
+ assert.equal((await api(b,review)).status,403);
+ assert.equal((await api(out,review)).status,403);
+ await check(db.from('pwd_lms_course_instructors').insert({course_id:course.id,user_id:out.id}));
+ assert.ok((await api(out,review)).data.students.some(s=>s.id===a.id));
+ assert.equal((await api(out,review+`&student=${a.id}`)).data.rows[0].answers['l01-f01'],'Private A café — 0');
+ assert.equal((await api(out,review+`&student=${out.id}`)).status,403);
+ const ac=await api(a,`/api/lms-coach?course=${course.id}`),bc=await api(b,`/api/lms-coach?course=${course.id}`);
+ assert.equal(ac.status,200);assert.equal(bc.status,200);
+ assert.equal(ac.data.context.workbook.lessons[0].activities[0].answer,'Private A café — 0');
+ assert.equal(bc.data.context.workbook.lessons[0].activities[0].answer,'');
  browser=await chromium.launch();
+ for(const width of [1440,390]){
+  const ctx=await browser.newContext({viewport:{width,height:1000}});const page=await ctx.newPage();
+  await page.addInitScript(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:`sb-${ref}-auth-token`,value:out.session});
+  await page.goto(base+'/training-center/teach');await page.getByRole('button',{name:'Workbooks',exact:true}).click();
+  await page.getByLabel('Workbook participant').selectOption(a.id);
+  await page.getByText('Private A café — 0',{exact:true}).waitFor();
+  await page.getByLabel('Workbook participant').selectOption(b.id);
+  await page.getByText('No answers saved for this class yet.',{exact:true}).waitFor();
+  assert.equal(await page.getByText('Private A café — 0',{exact:true}).count(),0);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  await page.screenshot({path:`/tmp/workbook-review-${width}.png`});await ctx.close();
+ }
+ await check(db.from('pwd_lms_course_instructors').delete().eq('user_id',out.id));
+ assert.equal((await api(out,review+`&student=${a.id}`)).status,403);
+ await check(db.from('pwd_lms_course_instructors').insert({course_id:course.id,user_id:out.id}));
  for(const [label,width]of [['desktop',1440],['mobile',390]]){
   const context=await browser.newContext({viewport:{width,height:1000}});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.addInitScript(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:`sb-${ref}-auth-token`,value:a.session});
-  await page.goto(base+`/training-center/course/${course.id}`);await page.getByRole('button',{name:'Open workbook',exact:true}).click();
+  await page.goto(base+`/training-center/course/${course.id}`);await page.getByRole('button',{name:'Open participant workbook',exact:true}).scrollIntoViewIfNeeded();await page.getByRole('button',{name:'Open participant workbook',exact:true}).locator('img').evaluate(img=>img.decode());await page.screenshot({path:`/tmp/workbook-cover-${label}.png`});await page.getByRole('button',{name:'Open workbook',exact:true}).click();
   await page.getByLabel('My customer, offer and location',{exact:true}).waitFor().catch(async e=>{await page.screenshot({path:'/tmp/workbook-load-failure.png',fullPage:true});console.log((await page.locator('body').innerText()).slice(0,6000));throw e;});
   const response=`${label}: Mi wantem statem bisnis. Café — 0`;
   await page.getByLabel('My customer, offer and location',{exact:true}).fill(response);
@@ -53,6 +79,8 @@ try{
  }
  // Revoke and verify both read and export gates; no real student records are touched.
  await check(db.from('pwd_lms_orders').update({status:'revoked'}).eq('id',orders[0].id));
+ assert.equal((await api(out,review+`&student=${a.id}`)).status,403);
+ assert.equal((await api(a,`/api/lms-coach?course=${course.id}`)).status,403);
  assert.equal((await api(a,path)).status,403);assert.equal((await api(a,'/api/lms-workbook',{...payload,revision:2})).status,403);
  assert.equal((await fetch(base+path+'&pdf=completed',{headers:{Authorization:`Bearer ${a.session.access_token}`}})).status,403);
  console.log('PASS: real auth/enrolment, private persistence, stale conflict, forged identity denial, RLS, desktop/mobile save/reload, save-failure recovery, PDF downloads and revoked access.');

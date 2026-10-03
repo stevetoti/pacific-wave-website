@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import WorkbookReview from "./WorkbookReview";
 import LessonThumbnail from "./LessonThumbnail";
 import { blpSlug, blpModules, workshopRecordingPending } from "@/lib/lms/blp-workshop";
 import CourseAdministration from "./CourseAdministration";
@@ -39,12 +40,12 @@ const emptyCourse = {
 // Admin tabs grouped by job so the right screen is easy to find.
 const adminGroups: [string, string[]][] = [
   ["People", ["students", "instructors", "affiliates", "access"]],
-  ["Courses & content", ["courses", "lessons", "grading"]],
+  ["Courses & content", ["courses", "lessons", "grading", "workbooks"]],
   ["Communication", ["community", "reports", "campaigns", "emails"]],
   ["Money", ["payments", "coupons", "banks"]],
 ];
 // Instructors get only the teaching tabs, scoped server-side to their assigned courses.
-const teachTabs = ["lessons", "students", "grading", "community", "messages", "profile"];
+const teachTabs = ["workbooks", "lessons", "students", "grading", "community", "messages", "profile"];
 const tabLabel: Record<string, string> = {
   payments: "Registrations & payments",
   community: "Course communication",
@@ -221,6 +222,7 @@ export default function TrainingAdmin({
         {["access", "coupons", "grading"].includes(tab) && (
           <CourseAdministration courses={courses} section={tab} />
         )}
+        {tab === "workbooks" && <WorkbookReview courses={courses} />}
         {tab === "campaigns" && <EmailCampaigns courses={courses} />}
         {tab === "affiliates" && <AffiliateAdmin />}
         {tab === "instructors" && !teaching && <InstructorAdmin courses={courses} />}

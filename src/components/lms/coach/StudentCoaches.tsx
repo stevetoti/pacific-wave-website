@@ -491,11 +491,12 @@ export default function StudentCoaches({
               AI coaching available through {access.ends_on}.
             </p>
           )}
+          <p className={styles.until}>Your AI faculty can refer to your saved workbook answers to help with your business. Save your work before starting a session. Changes made during a session are available in your next session.</p>
           {contextLoaded && !consent && (
             <div className={styles.preferences}>
               <strong>One profile for your coaching team</strong>
               <p>
-                Allow your relevant profile, course progress, notes and
+                Allow your relevant profile, course progress, saved workbook answers, notes and
                 conversation to be used by Anam and our AI research service for
                 personalized voice coaching. Private transcripts and researched
                 reports are saved in your dashboard and emailed to your account.

@@ -117,3 +117,7 @@ Use the existing private recording uploader and shared lesson editor for all nin
 ## 2026-10-03 — [Codex] October digital workbook implementation
 
 Added 12-lesson October workbook source, course component, authenticated save/export API and additive migration. Scope: participant-private answers with optimistic concurrency, blank PDF and workbook-with-answers PDF export. Source content and DOCX master live in Training Hub/Vanuatu October 2026/workbook-v1. Implementation is under verification; no live release claimed yet.
+
+## 2026-10-03 — [Codex] Workbook visibility and supported learning
+
+Stephen requested actual cover entry card, assigned-instructor read access and per-student AI workbook context. Implementing course-scoped read-only teaching review, bounded labelled session-start AI excerpts and clear student sharing notices. Other students remain denied; no instructor write capability. Verification in progress.
