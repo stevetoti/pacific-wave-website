@@ -99,6 +99,11 @@ export default function StudentRoster({
     return `${label} ${ago(l.created_at).toLowerCase()}`;
   };
   const [course, setCourse] = useState("");
+  const openCourse = (id: string, nextGroup: Group = "all") => {
+    setCourse(id); setGroup(nextGroup); setSearch(""); setSelected([]);
+    setContact(null); setProfile(null); setTarget(null);
+  };
+  const activeCourse = courses.find(c => c.id === course);
   const [group, setGroup] = useState<Group>("all");
   const [search, setSearch] = useState("");
   const [accounts, setAccounts] = useState<Account[] | null>(null);
@@ -150,11 +155,11 @@ export default function StudentRoster({
     review: list.filter((o) => o.status === "review").length,
     unpaid: list.filter((o) => statusInfo[o.status]?.group === "unpaid").length,
   });
-  const toReview = orders.filter((o) => o.status === "review");
+  const toReview = orders.filter((o) => o.course_id === course && o.status === "review");
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase();
     return orders
-      .filter((o) => !course || o.course_id === course)
+      .filter((o) => o.course_id === course)
       .filter((o) => group === "all" || statusInfo[o.status]?.group === group)
       .filter((o) => !q || [o.name, o.email, o.phone, paymentReference(o.id)].join(" ").toLowerCase().includes(q))
       .sort((a, b) => b.created_at.localeCompare(a.created_at));
@@ -247,24 +252,27 @@ export default function StudentRoster({
           </div>
         </div>
       )}
-      <section className="sr-courses">
+      {!course ? <><header className="sr-course-heading"><h2>Students by course</h2><p>Choose a course to view and manage its students.</p></header><section className="sr-courses" aria-label="Choose a course">
+
         {courses.map((c) => {
           const n = counts(orders.filter((o) => o.course_id === c.id));
           return (
             <article key={c.id} className={`sr-course ${course === c.id ? "selected" : ""}`}>
-              <button type="button" className="sr-course-title" onClick={() => { setCourse(course === c.id ? "" : c.id); setGroup("all"); }}>
+              <button type="button" className="sr-course-title" onClick={() => openCourse(c.id)}>
                 <strong>{c.title}</strong>
-                <small>{c.published ? "Published" : "Not public"}</small>
+                <small>{c.published ? "Published" : "Not public"} · {orders.filter(o => o.course_id === c.id).length} registrations</small><span className="sr-course-open">View students →</span>
               </button>
               <div className="sr-course-stats">
-                <button type="button" onClick={() => { setCourse(c.id); setGroup("enrolled"); }}><b>{n.enrolled}</b> enrolled</button>
-                <button type="button" className={n.review ? "warn" : ""} onClick={() => { setCourse(c.id); setGroup("review"); }}><b>{n.review}</b> to check</button>
-                <button type="button" onClick={() => { setCourse(c.id); setGroup("unpaid"); }}><b>{n.unpaid}</b> not paid</button>
+                <button type="button" onClick={() => openCourse(c.id, "enrolled")}><b>{n.enrolled}</b> enrolled</button>
+                <button type="button" className={n.review ? "warn" : ""} onClick={() => openCourse(c.id, "review")}><b>{n.review}</b> to check</button>
+                <button type="button" onClick={() => openCourse(c.id, "unpaid")}><b>{n.unpaid}</b> not paid</button>
               </div>
             </article>
           );
         })}
-      </section>
+        {admin && <article className="sr-course"><button type="button" className="sr-course-title" onClick={() => openCourse("__accounts")}><strong>Accounts with no course yet</strong><small>{accounts ? `${accounts.length} accounts` : "Loading accounts…"}</small><span className="sr-course-open">View accounts →</span></button></article>}
+        {!courses.length && <p>No courses available yet.</p>}
+      </section></> : <header className="sr-course-heading"><button type="button" className="lms-text" onClick={() => openCourse("")}>← Back to courses</button><h2>{activeCourse?.title || (course === "__accounts" ? "Accounts with no course yet" : "Course unavailable")}</h2>{activeCourse && <p>Students and registrations for this course only.</p>}</header>}
       {admin && toReview.length > 0 && (
         <section className="sr-attention">
           <h3><AlertCircle size={20} /> Needs your attention: {toReview.length} payment {toReview.length === 1 ? "proof" : "proofs"} to check</h3>
@@ -291,21 +299,20 @@ export default function StudentRoster({
           ))}
         </section>
       )}
-      <section className="lms-panel sr-list">
+      {activeCourse && <section className="lms-panel sr-list">
         <div className="sr-toolbar">
           <label className="sr-search">
             <Search size={18} />
             <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search name, email, phone or PWD- reference" aria-label="Search students" />
           </label>
-          <select value={course} onChange={(e) => setCourse(e.target.value)} aria-label="Course">
-            <option value="">All courses</option>
+          <select value={course} onChange={(e) => openCourse(e.target.value)} aria-label="Course">
             {courses.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
           </select>
         </div>
         <div className="sr-chips" role="tablist" aria-label="Status">
           {([["all", "All"], ["enrolled", "Enrolled"], ["review", "Proof to check"], ["unpaid", "Not paid yet"], ["other", "Refunded / removed"]] as [Group, string][]).map(([g, label]) => (
             <button key={g} type="button" role="tab" aria-selected={group === g} className={group === g ? "selected" : ""} onClick={() => setGroup(g)}>
-              {label} <span>{orders.filter((o) => (!course || o.course_id === course) && (g === "all" || statusInfo[o.status]?.group === g)).length}</span>
+              {label} <span>{orders.filter((o) => (o.course_id === course) && (g === "all" || statusInfo[o.status]?.group === g)).length}</span>
             </button>
           ))}
         </div>
@@ -319,13 +326,13 @@ export default function StudentRoster({
             Select all shown
           </label>
           {selected.length > 0 && (
-            <button type="button" className="lms-button sr-bulk-send" onClick={() => setContact({ recipients: orders.filter((o) => selected.includes(o.id)).map(fromOrder), template: "custom" })}>
+            <button type="button" className="lms-button sr-bulk-send" onClick={() => setContact({ recipients: orders.filter((o) => o.course_id === course && selected.includes(o.id)).map(fromOrder), template: "custom" })}>
               <Send size={15} /> Contact {selected.length} selected
             </button>
           )}
-          {admin && orders.filter((o) => (!course || o.course_id === course) && ["pending", "rejected"].includes(o.status)).length > 0 && (
-            <button type="button" className="sr-remind" onClick={() => setContact({ recipients: orders.filter((o) => (!course || o.course_id === course) && ["pending", "rejected"].includes(o.status)).map(fromOrder), template: "payment_reminder" })}>
-              <BellRing size={15} /> Remind everyone who hasn&apos;t paid ({orders.filter((o) => (!course || o.course_id === course) && ["pending", "rejected"].includes(o.status)).length})
+          {admin && orders.filter((o) => (o.course_id === course) && ["pending", "rejected"].includes(o.status)).length > 0 && (
+            <button type="button" className="sr-remind" onClick={() => setContact({ recipients: orders.filter((o) => (o.course_id === course) && ["pending", "rejected"].includes(o.status)).map(fromOrder), template: "payment_reminder" })}>
+              <BellRing size={15} /> Remind everyone who hasn&apos;t paid ({orders.filter((o) => (o.course_id === course) && ["pending", "rejected"].includes(o.status)).length})
             </button>
           )}
         </div>
@@ -379,10 +386,10 @@ export default function StudentRoster({
               </article>
             );
           })}
-          {!rows.length && <p className="sr-empty">No registrations match. Try “All courses” and “All”, or check the accounts below.</p>}
+          {!rows.length && <p className="sr-empty">No registrations match in this course. Clear your search or choose “All” to see every registration.</p>}
         </div>
-      </section>
-      {admin && <section className="lms-panel sr-list">
+      </section>}
+      {admin && course === "__accounts" && <section className="lms-panel sr-list">
         <h3><UserPlus size={19} /> Accounts with no course yet {accounts && <span className="sr-count">{filteredAccounts.length}</span>}</h3>
         <p className="sr-help">People who created a Training Centre account but haven&apos;t registered for a course (including affiliates and instructors). Message them to help them choose a course, or give access in the Access tab.</p>
         {!accounts ? (

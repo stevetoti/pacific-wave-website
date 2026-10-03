@@ -1,5 +1,8 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## 2026-10-04 — [Codex] Course-first Students
+StudentRoster now starts with course cards and drills into one course only; separate no-course accounts entry and Back to courses. Proofs/reminders/bulk selections stay scoped; course change resets selections. Existing admin/instructor CRM retained. Type/lint/build and ten desktop/mobile browser checks pass. No migration or student changes.
+
 ## 2026-10-03 — [Codex] Multilingual course release
 Stephen approved course/gold Bislama reference transmission to Anthropic; blocker resolved. 883 Bislama/French strings generated, reviewed and coverage-checked. English default, browser-local choice, original learner answers retained, tutor language preference/greeting. See scripts/localization/README.md. Type/lint/build, 15 focused tests, eight public browser checks and actual temporary-account multilingual saves/reloads/export/privacy checks pass. Source ready for approved publication.
 

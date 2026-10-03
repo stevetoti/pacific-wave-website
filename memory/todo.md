@@ -206,3 +206,11 @@ Stephen explicitly approved authored course text and private gold Bislama refere
 ## 2026-10-03 — [Codex] Multilingual course verified for release
 
 English default with saved browser preference; 883 gold-grounded Bislama/French strings; unchanged original student answers; selected-language AI session greeting/context. Seven locale/workbook tests, eight coach/report tests, lint/type/build and eight public browser checks pass. Actual desktop/mobile fixtures verify multilingual headings, switching before autosave, original Bislama/French answers persisting through reload, instructor/AI isolation, failure recovery, PDF download and revocation. Screenshots reviewed and fixtures cleaned. Recordings/PDF teaching pages and user-generated content retain original language; no runtime external translation of student data. Publishing under prior authorisation.
+
+## 2026-10-04 — [Codex] Course-first student lists
+
+Stephen requested Students show courses first, then only the chosen course roster. Implemented course drill-down/back navigation, separate no-course account entry, scoped proof/reminder/bulk-contact lists, and selection reset on course change. Existing CRM features retained. Verification in progress; no student data changed or messages sent.
+
+## 2026-10-04 — [Codex] Course-first roster verified
+
+Students starts with course cards; choosing a course opens only its roster/status/proof/reminder scope. Back to courses restores directory; unassigned accounts have a separate entry. Course changes clear search, selected recipients and open dialogs. Type/lint/production build pass. Ten desktop/mobile browser tests pass (two existing opt-in skips), including mocked mixed-course roster, proof isolation, recipient reset, empty course and no-course accounts; mobile screenshot reviewed. No real student data changed or messages sent. Ready for authorised publication.

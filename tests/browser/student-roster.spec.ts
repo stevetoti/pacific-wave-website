@@ -1,0 +1,32 @@
+import {test,expect} from '@playwright/test';
+test('Students opens courses first and isolates rosters, proofs and bulk selections',async({page})=>{
+ const courseA='10000000-0000-4000-8000-000000000001',courseB='10000000-0000-4000-8000-000000000002',empty='10000000-0000-4000-8000-000000000003';
+ const courses=[{id:courseA,title:'October business course',published:true},{id:courseB,title:'BLP workshop',published:true},{id:empty,title:'Empty course',published:false}];
+ const orders=[{id:'20000000-0000-4000-8000-000000000001',course_id:courseA,name:'Alpha Student',status:'pending'},{id:'20000000-0000-4000-8000-000000000002',course_id:courseB,name:'Beta Student',status:'review'}].map((o,i)=>({...o,user_id:`30000000-0000-4000-8000-00000000000${i+1}`,email:`student${i}@example.com`,phone:'+6785550101',attendance:'online',created_at:'2026-10-01T00:00:00Z',amount:35000,currency:'VUV',method:'bank'}));
+ const user={id:'40000000-0000-4000-8000-000000000001',email:'roster-test@example.com',aud:'authenticated',role:'authenticated'};
+ const session={access_token:'test.token.signature',refresh_token:'test-refresh',expires_at:Math.floor(Date.now()/1000)+3600,expires_in:3600,token_type:'bearer',user};
+ await page.addInitScript(s=>localStorage.setItem('sb-rndegttgwtpkbjtvjgnc-auth-token',JSON.stringify(s)),session);
+ await page.route('https://rndegttgwtpkbjtvjgnc.supabase.co/**',route=>route.fulfill({json:route.request().url().includes('admin_users')?{id:user.id,email:user.email,name:'Roster QA',role:'super_admin',site_id:'pacific-wave-digital',is_active:true}:{user}}));
+ const mutations:string[]=[];
+ await page.route('**/api/**',route=>{const req=route.request(),url=new URL(req.url());if(req.method()!=='GET'){mutations.push(url.pathname);return route.fulfill({status:400,json:{error:'No mutations permitted in fixture'}});}
+ const data=url.pathname==='/api/lms/admin'?{courses,orders,lessons:[],banks:[]}:url.pathname==='/api/lms-students'?{accounts:[{user_id:'50000000-0000-4000-8000-000000000001',name:'Unassigned Person',email:'unassigned@example.com',phone:'',role:'student',created_at:'2026-10-01T00:00:00Z'}]}:url.pathname==='/api/lms-contact'?{sms_enabled:false,sms_credits:0,live:false,latest:{}}:{};return route.fulfill({json:data});});
+ await page.goto('/admin/training-center');
+ await expect(page.getByRole('heading',{name:'Students by course'})).toBeVisible();
+ await expect(page.locator('.sr-row')).toHaveCount(0);
+ await page.getByRole('button',{name:/October business course.*View students/}).click();
+ await expect(page.locator('.sr-row')).toHaveCount(1);await expect(page.locator('.sr-row')).toContainText('Alpha Student');
+ await expect(page.locator('.sr-attention')).toHaveCount(0);
+ await expect(page.getByRole('button',{name:/Remind everyone/})).toContainText('(1)');
+ await page.getByLabel('Select Alpha Student').check();await expect(page.getByRole('button',{name:'Contact 1 selected'})).toBeVisible();
+ await page.getByLabel('Course',{exact:true}).selectOption(courseB);
+ await expect(page.locator('.sr-row')).toHaveCount(1);await expect(page.locator('.sr-row')).toContainText('Beta Student');
+ await expect(page.locator('.sr-attention')).toContainText('Beta Student');
+ await expect(page.getByRole('button',{name:'Contact 1 selected'})).toHaveCount(0);
+ await expect(page.getByRole('button',{name:/Remind everyone/})).toHaveCount(0);
+ await page.getByRole('button',{name:'← Back to courses'}).click();await expect(page.locator('.sr-row')).toHaveCount(0);
+ await page.getByRole('button',{name:/Empty course.*View students/}).click();await expect(page.getByText('No registrations match in this course.',{exact:false})).toBeVisible();
+ await page.getByRole('button',{name:'← Back to courses'}).click();await page.getByRole('button',{name:/Accounts with no course yet.*View accounts/}).click();
+ await expect(page.locator('.sr-row')).toHaveCount(1);await expect(page.locator('.sr-row')).toContainText('Unassigned Person');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);expect(mutations).toEqual([]);
+ await page.getByRole('button',{name:'← Back to courses'}).click();await page.screenshot({path:`/tmp/student-courses-${test.info().project.name}.png`,fullPage:true});
+});

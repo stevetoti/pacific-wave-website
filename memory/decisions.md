@@ -129,3 +129,7 @@ Stephen requested English-default course page with Bislama/French and original-l
 ## 2026-10-03 — [Codex] Gold translation transfer approved
 
 Stephen explicitly approved authored course text and private gold Bislama reference transmission to Anthropic through the existing service. Prior transfer approval blocker resolved. Generation running; no student data included. Verify coverage/content and language switching before publishing.
+
+## 2026-10-04 — [Codex] Course-first student lists
+
+Stephen requested Students show courses first, then only the chosen course roster. Implemented course drill-down/back navigation, separate no-course account entry, scoped proof/reminder/bulk-contact lists, and selection reset on course change. Existing CRM features retained. Verification in progress; no student data changed or messages sent.

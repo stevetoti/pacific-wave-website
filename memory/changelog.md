@@ -678,3 +678,11 @@ English default with saved browser preference; 883 gold-grounded Bislama/French 
 - Redesigned `ContactDialog`: two-panel composer (recipient avatars, segmented channel switch, template pills, click-to-insert personal tags, SMS char/credit badge, under-160 tip) with live channel preview (branded email card, phone mockup with SMS / WhatsApp bubble, credits cards); bottom sheet on mobile. Roster rows get coloured initials avatars; profile drawer gets avatar header, shimmer skeleton and label-style headings.
 - Verified tsc, lint, build release guard; desktop + 390px screenshots with temporary admin/student (no messages sent, no overflow); fixtures removed.
 - Released: commit `257780a` → production `dpl_B5sRVNTRi9PB546hijvvqfd3pTbj` (owns pacificwavedigital.com); new composer CSS confirmed live.
+
+## 2026-10-04 — [Codex] Course-first student lists
+
+Stephen requested Students show courses first, then only the chosen course roster. Implemented course drill-down/back navigation, separate no-course account entry, scoped proof/reminder/bulk-contact lists, and selection reset on course change. Existing CRM features retained. Verification in progress; no student data changed or messages sent.
+
+## 2026-10-04 — [Codex] Course-first roster verified
+
+Students starts with course cards; choosing a course opens only its roster/status/proof/reminder scope. Back to courses restores directory; unassigned accounts have a separate entry. Course changes clear search, selected recipients and open dialogs. Type/lint/production build pass. Ten desktop/mobile browser tests pass (two existing opt-in skips), including mocked mixed-course roster, proof isolation, recipient reset, empty course and no-course accounts; mobile screenshot reviewed. No real student data changed or messages sent. Ready for authorised publication.
