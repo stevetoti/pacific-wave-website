@@ -1,7 +1,7 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
 ## 2026-10-03 — [Codex] October workbook
-12-lesson interactive workbook with private revision-checked saving and blank/completed PDF exports implemented and verified. Additive migration applied. See docs/OCTOBER-WORKBOOK.md for sources, privacy and acceptance evidence. Release staging pending. Canonical checkout remains .deployment/training-recovery.
+12-lesson interactive workbook with private revision-checked saving and blank/completed PDF exports implemented and verified. Additive migration applied. See docs/OCTOBER-WORKBOOK.md for sources, privacy and acceptance evidence. Staged READY as dpl_HHAz8UH8RKoH2h2ZwAXz9jU53UHW, app commit 6552eef. Production promotion was rejected by automatic approval review; explicit user publishing permission is required. Do not push to main as a workaround. Canonical checkout remains .deployment/training-recovery.
 
 ## Latest release — 2026-10-01 [Codex] Private BLP workshop
 
