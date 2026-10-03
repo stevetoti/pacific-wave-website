@@ -1,5 +1,8 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## 2026-10-03 — [Codex] Multilingual course release
+Stephen approved course/gold Bislama reference transmission to Anthropic; blocker resolved. 883 Bislama/French strings generated, reviewed and coverage-checked. English default, browser-local choice, original learner answers retained, tutor language preference/greeting. See scripts/localization/README.md. Type/lint/build, 15 focused tests, eight public browser checks and actual temporary-account multilingual saves/reloads/export/privacy checks pass. Source ready for approved publication.
+
 ## 2026-10-03 — [Codex] Workbook learning support
 Workbook entry uses actual cover, with purpose/use and sharing notice. Teaching workspace/Admin → Workbooks gives assigned-course instructors/admins read-only active-student review. All AI faculty roles receive own-student saved workbook excerpts at new session start. Other students remain denied. See docs/OCTOBER-WORKBOOK.md for tests and limits.
 

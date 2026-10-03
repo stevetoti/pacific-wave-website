@@ -1,4 +1,5 @@
 "use client";
+import { CourseText } from '@/components/lms/CourseLanguage';
 import { useEffect, useState } from "react";
 import { authFetch } from "@/lib/auth-fetch";
 import type { Lesson, Question } from "@/lib/lms/types";
@@ -81,9 +82,8 @@ export default function QuizPlayer({
   }
   return (
     <section className="qb-player">
-      <h3>Check your understanding</h3>
-      <p>
-        Pass mark: {lesson.quiz_settings?.pass_mark ?? 70}%.{" "}
+      <h3><CourseText text={"Check your understanding"} /></h3>
+      <p><CourseText text={"Pass mark:"} />{lesson.quiz_settings?.pass_mark ?? 70}<CourseText text={"%."} />{" "}
         {lesson.quiz_settings?.max_attempts
           ? `${lesson.quiz_settings.max_attempts} attempts allowed.`
           : "Unlimited attempts."}{" "}
@@ -106,9 +106,7 @@ export default function QuizPlayer({
               setAttempt(d.attempt);
             })
           }
-        >
-          Start / resume quiz
-        </button>
+        ><CourseText text={"Start / resume quiz"} /></button>
       ) : (
         <form
           onSubmit={(e) => {
@@ -143,9 +141,7 @@ export default function QuizPlayer({
           }}
         >
           {remaining !== null && (
-            <p className="lms-notice" role="timer">
-              Time remaining: {Math.floor(remaining / 60)}:
-              {String(remaining % 60).padStart(2, "0")}
+            <p className="lms-notice" role="timer"><CourseText text={"Time remaining:"} />{Math.floor(remaining / 60)}<CourseText text={":"} />{String(remaining % 60).padStart(2, "0")}
             </p>
           )}
           <fieldset disabled={busy || remaining === 0}>
@@ -154,8 +150,8 @@ export default function QuizPlayer({
               return (
                 <fieldset className="lms-quiz" key={i}>
                   <legend>
-                    {i + 1}. {q.question.replaceAll("[[blank]]", "______")}{" "}
-                    <small>({q.points ?? 1} points)</small>
+                    {i + 1}<CourseText text={"."} />{q.question.replaceAll("[[blank]]", "______")}{" "}
+                    <small><CourseText text={"("} />{q.points ?? 1}<CourseText text={"points)"} /></small>
                   </legend>
                   {["single", "true_false", "multiple"].includes(t) &&
                     q.options.map((o, j) => (
@@ -185,8 +181,7 @@ export default function QuizPlayer({
                           .length,
                       },
                       (_, j) => (
-                        <label key={j}>
-                          Blank {j + 1}
+                        <label key={j}><CourseText text={"Blank"} />{j + 1}
                           <input required name={`q${i}_${j}`} maxLength={600} />
                         </label>
                       ),
@@ -199,7 +194,7 @@ export default function QuizPlayer({
                       <label key={j}>
                         {prompt}
                         <select required defaultValue="" name={`q${i}_${j}`}>
-                          <option value="">Choose an option</option>
+                          <option value=""><CourseText text={"Choose an option"} /></option>
                           {q.options.map((o, k) => (
                             <option value={k} key={k}>
                               {o}
@@ -211,7 +206,7 @@ export default function QuizPlayer({
                 </fieldset>
               );
             })}
-            <button className="lms-button">Submit answers</button>
+            <button className="lms-button"><CourseText text={"Submit answers"} /></button>
           </fieldset>
           {remaining === 0 && (
             <button
@@ -220,24 +215,21 @@ export default function QuizPlayer({
                 setAttempt(null);
                 load().catch((e) => setError(e.message));
               }}
-            >
-              Time expired — return to attempts
-            </button>
+            ><CourseText text={"Time expired — return to attempts"} /></button>
           )}
         </form>
       )}
       {!!history.length && (
         <div className="lms-bank">
-          <h4>Your attempts</h4>
+          <h4><CourseText text={"Your attempts"} /></h4>
           {history.map((a) => (
             <p key={a.id}>
-              {new Date(a.started_at).toLocaleString()} ·{" "}
+              {new Date(a.started_at).toLocaleString()}<CourseText text={"·"} />{" "}
               {a.state === "review" ? "Awaiting instructor review" : a.state}
               {a.score !== null ? ` · ${a.score}%` : ""}
               {a.feedback && (
                 <>
-                  <br />
-                  Instructor feedback: {a.feedback}
+                  <br /><CourseText text={"Instructor feedback:"} />{a.feedback}
                 </>
               )}
             </p>

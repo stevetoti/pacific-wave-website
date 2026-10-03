@@ -206,7 +206,7 @@ export async function POST(req: Request) {
     }
     const id = reservation.data;
     try {
-      const token = await mintCoach(input.role, context);
+      const token = await mintCoach(input.role, {...context, preferred_language: input.language === "bi" ? "Bislama" : input.language === "fr" ? "French" : "English"});
       checked(
         await db
           .from("pwd_lms_coach_sessions")

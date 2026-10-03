@@ -121,3 +121,11 @@ Added 12-lesson October workbook source, course component, authenticated save/ex
 ## 2026-10-03 — [Codex] Workbook visibility and supported learning
 
 Stephen requested actual cover entry card, assigned-instructor read access and per-student AI workbook context. Implementing course-scoped read-only teaching review, bounded labelled session-start AI excerpts and clear student sharing notices. Other students remain denied; no instructor write capability. Verification in progress.
+
+## 2026-10-03 — [Codex] Course languages prepared; translation permission pending
+
+Stephen requested English-default course page with Bislama/French and original-language workbook answers. Found existing Language Hub Bislama gold references (grammar.md, glossary.md, examples.md with 152 curated pairs). Prepared context-based selector, browser-local preference, course/workbook/faculty/community interface translation hooks and AI session language; student answer values/IDs remain unchanged. Prepared scripts/localization/source.json (875 authored strings, no learner data) and documented generation script. bi.json/fr.json are EMPTY placeholders: DO NOT PUBLISH unfinished language work. Automatic approval review rejected sending authored course text + private gold references to Anthropic because this payload/destination was not explicitly authorised. No external generation occurred; script saved for review only. Ask Stephen for approval before running or any indirect transmission. Type/lint/build and six focused tests pass. Live remains main 34e34e3.
+
+## 2026-10-03 — [Codex] Gold translation transfer approved
+
+Stephen explicitly approved authored course text and private gold Bislama reference transmission to Anthropic through the existing service. Prior transfer approval blocker resolved. Generation running; no student data included. Verify coverage/content and language switching before publishing.

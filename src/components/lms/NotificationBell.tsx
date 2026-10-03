@@ -1,4 +1,5 @@
 "use client";
+import { CourseText } from '@/components/lms/CourseLanguage';
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -140,11 +141,9 @@ export default function NotificationBell() {
         </summary>
         <div className="nb-panel" role="menu">
           <header>
-            <strong>Notifications</strong>
+            <strong><CourseText text={"Notifications"} /></strong>
             {unread > 0 && (
-              <button type="button" onClick={readAll}>
-                Mark all as read
-              </button>
+              <button type="button" onClick={readAll}><CourseText text={"Mark all as read"} /></button>
             )}
           </header>
           <div className="nb-list">
@@ -161,7 +160,7 @@ export default function NotificationBell() {
                 </button>
               ))
             ) : (
-              <p className="nb-empty">You&apos;re all caught up.</p>
+              <p className="nb-empty"><CourseText text={"You're all caught up."} /></p>
             )}
           </div>
         </div>

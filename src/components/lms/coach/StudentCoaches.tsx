@@ -1,4 +1,5 @@
 "use client";
+import { CourseText, useCourseLanguage } from '@/components/lms/CourseLanguage';
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -72,6 +73,7 @@ export default function StudentCoaches({
   lessonTitle: string | null;
   visible?: boolean;
 }) {
+  const {t, language}=useCourseLanguage();
   const [contextLoaded, setContextLoaded] = useState(false);
   const [expanded, setExpanded] = useState(true),
     [notes, setNotes] = useState(""),
@@ -339,6 +341,7 @@ export default function StudentCoaches({
         role: next,
         lesson_id: lessonId,
         consent: true,
+        language,
       });
       if (run !== generation.current) {
         await api(courseId, {
@@ -463,47 +466,38 @@ export default function StudentCoaches({
           <Video size={23} />
         </span>
         <span>
-          <strong>Your personal AI faculty</strong>
+          <strong><CourseText text={"Your personal AI faculty"} /></strong>
           <small>
-            {onboardingCompleted
+            {t(onboardingCompleted
               ? "Your coaching team, throughout your course."
-              : "Start with orientation. Meet the right coach for each step."}
+              : "Start with orientation. Meet the right coach for each step.")}
           </small>
         </span>
         <span className={styles.open}>
-          {expanded ? "Close" : "Meet your tutors →"}
+          {t(expanded ? "Close" : "Meet your tutors →")}
         </span>
       </button>
       {visible && expanded && (
         <div className={styles.content}>
-          <p className={styles.context}>
-            Learning together · {lessonTitle || "Course introduction"}
+          <p className={styles.context}><CourseText text={"Learning together ·"} />{lessonTitle || "Course introduction"}
           </p>
           <p className={styles.guide}>
-            {!access.active
+            {t(!access.active
               ? "Your coaching period has ended. You can still review your notes and recent conversations."
               : onboardingCompleted
                 ? "You’ve completed onboarding. Choose a specialist below for the task you’re working on."
-                : "New to this course? Meet your Onboarding Tutor once, then choose a specialist whenever you need help."}
+                : "New to this course? Meet your Onboarding Tutor once, then choose a specialist whenever you need help.")}
           </p>
           {access.ends_on && (
-            <p className={styles.until}>
-              AI coaching available through {access.ends_on}.
-            </p>
+            <p className={styles.until}><CourseText text={"AI coaching available through"} />{access.ends_on}<CourseText text={"."} /></p>
           )}
-          <p className={styles.until}>Your AI faculty can refer to your saved workbook answers to help with your business. Save your work before starting a session. Changes made during a session are available in your next session.</p>
+          <p className={styles.until}><CourseText text={"Your AI faculty can refer to your saved workbook answers to help with your business. Save your work before starting a session. Changes made during a session are available in your next session."} /></p>
           {contextLoaded && !consent && (
             <div className={styles.preferences}>
-              <strong>One profile for your coaching team</strong>
-              <p>
-                Allow your relevant profile, course progress, saved workbook answers, notes and
-                conversation to be used by Anam and our AI research service for
-                personalized voice coaching. Private transcripts and researched
-                reports are saved in your dashboard and emailed to your account.
-                Your approval is saved across your courses.
-              </p>
+              <strong><CourseText text={"One profile for your coaching team"} /></strong>
+              <p><CourseText text={"Allow your relevant profile, course progress, saved workbook answers, notes and conversation to be used by Anam and our AI research service for personalized voice coaching. Private transcripts and researched reports are saved in your dashboard and emailed to your account. Your approval is saved across your courses."} /></p>
               <button disabled={approving} onClick={() => void approve()}>
-                {approving ? "Saving approval…" : "Approve and meet my coaches"}
+                {t(approving ? "Saving approval…" : "Approve and meet my coaches")}
               </button>
             </div>
           )}
@@ -517,23 +511,22 @@ export default function StudentCoaches({
                     <div className={styles.cardImage}>
                       <Image
                         src={`/images/coaches/${k}.webp`}
-                        alt={`Illustration of a student meeting the ${coaches[k].title} on a laptop`}
+                        alt={`Illustration of a student meeting the ${t(coaches[k].title)} on a laptop`}
                         fill
                         sizes="(max-width: 600px) 90vw, (max-width: 1000px) 44vw, 30vw"
                       />
                       <span>
-                        <Icon size={15} /> AI video coach
-                      </span>
+                        <Icon size={15} /><CourseText text={"AI video coach"} /></span>
                     </div>
                     <div className={styles.cardBody}>
-                      <span className={styles.when}>{coaches[k].when}</span>
-                      <h3>{coaches[k].title}</h3>
-                      <p>{coaches[k].description}</p>
+                      <span className={styles.when}>{t(coaches[k].when)}</span>
+                      <h3>{t(coaches[k].title)}</h3>
+                      <p>{t(coaches[k].description)}</p>
                       <button
                         disabled={!consent || phase !== "idle" || !available[k]}
                         onClick={() => void start(k)}
                       >
-                        {phase !== "idle"
+                        {t(phase !== "idle"
                           ? "Session in progress"
                           : available[k]
                             ? "Start video conversation"
@@ -541,7 +534,7 @@ export default function StudentCoaches({
                               ? access.active
                                 ? "Temporarily unavailable"
                                 : "Course coaching ended"
-                              : "Checking availability…"}
+                              : "Checking availability…")}
                       </button>
                     </div>
                   </article>
@@ -549,18 +542,12 @@ export default function StudentCoaches({
               })}
           </div>
           <div className={styles.preferences}>
-            <small>
-              Up to 15 minutes per session, eight sessions per 24 hours across
-              your courses. AI guidance may need instructor verification.
-            </small>
+            <small><CourseText text={"Up to 15 minutes per session, eight sessions per 24 hours across your courses. AI guidance may need instructor verification."} /></small>
           </div>
           <div className={styles.memory}>
             <div>
-              <h3>Your coaching notes</h3>
-              <p>
-                Tell your tutors what matters: your goals, experience, business
-                idea and next steps. You can edit or clear this at any time.
-              </p>
+              <h3><CourseText text={"Your coaching notes"} /></h3>
+              <p><CourseText text={"Tell your tutors what matters: your goals, experience, business idea and next steps. You can edit or clear this at any time."} /></p>
               <textarea
                 aria-label="Coaching notes"
                 disabled={!contextLoaded}
@@ -571,22 +558,17 @@ export default function StudentCoaches({
                 placeholder="My goal is… My business is… Next I will…"
               />
               <button disabled={saving} onClick={() => void save()}>
-                {saving ? "Saving…" : "Save coaching notes"}
+                {t(saving ? "Saving…" : "Save coaching notes")}
               </button>
             </div>
             <div>
-              <h3>Recent conversations</h3>
-              <p>
-                Read your researched reports, download your PDFs and rename
-                sessions.
-              </p>
-              <Link href={`/training-center/sessions?course=${courseId}`}>
-                Open all conversations →
-              </Link>
+              <h3><CourseText text={"Recent conversations"} /></h3>
+              <p><CourseText text={"Read your researched reports, download your PDFs and rename sessions."} /></p>
+              <Link href={`/training-center/sessions?course=${courseId}`}><CourseText text={"Open all conversations →"} /></Link>
               {history.slice(0, 3).map((h) => (
                 <p key={h.id}>
                   <Link href={`/training-center/sessions?session=${h.id}`}>
-                    {coaches[h.role]?.title} ·{" "}
+                    {coaches[h.role]?.title}<CourseText text={"·"} />{" "}
                     {new Date(h.created_at).toLocaleDateString()}
                   </Link>
                 </p>
@@ -597,12 +579,12 @@ export default function StudentCoaches({
       )}
       {error && (
         <p role="alert" className={styles.error}>
-          {error}
+          {t(error)}
         </p>
       )}
       {notice && (
         <p role="status" className={styles.notice}>
-          {notice}
+          {t(notice)}
         </p>
       )}
       {role &&
@@ -613,7 +595,7 @@ export default function StudentCoaches({
             aria-label="Active video tutor"
           >
             <header>
-              <strong>{coaches[role].title}</strong>
+              <strong>{t(coaches[role].title)}</strong>
               {!minimized && (
                 <button
                   aria-label={fullscreen ? "Exit full screen" : "Full screen"}
@@ -647,8 +629,7 @@ export default function StudentCoaches({
                     aria-label="AI tutor video"
                   />
                   <span className={styles.tileLabel}>
-                    {coaches[role].title} · AI
-                  </span>
+                    {t(coaches[role].title)}<CourseText text={"· AI"} /></span>
                 </div>
                 <div className={styles.videoTile}>
                   <video
@@ -662,11 +643,11 @@ export default function StudentCoaches({
                   {!cameraOn && (
                     <div className={styles.cameraPlaceholder}>
                       <CameraOff size={30} />
-                      <strong>Your camera is off</strong>
-                      <small>You can still speak.</small>
+                      <strong><CourseText text={"Your camera is off"} /></strong>
+                      <small><CourseText text={"You can still speak."} /></small>
                     </div>
                   )}
-                  <span className={styles.tileLabel}>You · local preview</span>
+                  <span className={styles.tileLabel}><CourseText text={"You · local preview"} /></span>
                 </div>
               </div>
               <div className={styles.controls}>
@@ -676,11 +657,11 @@ export default function StudentCoaches({
                   onClick={() => void toggleCamera()}
                 >
                   {cameraOn ? <CameraOff size={16} /> : <Camera size={16} />}{" "}
-                  {cameraBusy
+                  {t(cameraBusy
                     ? "Opening camera…"
                     : cameraOn
                       ? "Turn camera off"
-                      : "Turn camera on"}
+                      : "Turn camera on")}
                 </button>
                 {role === "onboarding" && (
                   <button
@@ -691,15 +672,10 @@ export default function StudentCoaches({
                       !lines.some((l) => l.role === "persona")
                     }
                     onClick={() => void end(true)}
-                  >
-                    Complete onboarding
-                  </button>
+                  ><CourseText text={"Complete onboarding"} /></button>
                 )}
               </div>
-              <p className={styles.cameraNote}>
-                Your camera is a local preview only. The AI does not see or
-                record it.
-              </p>
+              <p className={styles.cameraNote}><CourseText text={"Your camera is a local preview only. The AI does not see or record it."} /></p>
               {cameraError && (
                 <p role="alert" className={styles.cameraNote}>
                   {cameraError}
@@ -711,9 +687,7 @@ export default function StudentCoaches({
                   : `${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")} remaining · ${lessonTitle || "Course introduction"}`}
               </p>
               {researching && (
-                <p className={styles.callStatus} role="status">
-                  Checking current sources…
-                </p>
+                <p className={styles.callStatus} role="status"><CourseText text={"Checking current sources…"} /></p>
               )}
               <button
                 className={styles.mic}
@@ -726,7 +700,7 @@ export default function StudentCoaches({
                 }}
               >
                 {muted ? <MicOff size={16} /> : <Mic size={16} />}{" "}
-                {muted ? "Unmute microphone" : "Mute microphone"}
+                {t(muted ? "Unmute microphone" : "Mute microphone")}
               </button>
             </div>
           </aside>,

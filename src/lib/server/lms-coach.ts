@@ -1,4 +1,5 @@
 import "server-only";
+import {coachGreeting} from "@/lib/lms/coach/greeting";
 import { workbook } from "@/lib/lms/workbook-schema";
 import { workbookContext } from "@/lib/lms/workbook-context";
 import {consentVersion} from "@/lib/lms/coach/report";
@@ -131,7 +132,7 @@ export async function coachContext(
 }
 export async function mintCoach(
   role: CoachRole,
-  context: Awaited<ReturnType<typeof coachContext>>["context"],
+  context: Awaited<ReturnType<typeof coachContext>>["context"] & {preferred_language?: string},
 ) {
   const key = process.env.ANAM_API_KEY,
     personaId = process.env[coaches[role].personaEnv];
@@ -168,7 +169,7 @@ export async function mintCoach(
         llmId,
         systemPrompt: coachPrompt(role, context),
         tools: [{type:"client",name:"live_research",description:"Search current trustworthy sources for a student's factual question, requirements or learning gap. Ask jurisdiction and relevant context first. Never include names, emails, credentials or private identifiers in a query.",parameters:{type:"object",properties:{topic:{type:"string",description:"A focused factual research question with jurisdiction where relevant"}},required:["topic"]},awaitResult:true,toolTimeoutSeconds:180}],
-        initialMessage: `Hello ${String(context.student.name || "there").split(" ")[0]}! I'm your ${coaches[role].title}. ${role === "onboarding" ? "Welcome to your course. Let’s walk through the course outline, the published class timetable, and how to use your coaches. Shall we start with the course journey?" : role === "class_assistant" && context.current_lesson ? `Let's work on ${context.current_lesson.title}. What would you like to understand better?` : "What would you like to work on together today?"}`,
+        initialMessage: coachGreeting(role,String(context.student.name || ""),context.preferred_language),
         maxSessionLengthSeconds: 900,
         ...(p.avatarModel ? { avatarModel: p.avatarModel } : {}),
       },

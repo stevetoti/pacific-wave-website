@@ -1,4 +1,5 @@
 "use client";
+import { CourseText, CourseLanguageProvider, CourseLanguagePicker, useCourseLanguage } from '@/components/lms/CourseLanguage';
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
@@ -58,16 +59,16 @@ async function api(path: string, body?: unknown) {
   if (!r.ok) throw new Error(data.error || "Please try again.");
   return data;
 }
-const when = (s: string) =>
-  new Date(s).toLocaleString("en-GB", {
+const when = (s: string, language = "en") =>
+  new Date(s).toLocaleString(language === "fr" ? "fr-FR" : "en-GB", {
     timeZone: "Pacific/Efate",
-    weekday: "short",
+    weekday: language === "bi" ? undefined : "short",
     day: "numeric",
-    month: "short",
+    month: language === "bi" ? "numeric" : "short",
     hour: "2-digit",
     minute: "2-digit",
   });
-export default function TrainingCenter({
+function TrainingCenterContent({
   path,
   query,
   initialCourses,
@@ -76,6 +77,7 @@ export default function TrainingCenter({
   path: string[];
   query: Record<string, string | undefined>;
 }) {
+  const { t, language } = useCourseLanguage();
   const router = useRouter();
   const view = path[0] || "catalog";
   const coursePathId = path[1];
@@ -314,6 +316,7 @@ export default function TrainingCenter({
   return (
     <div className={`lms ${view === "dashboard" ? "lms-dashboard-page" : ""}`}>
       <div className="lms-shell">
+        {view === "course" && <CourseLanguagePicker />}
         <nav className="lms-nav" aria-label="Training navigation">
           <Link href={base} className="lms-brand">
             <Image
@@ -322,13 +325,12 @@ export default function TrainingCenter({
               height={44}
               alt="Pacific Wave Digital"
             />
-            <span>
-              TRAINING CENTRE<small>Pacific Wave Digital</small>
+            <span><CourseText text={"TRAINING CENTRE"} /><small><CourseText text={"Pacific Wave Digital"} /></small>
             </span>
           </Link>
           <div>
-            <Link href="/">Main website</Link>
-            <Link href={base}>Explore courses</Link>
+            <Link href="/"><CourseText text={"Main website"} /></Link>
+            <Link href={base}><CourseText text={"Explore courses"} /></Link>
             <Link
               href={
                 email
@@ -336,7 +338,7 @@ export default function TrainingCenter({
                   : `${base}/account?mode=signin`
               }
             >
-              {email ? "My dashboard" : "Sign in"}
+              {t(email ? "My dashboard" : "Sign in")}
             </Link>
           </div>
           {email && (
@@ -357,14 +359,11 @@ export default function TrainingCenter({
           )}
         </nav>
         {sandbox && (
-          <div className="lms-notice">
-            Preview mode: registration emails go to a test inbox. Your review
-            here will not trigger a real card charge.
-          </div>
+          <div className="lms-notice"><CourseText text={"Preview mode: registration emails go to a test inbox. Your review here will not trigger a real card charge."} /></div>
         )}
         {error && (
           <div className="lms-alert" role="alert">
-            {error} <button onClick={() => run(refresh)}>Try again</button>
+            {error} <button onClick={() => run(refresh)}><CourseText text={"Try again"} /></button>
           </div>
         )}
         {message && (
@@ -373,42 +372,27 @@ export default function TrainingCenter({
           </div>
         )}
         {!ready ? (
-          <p className="lms-panel">Loading your training centre…</p>
+          <p className="lms-panel"><CourseText text={"Loading your training centre…"} /></p>
         ) : (
           <>
             {view === "catalog" && (
               <>
                 <section className="lms-hero">
                   <div>
-                    <p className="lms-eyebrow">
-                      LEARN HERE. BUILD WHAT’S NEXT.
-                    </p>
-                    <h1>
-                      Your next chapter
-                      <br />
-                      <em>starts with a skill.</em>
+                    <p className="lms-eyebrow"><CourseText text={"LEARN HERE. BUILD WHAT’S NEXT."} /></p>
+                    <h1><CourseText text={"Your next chapter"} /><br />
+                      <em><CourseText text={"starts with a skill."} /></em>
                     </h1>
-                    <p>
-                      Practical learning for people building businesses in
-                      Vanuatu and across the Pacific. Join a live class. Learn
-                      at your pace. Put it into practice.
-                    </p>
-                    <a className="lms-button" href="#courses">
-                      Find your course <ArrowRight size={18} />
+                    <p><CourseText text={"Practical learning for people building businesses in Vanuatu and across the Pacific. Join a live class. Learn at your pace. Put it into practice."} /></p>
+                    <a className="lms-button" href="#courses"><CourseText text={"Find your course"} /><ArrowRight size={18} />
                     </a>
                     <div className="lms-hero-facts">
                       <span>
-                        <GraduationCap />
-                        Practical projects
-                      </span>
+                        <GraduationCap /><CourseText text={"Practical projects"} /></span>
                       <span>
-                        <PlayCircle />
-                        Class replays
-                      </span>
+                        <PlayCircle /><CourseText text={"Class replays"} /></span>
                       <span>
-                        <CalendarDays />
-                        Live & self-paced
-                      </span>
+                        <CalendarDays /><CourseText text={"Live & self-paced"} /></span>
                     </div>
                   </div>
                   <div className="lms-hero-image">
@@ -420,18 +404,17 @@ export default function TrainingCenter({
                       sizes="(max-width: 800px) 100vw, 45vw"
                     />
                     <div className="lms-float">
-                      <span className="lms-dot" /> OCTOBER COHORT
-                      <small>Start 5 October · Vanuatu</small>
+                      <span className="lms-dot" /><CourseText text={"OCTOBER COHORT"} /><small><CourseText text={"Start 5 October · Vanuatu"} /></small>
                     </div>
                   </div>
                 </section>
                 <section id="courses" className="lms-section">
                   <div className="lms-section-head">
                     <div>
-                      <p className="lms-eyebrow">YOUR LEARNING JOURNEY</p>
-                      <h2>Find your next course</h2>
+                      <p className="lms-eyebrow"><CourseText text={"YOUR LEARNING JOURNEY"} /></p>
+                      <h2><CourseText text={"Find your next course"} /></h2>
                     </div>
-                    <p>Real skills. A clear path forward.</p>
+                    <p><CourseText text={"Real skills. A clear path forward."} /></p>
                   </div>
                   <div className="lms-grid lms-catalog-grid">
                     {courses.filter(c => !c.is_private).map((c) => (
@@ -457,11 +440,11 @@ export default function TrainingCenter({
                         </div>
                         <div className="lms-card-body">
                           <p className="lms-eyebrow">
-                            {c.private_sessions
+                            {t(c.private_sessions
                               ? "PERSONAL GUIDANCE"
                               : c.kind === "live"
                                 ? "LEARN TOGETHER"
-                                : "LEARN AT YOUR PACE"}
+                                : "LEARN AT YOUR PACE")}
                           </p>
                           <h3>{c.title}</h3>
                           <p>{c.description}</p>
@@ -477,11 +460,11 @@ export default function TrainingCenter({
                                 ? money(c.amount, c.currency)
                                 : "Coming soon"}
                               <small>
-                                {!c.enrollment_open
+                                {t(!c.enrollment_open
                                   ? "Details to be announced"
                                   : c.slug === mentorshipSlug
                                     ? "Total for 3 months"
-                                    : "One-time course fee"}
+                                    : "One-time course fee")}
                               </small>
                             </strong>
                             <Link
@@ -492,7 +475,7 @@ export default function TrainingCenter({
                                   : `${base}/account?mode=signup&course=${c.slug}`
                               }
                             >
-                              {c.cohort_id ? "Register" : "View course"}
+                              {t(c.cohort_id ? "Register" : "View course")}
                               <ArrowRight size={16} />
                             </Link>
                           </div>
@@ -504,13 +487,10 @@ export default function TrainingCenter({
                 <section className="lms-banner">
                   <ShieldCheck size={40} />
                   <div>
-                    <h2>A learning space that stays with you.</h2>
-                    <p>
-                      Your classes, recordings, quizzes and progress — together
-                      in your personal dashboard.
-                    </p>
+                    <h2><CourseText text={"A learning space that stays with you."} /></h2>
+                    <p><CourseText text={"Your classes, recordings, quizzes and progress — together in your personal dashboard."} /></p>
                   </div>
-                  <Link href={`${base}/dashboard`}>Open my dashboard →</Link>
+                  <Link href={`${base}/dashboard`}><CourseText text={"Open my dashboard →"} /></Link>
                 </section>
               </>
             )}
@@ -521,8 +501,8 @@ export default function TrainingCenter({
                 />
               ) : (
                 <div className="lms-panel">
-                  <h1>Course unavailable</h1>
-                  <Link href={base}>Explore courses</Link>
+                  <h1><CourseText text={"Course unavailable"} /></h1>
+                  <Link href={base}><CourseText text={"Explore courses"} /></Link>
                 </div>
               ))}
             {view === "account" && (
@@ -540,36 +520,21 @@ export default function TrainingCenter({
                   />
                   <div className="lms-auth-visual-shade" />
                   <span className="lms-auth-visual-tag">
-                    <GraduationCap size={18} aria-hidden="true" /> YOUR FUTURE
-                    STARTS HERE
-                  </span>
+                    <GraduationCap size={18} aria-hidden="true" /><CourseText text={"YOUR FUTURE STARTS HERE"} /></span>
                   <div className="lms-auth-story">
                     <span className="lms-auth-accent" />
-                    <h2>
-                      Build your skills.
-                      <br />
-                      Create your future.
-                    </h2>
-                    <p>
-                      Learn alongside people with ideas, ambition and the
-                      courage to take the next step.
-                    </p>
+                    <h2><CourseText text={"Build your skills."} /><br /><CourseText text={"Create your future."} /></h2>
+                    <p><CourseText text={"Learn alongside people with ideas, ambition and the courage to take the next step."} /></p>
                     <div className="lms-auth-benefits">
                       <span>
-                        <BookOpen size={16} aria-hidden="true" />
-                        Practical learning
-                      </span>
+                        <BookOpen size={16} aria-hidden="true" /><CourseText text={"Practical learning"} /></span>
                       <span>
-                        <PlayCircle size={16} aria-hidden="true" />
-                        Class recordings
-                      </span>
+                        <PlayCircle size={16} aria-hidden="true" /><CourseText text={"Class recordings"} /></span>
                     </div>
                   </div>
                 </aside>
                 <div className="lms-auth-form">
-                  <p className="lms-auth-kicker">
-                    PACIFIC WAVE DIGITAL · TRAINING CENTRE
-                  </p>
+                  <p className="lms-auth-kicker"><CourseText text={"PACIFIC WAVE DIGITAL · TRAINING CENTRE"} /></p>
 
                   {authMode === "signup" && queryCourse && checkout && (
                     <div className="lms-notice">
@@ -580,7 +545,7 @@ export default function TrainingCenter({
                     </div>
                   )}
                   <h1>
-                    {authMode === "signup"
+                    {t(authMode === "signup"
                       ? forAffiliate
                         ? "Create your free affiliate account"
                         : "Create your student account"
@@ -588,19 +553,18 @@ export default function TrainingCenter({
                         ? "Reset your password"
                         : authMode === "update"
                           ? "Choose a new password"
-                          : "Welcome back"}
+                          : "Welcome back")}
                   </h1>
                   <p>
-                    {authMode === "signup" && forAffiliate
+                    {t(authMode === "signup" && forAffiliate
                       ? "Free to join. You don't need to buy a course. Next, you'll apply to the affiliate programme."
                       : authMode === "signup"
                       ? checkout?.requires_approval ? "Register for free. Our team will approve your workshop access after checking participant eligibility." : "Register once, then choose how to pay. No email confirmation needed."
-                      : "Your courses, class recordings and learning progress in one place."}
+                      : "Your courses, class recordings and learning progress in one place.")}
                   </p>
                   {accountEmail && (
                     <div className="lms-notice">
-                      <p>
-                        Account email: <strong>{accountEmail}</strong>
+                      <p><CourseText text={"Account email:"} /><strong>{accountEmail}</strong>
                       </p>
                       <button
                         className="lms-text"
@@ -617,9 +581,7 @@ export default function TrainingCenter({
                             );
                           })
                         }
-                      >
-                        Resend access email
-                      </button>
+                      ><CourseText text={"Resend access email"} /></button>
                     </div>
                   )}
                   {verify && (
@@ -648,11 +610,10 @@ export default function TrainingCenter({
                           }
                         })
                       }
-                    >
-                      Confirm{" "}
-                      {verifyType === "recovery"
+                    ><CourseText text={"Confirm"} />{" "}
+                      {t(verifyType === "recovery"
                         ? "password reset"
-                        : "email address"}
+                        : "email address")}
                     </button>
                   )}
                   <form
@@ -717,9 +678,7 @@ export default function TrainingCenter({
                     <fieldset disabled={busy}>
                       {authMode === "signup" && (
                         <>
-                          <label>
-                            Full name
-                            <input
+                          <label><CourseText text={"Full name"} /><input
                               name="name"
                               autoComplete="name"
                               minLength={2}
@@ -727,9 +686,7 @@ export default function TrainingCenter({
                               required
                             />
                           </label>
-                          <label>
-                            Phone / WhatsApp
-                            <input
+                          <label><CourseText text={"Phone / WhatsApp"} /><input
                               name="phone"
                               type="tel"
                               autoComplete="tel"
@@ -739,9 +696,7 @@ export default function TrainingCenter({
                               required
                             />
                           </label>
-                          <label>
-                            Location (town, island or country)
-                            <input
+                          <label><CourseText text={"Location (town, island or country)"} /><input
                               name="location"
                               autoComplete="address-level2"
                               placeholder="e.g. Port Vila, Efate"
@@ -751,26 +706,18 @@ export default function TrainingCenter({
                             />
                           </label>
                           {!forAffiliate && (
-                          <label>
-                            How would you like to attend?
-                            <select name="attendance" required defaultValue="">
-                              <option value="" disabled>
-                                Choose your attendance
-                              </option>
-                              <option value="online">Online</option>
-                              <option value="in_person">
-                                In person (physical class)
-                              </option>
-                              <option value="mixed">A mix of both</option>
+                          <label><CourseText text={"How would you like to attend?"} /><select name="attendance" required defaultValue="">
+                              <option value="" disabled><CourseText text={"Choose your attendance"} /></option>
+                              <option value="online"><CourseText text={"Online"} /></option>
+                              <option value="in_person"><CourseText text={"In person (physical class)"} /></option>
+                              <option value="mixed"><CourseText text={"A mix of both"} /></option>
                             </select>
                           </label>
                           )}
                         </>
                       )}
                       {authMode !== "update" && (
-                        <label>
-                          Email address
-                          <input
+                        <label><CourseText text={"Email address"} /><input
                             name="email"
                             type="email"
                             autoComplete="email"
@@ -779,9 +726,7 @@ export default function TrainingCenter({
                         </label>
                       )}
                       {authMode !== "reset" && (
-                        <label>
-                          Password
-                          <input
+                        <label><CourseText text={"Password"} /><input
                             name="password"
                             type="password"
                             minLength={
@@ -800,16 +745,11 @@ export default function TrainingCenter({
                       )}
                       {authMode === "signup" && (
                         <label className="lms-check">
-                          <input name="privacy" type="checkbox" required />I
-                          agree to the{" "}
-                          <Link href="/privacy#training-registrations">
-                            training privacy notice
-                          </Link>
-                          .
-                        </label>
+                          <input name="privacy" type="checkbox" required /><CourseText text={"I agree to the"} />{" "}
+                          <Link href="/privacy#training-registrations"><CourseText text={"training privacy notice"} /></Link><CourseText text={"."} /></label>
                       )}
                       <button className="lms-button">
-                        {busy
+                        {t(busy
                           ? "Please wait…"
                           : authMode === "signup"
                             ? queryCourse
@@ -819,7 +759,7 @@ export default function TrainingCenter({
                               ? "Send reset email"
                               : authMode === "update"
                                 ? "Save password"
-                                : "Sign in"}
+                                : "Sign in")}
                         <ArrowRight size={18} />
                       </button>
                     </fieldset>
@@ -830,29 +770,25 @@ export default function TrainingCenter({
                         setAuthMode(authMode === "signup" ? "signin" : "signup")
                       }
                     >
-                      {authMode === "signup"
+                      {t(authMode === "signup"
                         ? "Already a student? Sign in"
-                        : "New here? Create an account"}
+                        : "New here? Create an account")}
                     </button>
                     {authMode === "signin" && (
-                      <button onClick={() => setAuthMode("reset")}>
-                        Forgot password?
-                      </button>
+                      <button onClick={() => setAuthMode("reset")}><CourseText text={"Forgot password?"} /></button>
                     )}
                   </div>
                   <p className="lms-auth-reassurance">
-                    <ShieldCheck size={16} aria-hidden="true" />
-                    Your personal space to learn and grow.
-                  </p>
+                    <ShieldCheck size={16} aria-hidden="true" /><CourseText text={"Your personal space to learn and grow."} /></p>
                 </div>
               </section>
             )}
             {view === "checkout" &&
               (!checkout || (!checkout.enrollment_open && !order)) && (
                 <section className="lms-panel">
-                  <h1>Course unavailable</h1>
-                  <p>This course is not currently accepting registrations.</p>
-                  <Link href={base}>Explore available courses →</Link>
+                  <h1><CourseText text={"Course unavailable"} /></h1>
+                  <p><CourseText text={"This course is not currently accepting registrations."} /></p>
+                  <Link href={base}><CourseText text={"Explore available courses →"} /></Link>
                 </section>
               )}
             {view === "checkout" &&
@@ -860,9 +796,9 @@ export default function TrainingCenter({
               (checkout.enrollment_open || order) && (
                 <>
                   <header className="lms-page-head">
-                    <p className="lms-eyebrow">YOUR NEXT STEP</p>
-                    <h1>Join the course</h1>
-                    <p>{checkout.requires_approval ? "Register for free. Our team will confirm you are a workshop participant before opening learning and chat access." : "Pay by bank transfer or card to complete your enrolment. We’ll guide you step by step."}</p>
+                    <p className="lms-eyebrow"><CourseText text={"YOUR NEXT STEP"} /></p>
+                    <h1><CourseText text={"Join the course"} /></h1>
+                    <p>{t(checkout.requires_approval ? "Register for free. Our team will confirm you are a workshop participant before opening learning and chat access." : "Pay by bank transfer or card to complete your enrolment. We’ll guide you step by step.")}</p>
                   </header>
                   <div className="lms-two lms-checkout">
                     <section className="lms-panel lms-checkout-course">
@@ -875,28 +811,18 @@ export default function TrainingCenter({
                         )}
                       </div>
                       <p>
-                        {checkout.requires_approval ? "No payment required · Administrator approval needed" : checkout.private_sessions
+                        {t(checkout.requires_approval ? "No payment required · Administrator approval needed" : checkout.private_sessions
                           ? "One-time fee for all 3 months"
-                          : "One-time course fee"}
+                          : "One-time course fee")}
                       </p>
                       {checkout.cohort_id && (
                         <>
                           <hr />
                           <p>
-                            <strong>12 live classes · 24 teaching hours</strong>
-                            <br />
-                            5–31 October · Mon, Thu & Sat
-                            <br />
-                            3–5 pm Vanuatu time (UTC+11)
-                          </p>
-                          <p>
-                            Yumiwork, Nambatu, near Kaiviti Motel, or online.
-                          </p>
-                          <p>
-                            Includes three free months of Digi Assist AI Pro and
-                            one additional mentorship month. Continued Pro use
-                            requires a paid subscription after the free period.
-                          </p>
+                            <strong><CourseText text={"12 live classes · 24 teaching hours"} /></strong>
+                            <br /><CourseText text={"5–31 October · Mon, Thu & Sat"} /><br /><CourseText text={"3–5 pm Vanuatu time (UTC+11)"} /></p>
+                          <p><CourseText text={"Yumiwork, Nambatu, near Kaiviti Motel, or online."} /></p>
+                          <p><CourseText text={"Includes three free months of Digi Assist AI Pro and one additional mentorship month. Continued Pro use requires a paid subscription after the free period."} /></p>
                         </>
                       )}
                       <Link
@@ -905,34 +831,22 @@ export default function TrainingCenter({
                             ? "/vanuatu-training"
                             : `${base}/programs/${checkout.slug}`
                         }
-                      >
-                        Read the full course details →
-                      </Link>
+                      ><CourseText text={"Read the full course details →"} /></Link>
                       {checkout.private_sessions && (
-                        <p>
-                          Includes building one software project during the
-                          programme and three free months of Digi Assist AI Pro.
-                          Continued Pro use after the free period requires a
-                          paid subscription. Sessions are arranged with your
-                          mentor, with private recordings for your enrolment.
-                        </p>
+                        <p><CourseText text={"Includes building one software project during the programme and three free months of Digi Assist AI Pro. Continued Pro use after the free period requires a paid subscription. Sessions are arranged with your mentor, with private recordings for your enrolment."} /></p>
                       )}
                     </section>
                     <section className="lms-panel lms-checkout-pay">
                       {!email ? (
                         <>
-                          <h2>Start with your student account</h2>
-                          <p>
-                            Sign in or create an account to save your
-                            registration and access your dashboard.
-                          </p>
-                          <Link className="lms-button" href={authUrl}>
-                            Register to join <ArrowRight size={18} />
+                          <h2><CourseText text={"Start with your student account"} /></h2>
+                          <p><CourseText text={"Sign in or create an account to save your registration and access your dashboard."} /></p>
+                          <Link className="lms-button" href={authUrl}><CourseText text={"Register to join"} /><ArrowRight size={18} />
                           </Link>
                         </>
                       ) : !order ? (
                         <>
-                          <h2>Your registration details</h2>
+                          <h2><CourseText text={"Your registration details"} /></h2>
                           <form
                             onSubmit={(e) => {
                               e.preventDefault();
@@ -952,9 +866,7 @@ export default function TrainingCenter({
                             <fieldset
                               disabled={busy || !checkout.enrollment_open}
                             >
-                              <label>
-                                Full name
-                                <input
+                              <label><CourseText text={"Full name"} /><input
                                   name="name"
                                   required
                                   minLength={2}
@@ -962,9 +874,7 @@ export default function TrainingCenter({
                                   autoComplete="name"
                                 />
                               </label>
-                              <label>
-                                Phone / WhatsApp
-                                <input
+                              <label><CourseText text={"Phone / WhatsApp"} /><input
                                   name="phone"
                                   type="tel"
                                   required
@@ -974,23 +884,16 @@ export default function TrainingCenter({
                                   autoComplete="tel"
                                 />
                               </label>
-                              <label>
-                                How will you attend?
-                                <select name="attendance">
-                                  <option value="online">Online</option>
-                                  <option value="in_person">In person</option>
-                                  <option value="mixed">A mix of both</option>
+                              <label><CourseText text={"How will you attend?"} /><select name="attendance">
+                                  <option value="online"><CourseText text={"Online"} /></option>
+                                  <option value="in_person"><CourseText text={"In person"} /></option>
+                                  <option value="mixed"><CourseText text={"A mix of both"} /></option>
                                 </select>
                               </label>
                               <label className="lms-check">
-                                <input type="checkbox" required />{checkout.requires_approval ? "I understand that workshop access requires approval and have read the" : "I understand the course fee and have read the"}{" "}
-                                <Link href="/privacy#training-registrations">
-                                  privacy notice
-                                </Link>
-                                .
-                              </label>
-                              <button className="lms-button">
-                                Save registration & continue{" "}
+                                <input type="checkbox" required />{t(checkout.requires_approval ? "I understand that workshop access requires approval and have read the" : "I understand the course fee and have read the")}{" "}
+                                <Link href="/privacy#training-registrations"><CourseText text={"privacy notice"} /></Link><CourseText text={"."} /></label>
+                              <button className="lms-button"><CourseText text={"Save registration & continue"} />{" "}
                                 <ArrowRight size={18} />
                               </button>
                             </fieldset>
@@ -1001,29 +904,28 @@ export default function TrainingCenter({
                         <>
                           <CheckCircle2 size={40} />
                           <h2>
-                            {["paid", "granted"].includes(order.status)
+                            {t(["paid", "granted"].includes(order.status)
                               ? "You’re enrolled!"
                               : order.status === "revoked"
                                 ? "Your access has been removed"
-                                : "Your proof is under review"}
+                                : "Your proof is under review")}
                           </h2>
                           <p>
-                            {["paid", "granted"].includes(order.status)
+                            {t(["paid", "granted"].includes(order.status)
                               ? "Your course is ready in your dashboard."
                               : order.status === "revoked"
                                 ? "Please contact steve@pacificwavedigital.com if you need help with your package."
-                                : "You can explore your introduction and timetable now. Paid lessons unlock after we verify your transfer."}
+                                : "You can explore your introduction and timetable now. Paid lessons unlock after we verify your transfer.")}
                           </p>
                           <Link
                             className="lms-button"
                             href={`${base}/course/${checkout.id}`}
-                          >
-                            Go to my course <ArrowRight size={18} />
+                          ><CourseText text={"Go to my course"} /><ArrowRight size={18} />
                           </Link>
                         </>
                       ) : (
                         <>
-                          <h2 className="pay-title">How to pay</h2>
+                          <h2 className="pay-title"><CourseText text={"How to pay"} /></h2>
                           <PaymentOptions
                             order={order}
                             courseTitle={checkout.title}
@@ -1063,9 +965,7 @@ export default function TrainingCenter({
                               })
                             }
                           />
-                          <Link href={`${base}/course/${checkout.id}`}>
-                            View introduction and schedule →
-                          </Link>
+                          <Link href={`${base}/course/${checkout.id}`}><CourseText text={"View introduction and schedule →"} /></Link>
                         </>
                       )}
                     </section>
@@ -1076,27 +976,23 @@ export default function TrainingCenter({
               (!email ? (
                 <div className="lms-panel">
                   <h1>
-                    {query.tab === "affiliate"
+                    {t(query.tab === "affiliate"
                       ? "Sign in to your affiliate dashboard"
-                      : "Your learning space is waiting"}
+                      : "Your learning space is waiting")}
                   </h1>
                   <p>
-                    {query.tab === "affiliate"
+                    {t(query.tab === "affiliate"
                       ? "Sign in with the email and password you used to apply. You don't need to be enrolled in a course."
-                      : "Sign in to see your courses, affiliate earnings, profile and purchase history."}
+                      : "Sign in to see your courses, affiliate earnings, profile and purchase history.")}
                   </p>
                   <Link
                     className="lms-button"
                     href={`${base}/account?mode=signin&next=${query.tab && /^[a-z_]{2,30}$/.test(query.tab) ? query.tab : "overview"}`}
-                  >
-                    Sign in to your dashboard
-                  </Link>{" "}
+                  ><CourseText text={"Sign in to your dashboard"} /></Link>{" "}
                   <Link
                     className="lms-text"
                     href={`${base}/account?mode=signup&next=${query.tab === "affiliate" ? "affiliate" : "overview"}`}
-                  >
-                    New here? Create a free account
-                  </Link>
+                  ><CourseText text={"New here? Create a free account"} /></Link>
                 </div>
               ) : (
                 <StudentDashboard
@@ -1111,31 +1007,27 @@ export default function TrainingCenter({
             {view === "course" &&
               (!email ? (
                 <div className="lms-panel">
-                  <h1>Sign in to your course</h1>
-                  <Link className="lms-button" href={`${base}/account`}>
-                    Student sign in
-                  </Link>
+                  <h1><CourseText text={"Sign in to your course"} /></h1>
+                  <Link className="lms-button" href={`${base}/account`}><CourseText text={"Student sign in"} /></Link>
                 </div>
               ) : (
                 current && (
                   <>
                     <header className="lms-page-head">
-                      <Link href={`${base}/dashboard`}>← My learning</Link>
+                      <Link href={`${base}/dashboard`}><CourseText text={"← My learning"} /></Link>
                       <p className="lms-eyebrow">
-                        {current.kind === "live"
+                        {t(current.kind === "live"
                           ? "YOUR LIVE COHORT"
-                          : "YOUR RECORDED COURSE"}
+                          : "YOUR RECORDED COURSE")}
                       </p>
                       {current.slug === blpSlug && <Image src="/images/training/blp/logo.png" alt="Business Link Pacific" width={180} height={115} />}
-                      <h1>{current.title}</h1>
+                      <h1>{t(current.title)}</h1>
                       <p>
                         {
                           progress.filter((p) =>
                             lessons.some((l) => l.id === p.lesson_id),
                           ).length
-                        }{" "}
-                        of {lessons.length} lessons completed
-                      </p>
+                        }{" "}<CourseText text={"of"} />{lessons.length}<CourseText text={"lessons completed"} /></p>
                       <progress
                         aria-label="Course progress"
                         max={lessons.length || 1}
@@ -1152,10 +1044,9 @@ export default function TrainingCenter({
                       <div className="lms-notice">
                         {courseOrder?.status === "review"
                           ? "Your bank transfer is awaiting verification."
-                          : current.requires_approval ? (courseOrder?.status === "revoked" ? "Your workshop access has been removed. Contact the team if you need help." : "Awaiting approval. Our team will confirm you are a workshop participant before opening lessons, resources, AI coaches and chat. No payment is required.") : "Complete payment to unlock published lessons."}{" "}
-                        Your introduction and timetable are available now.{" "}
+                          : current.requires_approval ? (courseOrder?.status === "revoked" ? "Your workshop access has been removed. Contact the team if you need help." : "Awaiting approval. Our team will confirm you are a workshop participant before opening lessons, resources, AI coaches and chat. No payment is required.") : "Complete payment to unlock published lessons."}{" "}<CourseText text={"Your introduction and timetable are available now."} />{" "}
                         <Link href={`${base}/checkout?course=${current.id}`}>
-                          {current.requires_approval ? "Registration details →" : "Payment details →"}
+                          {t(current.requires_approval ? "Registration details →" : "Payment details →")}
                         </Link>
                       </div>
                     )}
@@ -1168,16 +1059,14 @@ export default function TrainingCenter({
                       <button
                         className={courseTab === "lessons" ? "selected" : ""}
                         onClick={() => setCourseTab("lessons")}
-                      >
-                        Lessons & recordings
-                      </button>
+                      ><CourseText text={"Lessons & recordings"} /></button>
                       <button
                         className={courseTab === "community" ? "selected" : ""}
                         onClick={() => setCourseTab("community")}
                       >
-                        {current.private_sessions
+                        {t(current.private_sessions
                           ? "Private mentor chat"
-                          : "Community & groups"}
+                          : "Community & groups")}
                       </button>
                     </nav>
 
@@ -1193,16 +1082,14 @@ export default function TrainingCenter({
                       }
                     >
                       <aside className="lms-panel">
-                        <h2>Course journey</h2>
+                        <h2><CourseText text={"Course journey"} /></h2>
                         <button
                           className={`lms-lesson ${!active && !showFaculty ? "selected" : ""}`}
                           onClick={() => {setActive(null);setShowFaculty(false);}}
                         >
-                          <BookOpen size={18} />
-                          Start here: introduction
-                        </button>
-                        <button className={`lms-lesson lms-faculty-nav ${showFaculty ? "selected" : ""}`} onClick={()=>setShowFaculty(true)}><GraduationCap size={20}/><span>Meet your AI Faculty<small>Start with your onboarding tutor</small></span></button>
-                        <Link className="lms-lesson" href={`/training-center/sessions?course=${current.id}`}><BookOpen size={18}/>My coaching conversations</Link>
+                          <BookOpen size={18} /><CourseText text={"Start here: introduction"} /></button>
+                        <button className={`lms-lesson lms-faculty-nav ${showFaculty ? "selected" : ""}`} onClick={()=>setShowFaculty(true)}><GraduationCap size={20}/><span><CourseText text={"Meet your AI Faculty"} /><small><CourseText text={"Start with your onboarding tutor"} /></small></span></button>
+                        <Link className="lms-lesson" href={`/training-center/sessions?course=${current.id}`}><BookOpen size={18}/><CourseText text={"My coaching conversations"} /></Link>
                         {lessons.map((l, i) => (
                           <button
                             className={`lms-lesson lms-lesson-with-image ${!showFaculty && active?.id === l.id ? "selected" : ""}`}
@@ -1212,27 +1099,26 @@ export default function TrainingCenter({
                             <LessonThumbnail url={classImage(current,l,i)} />
                             <span className="lms-lesson-copy">
                               {l.section_title && (
-                                <small>{l.section_title}</small>
+                                <small>{t(l.section_title)}</small>
                               )}
                               {progress.some((p) => p.lesson_id === l.id)
                                 ? "✓ "
                                 : `${i + 1}. `}
-                              {l.title}
+                              {t(l.title)}
                               <small>
                                 {l.starts_at
-                                  ? when(l.starts_at)
+                                  ? when(l.starts_at, language)
                                   : current.private_sessions
-                                    ? "Time arranged with your mentor"
-                                    : "Learn at your pace"}
-                                {!l.published ? " · Coming soon" : ""}
+                                    ? t("Time arranged with your mentor")
+                                    : t("Learn at your pace")}
+                                {t(!l.published ? " · Coming soon" : "")}
                               </small>
                             </span>
                           </button>
                         ))}
                         {lessons.some((l) => l.starts_at) && (
                           <button className="lms-text" onClick={calendar}>
-                            <CalendarDays size={16} /> Add classes to calendar
-                          </button>
+                            <CalendarDays size={16} /><CourseText text={"Add classes to calendar"} /></button>
                         )}
                       </aside>
                       <section className="lms-panel lms-content">
@@ -1240,32 +1126,28 @@ export default function TrainingCenter({
                         <div hidden={showFaculty}>
                         {!active ? (
                           <>
-                            <div className="lms-welcome-image"><Image src={programs[current.slug]?.image || "/images/training/hero.webp"} alt="Students learning together in a live Pacific Wave Digital training session" fill sizes="(max-width: 700px) 90vw, 65vw" priority/><span>YOUR NEXT CHAPTER STARTS HERE</span></div>
-                            <p className="lms-eyebrow">START HERE</p>
-                            <h2>Welcome to your course</h2>
+                            <div className="lms-welcome-image"><Image src={programs[current.slug]?.image || "/images/training/hero.webp"} alt="Students learning together in a live Pacific Wave Digital training session" fill sizes="(max-width: 700px) 90vw, 65vw" priority/><span><CourseText text={"YOUR NEXT CHAPTER STARTS HERE"} /></span></div>
+                            <p className="lms-eyebrow"><CourseText text={"START HERE"} /></p>
+                            <h2><CourseText text={"Welcome to your course"} /></h2>
                             <div className="lms-prose">
-                              {current.introduction}
+                              {t(current.introduction)}
                             </div>
                             <div className="lms-discover-grid">
-                              <button onClick={()=>setShowFaculty(true)}><Image src="/images/coaches/onboarding.webp" alt="A student meeting an AI tutor" width={640} height={360}/><span><small>YOUR FIRST STEP</small><strong>Meet your AI Faculty</strong><p>Get oriented, ask questions and turn your learning into practical action.</p><b>Choose your coach →</b></span></button>
-                              <Link href={`/training-center/sessions?course=${current.id}`}><Image src="/images/coaches/project_review.webp" alt="Reviewing a project with a coach" width={640} height={360}/><span><small>YOUR PERSONAL LIBRARY</small><strong>Conversations & research</strong><p>Revisit sessions, rename them and download your researched learning guides.</p><b>Open your session library →</b></span></Link>
-                              <button onClick={()=>{if(lessons[0])setActive(lessons[0]);}}><Image src={classImage(current,lessons[0]||{} as Lesson,0)||"/images/training/hero.webp"} alt="Live course training" width={640} height={360}/><span><small>LEARN & PRACTISE</small><strong>Live classes & recordings</strong><p>Follow your timetable. Find each recording and activity here after publication.</p><b>Explore your lessons →</b></span></button>
-                              <button onClick={()=>setCourseTab("community")}><Image src="/images/training/hero.webp" alt="A supportive group of learners" width={640} height={360}/><span><small>STAY CONNECTED</small><strong>{current.private_sessions?"Your mentor space":"Your learning community"}</strong><p>Ask course questions and stay connected with your training team.</p><b>Open your community →</b></span></button>
+                              <button onClick={()=>setShowFaculty(true)}><Image src="/images/coaches/onboarding.webp" alt="A student meeting an AI tutor" width={640} height={360}/><span><small><CourseText text={"YOUR FIRST STEP"} /></small><strong><CourseText text={"Meet your AI Faculty"} /></strong><p><CourseText text={"Get oriented, ask questions and turn your learning into practical action."} /></p><b><CourseText text={"Choose your coach →"} /></b></span></button>
+                              <Link href={`/training-center/sessions?course=${current.id}`}><Image src="/images/coaches/project_review.webp" alt="Reviewing a project with a coach" width={640} height={360}/><span><small><CourseText text={"YOUR PERSONAL LIBRARY"} /></small><strong><CourseText text={"Conversations & research"} /></strong><p><CourseText text={"Revisit sessions, rename them and download your researched learning guides."} /></p><b><CourseText text={"Open your session library →"} /></b></span></Link>
+                              <button onClick={()=>{if(lessons[0])setActive(lessons[0]);}}><Image src={classImage(current,lessons[0]||{} as Lesson,0)||"/images/training/hero.webp"} alt="Live course training" width={640} height={360}/><span><small><CourseText text={"LEARN & PRACTISE"} /></small><strong><CourseText text={"Live classes & recordings"} /></strong><p><CourseText text={"Follow your timetable. Find each recording and activity here after publication."} /></p><b><CourseText text={"Explore your lessons →"} /></b></span></button>
+                              <button onClick={()=>setCourseTab("community")}><Image src="/images/training/hero.webp" alt="A supportive group of learners" width={640} height={360}/><span><small><CourseText text={"STAY CONNECTED"} /></small><strong>{t(current.private_sessions?"Your mentor space":"Your learning community")}</strong><p><CourseText text={"Ask course questions and stay connected with your training team."} /></p><b><CourseText text={"Open your community →"} /></b></span></button>
                             </div>
                             <div className="lms-bank">
-                              <h3>Make the most of your learning</h3>
-                              <p>
-                                Set aside time to practise. Bring your questions
-                                to class. Return here for recordings and quizzes
-                                after each session.
-                              </p>
+                              <h3><CourseText text={"Make the most of your learning"} /></h3>
+                              <p><CourseText text={"Set aside time to practise. Bring your questions to class. Return here for recordings and quizzes after each session."} /></p>
                             </div>
                           </>
                         ) : (
                           <>
                             <p className="lms-eyebrow">
                               {active.starts_at
-                                ? `${when(active.starts_at)} · VANUATU TIME`
+                                ? `${when(active.starts_at, language)} · VANUATU TIME`
                                 : "ON-DEMAND LESSON"}
                             </p>
                             {classImage(current,active,lessons.findIndex(l=>l.id===active.id)) && (
@@ -1275,29 +1157,29 @@ export default function TrainingCenter({
                                 locked={workshopRecordingPending(current, active)}
                               />
                             )}
-                            <h2>{active.title}</h2>
+                            <h2>{t(active.title)}</h2>
                             {!["paid", "granted"].includes(
                               courseOrder?.status || "",
                             ) ? (
                               <div className="lms-empty">
                                 <LockKeyhole size={36} />
-                                <h3>Unlock your learning</h3>
+                                <h3><CourseText text={"Unlock your learning"} /></h3>
                                 <p>
-                                  {current.requires_approval ? "Your workshop learning access opens after administrator approval." : "This lesson becomes available after payment is verified."}
+                                  {t(current.requires_approval ? "Your workshop learning access opens after administrator approval." : "This lesson becomes available after payment is verified.")}
                                 </p>
                               </div>
                             ) : workshopRecordingPending(current, active) ? (
                               <div className="lms-workshop-recording-notice">
-                                <h3>Video available after training</h3>
-                                <p>Your instructor will upload the video after the training. Return to this topic once the recording has been published.</p>
-                                <p className="lms-muted">You can explore the workshop outline and participant workbook in your course dashboard while you wait.</p>
+                                <h3><CourseText text={"Video available after training"} /></h3>
+                                <p><CourseText text={"Your instructor will upload the video after the training. Return to this topic once the recording has been published."} /></p>
+                                <p className="lms-muted"><CourseText text={"You can explore the workshop outline and participant workbook in your course dashboard while you wait."} /></p>
                               </div>
                             ) : !active.published ? (
                               <div className="lms-empty">
                                 <Clock3 size={36} />
-                                <h3>Your next class is on the way</h3>
+                                <h3><CourseText text={"Your next class is on the way"} /></h3>
                                 <p>
-                                  {active.starts_at ? `This class is scheduled for ${when(active.starts_at)} (Vanuatu time). Its recording will be available after the class, once published by your trainer.` : "Class materials and recordings will appear here when your trainer publishes them."}
+                                  {active.starts_at ? t("This class is scheduled for {date} (Vanuatu time). Its recording will be available after the class, once published by your trainer.").replace("{date}", when(active.starts_at, language)) : t("Class materials and recordings will appear here when your trainer publishes them.")}
                                 </p>
                               </div>
                             ) : (
@@ -1320,9 +1202,9 @@ export default function TrainingCenter({
                                       }
                                     >
                                       <PlayCircle size={18} />{" "}
-                                      {recordingUrl?.id === active.id
+                                      {t(recordingUrl?.id === active.id
                                         ? "Refresh recording link"
-                                        : "Play your private recording"}
+                                        : "Play your private recording")}
                                     </button>
                                     {recordingUrl?.id === active.id && (
                                       <video
@@ -1332,10 +1214,7 @@ export default function TrainingCenter({
                                         preload="metadata"
                                         controlsList="nodownload"
                                         src={recordingUrl.url}
-                                      >
-                                        Your browser does not support video
-                                        playback.
-                                      </video>
+                                      ><CourseText text={"Your browser does not support video playback."} /></video>
                                     )}
                                   </>
                                 )}
@@ -1345,16 +1224,14 @@ export default function TrainingCenter({
                                       className="lms-button"
                                       onClick={() => setPlayVideo(active.id)}
                                     >
-                                      <PlayCircle size={18} />
-                                      Load class recording
-                                    </button>
+                                      <PlayCircle size={18} /><CourseText text={"Load class recording"} /></button>
                                   )}
                                 {active.youtube_id &&
                                   playVideo === active.id && (
                                     <iframe
                                       className="lms-video"
                                       src={`https://www.youtube-nocookie.com/embed/${active.youtube_id}`}
-                                      title={active.title}
+                                      title={t(active.title)}
                                       allow="encrypted-media; picture-in-picture; fullscreen"
                                       allowFullScreen
                                       loading="lazy"
@@ -1367,13 +1244,12 @@ export default function TrainingCenter({
                                       href={active.meeting_url}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                    >
-                                      Join live class <ArrowRight size={18} />
+                                    ><CourseText text={"Join live class"} /><ArrowRight size={18} />
                                     </a>
                                   </p>
                                 )}
                                 <div className="lms-prose">
-                                  {active.content}
+                                  {t(active.content)}
                                 </div>
                                 {active.quiz.length ? (
                                   <QuizPlayer
@@ -1397,9 +1273,7 @@ export default function TrainingCenter({
                                         await refresh();
                                       })
                                     }
-                                  >
-                                    Mark lesson complete
-                                  </button>
+                                  ><CourseText text={"Mark lesson complete"} /></button>
                                 )}
                               </>
                             )}
@@ -1415,13 +1289,15 @@ export default function TrainingCenter({
         )}
         {view !== "dashboard" && (
           <footer className="lms-footer">
-            <span>Pacific Wave Digital · Learn. Build. Grow.</span>
-            <a href="https://wa.me/6785288141">
-              Need help? Talk to our training team →
-            </a>
+            <span><CourseText text={"Pacific Wave Digital · Learn. Build. Grow."} /></span>
+            <a href="https://wa.me/6785288141"><CourseText text={"Need help? Talk to our training team →"} /></a>
           </footer>
         )}
       </div>
     </div>
   );
+}
+
+export default function TrainingCenter(props: Parameters<typeof TrainingCenterContent>[0]) {
+ return <CourseLanguageProvider enabled={props.path[0] === "course"}><TrainingCenterContent {...props}/></CourseLanguageProvider>;
 }

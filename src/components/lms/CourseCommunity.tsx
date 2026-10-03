@@ -1,4 +1,5 @@
 "use client";
+import { CourseText } from '@/components/lms/CourseLanguage';
 import {
   useCallback,
   useEffect,
@@ -98,8 +99,7 @@ function Body({ body, userId }: { body: string; userId: string }) {
       <span
         key={match.index}
         className={`chat-mention ${match[2] === userId ? "chat-mention-me" : ""}`}
-      >
-        @{match[1]}
+      ><CourseText text={"@"} />{match[1]}
       </span>,
     );
     start = match.index! + match[0].length;
@@ -439,8 +439,7 @@ export default function CourseCommunity({ courseId }: { courseId: string }) {
     if (!canPost && active.announcements && !active.archived)
       return (
         <p className="cm-readonly">
-          <Megaphone size={15} /> Announcements from your instructors. Questions? Ask in the Course lounge.
-        </p>
+          <Megaphone size={15} /><CourseText text={"Announcements from your instructors. Questions? Ask in the Course lounge."} /></p>
       );
     return (
 canPost ? (
@@ -504,15 +503,13 @@ canPost ? (
                           if (edit) setText("");
                           setEdit(null);
                         }}
-                      >
-                        Cancel
-                      </button>
+                      ><CourseText text={"Cancel"} /></button>
                     </div>
                   )}
                   {active.announcements && !edit ? (
                     <div className="cm-announce-head">
-                      <strong><Megaphone size={18} /> New announcement</strong>
-                      <small>Every student in the course is notified in the app and by email.</small>
+                      <strong><Megaphone size={18} /><CourseText text={"New announcement"} /></strong>
+                      <small><CourseText text={"Every student in the course is notified in the app and by email."} /></small>
                       <input
                         aria-label="Announcement headline"
                         value={headline}
@@ -563,11 +560,11 @@ canPost ? (
                           onClick={() => tag(p)}
                         >
                           {p.name}
-                          {p.instructor && <small>Instructor</small>}
+                          {p.instructor && <small><CourseText text={"Instructor"} /></small>}
                         </button>
                       ))}
                       {!matches.length && (
-                        <p>No matching participants in this conversation.</p>
+                        <p><CourseText text={"No matching participants in this conversation."} /></p>
                       )}
                     </div>
                   )}
@@ -594,9 +591,7 @@ canPost ? (
                                 );
                               })
                             }
-                          >
-                            ×
-                          </button>
+                          ><CourseText text={"×"} /></button>
                         </div>
                       ))}
                     </div>
@@ -609,19 +604,16 @@ canPost ? (
                         aria-label="Tag a student or instructor"
                         onClick={() => setPicker(!picker)}
                       >
-                        <AtSign size={18} /> Tag someone
-                      </button>
+                        <AtSign size={18} /><CourseText text={"Tag someone"} /></button>
                       {!edit && (
                         <>
                           <button type="button" className="lms-text" disabled={busy || files.length >= 3} onClick={() => pickFile("image/jpeg,image/png,image/webp,application/pdf,text/plain")}>
-                            <ImagePlus size={18} /> {active.announcements ? "Banner image or file" : "Photo or file"}
+                            <ImagePlus size={18} /> <CourseText text={active.announcements ? "Banner image or file" : "Photo or file"} />
                           </button>
                           <button type="button" className="lms-text" disabled={busy || files.length >= 3} onClick={() => pickFile("video/mp4,video/webm,video/quicktime")}>
-                            <Video size={18} /> Video
-                          </button>
+                            <Video size={18} /><CourseText text={"Video"} /></button>
                           <button type="button" className="lms-text" disabled={busy || files.length >= 3} onClick={() => pickFile("audio/mpeg,audio/mp4,audio/x-m4a,audio/aac,audio/webm,audio/ogg,audio/wav")}>
-                            <Music size={18} /> Audio
-                          </button>
+                            <Music size={18} /><CourseText text={"Audio"} /></button>
                           <VoiceRecorder disabled={busy || files.length >= 3} onRecorded={(file) => void run(() => attach(file))} />
                         </>
                       )}
@@ -631,34 +623,33 @@ canPost ? (
                       disabled={busy || !text.trim()}
                     >
                       <Send size={16} />
-                      {busy
+                      <CourseText text={busy
                         ? "Please wait…"
                         : edit
                           ? "Save edit"
                           : active.announcements
                             ? "Post announcement"
-                            : "Send message"}
+                            : "Send message"} />
                     </button>
                   </div>
-                  {uploading && <p className="cm-uploading">Uploading {uploading}… please keep this page open.</p>}
+                  {uploading && <p className="cm-uploading"><CourseText text={"Uploading"} />{uploading}<CourseText text={"… please keep this page open."} /></p>}
                   <small>
-                    <Youtube size={13} /> Paste a YouTube link to show the video · Up to 3 attachments: photos or PDFs (4 MB), audio (25 MB), video ({instructor ? "200" : "50"} MB)
-                  </small>
+                    <Youtube size={13} /><CourseText text={"Paste a YouTube link to show the video · Up to 3 attachments: photos or PDFs (4 MB), audio (25 MB), video ("} /><CourseText text={instructor ? "200" : "50"} /><CourseText text={"MB)"} /></small>
                 </form>
               ) : (
                 <p className="lms-notice">
-                  {active.archived
+                  <CourseText text={active.archived
                     ? "This conversation is archived. You can still read its history."
                     : active.announcements
                       ? "Only instructors can post announcements here. Ask questions in the course lounge."
-                      : "The instructor has paused new messages in this conversation."}
+                      : "The instructor has paused new messages in this conversation."} />
                 </p>
               )
     );
   }
   if (loading)
     return (
-      <section className="lms-panel">Loading your course community…</section>
+      <section className="lms-panel"><CourseText text={"Loading your course community…"} /></section>
     );
   return (
     <section
@@ -667,21 +658,20 @@ canPost ? (
     >
       <header className="cm-hero">
         <div className="cm-hero-text">
-          <p className="cm-eyebrow">YOUR LEARNING COMMUNITY</p>
+          <p className="cm-eyebrow"><CourseText text={"YOUR LEARNING COMMUNITY"} /></p>
           <h2>
-            <MessageCircle size={26} /> {privateCourse ? "Mentor conversations" : "Course community"}
+            <MessageCircle size={26} /> <CourseText text={privateCourse ? "Mentor conversations" : "Course community"} />
           </h2>
           <p>
-            {privateCourse
+            <CourseText text={privateCourse
               ? "Your private space for questions, project feedback and session plans with your mentor."
-              : "Ask questions, share your work, hear announcements first and stay connected with your classmates and instructors."}
+              : "Ask questions, share your work, hear announcements first and stay connected with your classmates and instructors."} />
           </p>
           <div className="cm-hero-stats">
-            <span>{channels.length} {channels.length === 1 ? "room" : "rooms"}</span>
+            <span>{channels.length} <CourseText text={channels.length === 1 ? "room" : "rooms"} /></span>
             {people.length > 0 && (
               <button type="button" onClick={() => setShowPeople(true)}>
-                <Users size={15} /> {people.length} people in this room
-              </button>
+                <Users size={15} /> {people.length}<CourseText text={"people in this room"} /></button>
             )}
           </div>
         </div>
@@ -693,8 +683,7 @@ canPost ? (
               setMemberIds([]);
             }}
           >
-            <Plus size={16} /> Create group
-          </button>
+            <Plus size={16} /><CourseText text={"Create group"} /></button>
         )}
       </header>
       {error && (
@@ -707,9 +696,7 @@ canPost ? (
                 if (selected) await refreshMessages();
               })
             }
-          >
-            Retry
-          </button>
+          ><CourseText text={"Retry"} /></button>
         </div>
       )}
       {notice && (
@@ -718,9 +705,7 @@ canPost ? (
         </p>
       )}
       <div className="chat-mobile-rooms">
-        <label>
-          Conversation
-          <select
+        <label><CourseText text={"Conversation"} /><select
             aria-label="Choose conversation"
             value={selected}
             disabled={busy}
@@ -729,7 +714,7 @@ canPost ? (
             {channels.map((c) => (
               <option key={c.id} value={c.id}>
                 {roomTitle(c)}
-                {c.private ? " · Private" : ""}
+                <CourseText text={c.private ? " · Private" : ""} />
                 {Number(c.mentions) > 0
                   ? ` · @${c.mentions}`
                   : Number(c.unread) > 0
@@ -739,16 +724,12 @@ canPost ? (
             ))}
           </select>
         </label>
-        <button className="lms-text" disabled={busy} onClick={() => run(load)}>
-          Refresh conversations
-        </button>
+        <button className="lms-text" disabled={busy} onClick={() => run(load)}><CourseText text={"Refresh conversations"} /></button>
       </div>
       <div className="lms-community-layout">
         <aside className="lms-community-channels">
-          <h3>Conversations</h3>
-          <p className="lms-muted">
-            Unread messages and @mentions appear here.
-          </p>
+          <h3><CourseText text={"Conversations"} /></h3>
+          <p className="lms-muted"><CourseText text={"Unread messages and @mentions appear here."} /></p>
           {channels.map((c) => (
             <button
               key={c.id}
@@ -761,29 +742,24 @@ canPost ? (
               <span>
                 {roomTitle(c)}
                 <small>
-                  {c.archived
+                  <CourseText text={c.archived
                     ? "Archived"
                     : c.announcements
                       ? "Announcements"
                       : c.private
                         ? "Private group"
-                        : "Course group"}
+                        : "Course group"} />
                 </small>
               </span>
               {Number(c.mentions) > 0 ? (
-                <b className="chat-unread">@{c.mentions}</b>
+                <b className="chat-unread"><CourseText text={"@"} />{c.mentions}</b>
               ) : Number(c.unread) > 0 ? (
                 <b className="chat-unread">{c.unread}</b>
               ) : null}
             </button>
           ))}
-          <button className="lms-text" onClick={() => run(load)}>
-            Refresh conversations
-          </button>
-          <p className="lms-muted">
-            Respect your classmates. Share payment details privately with the
-            training team.
-          </p>
+          <button className="lms-text" onClick={() => run(load)}><CourseText text={"Refresh conversations"} /></button>
+          <p className="lms-muted"><CourseText text={"Respect your classmates. Share payment details privately with the training team."} /></p>
         </aside>
         <div className="lms-community-chat">
           {active ? (
@@ -802,8 +778,8 @@ canPost ? (
                         ),
                       )}
                     </span>
-                    {people.length ? `${people.length} people` : "Loading people…"} ·{" "}
-                    {active.private ? "Private conversation" : "Students & instructors"} · <u>{showPeople ? "Hide" : "See everyone"}</u>
+                    {people.length ? `${people.length} people` : "Loading people…"}<CourseText text={"·"} />{" "}
+                    <CourseText text={active.private ? "Private conversation" : "Students & instructors"} /><CourseText text={"·"} /><u><CourseText text={showPeople ? "Hide" : "See everyone"} /></u>
                   </button>
                 </div>
                 {instructor && (
@@ -811,9 +787,7 @@ canPost ? (
                     <button
                       className="lms-text"
                       onClick={() => setManage("settings")}
-                    >
-                      Room settings
-                    </button>
+                    ><CourseText text={"Room settings"} /></button>
                     {active.private && !active.order_id && (
                       <button
                         className="lms-text"
@@ -821,9 +795,7 @@ canPost ? (
                           setMemberIds(savedMembers);
                           setManage("members");
                         }}
-                      >
-                        Manage members
-                      </button>
+                      ><CourseText text={"Manage members"} /></button>
                     )}
                   </div>
                 )}
@@ -831,7 +803,7 @@ canPost ? (
               {showPeople && (
                 <div className="cm-people" aria-label="People in this conversation">
                   <div className="cm-people-head">
-                    <strong>People in {roomTitle(active)}</strong>
+                    <strong><CourseText text={"People in"} />{roomTitle(active)}</strong>
                     <button type="button" aria-label="Close people list" onClick={() => setShowPeople(false)}><X size={18} /></button>
                   </div>
                   <div className="cm-people-list">
@@ -844,18 +816,16 @@ canPost ? (
                         )}
                         <span className="cm-person-name">
                           {p.name}
-                          {p.user_id === userId ? <small>You</small> : p.instructor ? <small className="cm-role">Instructor</small> : <small>Student</small>}
+                          {p.user_id === userId ? <small><CourseText text={"You"} /></small> : p.instructor ? <small className="cm-role"><CourseText text={"Instructor"} /></small> : <small><CourseText text={"Student"} /></small>}
                         </span>
                         {p.user_id !== userId && (
                           <span className="cm-person-actions">
                             {canPost && (
                               <button type="button" onClick={() => { tag(p); setShowPeople(false); document.getElementById(`message-${courseId}`)?.focus(); }}>
-                                <AtSign size={14} /> Mention
-                              </button>
+                                <AtSign size={14} /><CourseText text={"Mention"} /></button>
                             )}
                             <a href={`/training-center/dashboard?tab=messages&with=${p.user_id}`}>
-                              <MessageCircle size={14} /> Message
-                            </a>
+                              <MessageCircle size={14} /><CourseText text={"Message"} /></a>
                           </span>
                         )}
                       </div>
@@ -878,7 +848,7 @@ canPost ? (
                   placeholder="Search this conversation…"
                   maxLength={120}
                 />
-                <button className="lms-text">Search</button>
+                <button className="lms-text"><CourseText text={"Search"} /></button>
                 {search && (
                   <button
                     type="button"
@@ -887,24 +857,20 @@ canPost ? (
                       setSearch("");
                       setSearchInput("");
                     }}
-                  >
-                    Clear
-                  </button>
+                  ><CourseText text={"Clear"} /></button>
                 )}
               </form>
               {thread && (
                 <div className="chat-thread-bar">
                   <button className="lms-text" onClick={() => setThread(null)}>
-                    <ArrowLeft size={16} /> All messages
-                  </button>
-                  <strong>Reply thread</strong>
+                    <ArrowLeft size={16} /><CourseText text={"All messages"} /></button>
+                  <strong><CourseText text={"Reply thread"} /></strong>
                 </div>
               )}
               {!!pinned.length && (
                 <details className="chat-pins">
                   <summary>
-                    <Pin size={15} /> Pinned messages ({pinned.length})
-                  </summary>
+                    <Pin size={15} /><CourseText text={"Pinned messages ("} />{pinned.length}<CourseText text={")"} /></summary>
                   {pinned.map((p) => (
                     <button
                       key={p.id}
@@ -922,25 +888,21 @@ canPost ? (
               )}
               {instructor && !!reports.length && (
                 <details className="chat-reports">
-                  <summary>Reports to review ({reports.length})</summary>
+                  <summary><CourseText text={"Reports to review ("} />{reports.length}<CourseText text={")"} /></summary>
                   {reports.map((r) => (
                     <div key={r.id}>
                       <p>{r.reason}</p>
                       <button
                         className="lms-text"
                         onClick={() => setThread(r.message_id)}
-                      >
-                        View message
-                      </button>
+                      ><CourseText text={"View message"} /></button>
                       <button
                         className="lms-text"
                         disabled={busy}
                         onClick={() =>
                           run(() => act("resolve", { report_id: r.id }))
                         }
-                      >
-                        Mark reviewed
-                      </button>
+                      ><CourseText text={"Mark reviewed"} /></button>
                     </div>
                   ))}
                 </details>
@@ -953,8 +915,7 @@ canPost ? (
                 aria-label="Messages"
               >
                 {older && (
-                  <div className="lms-notice">
-                    Live updates are paused while you browse older messages.{" "}
+                  <div className="lms-notice"><CourseText text={"Live updates are paused while you browse older messages."} />{" "}
                     <button
                       onClick={() =>
                         run(async () => {
@@ -962,9 +923,7 @@ canPost ? (
                           await refreshMessages();
                         })
                       }
-                    >
-                      Back to latest
-                    </button>
+                    ><CourseText text={"Back to latest"} /></button>
                   </div>
                 )}
                 {more && (
@@ -980,26 +939,24 @@ canPost ? (
                         setMore(d.has_more);
                       })
                     }
-                  >
-                    Load earlier messages
-                  </button>
+                  ><CourseText text={"Load earlier messages"} /></button>
                 )}
                 {!messages.length && !error && (
                   <div className="lms-empty cm-empty">
                     {active.announcements ? <Megaphone size={28} /> : <MessageCircle size={28} />}
                     <h3>
-                      {search
+                      <CourseText text={search
                         ? "No matching messages"
-                        : "Start the conversation"}
+                        : "Start the conversation"} />
                     </h3>
                     <p>
-                      {search
+                      <CourseText text={search
                         ? "Try a different word or clear your search."
                         : active.announcements
                           ? canPost
                             ? "Post your first announcement above. Students are notified straight away."
                             : "Announcements from your instructors will appear here."
-                          : "Introduce yourself, ask a question or share what you’re building. Use the message box below."}
+                          : "Introduce yourself, ask a question or share what you’re building. Use the message box below."} />
                     </p>
                   </div>
                 )}
@@ -1015,7 +972,7 @@ canPost ? (
                       </span>
                       <strong>{m.author_name}</strong>
                       {m.instructor && (
-                        <span className="lms-pill">Instructor</span>
+                        <span className="lms-pill"><CourseText text={"Instructor"} /></span>
                       )}
                       <time dateTime={m.created_at}>
                         {new Date(m.created_at).toLocaleString("en-GB", {
@@ -1025,7 +982,7 @@ canPost ? (
                           minute: "2-digit",
                         })}
                       </time>
-                      {m.edited_at && <small>Edited</small>}
+                      {m.edited_at && <small><CourseText text={"Edited"} /></small>}
                       {m.pinned && <Pin size={14} aria-label="Pinned" />}
                     </div>
                     {m.reply && (
@@ -1110,13 +1067,9 @@ canPost ? (
                                   .getElementById(`message-${courseId}`)
                                   ?.focus();
                               }}
-                            >
-                              Reply
-                            </button>
+                            ><CourseText text={"Reply"} /></button>
                           )}
-                          <button onClick={() => setThread(m.reply_to || m.id)}>
-                            Open thread
-                          </button>
+                          <button onClick={() => setThread(m.reply_to || m.id)}><CourseText text={"Open thread"} /></button>
                           {m.user_id === userId && canPost && (
                             <button
                               onClick={() => {
@@ -1124,9 +1077,7 @@ canPost ? (
                                 setText(m.body);
                                 setReply(null);
                               }}
-                            >
-                              Edit
-                            </button>
+                            ><CourseText text={"Edit"} /></button>
                           )}
                           {instructor && (
                             <button
@@ -1137,7 +1088,7 @@ canPost ? (
                                 )
                               }
                             >
-                              {m.pinned ? "Unpin" : "Pin"}
+                              <CourseText text={m.pinned ? "Unpin" : "Pin"} />
                             </button>
                           )}
                           {(instructor || m.user_id === userId) && (
@@ -1146,14 +1097,10 @@ canPost ? (
                               onClick={() =>
                                 run(() => act("delete", { id: m.id }))
                               }
-                            >
-                              Remove
-                            </button>
+                            ><CourseText text={"Remove"} /></button>
                           )}
                           {!instructor && m.user_id !== userId && (
-                            <button onClick={() => setReportTarget(m.id)}>
-                              Report
-                            </button>
+                            <button onClick={() => setReportTarget(m.id)}><CourseText text={"Report"} /></button>
                           )}
                         </div>
                       </>
@@ -1165,9 +1112,9 @@ canPost ? (
             </>
           ) : (
             <div className="lms-empty">
-              {privateCourse
+              <CourseText text={privateCourse
                 ? "A private mentor conversation will appear for each student when their payment or course access is approved."
-                : "No conversations available yet."}
+                : "No conversations available yet."} />
             </div>
           )}
         </div>
@@ -1189,21 +1136,15 @@ canPost ? (
             });
           }}
         >
-          <h3>Report this message</h3>
-          <label>
-            Reason
-            <textarea name="reason" required minLength={5} maxLength={500} />
+          <h3><CourseText text={"Report this message"} /></h3>
+          <label><CourseText text={"Reason"} /><textarea name="reason" required minLength={5} maxLength={500} />
           </label>
-          <button className="lms-button" disabled={busy}>
-            Send report
-          </button>
+          <button className="lms-button" disabled={busy}><CourseText text={"Send report"} /></button>
           <button
             type="button"
             className="lms-text"
             onClick={() => setReportTarget(null)}
-          >
-            Cancel
-          </button>
+          ><CourseText text={"Cancel"} /></button>
         </form>
       )}
       {manage && instructor && (
@@ -1252,9 +1193,7 @@ canPost ? (
           <fieldset disabled={busy}>
             {manage !== "members" && (
               <>
-                <label>
-                  Group name
-                  {manage === "settings" && active?.order_id ? (
+                <label><CourseText text={"Group name"} />{manage === "settings" && active?.order_id ? (
                     <>
                       <input name="name" type="hidden" value={active.name} />
                       <input value={roomTitle(active)} readOnly />
@@ -1269,9 +1208,7 @@ canPost ? (
                     />
                   )}
                 </label>
-                <label>
-                  Description
-                  <textarea
+                <label><CourseText text={"Description"} /><textarea
                     name="description"
                     maxLength={500}
                     defaultValue={
@@ -1286,16 +1223,12 @@ canPost ? (
                     defaultChecked={
                       manage === "settings" && active?.announcements
                     }
-                  />
-                  Only instructors can post announcements
-                </label>
+                  /><CourseText text={"Only instructors can post announcements"} /></label>
               </>
             )}
             {manage === "create" && (
               <label className="lms-check">
-                <input type="checkbox" name="private" defaultChecked />
-                Private group: selected students and instructors only
-              </label>
+                <input type="checkbox" name="private" defaultChecked /><CourseText text={"Private group: selected students and instructors only"} /></label>
             )}
             {manage === "settings" ? (
               <>
@@ -1304,28 +1237,18 @@ canPost ? (
                     type="checkbox"
                     name="locked"
                     defaultChecked={active?.locked}
-                  />
-                  Pause student messages
-                </label>
+                  /><CourseText text={"Pause student messages"} /></label>
                 <label className="lms-check">
                   <input
                     type="checkbox"
                     name="archived"
                     defaultChecked={active?.archived}
-                  />
-                  Archive this conversation (keep history)
-                </label>
-                <p>
-                  Privacy is fixed when a group is created, so private
-                  conversations cannot accidentally become public.
-                </p>
+                  /><CourseText text={"Archive this conversation (keep history)"} /></label>
+                <p><CourseText text={"Privacy is fixed when a group is created, so private conversations cannot accidentally become public."} /></p>
               </>
             ) : (
               <>
-                <p>
-                  Choose students for this private group. Instructors always
-                  have access.
-                </p>
+                <p><CourseText text={"Choose students for this private group. Instructors always have access."} /></p>
                 {coursePeople
                   .filter((p) => !p.instructor)
                   .map((p) => (
@@ -1345,18 +1268,16 @@ canPost ? (
                     </label>
                   ))}
                 {!coursePeople.some((p) => !p.instructor) && (
-                  <p>No enrolled students yet.</p>
+                  <p><CourseText text={"No enrolled students yet."} /></p>
                 )}
               </>
             )}
-            <button className="lms-button">Save conversation</button>
+            <button className="lms-button"><CourseText text={"Save conversation"} /></button>
             <button
               type="button"
               className="lms-text"
               onClick={() => setManage(null)}
-            >
-              Cancel
-            </button>
+            ><CourseText text={"Cancel"} /></button>
           </fieldset>
         </form>
       )}

@@ -647,3 +647,19 @@ Stephen requested actual cover entry card, assigned-instructor read access and p
 ## 2026-10-03 — [Codex] Workbook cover and learning support verified
 
 Actual cover card with purpose/use description added. Workbooks tab provides assigned instructors/admins read-only active-student answers. AI faculty uses authenticated student/course-scoped labelled excerpts (400 characters per activity, truncation flagged), refreshed each new session. Student notices explain sharing. No database migration. Type/lint/build and four workbook tests pass; eight public desktop/mobile checks pass (two opt-in skips). Real temporary-account tests verify instructor assignment/revocation, student switching, own-student AI context, denied outsiders/revoked enrolments, saves/failure recovery/PDF downloads. All fixtures cleaned; no test emails. Publishing under existing authorisation.
+
+## 2026-10-03 — [Codex] Course languages prepared; translation permission pending
+
+Stephen requested English-default course page with Bislama/French and original-language workbook answers. Found existing Language Hub Bislama gold references (grammar.md, glossary.md, examples.md with 152 curated pairs). Prepared context-based selector, browser-local preference, course/workbook/faculty/community interface translation hooks and AI session language; student answer values/IDs remain unchanged. Prepared scripts/localization/source.json (875 authored strings, no learner data) and documented generation script. bi.json/fr.json are EMPTY placeholders: DO NOT PUBLISH unfinished language work. Automatic approval review rejected sending authored course text + private gold references to Anthropic because this payload/destination was not explicitly authorised. No external generation occurred; script saved for review only. Ask Stephen for approval before running or any indirect transmission. Type/lint/build and six focused tests pass. Live remains main 34e34e3.
+
+## 2026-10-03 — [Codex] Gold translation transfer approved
+
+Stephen explicitly approved authored course text and private gold Bislama reference transmission to Anthropic through the existing service. Prior transfer approval blocker resolved. Generation running; no student data included. Verify coverage/content and language switching before publishing.
+
+## 2026-10-03 — [Codex] Course translations generated and checked
+
+883 Bislama/French source strings complete using explicitly approved transfer and existing gold references. Reviewed/clarified core Bislama legal, commission, ad-spend and privacy passages. Full source coverage/links/placeholders pass; seven locale/workbook tests, eight coach/report tests, lint/type/build pass. Locale preference and translated tutor greeting added; no automatic rewriting of student answers. Real browser verification underway.
+
+## 2026-10-03 — [Codex] Multilingual course verified for release
+
+English default with saved browser preference; 883 gold-grounded Bislama/French strings; unchanged original student answers; selected-language AI session greeting/context. Seven locale/workbook tests, eight coach/report tests, lint/type/build and eight public browser checks pass. Actual desktop/mobile fixtures verify multilingual headings, switching before autosave, original Bislama/French answers persisting through reload, instructor/AI isolation, failure recovery, PDF download and revocation. Screenshots reviewed and fixtures cleaned. Recordings/PDF teaching pages and user-generated content retain original language; no runtime external translation of student data. Publishing under prior authorisation.

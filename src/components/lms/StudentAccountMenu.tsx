@@ -1,4 +1,5 @@
 "use client";
+import { CourseText } from '@/components/lms/CourseLanguage';
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -49,12 +50,12 @@ export default function StudentAccountMenu({ email, onLogout }: { email: string;
     </summary>
     <div className="lms-account-dropdown">
       <div className="lms-account-identity"><strong>{profile.full_name || "Your account"}</strong><span>{email}</span></div>
-      <Link href="/training-center/dashboard" onClick={close}><LayoutDashboard size={18} /> My dashboard</Link>
-      <Link href="/training-center/dashboard?tab=messages" onClick={close}><MessagesSquare size={18} /> Messages{badge > 0 && <span className="msg-badge">{badge}</span>}</Link>
-      {teaches && <Link href="/training-center/teach" onClick={close}><Presentation size={18} /> Teaching workspace</Link>}
-      <Link href="/training-center/dashboard?tab=affiliate" onClick={close}><HandCoins size={18} /> Affiliate programme</Link>
-      <Link href="/training-center/dashboard?tab=settings" onClick={close}><Settings size={18} /> Settings</Link>
-      <button type="button" onClick={() => { close(); onLogout(); }}><LogOut size={18} /> Log out</button>
+      <Link href="/training-center/dashboard" onClick={close}><LayoutDashboard size={18} /><CourseText text={"My dashboard"} /></Link>
+      <Link href="/training-center/dashboard?tab=messages" onClick={close}><MessagesSquare size={18} /><CourseText text={"Messages"} />{badge > 0 && <span className="msg-badge">{badge}</span>}</Link>
+      {teaches && <Link href="/training-center/teach" onClick={close}><Presentation size={18} /><CourseText text={"Teaching workspace"} /></Link>}
+      <Link href="/training-center/dashboard?tab=affiliate" onClick={close}><HandCoins size={18} /><CourseText text={"Affiliate programme"} /></Link>
+      <Link href="/training-center/dashboard?tab=settings" onClick={close}><Settings size={18} /><CourseText text={"Settings"} /></Link>
+      <button type="button" onClick={() => { close(); onLogout(); }}><LogOut size={18} /><CourseText text={"Log out"} /></button>
     </div>
   </details>;
 }
