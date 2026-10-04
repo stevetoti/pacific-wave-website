@@ -1,7 +1,7 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
-## 2026-10-05 — [Codex] Zoom classroom release in progress
-Stephen authorised complete setup/publication. Meeting SDK app + production server secrets configured, additive migration applied, twelve October sessions scheduled and linked, first lesson published. Real student signature + desktop/mobile Zoom pre-join verified, ten browser checks pass. Final QA Join awaits Zoom terms confirmation. See docs/ZOOM-CLASSROOM.md.
+## 2026-10-05 — [Codex] Zoom classroom live
+Stephen authorised complete setup/publication. Meeting SDK app + production server secrets configured, additive migration applied, twelve October sessions scheduled and linked, first lesson published. Real student signature + desktop/mobile Zoom pre-join verified, ten browser checks pass. Final QA Join awaits Zoom terms confirmation. Production `dpl_x52pz9XRGAKRLAXdyoBwC3Wd7xBR`, app commit `96aa12d`, is promoted; eight live public browser checks pass. See docs/ZOOM-CLASSROOM.md.
 
 ## 2026-10-04 — [Codex] Course-first Students
 StudentRoster now starts with course cards and drills into one course only; separate no-course accounts entry and Back to courses. Proofs/reminders/bulk selections stay scoped; course change resets selections. Existing admin/instructor CRM retained. Type/lint/build and ten desktop/mobile browser checks pass. No migration or student changes.

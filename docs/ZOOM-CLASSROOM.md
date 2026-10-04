@@ -18,7 +18,7 @@ October classroom meeting ID: 962 8326 1755. Twelve sessions: 5, 8, 10, 12, 15, 
 
 Host: sign into the existing PWD Zoom account, open Meetings → PWD — Build Your Online Business in 30 Days — October Training → Start. Admit enrolled learners from the waiting room. Students: Training Centre → their October course → Live class 1 → Join inside dashboard, then Zoom Join. Open in Zoom is the fallback. Local recording must be started by the host in the desktop app; cloud storage remains full.
 
-Real SDK tests reach the pre-join screen on desktop/mobile. Accepting Zoom terms for the final QA Join requires separate browser confirmation; pending. Full audio/video transmission has not been verified. Production release in progress.
+Real SDK tests reach the pre-join screen on desktop/mobile. Accepting Zoom terms for the final QA Join requires separate browser confirmation; pending. Full audio/video transmission has not been verified. Published as `dpl_x52pz9XRGAKRLAXdyoBwC3Wd7xBR` (app commit `96aa12d`), promoted to pacificwavedigital.com. Eight live public desktop/mobile release checks pass. Candidate API verified through authenticated Vercel CLI. Ordinary candidate browser tests hit Vercel protection; no protection settings were weakened and the rejected cookie approach was not used.
 
 ### Validation
 

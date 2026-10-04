@@ -700,3 +700,7 @@ Stephen approved pending app creation and completion for tomorrow. Created PWD L
 
 ## 2026-10-05 — [Codex] Zoom connection verified
 App creation approval resolved. Production secrets/migration and 12-session October meeting configured; first lesson published. Real temporary-student endpoint returned 200, corrected passcode, desktop/mobile real SDK pre-join screen verified. Ten release checks pass. QA Join explicitly accepts Zoom terms; separate confirmation pending, deployment proceeds. No full audio/video claim.
+
+
+## 2026-10-05 — [Codex] Zoom classroom published
+Application 96aa12d; promoted production dpl_x52pz9XRGAKRLAXdyoBwC3Wd7xBR. Eight live public desktop/mobile release checks pass. Authenticated candidate API verified correct meeting/attendee claims/passcode; no secret in browser bundle. No new runtime errors found. Final terms/Join and actual audio/video verification remain pending; host/student instructions in docs/ZOOM-TRAINING-QUICK-START.md. Vercel candidate browser access required authentication; auto-review rejected protection-cookie approach and it was not used.
