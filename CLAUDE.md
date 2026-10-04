@@ -1,5 +1,8 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## 2026-10-05 — [Codex] Reusable classroom branding
+PWD logo, course/lesson artwork and names, Vanuatu schedule, mobile banner and Focus view added to every classroom. Native modal focus containment; Zoom iframe remains mounted during layout changes. Stephen reports successful joining. Type/lint/build and ten desktop/mobile checks pass; real Zoom desktop/mobile pre-join visuals verified. Publishing the branded shell.
+
 ## 2026-10-05 — [Codex] Zoom classroom live
 Stephen authorised complete setup/publication. Meeting SDK app + production server secrets configured, additive migration applied, twelve October sessions scheduled and linked, first lesson published. Real student signature + desktop/mobile Zoom pre-join verified, ten browser checks pass. Final QA Join awaits Zoom terms confirmation. Production `dpl_x52pz9XRGAKRLAXdyoBwC3Wd7xBR`, app commit `96aa12d`, is promoted; eight live public browser checks pass. See docs/ZOOM-CLASSROOM.md.
 

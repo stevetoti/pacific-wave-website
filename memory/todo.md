@@ -226,3 +226,7 @@ App creation approval resolved. Production secrets/migration and 12-session Octo
 
 ## 2026-10-05 — [Codex] Zoom classroom published
 Application 96aa12d; promoted production dpl_x52pz9XRGAKRLAXdyoBwC3Wd7xBR. Eight live public desktop/mobile release checks pass. Authenticated candidate API verified correct meeting/attendee claims/passcode; no secret in browser bundle. No new runtime errors found. Final terms/Join and actual audio/video verification remain pending; host/student instructions in docs/ZOOM-TRAINING-QUICK-START.md. Vercel candidate browser access required authentication; auto-review rejected protection-cookie approach and it was not used.
+
+
+## 2026-10-05 — [Codex] Reusable classroom branding
+Use shared PWD shell with lesson thumbnail → course artwork → generic training fallback; course/lesson titles and Vanuatu schedule supplied from existing course data. Desktop panel/mobile banner, focus view preserving iframe, native keyboard modal. User reports successful joining. Verification/publication in progress.

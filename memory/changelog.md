@@ -704,3 +704,14 @@ App creation approval resolved. Production secrets/migration and 12-session Octo
 
 ## 2026-10-05 — [Codex] Zoom classroom published
 Application 96aa12d; promoted production dpl_x52pz9XRGAKRLAXdyoBwC3Wd7xBR. Eight live public desktop/mobile release checks pass. Authenticated candidate API verified correct meeting/attendee claims/passcode; no secret in browser bundle. No new runtime errors found. Final terms/Join and actual audio/video verification remain pending; host/student instructions in docs/ZOOM-TRAINING-QUICK-START.md. Vercel candidate browser access required authentication; auto-review rejected protection-cookie approach and it was not used.
+
+
+## 2026-10-05 — [Codex] Final Zoom release verification
+Main source/guide 6fc1418 pushed successfully. Git production dpl_C5vDgcqAYjE4YHLrdiB9wTeeGdGK READY and owns pacificwavedigital.com. Same application as verified promoted candidate; live frame/CDN and frame-ancestors checked after Git deployment. Live real temporary student reached Zoom Join preview on desktop/mobile, all eight public checks passed, temporary QA user/order cleaned. Temporary credential transfer files removed; server-only local/Vercel settings retained. Full meeting/media test remains pending explicit Zoom terms acceptance. Final journal/doc update remains local to avoid another documentation-only deployment.
+
+## 2026-10-05 — [Codex] Reusable classroom branding
+Stephen reports successful joining and requests reusable PWD branding for every course. Adding actual PWD logo, automatic course/lesson identity and artwork, schedule, responsive welcome panel and focus view. Zoom controls/notices retained; native modal focus containment added. Verification in progress.
+
+
+## 2026-10-05 — [Codex] Branding verified
+Type/lint/full networked build pass; ten desktop/mobile release/LMS/classroom checks pass (two opt-in skips). Real temporary-student Zoom pre-join visuals reviewed at desktop/mobile sizes. Fixed lingering preparing message over mobile pre-join by hiding it at SDK init success; errors still restore it. Temporary QA account/access cleaned. Source ready for publication.

@@ -8,9 +8,9 @@ test("embedded class opens, exchanges only join data, handles errors and returns
  const session={access_token:token,refresh_token:"test-refresh",expires_at:Math.floor(Date.now()/1000)+3600,expires_in:3600,token_type:"bearer",user};
  await page.addInitScript(s=>localStorage.setItem("sb-rndegttgwtpkbjtvjgnc-auth-token",JSON.stringify(s)),session);
  await page.route("**/auth/v1/**",r=>r.fulfill({json:{...session,user}}));
- const course={id:courseId,slug:"zoom-fixture",title:"Zoom classroom QA",published:true,private_sessions:false,introduction:"Join your class",amount:35000,currency:"VUV"};
+ const course={id:courseId,slug:"zoom-fixture",title:"Build Your Online Business in 30 Days",published:true,private_sessions:false,introduction:"Join your class",amount:35000,currency:"VUV"};
  const order={id:"33333333-3333-4333-8333-333333333333",course_id:courseId,status:"granted"};
- const lesson={id:lessonId,course_id:courseId,title:"Live website workshop",position:1,published:true,starts_at:null,content:"Practice after class",youtube_id:"",meeting_url:"https://us02web.zoom.us/j/12345678901?pwd=fixture",quiz:[]};
+ const lesson={id:lessonId,course_id:courseId,title:"Live website workshop",position:1,published:true,starts_at:"2026-10-05T04:00:00Z",content:"Practice after class",youtube_id:"",meeting_url:"https://us02web.zoom.us/j/12345678901?pwd=fixture",quiz:[]};
  let fail=false;
  await page.route("**/api/**",r=>{
   const path=new URL(r.request().url()).pathname;
@@ -36,10 +36,17 @@ test("embedded class opens, exchanges only join data, handles errors and returns
  fail=false;await join.click();
  const dialog=page.getByRole("dialog");
  await expect(dialog).toBeVisible();
+ await expect(dialog.getByAltText("Pacific Wave Digital logo")).toBeVisible();
+ await expect(dialog.getByRole("heading",{name:course.title,exact:true})).toBeVisible();
  const embedded=page.frameLocator('iframe[title="Zoom live classroom"]');
  await expect(embedded.locator("body")).toHaveAttribute("data-joined","QA Student");
  await expect(embedded.locator("body")).toHaveAttribute("data-meeting","12345678901");
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+ await page.getByRole("button",{name:"Focus on meeting",exact:true}).click();
+ await expect(dialog.getByRole("complementary",{name:"Class details"})).toBeHidden();
+ await expect(embedded.locator("body")).toHaveAttribute("data-joined","QA Student");
+ await page.getByRole("button",{name:"Show class details",exact:true}).click();
+ await expect(dialog.getByRole("complementary",{name:"Class details"})).toBeVisible();
  await page.screenshot({path:"/tmp/zoom-classroom-"+test.info().project.name+".png"});
  await embedded.getByRole("button",{name:"Leave meeting"}).click();await expect(dialog).toHaveCount(0);
  await join.click();await expect(dialog).toBeVisible();

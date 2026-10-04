@@ -141,3 +141,7 @@ Use same-account Zoom Meeting SDK client view for desktop/mobile; instructors ho
 
 ## 2026-10-05 — [Codex] Zoom connection verified
 App creation approval resolved. Production secrets/migration and 12-session October meeting configured; first lesson published. Real temporary-student endpoint returned 200, corrected passcode, desktop/mobile real SDK pre-join screen verified. Ten release checks pass. QA Join explicitly accepts Zoom terms; separate confirmation pending, deployment proceeds. No full audio/video claim.
+
+
+## 2026-10-05 — [Codex] Reusable classroom branding
+Use shared PWD shell with lesson thumbnail → course artwork → generic training fallback; course/lesson titles and Vanuatu schedule supplied from existing course data. Desktop panel/mobile banner, focus view preserving iframe, native keyboard modal. User reports successful joining. Verification/publication in progress.

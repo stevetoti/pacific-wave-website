@@ -27,6 +27,7 @@
         leaveUrl: window.location.origin + "/zoom-classroom/left.html",
         disableInvite: true, isSupportAV: true,
         success: function () {
+          status.style.display = "none";
           ZoomMtg.join({
             sdkKey: data.sdkKey, signature: data.signature,
             meetingNumber: data.meetingNumber, passWord: data.passWord,

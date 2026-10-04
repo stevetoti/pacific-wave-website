@@ -1160,7 +1160,7 @@ function TrainingCenterContent({
                             )}
                             <h2>{t(active.title)}</h2>
                             {active.published && active.meeting_url && ["paid", "granted"].includes(courseOrder?.status || "") && (
-                              <ZoomClassroom key={active.id} lessonId={active.id} meetingUrl={active.meeting_url} title={t(active.title)} />
+                              <ZoomClassroom key={active.id} lessonId={active.id} meetingUrl={active.meeting_url} title={t(active.title)} courseTitle={t(current.title)} artwork={classImage(current, active, lessons.findIndex(l => l.id === active.id)) || programs[current.slug]?.image || "/images/training/hero.webp"} schedule={active.starts_at ? when(active.starts_at, language) : undefined} classNumber={active.position} />
                             )}
                             {!["paid", "granted"].includes(
                               courseOrder?.status || "",
