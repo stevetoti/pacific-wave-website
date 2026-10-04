@@ -1,4 +1,5 @@
 "use client";
+import { liveRecordingPending } from "@/lib/lms/lesson-recording";
 import { CourseText, CourseLanguageProvider, CourseLanguagePicker, useCourseLanguage } from '@/components/lms/CourseLanguage';
 
 import { useCallback, useEffect, useState } from "react";
@@ -1177,6 +1178,11 @@ function TrainingCenterContent({
                                 <h3><CourseText text={"Video available after training"} /></h3>
                                 <p><CourseText text={"Your instructor will upload the video after the training. Return to this topic once the recording has been published."} /></p>
                                 <p className="lms-muted"><CourseText text={"You can explore the workshop outline and participant workbook in your course dashboard while you wait."} /></p>
+                              </div>
+                            ) : liveRecordingPending(active) ? (
+                              <div className="lms-workshop-recording-notice">
+                                <h3><CourseText text={"Video available after training"} /></h3>
+                                <p><CourseText text={"Your instructor will upload the video after the training. Return to this topic once the recording has been published."} /></p>
                               </div>
                             ) : !active.published ? (
                               <div className="lms-empty">

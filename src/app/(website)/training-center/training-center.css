@@ -2735,3 +2735,5 @@
 .cm-headline{font-weight:800!important;}
 
 .sr-course-heading{display:grid;gap:10px;margin:0 0 18px}.sr-course-heading h2{margin:0;color:#233c6f;font-size:24px}.sr-course-heading p{margin:0;color:#64748b}.sr-course-heading>button{justify-self:start}.sr-course-open{color:#d44b23;font-size:14px;font-weight:700;margin-top:10px}.sr-course-title:focus-visible{outline:3px solid #ef5e33;outline-offset:5px;border-radius:4px}
+
+.lms .lms-lesson-cover .lms-lesson-image { object-fit:contain; }

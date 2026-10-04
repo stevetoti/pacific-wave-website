@@ -1,3 +1,4 @@
+import { liveRecordingPending } from "@/lib/lms/lesson-recording";
 import { workshopRecordingPending } from "@/lib/lms/blp-workshop";
 import { accountSchema } from "@/lib/lms/signup";
 import { createTrainingAccount } from "@/lib/server/lms-signup";
@@ -691,7 +692,7 @@ export async function POST(request: Request, context: Context) {
       );
       if (!order || (lesson.order_id && lesson.order_id !== order.id))
         throw new HttpError(403, "Paid course access required.");
-      if (workshopRecordingPending(lesson.pwd_lms_courses, lesson))
+      if (workshopRecordingPending(lesson.pwd_lms_courses, lesson) || liveRecordingPending(lesson))
         throw new HttpError(409, "Your instructor will upload the video after the training. This topic cannot be marked complete yet.");
       if (lesson.quiz.length)
         throw new HttpError(

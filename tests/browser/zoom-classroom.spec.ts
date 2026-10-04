@@ -10,7 +10,7 @@ test("embedded class opens, exchanges only join data, handles errors and returns
  await page.route("**/auth/v1/**",r=>r.fulfill({json:{...session,user}}));
  const course={id:courseId,slug:"zoom-fixture",title:"Build Your Online Business in 30 Days",published:true,private_sessions:false,introduction:"Join your class",amount:35000,currency:"VUV"};
  const order={id:"33333333-3333-4333-8333-333333333333",course_id:courseId,status:"granted"};
- const lesson={id:lessonId,course_id:courseId,title:"Live website workshop",position:1,published:true,starts_at:"2026-10-05T04:00:00Z",content:"Practice after class",youtube_id:"",meeting_url:"https://us02web.zoom.us/j/12345678901?pwd=fixture",quiz:[]};
+ const lesson={id:lessonId,course_id:courseId,title:"Live website workshop",position:1,published:true,has_recording:false,starts_at:"2026-10-05T04:00:00Z",content:"Practice after class",youtube_id:"",meeting_url:"https://us02web.zoom.us/j/12345678901?pwd=fixture",quiz:[]};
  let fail=false;
  await page.route("**/api/**",r=>{
   const path=new URL(r.request().url()).pathname;
@@ -31,6 +31,9 @@ test("embedded class opens, exchanges only join data, handles errors and returns
  await page.getByRole("button",{name:/Live website workshop/}).click();
  const join=page.getByRole("button",{name:"Join inside dashboard"});
  await expect(join).toBeVisible();
+ await expect(page.getByRole("button",{name:"Mark lesson complete",exact:true})).toHaveCount(0);
+ await expect(page.getByRole("heading",{name:"Video available after training"})).toBeVisible();
+ await expect(page.locator(".pwd-live-card-art img")).toHaveCSS("object-fit","contain");
  await expect(page.getByRole("link",{name:"Open in Zoom",exact:true})).toHaveAttribute("href",lesson.meeting_url);
  fail=true;await join.click();await expect(page.getByRole("region",{name:"Live classroom"}).getByRole("alert")).toContainText("not ready");
  fail=false;await join.click();
@@ -52,4 +55,11 @@ test("embedded class opens, exchanges only join data, handles errors and returns
  await join.click();await expect(dialog).toBeVisible();
  await page.getByRole("button",{name:"Leave classroom and return to course"}).click();await expect(dialog).toHaveCount(0);
  await expect(join).toBeFocused();
+ // The same lesson gains replay playback and completion when the trainer uploads a recording.
+ lesson.has_recording=true;
+ await page.reload();
+ await page.getByRole("button",{name:/Live website workshop/}).click();
+ await expect(page.getByRole("button",{name:"Play your private recording",exact:true})).toBeVisible();
+ await expect(page.getByRole("button",{name:"Mark lesson complete",exact:true})).toBeVisible();
+ await expect(page.getByRole("button",{name:"Join inside dashboard",exact:true})).toBeVisible();
 });

@@ -1,5 +1,13 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+
+## 2026-10-05 — [Codex] All live days and replay handling verified
+All twelve October lessons published with existing Zoom links; previously draft lessons contain no unpublished content/quiz/replay. Live-only lessons show replay-pending notice and reject completion server-side (409); private or YouTube replay restores playback/completion. Wide image containment and stacked mobile join card preserve full artwork. Four unit/API tests, lint/type/build and ten desktop/mobile checks pass (desktop sitemap timeout passed on retry; two opt-in skips). Real temporary student verified all twelve Zoom signatures and completion rejection, days 1/2/12 UI and desktop/mobile images; fixture cleaned. Publishing. Persistent-memory CLI unavailable because system Python lacks numpy; shared journals updated.
+
+
+## 2026-10-05 — [Codex] Branded classroom live
+Application 2afb6f7 pushed to main; production dpl_GxdHxUJJD5czgLc4AQ9DeWWmNe5H READY and serving pacificwavedigital.com. Eight live public desktop/mobile checks pass (two opt-in skips). Real temporary student received API 200 and reached Zoom pre-join on desktop/mobile; branded screenshots reviewed and lingering preparing message confirmed absent. Temporary QA user/order cleaned. Reusable branding request completed; Stephen separately reports successful joining. Final release evidence remains local to avoid a documentation-only deployment.
+
 ## 2026-10-05 — [Codex] Reusable classroom branding
 PWD logo, course/lesson artwork and names, Vanuatu schedule, mobile banner and Focus view added to every classroom. Native modal focus containment; Zoom iframe remains mounted during layout changes. Stephen reports successful joining. Type/lint/build and ten desktop/mobile checks pass; real Zoom desktop/mobile pre-join visuals verified. Publishing the branded shell.
 

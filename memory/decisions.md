@@ -145,3 +145,7 @@ App creation approval resolved. Production secrets/migration and 12-session Octo
 
 ## 2026-10-05 — [Codex] Reusable classroom branding
 Use shared PWD shell with lesson thumbnail → course artwork → generic training fallback; course/lesson titles and Vanuatu schedule supplied from existing course data. Desktop panel/mobile banner, focus view preserving iframe, native keyboard modal. User reports successful joining. Verification/publication in progress.
+
+
+## 2026-10-05 — [Codex] Live-day access and replay lifecycle
+User requests Zoom for all twelve days, no live-only completion, and uncropped artwork. Confirmed all twelve existing meeting links; days 2–12 are drafts with empty content/quiz/recordings. Publishing these scheduled lessons under explicit request, retaining enrolment checks. Shared live-recording guard prevents completion until replay; wide artwork uses contain and stacked mobile card. Verification in progress.
