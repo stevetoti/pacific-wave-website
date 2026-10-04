@@ -4,6 +4,8 @@ import {claimSchema,challengeSchema,challengePhase} from '../src/lib/lms/challen
 test('challenge windows and proof links reject unsafe or invalid input',()=>{
  const c={course_id:'22222222-2222-4222-8222-222222222222',title:'Week 1',description:'Earn your first genuine commission.',proof_instructions:'Submit redacted transaction proof.',prize:'1 month Pro',max_winners:1,opens_at:'2026-10-04T13:00:00Z',closes_at:'2026-10-11T13:00:00Z',published:false};
  assert.equal(challengeSchema.safeParse(c).success,true);
+ assert.equal(challengeSchema.safeParse({...c,selection_mode:'participation',max_winners:2}).success,false);
+ assert.equal(challengeSchema.safeParse({...c,selection_mode:'participation'}).success,true);
  assert.equal(challengeSchema.safeParse({...c,closes_at:c.opens_at}).success,false);
  assert.equal(challengePhase(c,Date.parse(c.opens_at)),'Open');
  assert.equal(challengePhase(c,Date.parse(c.closes_at)),'Closed');

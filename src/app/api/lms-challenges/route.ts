@@ -27,12 +27,13 @@ export async function POST(request:Request){try{
  const input=await readJson(request,z.discriminatedUnion('action',[
  z.object({action:z.literal('save'),challenge:challengeSchema}),
  z.object({action:z.literal('submit'),claim:claimSchema}),
- z.object({action:z.literal('review'),id:z.uuid(),status:z.enum(['verified','rejected','winner','delivered']),note:z.string().trim().min(4).max(1500)}),
+ z.object({action:z.literal('review'),id:z.uuid(),status:z.enum(['verified','rejected','winner','delivered']),note:z.string().trim().min(4).max(1500),scores:z.tuple([z.number().int().min(0).max(5),z.number().int().min(0).max(5),z.number().int().min(0).max(5),z.number().int().min(0).max(5)]).optional()}),
  ]));
  if(input.action==='submit'){
  const {db,user}=await student(request),v=input.claim;
  const c=checked(await db.from('pwd_lms_challenges').select('*').eq('id',v.challenge_id).eq('published',true).maybeSingle());if(!c)throw new HttpError(404,'Challenge not found.');
  await enrolled(db,user.id,c.course_id);
+ if(c.selection_mode==='participation'){const previous=checked(await db.from('pwd_lms_challenge_claims').select('id,pwd_lms_challenges!inner(course_id,selection_mode)').eq('user_id',user.id).in('status',['winner','delivered']).eq('pwd_lms_challenges.course_id',c.course_id).eq('pwd_lms_challenges.selection_mode','participation').limit(1));if(previous?.length)throw new HttpError(409,'You have already won a Participation Champion prize in this course.');}
  const now=Date.now(),achieved=Date.parse(v.achieved_at);
  if(now<Date.parse(c.opens_at)||now>=Date.parse(c.closes_at))throw new HttpError(409,'Submissions are only accepted while the challenge is open.');
  if(achieved<Date.parse(c.opens_at)||achieved>=Date.parse(c.closes_at)||achieved>now)throw new HttpError(400,'Achievement must be within the challenge dates and cannot be in the future.');
@@ -51,6 +52,6 @@ export async function POST(request:Request){try{
  if(!claim)throw new HttpError(404,'Submission not found.');
  const c=checked(await db.from('pwd_lms_challenges').select('course_id').eq('id',claim.challenge_id).single());if(!c)throw new HttpError(404,'Challenge not found.');access.assertCourse(c.course_id);
  if(['winner','delivered'].includes(input.status)&&!access.admin)throw new HttpError(403,'An administrator awards and fulfils prizes.');
- const {error}=await db.rpc('pwd_challenge_review',{p_claim:input.id,p_status:input.status,p_note:input.note,p_reviewer:access.user.id});if(error?.code==='P0001')throw new HttpError(409,error.message);if(error)throw error;
+ const {error}=await db.rpc('pwd_challenge_review_v2',{p_claim:input.id,p_status:input.status,p_note:input.note,p_reviewer:access.user.id,p_scores:input.scores||null});if(error?.code==='P0001')throw new HttpError(409,error.message);if(error)throw error;
  return json({success:true});
 }catch(e){return apiError(e,'lms-challenges/post');}}

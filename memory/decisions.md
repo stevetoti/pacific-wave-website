@@ -157,3 +157,7 @@ Building Challenges under AI Faculty, private evidence submissions, course-scope
 
 ## 2026-10-05 — [Codex] Challenge prizes approved
 Stephen approved VT 2,000 + one Pro month for Week 1 (5–11 October), VT 1,000 + one Pro month for Week 2 (12–18 October), total VT 3,000/two Pro months. Seeded these two published challenge records; business-page/first-customer ideas remain drafts. RLS/service-only schema applied; no cash transfers/subscription changes. Build passed after clearing generated cache to recover disk space. End-to-end verification underway.
+
+
+## 2026-10-05 — [Codex] Storian participation and AI milestones
+User requests Storian AI rewards and weekly participation awards. Implementing a 20-point staff-verified rubric (attendance/recording engagement, activity, contributions, peer support), practical-work/contribution tie-breaks, explained final ties and one participation prize per student/course. Existing affiliate races retain chronological ranking. Proposed four weekly Storian months plus one practical AI milestone month; awaiting exact prize-count approval before publication.

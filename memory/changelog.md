@@ -747,3 +747,19 @@ Unit validation, lint/type/build and ten classroom/public desktop/mobile checks 
 
 ## 2026-10-05 — [Codex] Course Challenges ready for release
 Challenges sits below AI Faculty, reusable for every course. Two October first-affiliate-income challenges carry approved VT 2,000/VT 1,000 cash plus one Digi Assist Pro month each. Two extra ideas remain drafts. RLS-private proofs, assigned-instructor verification and admin-only budget/publication/chronological prize awards/delivery implemented. Concurrent awards and capacity guarded transactionally. Full unit/API/desktop/mobile checks and actual admin draft creation/reload pass; fixtures cleaned. See docs/COURSE-CHALLENGES.md. Publishing under Stephen’s explicit prize approval.
+
+
+## 2026-10-05 — [Codex] Challenges published and verified
+Commit a9c93eb pushed to main. Production dpl_82DYdFrvKV1bwkHgyBLs85RQJySP READY on pacificwavedigital.com. Eight live public desktop/mobile checks pass (two opt-in skips); real temporary approved student sees exactly two approved weekly prizes with correct amounts/dates and no drafts. Desktop/mobile visual checks pass; all QA fixtures cleaned, local server stopped. Admin course selection/draft save/reload confirmed. Manual reward fulfilment documented; no actual cash or Pro credits issued. Final evidence retained locally to avoid a docs-only deployment.
+
+
+## 2026-10-05 — [Codex] Storian participation and AI milestones
+User requests Storian AI rewards and weekly participation awards. Implementing a 20-point staff-verified rubric (attendance/recording engagement, activity, contributions, peer support), practical-work/contribution tie-breaks, explained final ties and one participation prize per student/course. Existing affiliate races retain chronological ranking. Proposed four weekly Storian months plus one practical AI milestone month; awaiting exact prize-count approval before publication.
+
+
+## 2026-10-05 — [Codex] Participation scoring implemented
+Backward-compatible scoring migration applied. Added 20-point rubric, private score feedback, instructor scoring UI, eligible highest-score ranking, explained ties and transactionally enforced one participation award/student/course. Four weekly Storian prize drafts plus one practical AI milestone draft seeded; no public commitment before five-month approval. Build/type/lint pass; real workflow and desktop/mobile release tests running.
+
+
+## 2026-10-05 — [Codex] Participation judging verified
+Real isolated desktop/mobile reflections, staff UI scoring, invalid/missing score rejection, positive-score rule, highest eligible score, exact-tie explanation, one participation win/course and independent chronological challenge regression pass. Type/lint/build/unit and eight desktop/mobile release checks pass (two opt-in skips). Fixtures cleaned; screenshots reviewed. Five Storian drafts remain unpublished awaiting explicit five-month budget approval. Deploying scoring support only.
