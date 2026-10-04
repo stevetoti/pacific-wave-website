@@ -40,3 +40,7 @@ Application 2afb6f7 pushed to main; production dpl_GxdHxUJJD5czgLc4AQ9DeWWmNe5H 
 
 ## 2026-10-05 — [Codex] All live days and replay handling verified
 All twelve October lessons published with existing Zoom links; previously draft lessons contain no unpublished content/quiz/replay. Live-only lessons show replay-pending notice and reject completion server-side (409); private or YouTube replay restores playback/completion. Wide image containment and stacked mobile join card preserve full artwork. Four unit/API tests, lint/type/build and ten desktop/mobile checks pass (desktop sitemap timeout passed on retry; two opt-in skips). Real temporary student verified all twelve Zoom signatures and completion rejection, days 1/2/12 UI and desktop/mobile images; fixture cleaned. Publishing. Persistent-memory CLI unavailable because system Python lacks numpy; shared journals updated.
+
+
+## 2026-10-05 — [Codex] Live-day corrections released
+Commit 24cb741 pushed to main; production dpl_7LkWparLjN1Eb5sFXmqAeuzKT8st READY on pacificwavedigital.com. Eight live public desktop/mobile checks pass (two opt-in skips). Real live temporary-student verification: all twelve Zoom signatures 200, live-only completion 409, days 1/2/12 join UI and no completion button, full artwork/no horizontal overflow desktop/mobile. QA user/order cleaned; local server stopped. Final evidence kept local to avoid another docs-only deploy.

@@ -7,6 +7,7 @@ import CourseAdministration from "./CourseAdministration";
 import QuizBuilder from "./QuizBuilder";
 import EmailCampaigns from "./EmailCampaigns";
 import CourseCommunity from "./CourseCommunity";
+import ChallengeAdmin from "./challenges/ChallengeAdmin";
 import AffiliateAdmin from "./AffiliateAdmin";
 import InstructorAdmin from "./InstructorAdmin";
 import StudentRoster from "./StudentRoster";
@@ -41,12 +42,12 @@ const emptyCourse = {
 // Admin tabs grouped by job so the right screen is easy to find.
 const adminGroups: [string, string[]][] = [
   ["People", ["students", "history", "instructors", "affiliates", "access"]],
-  ["Courses & content", ["courses", "lessons", "grading", "workbooks"]],
+  ["Courses & content", ["courses", "lessons", "grading", "workbooks", "challenges"]],
   ["Communication", ["community", "reports", "campaigns", "emails"]],
   ["Money", ["payments", "coupons", "banks"]],
 ];
 // Instructors get only the teaching tabs, scoped server-side to their assigned courses.
-const teachTabs = ["workbooks", "lessons", "students", "history", "grading", "community", "messages", "profile"];
+const teachTabs = ["challenges", "workbooks", "lessons", "students", "history", "grading", "community", "messages", "profile"];
 const tabLabel: Record<string, string> = {
   payments: "Registrations & payments",
   community: "Course communication",
@@ -226,6 +227,7 @@ export default function TrainingAdmin({
         )}
         {tab === "workbooks" && <WorkbookReview courses={courses} />}
         {tab === "campaigns" && <EmailCampaigns courses={courses} />}
+        {tab === "challenges" && <ChallengeAdmin courses={courses} />}
         {tab === "affiliates" && <AffiliateAdmin />}
         {tab === "instructors" && !teaching && <InstructorAdmin courses={courses} />}
         {tab === "profile" && teaching && <InstructorProfileForm />}

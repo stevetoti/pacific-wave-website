@@ -242,3 +242,23 @@ User requests Zoom for all twelve days, no live-only completion, and uncropped a
 
 ## 2026-10-05 — [Codex] All live days and replay handling verified
 All twelve October lessons published with existing Zoom links; previously draft lessons contain no unpublished content/quiz/replay. Live-only lessons show replay-pending notice and reject completion server-side (409); private or YouTube replay restores playback/completion. Wide image containment and stacked mobile join card preserve full artwork. Four unit/API tests, lint/type/build and ten desktop/mobile checks pass (desktop sitemap timeout passed on retry; two opt-in skips). Real temporary student verified all twelve Zoom signatures and completion rejection, days 1/2/12 UI and desktop/mobile images; fixture cleaned. Publishing. Persistent-memory CLI unavailable because system Python lacks numpy; shared journals updated.
+
+
+## 2026-10-05 — [Codex] Live-day corrections released
+Commit 24cb741 pushed to main; production dpl_7LkWparLjN1Eb5sFXmqAeuzKT8st READY on pacificwavedigital.com. Eight live public desktop/mobile checks pass (two opt-in skips). Real live temporary-student verification: all twelve Zoom signatures 200, live-only completion 409, days 1/2/12 join UI and no completion button, full artwork/no horizontal overflow desktop/mobile. QA user/order cleaned; local server stopped. Final evidence kept local to avoid another docs-only deploy.
+
+
+## 2026-10-05 — [Codex] Course Challenges in progress
+Building Challenges under AI Faculty, private evidence submissions, course-scoped instructor review and admin prize publication/fulfilment. Earliest verified achievement after closing wins; ties use submission time. Awards serialize and respect prize capacity. Configurable drafts for affiliate week 1/2, business launch and first customer. Prize preference asked; no unconfirmed cash commitment.
+
+
+## 2026-10-05 — [Codex] Challenge prizes approved
+Stephen approved VT 2,000 + one Pro month for Week 1 (5–11 October), VT 1,000 + one Pro month for Week 2 (12–18 October), total VT 3,000/two Pro months. Seeded these two published challenge records; business-page/first-customer ideas remain drafts. RLS/service-only schema applied; no cash transfers/subscription changes. Build passed after clearing generated cache to recover disk space. End-to-end verification underway.
+
+
+## 2026-10-05 — [Codex] Challenge workflow verified
+Unit validation, lint/type/build and ten classroom/public desktop/mobile checks passed (cold sitemap retry passed; two opt-in skips). Real isolated student flow verified proof submission/reload, draft privacy, enrolment/revocation, instructor course scope, admin-only rewards, deadlines, duplicate rejection, earliest-achievement order, concurrent award/capacity enforcement and manual delivered state. Initial fixture cleanup needed automatic course channels removed; corrected and cleaned all fixtures. Admin UI course selector gained explicit accessible name; final admin form check in progress.
+
+
+## 2026-10-05 — [Codex] Course Challenges ready for release
+Challenges sits below AI Faculty, reusable for every course. Two October first-affiliate-income challenges carry approved VT 2,000/VT 1,000 cash plus one Digi Assist Pro month each. Two extra ideas remain drafts. RLS-private proofs, assigned-instructor verification and admin-only budget/publication/chronological prize awards/delivery implemented. Concurrent awards and capacity guarded transactionally. Full unit/API/desktop/mobile checks and actual admin draft creation/reload pass; fixtures cleaned. See docs/COURSE-CHALLENGES.md. Publishing under Stephen’s explicit prize approval.

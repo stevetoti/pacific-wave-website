@@ -149,3 +149,11 @@ Use shared PWD shell with lesson thumbnail → course artwork → generic traini
 
 ## 2026-10-05 — [Codex] Live-day access and replay lifecycle
 User requests Zoom for all twelve days, no live-only completion, and uncropped artwork. Confirmed all twelve existing meeting links; days 2–12 are drafts with empty content/quiz/recordings. Publishing these scheduled lessons under explicit request, retaining enrolment checks. Shared live-recording guard prevents completion until replay; wide artwork uses contain and stacked mobile card. Verification in progress.
+
+
+## 2026-10-05 — [Codex] Course Challenges in progress
+Building Challenges under AI Faculty, private evidence submissions, course-scoped instructor review and admin prize publication/fulfilment. Earliest verified achievement after closing wins; ties use submission time. Awards serialize and respect prize capacity. Configurable drafts for affiliate week 1/2, business launch and first customer. Prize preference asked; no unconfirmed cash commitment.
+
+
+## 2026-10-05 — [Codex] Challenge prizes approved
+Stephen approved VT 2,000 + one Pro month for Week 1 (5–11 October), VT 1,000 + one Pro month for Week 2 (12–18 October), total VT 3,000/two Pro months. Seeded these two published challenge records; business-page/first-customer ideas remain drafts. RLS/service-only schema applied; no cash transfers/subscription changes. Build passed after clearing generated cache to recover disk space. End-to-end verification underway.

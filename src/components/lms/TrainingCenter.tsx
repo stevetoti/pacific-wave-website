@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   Clock3,
   GraduationCap,
+  Trophy,
   PlayCircle,
   ShieldCheck,
   LockKeyhole,
@@ -36,6 +37,7 @@ import NotificationBell from "./NotificationBell";
 import PaymentOptions from "./PaymentOptions";
 import StudentAccountMenu from "./StudentAccountMenu";
 const CourseCommunity = dynamic(() => import("./CourseCommunity"));
+const Challenges = dynamic(() => import("./challenges/Challenges"), { ssr: false });
 const StudentCoaches = dynamic(() => import("./coach/StudentCoaches"), { ssr: false });
 import WorkshopResources from "./WorkshopResources";
 const DigitalWorkbook = dynamic(() => import("./DigitalWorkbook"));
@@ -84,6 +86,7 @@ function TrainingCenterContent({
   const view = path[0] || "catalog";
   const coursePathId = path[1];
   const [showFaculty, setShowFaculty] = useState(false);
+  const [showChallenges, setShowChallenges] = useState(query.view === "challenges");
   const [courseTab, setCourseTab] = useState(
     query.tab === "community" ? "community" : "lessons",
   );
@@ -1086,17 +1089,18 @@ function TrainingCenterContent({
                       <aside className="lms-panel">
                         <h2><CourseText text={"Course journey"} /></h2>
                         <button
-                          className={`lms-lesson ${!active && !showFaculty ? "selected" : ""}`}
-                          onClick={() => {setActive(null);setShowFaculty(false);}}
+                          className={`lms-lesson ${!active && !showFaculty && !showChallenges ? "selected" : ""}`}
+                          onClick={() => {setActive(null);setShowFaculty(false);setShowChallenges(false);}}
                         >
                           <BookOpen size={18} /><CourseText text={"Start here: introduction"} /></button>
-                        <button className={`lms-lesson lms-faculty-nav ${showFaculty ? "selected" : ""}`} onClick={()=>setShowFaculty(true)}><GraduationCap size={20}/><span><CourseText text={"Meet your AI Faculty"} /><small><CourseText text={"Start with your onboarding tutor"} /></small></span></button>
+                        <button className={`lms-lesson lms-faculty-nav ${showFaculty ? "selected" : ""}`} onClick={()=>{setShowFaculty(true);setShowChallenges(false);}}><GraduationCap size={20}/><span><CourseText text={"Meet your AI Faculty"} /><small><CourseText text={"Start with your onboarding tutor"} /></small></span></button>
+                        <button className={`lms-lesson lms-faculty-nav ${showChallenges ? "selected" : ""}`} onClick={()=>{setShowChallenges(true);setShowFaculty(false);}}><Trophy size={20}/><span>Challenges<small>Put your skills to work. Earn rewards.</small></span></button>
                         <Link className="lms-lesson" href={`/training-center/sessions?course=${current.id}`}><BookOpen size={18}/><CourseText text={"My coaching conversations"} /></Link>
                         {lessons.map((l, i) => (
                           <button
-                            className={`lms-lesson lms-lesson-with-image ${!showFaculty && active?.id === l.id ? "selected" : ""}`}
+                            className={`lms-lesson lms-lesson-with-image ${!showFaculty && !showChallenges && active?.id === l.id ? "selected" : ""}`}
                             key={l.id}
-                            onClick={() => {setActive(l);setShowFaculty(false);}}
+                            onClick={() => {setActive(l);setShowFaculty(false);setShowChallenges(false);}}
                           >
                             <LessonThumbnail url={classImage(current,l,i)} />
                             <span className="lms-lesson-copy">
@@ -1125,7 +1129,8 @@ function TrainingCenterContent({
                       </aside>
                       <section className="lms-panel lms-content">
                         {["paid", "granted"].includes(courseOrder?.status || "") && <StudentCoaches key={current.id} visible={showFaculty} courseId={current.id} lessonId={active?.published ? active.id : null} lessonTitle={active?.published ? active.title : null} />}
-                        <div hidden={showFaculty}>
+                        {showChallenges && <Challenges key={current.id} courseId={current.id} />}
+                        <div hidden={showFaculty || showChallenges}>
                         {!active ? (
                           <>
                             <div className="lms-welcome-image"><Image src={programs[current.slug]?.image || "/images/training/hero.webp"} alt="Students learning together in a live Pacific Wave Digital training session" fill sizes="(max-width: 700px) 90vw, 65vw" priority/><span><CourseText text={"YOUR NEXT CHAPTER STARTS HERE"} /></span></div>
@@ -1135,7 +1140,7 @@ function TrainingCenterContent({
                               {t(current.introduction)}
                             </div>
                             <div className="lms-discover-grid">
-                              <button onClick={()=>setShowFaculty(true)}><Image src="/images/coaches/onboarding.webp" alt="A student meeting an AI tutor" width={640} height={360}/><span><small><CourseText text={"YOUR FIRST STEP"} /></small><strong><CourseText text={"Meet your AI Faculty"} /></strong><p><CourseText text={"Get oriented, ask questions and turn your learning into practical action."} /></p><b><CourseText text={"Choose your coach →"} /></b></span></button>
+                              <button onClick={()=>{setShowFaculty(true);setShowChallenges(false);}}><Image src="/images/coaches/onboarding.webp" alt="A student meeting an AI tutor" width={640} height={360}/><span><small><CourseText text={"YOUR FIRST STEP"} /></small><strong><CourseText text={"Meet your AI Faculty"} /></strong><p><CourseText text={"Get oriented, ask questions and turn your learning into practical action."} /></p><b><CourseText text={"Choose your coach →"} /></b></span></button>
                               <Link href={`/training-center/sessions?course=${current.id}`}><Image src="/images/coaches/project_review.webp" alt="Reviewing a project with a coach" width={640} height={360}/><span><small><CourseText text={"YOUR PERSONAL LIBRARY"} /></small><strong><CourseText text={"Conversations & research"} /></strong><p><CourseText text={"Revisit sessions, rename them and download your researched learning guides."} /></p><b><CourseText text={"Open your session library →"} /></b></span></Link>
                               <button onClick={()=>{if(lessons[0])setActive(lessons[0]);}}><Image src={classImage(current,lessons[0]||{} as Lesson,0)||"/images/training/hero.webp"} alt="Live course training" width={640} height={360}/><span><small><CourseText text={"LEARN & PRACTISE"} /></small><strong><CourseText text={"Live classes & recordings"} /></strong><p><CourseText text={"Follow your timetable. Find each recording and activity here after publication."} /></p><b><CourseText text={"Explore your lessons →"} /></b></span></button>
                               <button onClick={()=>setCourseTab("community")}><Image src="/images/training/hero.webp" alt="A supportive group of learners" width={640} height={360}/><span><small><CourseText text={"STAY CONNECTED"} /></small><strong>{t(current.private_sessions?"Your mentor space":"Your learning community")}</strong><p><CourseText text={"Ask course questions and stay connected with your training team."} /></p><b><CourseText text={"Open your community →"} /></b></span></button>
