@@ -36,6 +36,7 @@ export type Lesson = {
   content: string;
   youtube_id: string;
   meeting_url: string;
+  zoom_passcode?: string;
   published: boolean;
   quiz: Question[];
   section_title?: string;

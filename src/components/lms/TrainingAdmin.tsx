@@ -535,6 +535,7 @@ export default function TrainingAdmin({
                           content: f.get("content"),
                           youtube_id: f.get("youtube_id"),
                           meeting_url: f.get("meeting_url"),
+                          zoom_passcode: f.get("zoom_passcode"),
                           published: f.get("published") === "on",
                           quiz,
                           section_title: f.get("section_title"),
@@ -845,6 +846,11 @@ export default function TrainingAdmin({
                           defaultValue={editLesson.meeting_url}
                         />
                       </label>
+                      <label>
+                        Zoom meeting passcode (for the embedded classroom)
+                        <input name="zoom_passcode" autoComplete="off" maxLength={100} defaultValue={editLesson.zoom_passcode || ""} />
+                      </label>
+                      <p className="lms-muted">For Zoom, paste the standard meeting invitation URL above and its actual passcode here (not the encrypted pwd value in the link). Use a meeting hosted by the connected PWD Zoom account. Start the class in your Zoom desktop app. Publish the lesson to let approved students join; recordings can be added afterwards.</p>
                       <QuizBuilder
                         questions={questions}
                         onChange={setQuestions}

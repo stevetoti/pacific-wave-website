@@ -48,6 +48,7 @@ export const lessonSchema = z.object({
   starts_at: z.iso.datetime({ offset: true }).nullable(),
   content: z.string().max(20000),
   youtube_id: z.string().regex(/^$|^[a-zA-Z0-9_-]{11}$/),
+  zoom_passcode: z.string().trim().max(100).optional(),
   meeting_url: z.union([
     z.literal(""),
     z

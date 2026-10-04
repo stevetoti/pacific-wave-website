@@ -158,6 +158,7 @@ export async function GET(request: Request, context: Context) {
       const lessons = rows.map((l) => ({
         ...l,
         recording_path: "",
+        zoom_passcode: "",
         has_recording:
           ["paid", "granted"].includes(order.status) &&
           l.published &&

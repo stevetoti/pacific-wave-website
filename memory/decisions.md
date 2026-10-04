@@ -133,3 +133,11 @@ Stephen explicitly approved authored course text and private gold Bislama refere
 ## 2026-10-04 — [Codex] Course-first student lists
 
 Stephen requested Students show courses first, then only the chosen course roster. Implemented course drill-down/back navigation, separate no-course account entry, scoped proof/reminder/bulk-contact lists, and selection reset on course change. Existing CRM features retained. Verification in progress; no student data changed or messages sent.
+
+
+## 2026-10-04 — [Codex] Zoom classroom handoff
+Use same-account Zoom Meeting SDK client view for desktop/mobile; instructors host in Zoom. Credentials remain server-only; no contact/recording scopes or paid Video SDK. Encrypted invite pwd is not a plain passcode. App creation requires pending browser security confirmation.
+
+
+## 2026-10-05 — [Codex] Zoom connection verified
+App creation approval resolved. Production secrets/migration and 12-session October meeting configured; first lesson published. Real temporary-student endpoint returned 200, corrected passcode, desktop/mobile real SDK pre-join screen verified. Ten release checks pass. QA Join explicitly accepts Zoom terms; separate confirmation pending, deployment proceeds. No full audio/video claim.

@@ -686,3 +686,17 @@ Stephen requested Students show courses first, then only the chosen course roste
 ## 2026-10-04 — [Codex] Course-first roster verified
 
 Students starts with course cards; choosing a course opens only its roster/status/proof/reminder scope. Back to courses restores directory; unassigned accounts have a separate entry. Course changes clear search, selected recipients and open dialogs. Type/lint/production build pass. Ten desktop/mobile browser tests pass (two existing opt-in skips), including mocked mixed-course roster, proof isolation, recipient reset, empty course and no-course accounts; mobile screenshot reviewed. No real student data changed or messages sent. Ready for authorised publication.
+
+## 2026-10-04 — [Codex] Embedded Zoom classroom in progress
+Stephen signed into Zoom and authorised setup/integration using existing Workplace Pro, without add-ons. Verified account UI; 10 GB cloud recording storage is full. Separate PWD Meeting SDK app creation confirmation pending at browser security boundary. Implementing student embedded client-view classroom, existing Zoom-app fallback, server-only attendee signatures and lesson/enrolment/private-session checks. No live publication claimed.
+
+
+## 2026-10-04 — [Codex] Zoom classroom handoff
+Implemented protected attendee-signature endpoint, dashboard classroom/Zoom fallback, isolated SDK 6.5.0 frame and admin passcode field. Type/lint/build, three focused tests, two classroom and eight public/release desktop/mobile checks passed; real SDK assets load. Real meeting, app credentials, additive migration and publication remain pending. See docs/ZOOM-CLASSROOM.md.
+
+## 2026-10-04 — [Codex] Overnight Zoom setup authorised
+Stephen approved pending app creation and completion for tomorrow. Created PWD Live Classroom General App, enabled Meeting SDK (no API scopes), privately captured production credentials and stored in ignored env files plus sensitive Vercel production variables. Applied additive passcode migration. Created dedicated 12-occurrence October meeting series, Mon/Thu/Sat 15:00–17:00 UTC+11, passcode and waiting room retained, muted entry. Attached to 12 October lessons; published first lesson for 5 October. Real QA connection and deployment verification in progress. No add-ons purchased, existing unrelated Zoom apps/meetings untouched.
+
+
+## 2026-10-05 — [Codex] Zoom connection verified
+App creation approval resolved. Production secrets/migration and 12-session October meeting configured; first lesson published. Real temporary-student endpoint returned 200, corrected passcode, desktop/mobile real SDK pre-join screen verified. Ten release checks pass. QA Join explicitly accepts Zoom terms; separate confirmation pending, deployment proceeds. No full audio/video claim.

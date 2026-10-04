@@ -27,6 +27,7 @@ import {
   type Progress,
 } from "@/lib/lms/types";
 import dynamic from "next/dynamic";
+const ZoomClassroom = dynamic(() => import("./ZoomClassroom"), { ssr: false });
 const QuizPlayer = dynamic(() => import("./QuizPlayer"));
 const StudentDashboard = dynamic(() => import("./StudentDashboard"));
 import LessonThumbnail from "./LessonThumbnail";
@@ -1158,6 +1159,9 @@ function TrainingCenterContent({
                               />
                             )}
                             <h2>{t(active.title)}</h2>
+                            {active.published && active.meeting_url && ["paid", "granted"].includes(courseOrder?.status || "") && (
+                              <ZoomClassroom key={active.id} lessonId={active.id} meetingUrl={active.meeting_url} title={t(active.title)} />
+                            )}
                             {!["paid", "granted"].includes(
                               courseOrder?.status || "",
                             ) ? (
@@ -1237,17 +1241,6 @@ function TrainingCenterContent({
                                       loading="lazy"
                                     />
                                   )}
-                                {active.meeting_url && (
-                                  <p>
-                                    <a
-                                      className="lms-button"
-                                      href={active.meeting_url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    ><CourseText text={"Join live class"} /><ArrowRight size={18} />
-                                    </a>
-                                  </p>
-                                )}
                                 <div className="lms-prose">
                                   {t(active.content)}
                                 </div>

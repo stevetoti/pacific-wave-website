@@ -214,3 +214,11 @@ Stephen requested Students show courses first, then only the chosen course roste
 ## 2026-10-04 — [Codex] Course-first roster verified
 
 Students starts with course cards; choosing a course opens only its roster/status/proof/reminder scope. Back to courses restores directory; unassigned accounts have a separate entry. Course changes clear search, selected recipients and open dialogs. Type/lint/production build pass. Ten desktop/mobile browser tests pass (two existing opt-in skips), including mocked mixed-course roster, proof isolation, recipient reset, empty course and no-course accounts; mobile screenshot reviewed. No real student data changed or messages sent. Ready for authorised publication.
+
+
+## 2026-10-04 — [Codex] Zoom classroom handoff
+[ ] Finish Zoom setup after pending credential-creation confirmation: create PWD Live Classroom Meeting SDK app, configure server environment, apply 20261004_zoom_classroom.sql, test real meeting, release verification and publish. Current local implementation/tests ready; see docs/ZOOM-CLASSROOM.md.
+
+
+## 2026-10-05 — [Codex] Zoom connection verified
+App creation approval resolved. Production secrets/migration and 12-session October meeting configured; first lesson published. Real temporary-student endpoint returned 200, corrected passcode, desktop/mobile real SDK pre-join screen verified. Ten release checks pass. QA Join explicitly accepts Zoom terms; separate confirmation pending, deployment proceeds. No full audio/video claim.
