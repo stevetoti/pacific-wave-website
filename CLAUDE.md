@@ -1,5 +1,17 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## 2026-10-05 — [Codex] Multiple YouTube recordings ready
+Ordered full-link rows and student Part buttons implemented for all group courses, legacy ID preserved and mentorship remains private. Additive migration applied. Nine unit/database/API tests, lint/type/build, ten desktop/mobile release checks (two opt-in skips), and real temporary admin/student save/reload/part switching/privacy checks pass. Fixtures cleaned. Live class 1 had no saved YouTube ID or upload; Stephen must paste actual links and save. See docs/MULTIPLE-RECORDINGS.md. Publishing update.
+
+
+
+## 2026-10-05 — [Codex] Approved Storian prizes published
+Stephen approved five Storian AI months. Published four weekly Participation Champion prizes and Put AI to Work (one month each). Live enrolled-student API and desktop/mobile UI verify all seven approved challenges: five Storian plus two prior affiliate prizes; unrelated business-page/first-customer drafts remain hidden. QA user/order cleaned. No application redeployment needed; scoring release 5dfb263 remains live. Prize fulfilment stays manual. Approval/publication handoff recorded locally.
+
+
+## 2026-10-05 — [Codex] Participation feature live; Storian prizes awaiting approval
+Commit 5dfb263 pushed to main; production dpl_9cbzGgjdHog3pSYpS1EccxkD9X5E READY on pacificwavedigital.com. Eight live desktop/mobile release checks pass (two opt-in skips). Live temporary admin verified exactly five Storian drafts and participation mode preserved; real student sees only two approved affiliate prizes, drafts hidden. All QA fixtures cleaned, local server stopped. Four weekly Participation Champion + one Put AI to Work prize remain drafts pending response to five-Storian-month budget question. No Storian subscription granted. Final evidence kept local to avoid docs-only deployment.
+
 
 ## 2026-10-05 — [Codex] Participation judging verified
 Real isolated desktop/mobile reflections, staff UI scoring, invalid/missing score rejection, positive-score rule, highest eligible score, exact-tie explanation, one participation win/course and independent chronological challenge regression pass. Type/lint/build/unit and eight desktop/mobile release checks pass (two opt-in skips). Fixtures cleaned; screenshots reviewed. Five Storian drafts remain unpublished awaiting explicit five-month budget approval. Deploying scoring support only.

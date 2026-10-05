@@ -161,3 +161,10 @@ Stephen approved VT 2,000 + one Pro month for Week 1 (5–11 October), VT 1,000 
 
 ## 2026-10-05 — [Codex] Storian participation and AI milestones
 User requests Storian AI rewards and weekly participation awards. Implementing a 20-point staff-verified rubric (attendance/recording engagement, activity, contributions, peer support), practical-work/contribution tie-breaks, explained final ties and one participation prize per student/course. Existing affiliate races retain chronological ranking. Proposed four weekly Storian months plus one practical AI milestone month; awaiting exact prize-count approval before publication.
+
+
+## 2026-10-05 — [Codex] Five Storian prize months approved
+Stephen explicitly approved the pending four weekly Participation Champion prizes plus one Put AI to Work prize, one free Storian AI month each (five total). Publishing the exact five prepared records for the October course. Existing affiliate cash/Digi Assist prizes and two unrelated drafts stay as configured. No subscription credits issued automatically.
+
+## 2026-10-05 — [Codex] Ordered class recordings
+User requests multiple YouTube links per class via Add another video. Store up to 20 normalized ordered IDs, maintain legacy first ID, show one active student embed with numbered parts. Existing private mentorship and publication/enrolment protections remain. Live class 1 had no saved link/upload at inspection; no video URL invented or existing class content changed.

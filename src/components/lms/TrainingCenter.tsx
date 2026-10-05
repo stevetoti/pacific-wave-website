@@ -1,4 +1,5 @@
 "use client";
+import YouTubeRecordings from "./YouTubeRecordings";
 import { liveRecordingPending } from "@/lib/lms/lesson-recording";
 import { CourseText, CourseLanguageProvider, CourseLanguagePicker, useCourseLanguage } from '@/components/lms/CourseLanguage';
 
@@ -94,7 +95,6 @@ function TrainingCenterContent({
     id: string;
     url: string;
   } | null>(null);
-  const [playVideo, setPlayVideo] = useState<string | null>(null);
   const [sandbox, setSandbox] = useState(false);
   const [courses, setCourses] = useState<Course[]>(initialCourses || []),
     [banks, setBanks] = useState<Bank[]>([]),
@@ -1233,25 +1233,7 @@ function TrainingCenterContent({
                                     )}
                                   </>
                                 )}
-                                {active.youtube_id &&
-                                  playVideo !== active.id && (
-                                    <button
-                                      className="lms-button"
-                                      onClick={() => setPlayVideo(active.id)}
-                                    >
-                                      <PlayCircle size={18} /><CourseText text={"Load class recording"} /></button>
-                                  )}
-                                {active.youtube_id &&
-                                  playVideo === active.id && (
-                                    <iframe
-                                      className="lms-video"
-                                      src={`https://www.youtube-nocookie.com/embed/${active.youtube_id}`}
-                                      title={t(active.title)}
-                                      allow="encrypted-media; picture-in-picture; fullscreen"
-                                      allowFullScreen
-                                      loading="lazy"
-                                    />
-                                  )}
+                                <YouTubeRecordings key={active.id} lesson={active} />
                                 <div className="lms-prose">
                                   {t(active.content)}
                                 </div>

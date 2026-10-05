@@ -168,6 +168,10 @@ export async function GET(request: Request, context: Context) {
           ["paid", "granted"].includes(order.status) && l.published
             ? l.content
             : "",
+        youtube_ids:
+          ["paid", "granted"].includes(order.status) && l.published
+            ? l.youtube_ids || []
+            : [],
         youtube_id:
           ["paid", "granted"].includes(order.status) && l.published
             ? l.youtube_id
@@ -848,7 +852,7 @@ export async function POST(request: Request, context: Context) {
         );
         if (
           course!.private_sessions &&
-          (!input.value.order_id || input.value.youtube_id)
+          (!input.value.order_id || input.value.youtube_id || input.value.youtube_ids?.length)
         )
           throw new HttpError(
             400,

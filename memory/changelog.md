@@ -763,3 +763,21 @@ Backward-compatible scoring migration applied. Added 20-point rubric, private sc
 
 ## 2026-10-05 — [Codex] Participation judging verified
 Real isolated desktop/mobile reflections, staff UI scoring, invalid/missing score rejection, positive-score rule, highest eligible score, exact-tie explanation, one participation win/course and independent chronological challenge regression pass. Type/lint/build/unit and eight desktop/mobile release checks pass (two opt-in skips). Fixtures cleaned; screenshots reviewed. Five Storian drafts remain unpublished awaiting explicit five-month budget approval. Deploying scoring support only.
+
+
+## 2026-10-05 — [Codex] Participation feature live; Storian prizes awaiting approval
+Commit 5dfb263 pushed to main; production dpl_9cbzGgjdHog3pSYpS1EccxkD9X5E READY on pacificwavedigital.com. Eight live desktop/mobile release checks pass (two opt-in skips). Live temporary admin verified exactly five Storian drafts and participation mode preserved; real student sees only two approved affiliate prizes, drafts hidden. All QA fixtures cleaned, local server stopped. Four weekly Participation Champion + one Put AI to Work prize remain drafts pending response to five-Storian-month budget question. No Storian subscription granted. Final evidence kept local to avoid docs-only deployment.
+
+
+## 2026-10-05 — [Codex] Five Storian prize months approved
+Stephen explicitly approved the pending four weekly Participation Champion prizes plus one Put AI to Work prize, one free Storian AI month each (five total). Publishing the exact five prepared records for the October course. Existing affiliate cash/Digi Assist prizes and two unrelated drafts stay as configured. No subscription credits issued automatically.
+
+
+## 2026-10-05 — [Codex] Approved Storian prizes published
+Stephen approved five Storian AI months. Published four weekly Participation Champion prizes and Put AI to Work (one month each). Live enrolled-student API and desktop/mobile UI verify all seven approved challenges: five Storian plus two prior affiliate prizes; unrelated business-page/first-customer drafts remain hidden. QA user/order cleaned. No application redeployment needed; scoring release 5dfb263 remains live. Prize fulfilment stays manual. Approval/publication handoff recorded locally.
+
+## 2026-10-05 — [Codex] Multiple class recording links in progress
+Live class 1 currently has empty youtube_id and no recording_path in the live database; informed Stephen the first link may not have saved. Adding ordered full-YouTube-link rows, one active student player with numbered parts, legacy first-video compatibility and server/database mentorship guards. No existing lesson content changed. Verification and release pending.
+
+## 2026-10-05 — [Codex] Multiple recordings verified
+Nine unit/database/API checks pass; older test fixtures corrected to valid 11-character IDs. Lint/type/build and ten desktop/mobile release/Zoom checks pass, two opt-in skips. Real isolated admin full-link save/reload, add/remove/error feedback, student single-player part switching and pending/draft privacy pass on desktop/mobile. Screenshots reviewed; fixtures cleaned. Migration applied, existing class links unchanged; ready for release.

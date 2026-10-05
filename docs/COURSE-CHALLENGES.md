@@ -42,8 +42,16 @@ At closing, review all eligible pending reflections. Highest total wins, then hi
 
 Migration `20261005_participation_challenges.sql` adds mode/scores and `pwd_challenge_review_v2`; the prior review RPC delegates to it so old deployed clients cannot bypass participation rules. Tests: `scripts/verify-participation.mjs` exercises actual student reflection UI, staff rubric scoring, bounds, positive-score rule, ranking, explained ties, no-repeat awards and original chronological prizes.
 
-Four weekly Storian AI prize drafts cover 5–11, 12–18, 19–25 October and 26 October–1 November, UTC+11. A fifth draft, **Put AI to Work**, rewards the earliest verified practical AI business task during 5 October–1 November: original problem, prompt, checked/improved output and real use. Each draft suggests one free Storian AI month. These five months await the user's budget confirmation; no Storian subscriptions have been granted automatically.
+Four weekly Storian AI prize drafts cover 5–11, 12–18, 19–25 October and 26 October–1 November, UTC+11. A fifth draft, **Put AI to Work**, rewards the earliest verified practical AI business task during 5 October–1 November: original problem, prompt, checked/improved output and real use. Each draft suggests one free Storian AI month. Stephen approved all five months on 2026-10-05; all five prizes are now published. No Storian subscriptions have been granted automatically.
 
 
 ## 2026-10-05 — [Codex] Participation judging verified
 Real isolated desktop/mobile reflections, staff UI scoring, invalid/missing score rejection, positive-score rule, highest eligible score, exact-tie explanation, one participation win/course and independent chronological challenge regression pass. Type/lint/build/unit and eight desktop/mobile release checks pass (two opt-in skips). Fixtures cleaned; screenshots reviewed. Five Storian drafts remain unpublished awaiting explicit five-month budget approval. Deploying scoring support only.
+
+
+## 2026-10-05 — [Codex] Participation feature live; Storian prizes awaiting approval
+Commit 5dfb263 pushed to main; production dpl_9cbzGgjdHog3pSYpS1EccxkD9X5E READY on pacificwavedigital.com. Eight live desktop/mobile release checks pass (two opt-in skips). Live temporary admin verified exactly five Storian drafts and participation mode preserved; real student sees only two approved affiliate prizes, drafts hidden. All QA fixtures cleaned, local server stopped. Four weekly Participation Champion + one Put AI to Work prize remain drafts pending response to five-Storian-month budget question. No Storian subscription granted. Final evidence kept local to avoid docs-only deployment.
+
+
+## 2026-10-05 — [Codex] Approved Storian prizes published
+Stephen approved five Storian AI months. Published four weekly Participation Champion prizes and Put AI to Work (one month each). Live enrolled-student API and desktop/mobile UI verify all seven approved challenges: five Storian plus two prior affiliate prizes; unrelated business-page/first-customer drafts remain hidden. QA user/order cleaned. No application redeployment needed; scoring release 5dfb263 remains live. Prize fulfilment stays manual. Approval/publication handoff recorded locally.

@@ -1,3 +1,4 @@
+import { lessonYouTubeIds } from "./youtube-recordings";
 export const blpSlug = 'blp-digital-skills-workshop';
 export const blpModules = [
   { title: 'Welcome and your business goals', time: '09:00', image: 1, body: 'Choose the business outcome you want to achieve. Write down your starting point and one practical result for today.', task: 'Complete your starting-point check and choose one business goal in your participant workbook.' },
@@ -12,6 +13,6 @@ export const blpModules = [
 ];
 
 // Published workshop topics stay previews until an instructor attaches a recording.
-export function workshopRecordingPending(course: { slug: string }, lesson: { has_recording?: boolean; recording_path?: string | null; youtube_id?: string | null }) {
-  return course.slug === blpSlug && !lesson.has_recording && !lesson.recording_path && !lesson.youtube_id;
+export function workshopRecordingPending(course: { slug: string }, lesson: { has_recording?: boolean; recording_path?: string | null; youtube_ids?: string[] | null; youtube_id?: string | null }) {
+  return course.slug === blpSlug && !lesson.has_recording && !lesson.recording_path && !lessonYouTubeIds(lesson).length;
 }

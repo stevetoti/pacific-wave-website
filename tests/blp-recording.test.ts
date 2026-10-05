@@ -6,7 +6,7 @@ test('BLP completion stays locked until an uploaded or linked recording exists; 
   assert.equal(workshopRecordingPending(blp,{has_recording:false,youtube_id:''}),true);
   assert.equal(workshopRecordingPending(blp,{has_recording:true}),false);
   assert.equal(workshopRecordingPending(blp,{recording_path:'private/lesson.mp4'}),false);
-  assert.equal(workshopRecordingPending(blp,{youtube_id:'published-id'}),false);
+  assert.equal(workshopRecordingPending(blp,{youtube_id:'abcdefghijk'}),false);
   assert.equal(workshopRecordingPending({slug:'public-course'},{}),false);
 });
 test('progress API rejects completing a BLP preview without writing progress',async()=>{

@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
+import YouTubeRecordingFields from "./YouTubeRecordingFields";
+import { parseYouTubeRecording } from "@/lib/lms/youtube-recordings";
 import WorkbookReview from "./WorkbookReview";
 import LessonThumbnail from "./LessonThumbnail";
 import { blpSlug, blpModules, workshopRecordingPending } from "@/lib/lms/blp-workshop";
@@ -521,6 +523,13 @@ export default function TrainingAdmin({
                       e.preventDefault();
                       const f = new FormData(e.currentTarget);
                       const quiz = questions;
+                      const links = f.getAll("youtube_links").map(String).map(value => value.trim()).filter(Boolean);
+                      const ids = links.map(parseYouTubeRecording);
+                      if (ids.some(id => !id)) {
+                        setError("Please enter a valid YouTube video link or 11-character video ID for each recording.");
+                        return;
+                      }
+                      const youtubeIds = Array.from(new Set(ids.filter((id): id is string => id !== null)));
                       save({
                         action: "lesson",
                         value: {
@@ -535,7 +544,8 @@ export default function TrainingAdmin({
                             ? `${f.get("starts_at")}:00+11:00`
                             : null,
                           content: f.get("content"),
-                          youtube_id: f.get("youtube_id"),
+                          youtube_id: youtubeIds[0] || "",
+                          youtube_ids: youtubeIds,
                           meeting_url: f.get("meeting_url"),
                           zoom_passcode: f.get("zoom_passcode"),
                           published: f.get("published") === "on",
@@ -821,24 +831,9 @@ export default function TrainingAdmin({
                           defaultValue={editLesson.content}
                         />
                       </label>
-                      <label>
-                        YouTube video ID
-                        <input
-                          name="youtube_id"
-                          readOnly={
-                            courses.find((c) => c.id === selected)
-                              ?.private_sessions
-                          }
-                          placeholder="e.g. dQw4w9WgXcQ"
-                          pattern="[a-zA-Z0-9_-]{11}"
-                          defaultValue={editLesson.youtube_id}
-                        />
-                      </label>
-                      <p className="lms-muted">
-                        Mentorship uses the private upload above. For group
-                        courses, use the 11-character ID from your video link.
-                        Unlisted YouTube links can be shared by viewers.
-                      </p>
+                      {courses.find(c => c.id === selected)?.private_sessions
+                        ? <p className="lms-muted">Mentorship uses the private recording upload above.</p>
+                        : <YouTubeRecordingFields key={editLesson.id || "new"} lesson={editLesson} />}
                       <label>
                         Live meeting URL
                         <input
