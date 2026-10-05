@@ -293,8 +293,8 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 
 ## 2026-10-05 — [Codex] Multiple recording release
 - [x] Finish real admin/student desktop/mobile verification and publish ordered YouTube recording support. — [Codex] 2026-10-05: a211c48 live; production admin/student and public checks pass, QA fixtures cleaned.
-- [ ] Stephen: enter both actual Live class 1 links and click Save lesson; neither recording was saved in the database when inspected.
+- [x] Stephen: enter both actual Live class 1 links. — [Codex] 2026-10-06: two published IDs confirmed; user reports working.
 
 ## 2026-10-05 — [Codex] Recording publishing
 - [x] Separate recording save/publish controls from live lesson settings; local real admin/student verification passes.
-- [ ] Publish and verify live recording workflow.
+- [x] Publish and verify live recording workflow. — [Codex] 2026-10-05: e88022a live; real production desktop/mobile publication/upload playback/privacy checks pass, fixtures cleaned.

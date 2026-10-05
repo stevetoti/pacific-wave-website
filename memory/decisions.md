@@ -171,3 +171,6 @@ User requests multiple YouTube links per class via Add another video. Store up t
 
 ## 2026-10-05 — [Codex] Independent recording publication
 User requests recording controls separate from live settings. Separate form and narrow API update only replay fields; Publish recordings releases, Save recording draft saves and hides, Unpublish hides without altering live meeting. Existing replay visibility preserved by additive default-true flag. Approved course/lesson access still required; unpublished replay IDs, uploaded-video availability, new signed links and completion are withheld. Prior signed media URLs retain original expiry. Lesson metadata saves omit recording fields.
+
+## 2026-10-06 — [Codex] YouTube previews and identification
+Show real YouTube thumbnail cards before player load; keep one selected iframe and the existing privacy-enhanced domain. Scope strict-origin-when-cross-origin to YouTube iframe/link so global no-referrer stays unchanged elsewhere. Basic embeds need no API key. YouTube verification cannot be bypassed or guaranteed away; same-video external fallback helps complete its own sign-in. Both actual published Class 1 IDs returned official oEmbed 200.

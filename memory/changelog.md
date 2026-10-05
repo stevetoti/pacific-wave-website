@@ -790,3 +790,12 @@ Stephen reports saving a replay still leaves it absent for students and requests
 
 ## 2026-10-05 — [Codex] Separate recording publication verified
 Independent replay editor and narrow save/publish/unpublish API, preserving live settings. Additive visibility migration applied. Ten unit/API/database tests, lint/type/build and ten desktop/mobile public/Zoom checks pass (two opt-in skips). Real temporary admin/student verifies separate form even with invalid meeting URL, YouTube parts, actual uploaded WebM decoding, draft/publish/unpublish, draft signed-download/completion denial, metadata preservation and pending/draft lesson privacy. Fixtures cleaned. Publishing; actual class 1 has no saved recording supplied.
+
+## 2026-10-05 — [Codex] Separate recording publishing live
+Application e88022a pushed to main; production dpl_FTzXSEfQn6nVfeUMeAwXBvJFi4gs READY on pacificwavedigital.com. Eight live public desktop/mobile tests pass (two opt-in skips). Real production temporary admin/student verification passes recording draft/publish/unpublish, independent validation, YouTube parts and uploaded WebM decoding, signed-download/progress draft denial, metadata preservation and pending/unpublished-lesson privacy on desktop/mobile. Fixtures/storage cleaned, local server stopped. Final evidence retained locally to avoid docs-only deployment.
+
+## 2026-10-06 — [Codex] Recording previews and embed compatibility
+User confirms published videos work and requests visible video previews. Actual Class 1 has two published IDs. Replacing plain part buttons with YouTube thumbnail cards and embedded selected player, preserving one player at a time. Found global no-referrer header; player now explicitly sends origin using strict-origin-when-cross-origin, required by YouTube documentation. No API key needed. Verification prompts remain YouTube-controlled; direct same-video fallback included. Testing pending.
+
+## 2026-10-06 — [Codex] Replay previews verified
+Real YouTube thumbnail cards, play/ready badges, selected inline player and external same-video fallback. Scoped iframe/link referrer override fixes global no-referrer suppression; no API key added. Both actual Class 1 videos returned oEmbed 200. Lint/type/build and ten desktop/mobile browser checks pass (two opt-in skips), including real thumbnails and intercepted outgoing request proving origin Referer despite global header. YouTube player content stubbed for deterministic tests; no claim that provider bot checks are eliminated. Publishing.

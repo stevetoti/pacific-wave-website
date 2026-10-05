@@ -57,8 +57,8 @@ try {
   const sc=await browser.newContext(options);await sc.addInitScript(s=>localStorage.setItem('sb-rndegttgwtpkbjtvjgnc-auth-token',JSON.stringify(s)),student.session);const sp=await sc.newPage();
   await sp.route('https://www.youtube-nocookie.com/**',r=>r.fulfill({contentType:'text/html',body:'<p>Video embed fixture</p>'}));
   await sp.goto(base+'/training-center/course/'+course.id);await sp.getByRole('button',{name:/1\. Recording QA lesson/}).click();
-  await sp.getByRole('button',{name:'Watch Part 1',exact:true}).click();assert.equal(await sp.locator('iframe.lms-video').getAttribute('src'),'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
-  await sp.getByRole('button',{name:'Watch Part 2',exact:true}).click();assert.equal(await sp.locator('iframe.lms-video').count(),1);assert.equal(await sp.locator('iframe.lms-video').getAttribute('src'),'https://www.youtube-nocookie.com/embed/abcdefghijk');
+  await sp.getByRole('button',{name:'Watch Part 1',exact:true}).click();assert.equal(await sp.locator('iframe.lms-video').getAttribute('src'),'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?playsinline=1');
+  await sp.getByRole('button',{name:'Watch Part 2',exact:true}).click();assert.equal(await sp.locator('iframe.lms-video').count(),1);assert.equal(await sp.locator('iframe.lms-video').getAttribute('src'),'https://www.youtube-nocookie.com/embed/abcdefghijk?playsinline=1');
   await sp.getByRole('button',{name:'Play your private recording',exact:true}).click();
   await sp.locator('video').evaluate(v=>new Promise((resolve,reject)=>{if(v.readyState>=1)return resolve();v.onloadedmetadata=resolve;v.onerror=()=>reject(Error('Playback failed'));}));
   assert.equal(await sp.locator('video').evaluate(v=>v.videoWidth),320);
