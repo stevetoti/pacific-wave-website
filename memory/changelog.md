@@ -781,3 +781,12 @@ Live class 1 currently has empty youtube_id and no recording_path in the live da
 
 ## 2026-10-05 — [Codex] Multiple recordings verified
 Nine unit/database/API checks pass; older test fixtures corrected to valid 11-character IDs. Lint/type/build and ten desktop/mobile release/Zoom checks pass, two opt-in skips. Real isolated admin full-link save/reload, add/remove/error feedback, student single-player part switching and pending/draft privacy pass on desktop/mobile. Screenshots reviewed; fixtures cleaned. Migration applied, existing class links unchanged; ready for release.
+
+## 2026-10-05 — [Codex] Multiple recordings live
+Application a211c48 pushed to main; production dpl_8GmX52LDUjiE41vZvjs3MdMVeBaa READY on pacificwavedigital.com. Eight live desktop/mobile release checks pass (two opt-in skips). Real live temporary admin/student verification passes full-link save/reload/add/remove/validation, numbered single-player switching and pending/draft privacy on desktop/mobile. Fixtures cleaned and local server stopped. Live class 1 contained no saved video at initial inspection; Stephen must paste both actual links and save. Final evidence retained locally to avoid docs-only deployment.
+
+## 2026-10-05 — [Codex] Separate recording publication in progress
+Stephen reports saving a replay still leaves it absent for students and requests separate recording publishing. Live class 1 remains published with empty YouTube list/upload path. Implementing independent recording form/API with local save/error/status feedback, Save recording draft, Publish recordings and Unpublish recordings. Draft filtering and signed-download/progress guards independent of live meeting; metadata saves omit recording fields. Existing replays retain availability. Verification pending.
+
+## 2026-10-05 — [Codex] Separate recording publication verified
+Independent replay editor and narrow save/publish/unpublish API, preserving live settings. Additive visibility migration applied. Ten unit/API/database tests, lint/type/build and ten desktop/mobile public/Zoom checks pass (two opt-in skips). Real temporary admin/student verifies separate form even with invalid meeting URL, YouTube parts, actual uploaded WebM decoding, draft/publish/unpublish, draft signed-download/completion denial, metadata preservation and pending/draft lesson privacy. Fixtures cleaned. Publishing; actual class 1 has no saved recording supplied.

@@ -168,3 +168,6 @@ Stephen explicitly approved the pending four weekly Participation Champion prize
 
 ## 2026-10-05 — [Codex] Ordered class recordings
 User requests multiple YouTube links per class via Add another video. Store up to 20 normalized ordered IDs, maintain legacy first ID, show one active student embed with numbered parts. Existing private mentorship and publication/enrolment protections remain. Live class 1 had no saved link/upload at inspection; no video URL invented or existing class content changed.
+
+## 2026-10-05 — [Codex] Independent recording publication
+User requests recording controls separate from live settings. Separate form and narrow API update only replay fields; Publish recordings releases, Save recording draft saves and hides, Unpublish hides without altering live meeting. Existing replay visibility preserved by additive default-true flag. Approved course/lesson access still required; unpublished replay IDs, uploaded-video availability, new signed links and completion are withheld. Prior signed media URLs retain original expiry. Lesson metadata saves omit recording fields.

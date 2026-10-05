@@ -13,6 +13,6 @@ export const blpModules = [
 ];
 
 // Published workshop topics stay previews until an instructor attaches a recording.
-export function workshopRecordingPending(course: { slug: string }, lesson: { has_recording?: boolean; recording_path?: string | null; youtube_ids?: string[] | null; youtube_id?: string | null }) {
-  return course.slug === blpSlug && !lesson.has_recording && !lesson.recording_path && !lessonYouTubeIds(lesson).length;
+export function workshopRecordingPending(course: { slug: string }, lesson: { recordings_published?: boolean; has_recording?: boolean; recording_path?: string | null; youtube_ids?: string[] | null; youtube_id?: string | null }) {
+  return course.slug === blpSlug && (lesson.recordings_published === false || (!lesson.has_recording && !lesson.recording_path && !lessonYouTubeIds(lesson).length));
 }

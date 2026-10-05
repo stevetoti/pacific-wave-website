@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import YouTubeRecordingFields from "./YouTubeRecordingFields";
-import { parseYouTubeRecording } from "@/lib/lms/youtube-recordings";
+import LessonRecordingsEditor from "./LessonRecordingsEditor";
 import WorkbookReview from "./WorkbookReview";
 import LessonThumbnail from "./LessonThumbnail";
 import { blpSlug, blpModules, workshopRecordingPending } from "@/lib/lms/blp-workshop";
@@ -461,11 +460,11 @@ export default function TrainingAdmin({
               <p><strong>{selectedLessons.filter(l => l.published && !workshopRecordingPending(selectedCourse!, l)).length} of {selectedLessons.length} session recordings available</strong></p>
               <ol>
                 <li>Select the matching session below. Its title, date, time and lesson notes are already prepared.</li>
-                <li>Upload the session video in the Class recording section: MP4 or WebM, up to 500 MB. Compress or split larger recordings.</li>
+                <li>Use the separate Class recordings panel to upload MP4/WebM or add YouTube links.</li>
                 <li>Keep Student enrolment set to Shared course lesson so every approved BLP participant can watch.</li>
-                <li>Keep Publish lesson materials checked and click Save lesson. Uploading alone does not attach the video.</li>
+                <li>Click Publish recordings in the recording panel to release the replay to approved students.</li>
               </ol>
-              <p>Topics without recordings stay as locked previews. Saving a recording to a published session replaces its preview with playback for approved participants only.</p>
+              <p>Topics without recordings stay as locked previews. Publishing recordings replaces the preview with playback for approved participants only.</p>
             </section>}
             {selected && (
               <div className="lms-two">
@@ -516,6 +515,8 @@ export default function TrainingAdmin({
                   </button>
                 </section>
                 {editLesson && (
+                  <div key={editLesson.id || "new"}>
+                  {editLesson.id ? <LessonRecordingsEditor lesson={lessons.find(l => l.id === editLesson.id)!} privateSessions={Boolean(selectedCourse?.private_sessions)} onSaved={load} /> : <p className="lms-notice">Save this lesson first, then add and publish its recordings.</p>}
                   <form
                     className="lms-panel"
                     key={editLesson.id || "new"}
@@ -523,20 +524,12 @@ export default function TrainingAdmin({
                       e.preventDefault();
                       const f = new FormData(e.currentTarget);
                       const quiz = questions;
-                      const links = f.getAll("youtube_links").map(String).map(value => value.trim()).filter(Boolean);
-                      const ids = links.map(parseYouTubeRecording);
-                      if (ids.some(id => !id)) {
-                        setError("Please enter a valid YouTube video link or 11-character video ID for each recording.");
-                        return;
-                      }
-                      const youtubeIds = Array.from(new Set(ids.filter((id): id is string => id !== null)));
                       save({
                         action: "lesson",
                         value: {
                           ...(editLesson.id ? { id: editLesson.id } : {}),
                           course_id: selected,
                           order_id: f.get("order_id") || null,
-                          recording_path: editLesson.recording_path || "",
                           thumbnail_path: editLesson.thumbnail_path || "",
                           title: f.get("title"),
                           position: Number(f.get("position")),
@@ -544,8 +537,6 @@ export default function TrainingAdmin({
                             ? `${f.get("starts_at")}:00+11:00`
                             : null,
                           content: f.get("content"),
-                          youtube_id: youtubeIds[0] || "",
-                          youtube_ids: youtubeIds,
                           meeting_url: f.get("meeting_url"),
                           zoom_passcode: f.get("zoom_passcode"),
                           published: f.get("published") === "on",
@@ -703,92 +694,6 @@ export default function TrainingAdmin({
                           ))}
                       </select>
                     </label>
-                    {(editLesson.order_id || !courses.find(c=>c.id===selected)?.private_sessions) && (
-                      <div className="lms-bank">
-                        <h3>{editLesson.order_id ? "Private session recording" : "Class recording"}</h3>
-                        <p>
-                          Upload MP4 or WebM (up to 500 MB). Playback is restricted to the enrolled student or course members. Save the lesson and publish it when ready.
-                        </p>
-                        <input
-                          aria-label="Upload class recording"
-                          type="file"
-                          accept="video/mp4,video/webm"
-                          disabled={busy}
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
-                            setBusy(true);
-                            setError("");
-                            try {
-                              if (file.size > 524288000)
-                                throw new Error(
-                                  "Recording must be 500 MB or smaller. Compress or split longer sessions.",
-                                );
-                              const extension = file.name
-                                .toLowerCase()
-                                .endsWith(".webm")
-                                ? "webm"
-                                : "mp4";
-                              if (
-                                !["video/mp4", "video/webm"].includes(file.type)
-                              )
-                                throw new Error("Choose an MP4 or WebM video.");
-                              const r = await authFetch("/api/lms/admin", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                  action: "recording_upload",
-                                  order_id: editLesson.order_id || null,
-                                  course_id: selected,
-                                  extension,
-                                }),
-                              });
-                              const d = await r.json();
-                              if (!r.ok) throw new Error(d.error);
-                              const upload = await supabase.storage
-                                .from("pwd-mentorship-recordings")
-                                .uploadToSignedUrl(d.path, d.token, file, {
-                                  contentType: file.type,
-                                });
-                              if (upload.error) throw upload.error;
-                              setEditLesson({
-                                ...editLesson,
-                                recording_path: d.path,
-                              });
-                              setMessage(
-                                "Recording uploaded privately. Save the lesson to attach it.",
-                              );
-                            } catch (e) {
-                              setError(
-                                e instanceof Error
-                                  ? e.message
-                                  : "Upload failed",
-                              );
-                            } finally {
-                              setBusy(false);
-                            }
-                          }}
-                        />
-                        {editLesson.recording_path && (
-                          <p>
-                            Private recording attached.{" "}
-                            <button
-                              type="button"
-                              className="lms-text"
-                              onClick={() =>
-                                setEditLesson({
-                                  ...editLesson,
-                                  recording_path: "",
-                                })
-                              }
-                            >
-                              Detach recording
-                            </button>
-                          </p>
-                        )}
-                      </div>
-                    )}
-
                     <fieldset disabled={busy}>
                       <label>
                         Title
@@ -831,9 +736,6 @@ export default function TrainingAdmin({
                           defaultValue={editLesson.content}
                         />
                       </label>
-                      {courses.find(c => c.id === selected)?.private_sessions
-                        ? <p className="lms-muted">Mentorship uses the private recording upload above.</p>
-                        : <YouTubeRecordingFields key={editLesson.id || "new"} lesson={editLesson} />}
                       <label>
                         Live meeting URL
                         <input
@@ -876,6 +778,7 @@ export default function TrainingAdmin({
                       <button className="lms-button">Save lesson</button>
                     </fieldset>
                   </form>
+                  </div>
                 )}
               </div>
             )}

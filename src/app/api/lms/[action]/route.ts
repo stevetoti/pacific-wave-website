@@ -95,7 +95,7 @@ export async function GET(request: Request, context: Context) {
           .eq("published", true)
           .maybeSingle(),
       );
-      if (!lesson?.recording_path)
+      if (!lesson?.recording_path || lesson.recordings_published === false)
         throw new HttpError(404, "Recording unavailable.");
       const course = checked(await db.from("pwd_lms_courses").select("private_sessions").eq("id",lesson.course_id).single());
       if (!course || (course.private_sessions && !lesson.order_id)) throw new HttpError(404,"Recording unavailable.");
@@ -163,18 +163,18 @@ export async function GET(request: Request, context: Context) {
         has_recording:
           ["paid", "granted"].includes(order.status) &&
           l.published &&
-          Boolean(l.recording_path),
+          l.recordings_published !== false && Boolean(l.recording_path),
         content:
           ["paid", "granted"].includes(order.status) && l.published
             ? l.content
             : "",
         youtube_ids:
           ["paid", "granted"].includes(order.status) && l.published
-            ? l.youtube_ids || []
+            && l.recordings_published !== false ? l.youtube_ids || []
             : [],
         youtube_id:
           ["paid", "granted"].includes(order.status) && l.published
-            ? l.youtube_id
+            && l.recordings_published !== false ? l.youtube_id
             : "",
         meeting_url:
           ["paid", "granted"].includes(order.status) && l.published
@@ -736,6 +736,8 @@ export async function POST(request: Request, context: Context) {
           }),
           z.object({ action: z.literal("course"), value: courseSchema }),
           z.object({ action: z.literal("lesson"), value: lessonSchema }),
+          z.object({ action: z.literal("recordings"), lesson_id: z.uuid(), course_id: z.uuid(), youtube_ids: z.array(z.string().regex(/^[A-Za-z0-9_-]{11}$/)).max(20), recording_path: z.string().regex(/^$|^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(mp4|webm)$/), publish: z.boolean() }),
+          z.object({ action: z.literal("recordings_unpublish"), lesson_id: z.uuid(), course_id: z.uuid() }),
           z.object({
             action: z.literal("banks"),
             value: z.array(bankSchema).max(2),
@@ -751,7 +753,7 @@ export async function POST(request: Request, context: Context) {
       );
       if (!teach.admin) {
         // Instructors may only edit lessons and upload recordings for their own courses.
-        if (input.action !== "lesson" && input.action !== "recording_upload")
+        if (input.action !== "lesson" && input.action !== "recording_upload" && input.action !== "recordings" && input.action !== "recordings_unpublish")
           throw new HttpError(403, "Only admins can do this.");
         const courseId =
           input.action === "lesson" ? input.value.course_id : input.course_id;
@@ -801,6 +803,21 @@ export async function POST(request: Request, context: Context) {
             .eq("id", input.id),
         );
         return json({ success: true });
+      }
+      if (input.action === "recordings" || input.action === "recordings_unpublish") {
+        const lesson = checked(await db.from("pwd_lms_lessons").select("id,course_id,order_id,published").eq("id", input.lesson_id).eq("course_id", input.course_id).maybeSingle());
+        if (!lesson) throw new HttpError(404, "Lesson not found in this course.");
+        if (input.action === "recordings_unpublish") {
+          checked(await db.from("pwd_lms_lessons").update({ recordings_published: false }).eq("id", lesson.id));
+          return json({ success: true, published: false });
+        }
+        const course = checked(await db.from("pwd_lms_courses").select("private_sessions").eq("id", lesson.course_id).single());
+        if (course?.private_sessions && (!lesson.order_id || input.youtube_ids.length)) throw new HttpError(400, "Mentorship recordings must use a private upload for the assigned student.");
+        if (input.recording_path && !input.recording_path.startsWith(`${lesson.order_id || lesson.course_id}/`)) throw new HttpError(400, "Choose a recording uploaded for this course or student.");
+        if (input.publish && !input.youtube_ids.length && !input.recording_path) throw new HttpError(400, "Add a YouTube link or upload a video before publishing.");
+        if (input.publish && !lesson.published) throw new HttpError(400, "Publish the lesson in its settings first, then publish the recordings.");
+        checked(await db.from("pwd_lms_lessons").update({ youtube_ids: input.youtube_ids, youtube_id: input.youtube_ids[0] || "", recording_path: input.recording_path, recordings_published: input.publish }).eq("id", lesson.id));
+        return json({ success: true, published: input.publish });
       }
       if (input.action === "recording_upload") {
         const course = checked(await db.from("pwd_lms_courses").select("id,private_sessions").eq("id",input.course_id).maybeSingle());
@@ -860,7 +877,9 @@ export async function POST(request: Request, context: Context) {
           );
         if(input.value.order_id){const order=checked(await db.from("pwd_lms_orders").select("id").eq("id",input.value.order_id).eq("course_id",input.value.course_id).maybeSingle());if(!order)throw new HttpError(400,"Choose an enrolment from this course.");}
         if(input.value.recording_path && !input.value.recording_path.startsWith(`${input.value.order_id || input.value.course_id}/`))throw new HttpError(400,"Choose a recording uploaded for this course or student.");
-        checked(await db.from("pwd_lms_lessons").upsert(input.value));
+        checked(input.value.id
+          ? await db.from("pwd_lms_lessons").update(input.value).eq("id", input.value.id)
+          : await db.from("pwd_lms_lessons").insert(input.value));
       }
       if (input.action === "banks") {
         if (new Set(input.value.map((b) => b.bank)).size !== input.value.length)

@@ -1,5 +1,11 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## 2026-10-05 — [Codex] Separate recording publication verified
+Independent replay editor and narrow save/publish/unpublish API, preserving live settings. Additive visibility migration applied. Ten unit/API/database tests, lint/type/build and ten desktop/mobile public/Zoom checks pass (two opt-in skips). Real temporary admin/student verifies separate form even with invalid meeting URL, YouTube parts, actual uploaded WebM decoding, draft/publish/unpublish, draft signed-download/completion denial, metadata preservation and pending/draft lesson privacy. Fixtures cleaned. Publishing; actual class 1 has no saved recording supplied.
+
+## 2026-10-05 — [Codex] Multiple recordings live
+Application a211c48 pushed to main; production dpl_8GmX52LDUjiE41vZvjs3MdMVeBaa READY on pacificwavedigital.com. Eight live desktop/mobile release checks pass (two opt-in skips). Real live temporary admin/student verification passes full-link save/reload/add/remove/validation, numbered single-player switching and pending/draft privacy on desktop/mobile. Fixtures cleaned and local server stopped. Live class 1 contained no saved video at initial inspection; Stephen must paste both actual links and save. Final evidence retained locally to avoid docs-only deployment.
+
 ## 2026-10-05 — [Codex] Multiple YouTube recordings ready
 Ordered full-link rows and student Part buttons implemented for all group courses, legacy ID preserved and mentorship remains private. Additive migration applied. Nine unit/database/API tests, lint/type/build, ten desktop/mobile release checks (two opt-in skips), and real temporary admin/student save/reload/part switching/privacy checks pass. Fixtures cleaned. Live class 1 had no saved YouTube ID or upload; Stephen must paste actual links and save. See docs/MULTIPLE-RECORDINGS.md. Publishing update.
 

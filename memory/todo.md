@@ -292,5 +292,9 @@ Stephen explicitly approved the pending four weekly Participation Champion prize
 Stephen approved five Storian AI months. Published four weekly Participation Champion prizes and Put AI to Work (one month each). Live enrolled-student API and desktop/mobile UI verify all seven approved challenges: five Storian plus two prior affiliate prizes; unrelated business-page/first-customer drafts remain hidden. QA user/order cleaned. No application redeployment needed; scoring release 5dfb263 remains live. Prize fulfilment stays manual. Approval/publication handoff recorded locally.
 
 ## 2026-10-05 — [Codex] Multiple recording release
-- [ ] Finish real admin/student desktop/mobile verification and publish ordered YouTube recording support.
+- [x] Finish real admin/student desktop/mobile verification and publish ordered YouTube recording support. — [Codex] 2026-10-05: a211c48 live; production admin/student and public checks pass, QA fixtures cleaned.
 - [ ] Stephen: enter both actual Live class 1 links and click Save lesson; neither recording was saved in the database when inspected.
+
+## 2026-10-05 — [Codex] Recording publishing
+- [x] Separate recording save/publish controls from live lesson settings; local real admin/student verification passes.
+- [ ] Publish and verify live recording workflow.

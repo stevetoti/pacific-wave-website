@@ -10,7 +10,7 @@ export default function YouTubeRecordingFields({ lesson }: { lesson: YouTubeReco
   const [nextKey, setNextKey] = useState(rows.length);
   return <fieldset style={{ minWidth: 0 }}>
     <legend>YouTube recordings</legend>
-    <p className="lms-muted">Paste each YouTube link in order. Students will see Part 1, Part 2 and so on. Click Save lesson when finished. Unlisted links can be shared by viewers.</p>
+    <p className="lms-muted">Paste each YouTube link in order. Students will see Part 1, Part 2 and so on. Use the recording publish button below when finished. Unlisted links can be shared by viewers.</p>
     {rows.map((row, index) => <div key={row.key} style={{ marginBottom: 16 }}>
       <label>YouTube recording {index + 1}
         <input name="youtube_links" value={row.value} placeholder="https://www.youtube.com/watch?v=…" maxLength={2048}
