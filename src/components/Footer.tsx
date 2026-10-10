@@ -251,6 +251,16 @@ export default function Footer() {
             viewport={{ once: true }}
           >
             &copy; {new Date().getFullYear()} Pacific Wave Digital. All rights reserved.
+            <span className="block mt-1">
+              <a
+                href="https://www.globaldigitalprime.com"
+                target="_blank"
+                rel="noopener"
+                className="hover:text-vibrant-orange transition-colors"
+              >
+                A Global Digital Prime group company
+              </a>
+            </span>
           </motion.p>
           <motion.p
             initial={{ opacity: 0 }}
