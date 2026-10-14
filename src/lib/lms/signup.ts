@@ -1,6 +1,9 @@
 import { z } from 'zod';
 export const signupSchema = z.object({
   mode: z.literal('signup'),
+  website: z.string().max(200).optional(),
+  form_started_at: z.number().optional(),
+  turnstile_token: z.string().max(2048).optional(),
   email: z.email().max(254).transform(value => value.trim().toLowerCase()),
   password: z.string().min(10).max(128),
   name: z.string().trim().min(2, 'Please enter your full name.').max(120),

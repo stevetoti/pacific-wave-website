@@ -25,3 +25,27 @@ test('digit-only and link-only messages are not real enquiries', () => {
   assert.equal(messageLooksReal('We need a booking website for our resort in Santo.'), true);
   assert.equal(messageLooksReal(''), true);
 });
+
+test('account bot verification rejects missing/invalid tokens and accepts a verified human', async () => {
+  const { guardPublicForm } = await import('../src/lib/security/form-guard');
+  const originalFetch = globalThis.fetch;
+  const originalSite = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const originalSecret = process.env.TURNSTILE_SECRET_KEY;
+  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = 'test-site';
+  process.env.TURNSTILE_SECRET_KEY = 'test-secret';
+  let calls = 0;
+  globalThis.fetch = async () => { calls++; return Response.json({ success: false }); };
+  try {
+    assert.equal((await guardPublicForm({ skipMessageCheck: true })).ok, false);
+    assert.equal(calls, 0);
+    assert.equal((await guardPublicForm({ honeypot: 'spam', turnstileToken: 'token', skipMessageCheck: true })).ok, false);
+    assert.equal(calls, 0);
+    assert.equal((await guardPublicForm({ turnstileToken: 'invalid', skipMessageCheck: true })).ok, false);
+    globalThis.fetch = async () => Response.json({ success: true });
+    assert.equal((await guardPublicForm({ turnstileToken: 'valid', formStartedAt: Date.now() - 10_000, skipMessageCheck: true })).ok, true);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalSite === undefined) delete process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY; else process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = originalSite;
+    if (originalSecret === undefined) delete process.env.TURNSTILE_SECRET_KEY; else process.env.TURNSTILE_SECRET_KEY = originalSecret;
+  }
+});

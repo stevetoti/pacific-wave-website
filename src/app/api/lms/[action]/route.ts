@@ -1,3 +1,5 @@
+import { guardPublicForm } from "@/lib/security/form-guard";
+import { clientIpFromHeaders } from "@/lib/security/turnstile";
 import { liveRecordingPending } from "@/lib/lms/lesson-recording";
 import { workshopRecordingPending } from "@/lib/lms/blp-workshop";
 import { accountSchema } from "@/lib/lms/signup";
@@ -358,6 +360,8 @@ export async function POST(request: Request, context: Context) {
       const input = await readJson(request, accountSchema);
       await rateLimit(request, accountEmailBucket(input.email), 4);
       if (input.mode === "signup") {
+        const guard = await guardPublicForm({ honeypot: input.website, formStartedAt: input.form_started_at, turnstileToken: input.turnstile_token, ip: clientIpFromHeaders(request.headers), name: input.name, skipMessageCheck: true });
+        if (!guard.ok) throw new HttpError(400, guard.message);
         const registration = await createTrainingAccount(input);
         if (registration.orderId)
           await attachReferral(getSupabaseAdmin(), request, registration.orderId);

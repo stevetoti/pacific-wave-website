@@ -6,6 +6,9 @@ test('one signup form opens payment with contact and attendance already saved', 
  const user={id:'22222222-2222-4222-8222-222222222222',email:'signup-ui@example.com',aud:'authenticated',role:'authenticated',created_at:new Date().toISOString(),app_metadata:{provider:'email'},user_metadata:{}};
  const encode=(v:unknown)=>Buffer.from(JSON.stringify(v)).toString('base64url');
  const token=`${encode({alg:'HS256',typ:'JWT'})}.${encode({sub:user.id,exp:Math.floor(Date.now()/1000)+3600,role:'authenticated'})}.fixture`;
+ await page.addInitScript(() => {
+   window.turnstile = { render: (_element, options) => { setTimeout(() => options.callback?.('browser-test-token'), 0); return 'fixture'; }, reset: () => {}, remove: () => {} };
+ });
  let payload:Record<string,unknown>={};
  await page.route('**/auth/v1/**',r=>r.fulfill({json:{access_token:token,refresh_token:'fixture-refresh',expires_in:3600,token_type:'bearer',user}}));
  await page.route('**/api/lms-profile**',r=>r.fulfill({json:{profile:{full_name:'Test Student',avatar_url:''}}}));
@@ -30,7 +33,7 @@ test('one signup form opens payment with contact and attendance already saved', 
  await expect(page).toHaveURL(/\/checkout\?course=vanuatu-october-2026/);
  await expect(page.getByRole('button',{name:/Pay .* by card/})).toBeVisible();
  await expect(page.getByRole('heading',{name:'Your registration details'})).toHaveCount(0);
- expect(payload).toMatchObject({name:'Test Student',phone:'+678 5551234',location:'Port Vila',attendance:'online',acknowledged:true,mode:'signup'});
+ expect(payload).toMatchObject({name:'Test Student',phone:'+678 5551234',location:'Port Vila',attendance:'online',acknowledged:true,mode:'signup',turnstile_token:'browser-test-token',website:''});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
 });
 

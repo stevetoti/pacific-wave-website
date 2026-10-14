@@ -1,4 +1,7 @@
 "use client";
+import { HoneypotField, useFormBotFields } from "@/components/security/FormBotFields";
+import { TurnstileWidget } from "@/components/security/TurnstileWidget";
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
 import YouTubeRecordings from "./YouTubeRecordings";
 import { liveRecordingPending } from "@/lib/lms/lesson-recording";
 import { CourseText, CourseLanguageProvider, CourseLanguagePicker, useCourseLanguage } from '@/components/lms/CourseLanguage';
@@ -95,6 +98,9 @@ function TrainingCenterContent({
     id: string;
     url: string;
   } | null>(null);
+  const bot = useFormBotFields();
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [captchaAttempt, setCaptchaAttempt] = useState(0);
   const [sandbox, setSandbox] = useState(false);
   const [courses, setCourses] = useState<Course[]>(initialCourses || []),
     [banks, setBanks] = useState<Bank[]>([]),
@@ -650,6 +656,8 @@ function TrainingCenterContent({
                           return;
                         }
                         if (authMode === "signup") {
+                          if (!turnstileToken) throw new Error("Please complete the human verification check below.");
+                          try {
                           await api("account", {
                             email: address,
                             password,
@@ -659,9 +667,16 @@ function TrainingCenterContent({
                             attendance: f.get("attendance") || "online",
                             acknowledged: f.get("privacy") === "on",
                             mode: "signup",
+                            website: bot.honeypot,
+                            form_started_at: bot.formStartedAt ?? undefined,
+                            turnstile_token: turnstileToken,
                             course: queryCourse || undefined,
                             intent: forAffiliate ? "affiliate" : undefined,
                           });
+                          } finally {
+                            setTurnstileToken(null);
+                            setCaptchaAttempt(value => value + 1);
+                          }
                           // Sign in immediately using the supplied password; the new account
                           // and pending enrollment were created together on the server.
                         }
@@ -753,7 +768,11 @@ function TrainingCenterContent({
                           <input name="privacy" type="checkbox" required /><CourseText text={"I agree to the"} />{" "}
                           <Link href="/privacy#training-registrations"><CourseText text={"training privacy notice"} /></Link><CourseText text={"."} /></label>
                       )}
-                      <button className="lms-button">
+                      {authMode === "signup" && <>
+                        <HoneypotField value={bot.honeypot} onChange={bot.setHoneypot} />
+                        {TURNSTILE_SITE_KEY ? <TurnstileWidget key={captchaAttempt} siteKey={TURNSTILE_SITE_KEY} onVerify={setTurnstileToken} theme="light" /> : <p role="alert">Registration is temporarily unavailable. Please contact us for help.</p>}
+                      </>}
+                      <button className="lms-button" disabled={authMode === "signup" && !turnstileToken}>
                         {t(busy
                           ? "Please wait…"
                           : authMode === "signup"
