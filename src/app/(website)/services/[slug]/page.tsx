@@ -36,6 +36,7 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
       description: service.metaDescription,
       type: 'website',
       url: `${baseUrl}/services/${service.slug}`,
+      ...(service.slug === 'online-payment-integration' ? { images: [{ url: '/images/payments/couple-laptop-card-hero.webp', width: 1672, height: 941, alt: 'Illustrative couple using a laptop and credit card' }] } : {}),
     },
   };
 }

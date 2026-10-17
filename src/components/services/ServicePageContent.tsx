@@ -2,6 +2,7 @@
 
 import BrandBackdrop from '@/components/BrandBackdrop';
 import PaymentOptions from './PaymentOptions';
+import PaymentServiceHero from './PaymentServiceHero';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -18,7 +19,7 @@ export default function ServicePageContent({ service, relatedServices }: Service
   return (
     <>
       {/* Hero */}
-      <section className="relative min-h-[55vh] flex items-center overflow-hidden">
+      {service.slug === 'online-payment-integration' ? <PaymentServiceHero service={service} /> : <section className="relative min-h-[55vh] flex items-center overflow-hidden">
         <BrandBackdrop tone={['ecommerce', 'online-payment-integration'].includes(service.slug) ? 'commerce' : ['software-development', 'ai-automation'].includes(service.slug) ? 'learning' : 'brand'} />
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
@@ -74,7 +75,7 @@ export default function ServicePageContent({ service, relatedServices }: Service
             />
           </svg>
         </div>
-      </section>
+      </section>}
 
       {/* Intro */}
       <section className="section-padding bg-white">

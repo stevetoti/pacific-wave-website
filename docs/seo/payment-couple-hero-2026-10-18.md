@@ -1,0 +1,13 @@
+# Payment service couple hero — 18 October 2026
+
+Stephen requested a couple behind a laptop with a credit card as the payment-service hero. Built-in image_gen produced the illustrative photograph; it does not represent identifiable clients or a testimonial. No branded or legible card information. Original: /Users/stephentotimeh/.codex/generated_images/01a14781-b7c5-79b3-9d09-c5371a2f06c3/exec-94e36cd8-1498-4330-be03-c9f5ac225cfa.png . Optimized project asset: public/images/payments/couple-laptop-card-hero.webp (104000 bytes).
+
+Payment-only responsive hero keeps the photo above the copy on mobile/tablet/smaller laptops and behind the headline on wide desktops, using a contrast gradient. Both contact and provider-options CTAs remain. Payment service Open Graph image updated. Other service heroes, payment-provider copy, account settings and functional workflows retained. No Google edits, enquiries, emails or payment transactions.
+
+## Generation prompt
+
+Create a premium photorealistic wide 16:9 website hero photograph for an online payment integration service in Vanuatu. Two happy adult partners, a Pacific Islander couple in their early thirties, sitting together behind an open laptop at a light wooden table in an airy contemporary tropical home office. They are naturally looking at the laptop screen together while one partner holds a plain unbranded credit card in one hand beside the laptop, blank card with a small chip and no legible number, name or text. Natural believable hands and anatomy. Relaxed business-casual navy and cream clothing. Warm natural daylight, subtle green foliage and pale ocean-blue background, sophisticated editorial lifestyle photography. Composition: couple, laptop and held card grouped in the RIGHT HALF of the wide image, with uncluttered darker navy/teal interior space on the LEFT HALF for website headline overlay. The couple and card should remain legible in a portrait crop focused on the right half. Eye-level view from the front, laptop back toward camera. No logos, no brands, no text or watermarks. Aspirational illustrative scene, not a testimonial or identifiable real PWD clients.
+
+## Verification
+
+TypeScript, full lint, production build/eight release guards and four local responsive hero checks pass at 390/768/1024/1440px. Image decode, no overflow, self-canonical, social image, contact navigation/service selection and no-JavaScript hero verified. Screenshots visually reviewed. Staging/live verification pending. Prior production dpl_7PkQpcAxwvrTZziU4jMq7dBUKae3 is rollback reference. Complete source remains .deployment/enquiry-tracking-20261017; branch codex/pwd-payment-couple-hero includes all prior releases.
