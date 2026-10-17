@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -109,7 +109,7 @@ const getYoutubeThumbnail = (url: string) => {
   return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : '';
 };
 
-export default function HomePage() {
+export default function HomePage({ articles }: { articles?: ReactNode }) {
   const [videos, setVideos] = useState<VideoItem[]>(defaultVideos);
 
   useEffect(() => {
@@ -556,6 +556,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {articles}
 
       {/* CTA Section - Enhanced */}
       <section className="section-padding bg-white">

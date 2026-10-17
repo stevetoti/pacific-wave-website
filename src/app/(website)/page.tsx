@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import HomePageContent from '@/components/HomePageContent';
+import LatestArticles from '@/components/blog/LatestArticles';
+import { getPublishedPosts } from '@/lib/blog';
 
 export const metadata: Metadata = {
   title: { absolute: 'Web Design, Apps & AI in Vanuatu | Pacific Wave Digital' },
@@ -8,6 +10,9 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://pacificwavedigital.com/' },
 };
 
-export default function HomePage() {
-  return <HomePageContent />;
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const posts = await getPublishedPosts();
+  return <HomePageContent articles={<LatestArticles posts={posts.slice(0, 4)} />} />;
 }

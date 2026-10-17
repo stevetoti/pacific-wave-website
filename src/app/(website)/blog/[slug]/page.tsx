@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Image from 'next/image';
+import BlogImage from '@/components/blog/BlogImage';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
@@ -100,7 +101,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   // Get related posts
-  const relatedPosts = await getRelatedPosts(post.id, post.category, 3);
+  const relatedPosts = await getRelatedPosts(post.id, post.category, 4);
 
   // Extract headings for TOC
   const headings = extractHeadings(post.content || '');
@@ -156,11 +157,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <section className="relative min-h-[60vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           {post.image_url ? (
-            <Image
+            <BlogImage
               src={post.image_url}
-              alt={post.title}
+              alt={post.image_alt || post.title}
               title={post.title}
               fill
+              sizes="100vw"
               className="object-cover"
               priority
             />

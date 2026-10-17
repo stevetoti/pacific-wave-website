@@ -954,3 +954,12 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 - App bab5632 on codex/pwd-complete-trust-fixes; production dpl_BB62pibWtPBSGsj7bN5NewRKGjyj (https://pacific-wave-website-f3eyukxrn-pacificwaveprojects.vercel.app) promoted to pacificwavedigital.com. Corrected six unique CMS posts, About history/awards/stock-image identity captions, product/client distinctions and status conflicts, broad AI availability language and market-leadership metadata. Existing article draft prompt now explicitly forbids invented evidence and keeps human review.
 - Type/lint/build/eight route guards, 22 local responsive checks, 21 staged content/SEO/tracking/training checks and 22 final live phone/desktop checks pass. Article self-canonicals and current product links verified; screenshots reviewed. CMS before/after and receipts retained in docs/seo/change-requests; full report docs/seo/pwd-remaining-trust-fixes-2026-10-17.md.
 - Complete website source remains .deployment/enquiry-tracking-20261017; integrate full codex/pwd-complete-trust-fixes before deploying main. Prior SEO, enquiry tracking, signup, training/payment and visual work preserved. Rollback app deployment dpl_485FuB2sxbKPZQ5pvUW2mX3UUW2W; CMS rollback is separate (reverse audit order for overlapping post). No review requests sent, new enquiries/emails/payments or Google writes. QA server stopped; five-page index monitor unchanged; Google indexing/ranking outcomes still await Google.
+
+## 2026-10-17 — [Codex] Homepage articles and durable blog images prepared
+
+- Four recent server-rendered homepage articles; shared compact 4/2/1-column cards in index/related. Four new built-in image_gen topic covers and 28 locally optimized inline images; source manifest resolves 42 legacy URLs without CMS writes. All 14 remote covers rejected by Next image host allowlist despite live origin files. Local artwork/failure fallback prevents broken tiles. Existing content/canonicals and complete prior source preserved. Validation underway; report docs/seo/homepage-blog-images-2026-10-17.md.
+- Persistent-memory CLI still fails missing numpy; shared journals updated. No client messages, Google edits or customer records changed.
+
+## 2026-10-17 — [Codex] Blog layout and image repairs verified
+
+- Type/lint/build/eight guards plus 48 local phone/tablet/desktop page checks pass. All images decode; four/two/one columns, self-canonicals, no overflow, homepage visibility without JS and forced failed-image recovery verified. Screenshots reviewed; staging next.

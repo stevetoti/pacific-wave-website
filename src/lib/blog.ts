@@ -1,4 +1,5 @@
 import { supabase, BlogPost } from './supabase';
+import { withLocalBlogImages } from './blog-images';
 
 const SITE_ID = 'pwd';
 
@@ -57,7 +58,7 @@ export async function getPublishedPosts(): Promise<BlogPost[]> {
     return [];
   }
 
-  return data || [];
+  return (data || []).map(withLocalBlogImages);
 }
 
 /**
@@ -77,7 +78,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
     return null;
   }
 
-  return data;
+  return data ? withLocalBlogImages(data) : null;
 }
 
 /**
@@ -96,7 +97,7 @@ export async function getPostById(id: string): Promise<BlogPost | null> {
     return null;
   }
 
-  return data;
+  return data ? withLocalBlogImages(data) : null;
 }
 
 /**
@@ -121,7 +122,7 @@ export async function getRelatedPosts(
       .limit(limit);
 
     if (!categoryError && categoryPosts && categoryPosts.length >= limit) {
-      return categoryPosts;
+      return categoryPosts.map(withLocalBlogImages);
     }
 
     // If we have some category posts but need more, get additional recent posts
@@ -139,7 +140,7 @@ export async function getRelatedPosts(
         .order('published_at', { ascending: false })
         .limit(remaining);
 
-      return [...categoryPosts, ...(recentPosts || [])];
+      return [...categoryPosts, ...(recentPosts || [])].map(withLocalBlogImages);
     }
   }
 
@@ -158,7 +159,7 @@ export async function getRelatedPosts(
     return [];
   }
 
-  return data || [];
+  return (data || []).map(withLocalBlogImages);
 }
 
 /**

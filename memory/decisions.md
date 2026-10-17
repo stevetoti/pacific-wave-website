@@ -212,3 +212,7 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 - Removed unsupported founding/launch years and award claim; replaced timeline with verified project links. Conceptual artwork no longer captioned as actual staff or Stephen’s portrait.
 - Product cards now use bounded descriptions, accurate client/product distinctions and direct information/enquiry links instead of conflicting Live/Beta labels. Removed unsupported TrainerSim sports-feature card. Current Akwaaba public site supports Twi/English assistant description; VanuWay product site is public despite older company KB status. Avoided substituting unverified launch claims.
 - Root metadata no longer claims market leadership. Broad shared AI service wording scopes human escalation. Three audited CMS result blocks saved with originals and verified. Validation/release pending.
+
+## 2026-10-17 — [Codex] Local editorial image resolution
+
+- Retain original CMS content/URLs and resolve exact image URLs at shared blog read boundary to versioned local assets. Avoid broadening allowed remote hosts. Unknown/failed covers recover to local topic artwork. Homepage uses server component slot to keep current posts visible without JS; all public cards share compact responsive layout.
