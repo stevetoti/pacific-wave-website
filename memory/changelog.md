@@ -881,3 +881,18 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 
 - Live app 587c10e, deployment dpl_EVGYY7surCYFmWFPwXpEHbR2j98X (https://pacific-wave-website-qdys241pr-pacificwaveprojects.vercel.app), promoted to pacificwavedigital.com. Lint/type/build/eight guards, 16 targeted tests, staged desktop/mobile/HTTP checks and all 24 final live checks pass (3.1 min). Two real labelled public-form QA enquiries saved; matching Resend messages delivered to existing owner recipients. GA4 receives generate_lead as key event plus separate phone/WhatsApp clicks; initial totals include QA. No migrations or production credentials changed. Two QA records retained pending explicit cleanup approval.
 - Complete source retained at .deployment/enquiry-tracking-20261017. Local fixture server stopped, temporary staging/QA form tabs closed after screenshots; GA4 retained for follow-up. No local production-credential server or share bypass was created after rejection.
+
+## 2026-10-17 — [Codex] Explicitly approved QA cleanup completed
+
+- Stephen replied “Delete two QA records.” Deleted only PWD QA Contact Verification (609d2558-cc6e-4d82-b366-909a04bfa699) and PWD QA Quote Verification (2d3d7432-401d-475b-9a68-e34760ab1158), guarded by exact ID/name/site. Post-delete lookup by IDs returned zero rows at 2026-10-17T08:43:33.478Z.
+- Delivery audit evidence and sent emails remain preserved; Analytics unchanged. Earlier pending-cleanup notes are superseded. No application code or deployment changed. Local approval audit resides in Google Business Profiles/docs/seo/change-requests/2026-10-17-pwd-qa-enquiry-cleanup.json.
+
+## 2026-10-17 — [Codex] Factual project evidence in progress
+
+- Added server-rendered internal PWD Training Centre case study, portfolio feature and links from web/software development and AI automation; canonical/Article/breadcrumb metadata and sitemap inclusion. Uses verified platform capabilities; no usage/outcome metrics, client endorsement or private workshop details.
+- Existing portfolio claims need owner substantiation; no expansion of those claims. Validation and release pending.
+
+## 2026-10-17 — [Codex] Project case studies verified before release
+
+- Owner selected Aelan Basket, E’Nauwi Beach Resort and Lapita Beach; public sites and client project records support factual website descriptions. Replaced unsupported portfolio examples and outcome metrics with these projects, plus an explicitly internal PWD training-centre case study. Five relevant service pages link to matching projects.
+- TypeScript/lint/build/eight guards pass; desktop/mobile no-JS content, metadata/schema/canonicals, sitemap, links, quote navigation and 404 checks pass. No client sites, transactions or Google account fields changed. Staged production publication next.

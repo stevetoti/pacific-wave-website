@@ -191,3 +191,8 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 - Count generate_lead only after HTTP 201 with server-generated persisted receipt; deduplicate that receipt locally without sending it to Google. Notification may remain pending without losing saved lead. Phone/WhatsApp clicks are contact intent, not connected calls/conversations.
 - No enquiry PII or full destination URLs in custom event dimensions. Preserve training analytics opt-in and exclude private routes. Existing automatic GA form events do not define successful leads.
 - Keep verified QA evidence; production QA deletion requires explicit approval after auto-review rejection. No bypass share link or production-credential QA server created.
+
+## 2026-10-17 — [Codex] Factual project evidence in progress
+
+- Added server-rendered internal PWD Training Centre case study, portfolio feature and links from web/software development and AI automation; canonical/Article/breadcrumb metadata and sitemap inclusion. Uses verified platform capabilities; no usage/outcome metrics, client endorsement or private workshop details.
+- Existing portfolio claims need owner substantiation; no expansion of those claims. Validation and release pending.

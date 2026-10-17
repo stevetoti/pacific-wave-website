@@ -195,6 +195,30 @@ export default function ServicePageContent({ service, relatedServices }: Service
         </div>
       </section>
 
+      {['web-development', 'software-development', 'ai-automation'].includes(service.slug) ? (
+        <section className="section-padding bg-light-gray" aria-labelledby="project-example">
+          <div className="container-max max-w-4xl">
+            <p className="font-semibold text-deep-blue mb-3">Built by Pacific Wave Digital</p>
+            <h2 id="project-example" className="text-2xl sm:text-3xl font-bold font-heading text-deep-blue mb-4">See our own training platform in Vanuatu</h2>
+            <p className="text-gray-600 leading-relaxed mb-6">Course enrolment, VUV payment options, live teaching and private student workspaces show how we connect a public website with the software behind it.</p>
+            <Link href="/portfolio/pwd-training-centre" className="btn-primary">Read the PWD Training Centre case study</Link>
+          </div>
+        </section>
+      ) : null}
+
+      {['web-design', 'web-development', 'ecommerce'].includes(service.slug) ? (
+        <section className="section-padding bg-white" aria-labelledby="client-work">
+          <div className="container-max max-w-4xl">
+            <h2 id="client-work" className="text-2xl sm:text-3xl font-bold font-heading text-deep-blue mb-4">Website work for Vanuatu businesses</h2>
+            <p className="text-gray-600 leading-relaxed mb-6">Explore our work for local retail and tourism businesses.</p>
+            <div className="flex flex-wrap gap-6 text-deep-blue font-semibold">
+              <Link href="/portfolio/aelan-basket" className="underline underline-offset-4">Aelan Basket: online grocery storefront</Link>
+              {service.slug !== 'ecommerce' ? <><Link href="/portfolio/enauwi-beach-resort" className="underline underline-offset-4">E’Nauwi Beach Resort: resort website</Link><Link href="/portfolio/lapita-beach" className="underline underline-offset-4">Lapita Beach: stays and tours website</Link></> : null}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {/* Related services */}
       <section className="section-padding bg-white">
         <div className="container-max">

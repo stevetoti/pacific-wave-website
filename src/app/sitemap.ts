@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { getPublishedPosts } from '@/lib/blog';
 import { servicePages } from '@/lib/service-pages';
+import { projectCaseStudies } from '@/lib/project-case-studies';
 
 // Re-generate the sitemap at most once per hour so newly published
 // blog posts appear without a redeploy.
@@ -9,6 +10,8 @@ export const revalidate = 3600;
 const baseUrl = 'https://pacificwavedigital.com';
 
 const staticPages: MetadataRoute.Sitemap = [
+  ...projectCaseStudies.map(project => ({ url: `${baseUrl}/portfolio/${project.slug}`, lastModified: new Date('2026-10-17'), changeFrequency: 'monthly' as const, priority: 0.7 })),
+  { url: `${baseUrl}/portfolio/pwd-training-centre`, lastModified: new Date('2026-10-17'), changeFrequency: 'monthly', priority: 0.7 },
   { url: `${baseUrl}/training-center/programs/one-on-one-mentorship`, changeFrequency: 'monthly', priority: 0.8 },
   { url: `${baseUrl}/training-center/programs/how-to-start-a-profitable-business`, changeFrequency: 'monthly', priority: 0.7 },
   { url: `${baseUrl}/training-center`, changeFrequency: 'weekly', priority: 0.9 },

@@ -329,3 +329,13 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [x] Successful Contact/project enquiries, phone/WhatsApp intent events, GA4 key event, real persistence/delivery and final live regressions verified — [Codex] 2026-10-17.
 - [ ] Await explicit deletion approval for ONLY QA IDs 609d2558-cc6e-4d82-b366-909a04bfa699 and 2d3d7432-401d-475b-9a68-e34760ab1158. Prepared cleanup script /private/tmp/pwd-clean-qa-enquiries.cjs has not run; scope includes exact IDs/site/QA names. Preserve audit/emails.
 - [ ] Exclude documented initial 17 October QA period from lead-growth comparisons. Future fixture vendor patterns corrected.
+
+## 2026-10-17 — [Codex] QA cleanup resolved
+
+- [x] Delete two own QA enquiries after explicit approval — [Codex] 2026-10-17: both approved records deleted and verified absent. Supersedes pending-cleanup task; emails/evidence preserved.
+
+## 2026-10-17 — [Codex] Project-proof release
+
+- [x] Prepare three owner-selected client case studies and internal training-centre case study; validate build and desktop/mobile discoverability.
+- [ ] Publish and verify on production; preserve complete repair/enquiry lineage.
+- [ ] Verify remaining homepage/about testimonials and statistics with owner records before expanding those claims.
