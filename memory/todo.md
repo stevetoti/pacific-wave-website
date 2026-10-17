@@ -366,3 +366,9 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 
 - [x] Publish and verify core corrections — [Codex] 2026-10-17: 5a6a2bd / dpl_485FuB2sxbKPZQ5pvUW2mX3UUW2W; ten live phone/desktop checks pass.
 - [ ] Integrate complete codex/pwd-authentic-proof lineage before future main deploys.
+
+## 2026-10-17 — [Codex] Complete trust corrections released
+
+- [x] Remaining CMS/public-content audit corrected and verified live — [Codex] 2026-10-17: bab5632 / dpl_BB62pibWtPBSGsj7bN5NewRKGjyj, 22 final live checks pass. Supersedes earlier pending remaining-audit entries.
+- [ ] Integrate full codex/pwd-complete-trust-fixes lineage before deploying main; retain all earlier SEO/enquiry/signup/LMS and custom visual repairs.
+- [ ] Genuine review requests remain drafts in GBP repo; no messages sent. Existing index monitor unchanged.
