@@ -376,3 +376,7 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 ## 2026-10-17 — [Codex] Article display and image repairs completed
 
 - [x] Add four recent homepage articles, compact desktop four-column cards and fix every published article image — [Codex] 2026-10-17: e747b35 / dpl_7f1hHxVkPGGPqen5MLxT8TURhCSz live, 48 final responsive checks plus image-fallback/no-JS/RSS checks pass.
+
+## 2026-10-17 — [Codex] Payment service published
+
+- [x] Add online payment integration with four provider visuals and contact links — [Codex] 2026-10-17: 3055f2d / dpl_7PkQpcAxwvrTZziU4jMq7dBUKae3 live; fifteen final responsive checks, no-JS and intercepted enquiry/tracking pass. Provider eligibility is scoped accurately; no merchant or payment settings changed.
