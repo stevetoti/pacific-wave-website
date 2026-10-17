@@ -21,6 +21,7 @@ const footerLinks = {
     { href: '/services/digital-marketing', label: 'Digital Marketing' },
     { href: '/services/seo', label: 'SEO Services' },
     { href: '/services/ecommerce', label: 'E-commerce' },
+    { href: '/services/online-payment-integration', label: 'Payment Integration' },
     { href: '/services/mobile-apps', label: 'Mobile Apps' },
     { href: '/services/ai-automation', label: 'AI & Automation' },
     { href: '/services/cloud-hosting', label: 'Hosting & Maintenance' },

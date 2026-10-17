@@ -1,0 +1,23 @@
+[
+  {
+    "name": "mycash",
+    "source": "https://www.datocms-assets.com/88735/1765499456-mycash-logo.png",
+    "path": "/images/payments/mycash.webp"
+  },
+  {
+    "name": "mvatu",
+    "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c7/a7/3d/c7a73dbd-afbb-6378-2681-008b6c1ea942/AppIcon-0-0-1x_U007emarketing-0-6-0-0-85-220.png/512x512bb.jpg",
+    "path": "/images/payments/mvatu.webp"
+  },
+  {
+    "name": "paypal",
+    "source": "https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png",
+    "path": "/images/payments/paypal.webp"
+  },
+  {
+    "name": "stripe",
+    "source": "https://stripe.com/newsroom/brand-assets",
+    "kit": "https://assets.stripeassets.com/fzn2n1nzq965/7q0dJGs6fRS1LRmMpChoAF/87def4edfbb7fd5aef4ab9baf904b2db/Stripe_logo_kit.zip",
+    "path": "/images/payments/stripe.svg"
+  }
+]

@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import FadeInView from '@/components/animations/FadeInView';
 import { StaggerContainer, StaggerItem } from '@/components/animations/StaggerContainer';
 import TechStack from '@/components/TechStack';
+import PaymentOptions from '@/components/services/PaymentOptions';
 import ProjectPreview from '@/components/ProjectPreview';
 import { projectCaseStudies } from '@/lib/project-case-studies';
 import { getAllSettings, SETTINGS_KEYS } from '@/lib/supabase';
@@ -18,6 +19,13 @@ interface VideoItem {
 }
 
 const services = [
+{
+  "title": "Online Payment Integration",
+  "description": "Card checkout and local mobile-money payment workflows, with provider and merchant eligibility assessed for your business.",
+  "icon": "\ud83d\udcb3",
+  "gradient": "from-teal-500 to-blue-600",
+  "href": "/services/online-payment-integration"
+},
   {
     "title": "Web Design",
     "description": "Mobile-first website design for Vanuatu tourism, retail and professional businesses.",
@@ -351,6 +359,8 @@ export default function HomePage({ articles }: { articles?: ReactNode }) {
       </section>
 
       {/* Tech Stack */}
+      <PaymentOptions compact />
+
       <TechStack />
 
       <section className="section-padding bg-[#f6f5f1]" aria-labelledby="selected-work">

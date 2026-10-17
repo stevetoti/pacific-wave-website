@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import FadeInView from '@/components/animations/FadeInView';
 import { StaggerContainer, StaggerItem } from '@/components/animations/StaggerContainer';
 import TechStack from '@/components/TechStack';
+import PaymentOptions from '@/components/services/PaymentOptions';
 import CodeShowcase from '@/components/CodeShowcase';
 
 interface HubService {
@@ -24,6 +25,24 @@ interface HubService {
 }
 
 const services: HubService[] = [
+{
+  "id": "online-payment-integration",
+  "title": "Online Payment Integration",
+  "href": "/services/online-payment-integration",
+  "description": "Connect checkout, bookings and invoices with suitable Stripe, MyCash, M-Vatu and PayPal payment workflows. We assess your merchant eligibility, provider approval and confirmation process before implementation.",
+  "features": [
+    "Card and wallet checkout for eligible accounts",
+    "MyCash and M-Vatu merchant payment flows",
+    "Payment links, QR instructions and order references",
+    "Verified payment status or agreed staff confirmation",
+    "Success, failure and cancellation testing",
+    "Implementation handover and reconciliation guidance"
+  ],
+  "image": "/images/blog/commerce-editorial.webp",
+  "fallbackImage": "/images/custom/commerce.webp",
+  "gradient": "from-teal-500 to-blue-600",
+  "icon": "\ud83d\udcb3"
+},
   {
     id: 'web-design',
     title: 'Web Design',
@@ -414,6 +433,8 @@ export default function ServicesPage() {
       </section>
 
       {/* Tech Stack Section */}
+      <PaymentOptions compact />
+
       <TechStack />
 
       {/* Process Section - Enhanced */}

@@ -216,3 +216,7 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 ## 2026-10-17 — [Codex] Local editorial image resolution
 
 - Retain original CMS content/URLs and resolve exact image URLs at shared blog read boundary to versioned local assets. Avoid broadening allowed remote hosts. Unknown/failed covers recover to local topic artwork. Homepage uses server component slot to keep current posts visible without JS; all public cards share compact responsive layout.
+
+## 2026-10-17 — [Codex] Payment service eligibility wording
+
+- Market payment integration for Vanuatu without claiming every provider directly onboards Vanuatu merchants. Stripe/PayPal require eligible account/country/settlement checks. Mobile-money merchant QR/manual confirmation differs from an automated gateway; promise automation only with supported access and approval. Use authentic logos with no claimed partnership. Service-page content is marketing only; existing live payment configuration remains unchanged.

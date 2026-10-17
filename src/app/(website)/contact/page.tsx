@@ -186,7 +186,7 @@ export default function ContactPage() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="bg-light-gray rounded-2xl p-8 md:p-12">
+                <form id="enquiry-form" onSubmit={handleSubmit} className="scroll-mt-28 bg-light-gray rounded-2xl p-8 md:p-12">
                   {!isReady && <p role="status" className="mb-4 text-gray-700">Enable JavaScript to send this form, or use the email, phone or WhatsApp links to contact us.</p>}
                   <fieldset disabled={!isReady} aria-busy={!isReady} className="min-w-0">
                   <h2 className="text-2xl font-bold text-deep-blue font-heading mb-8">Tell Us About Your Project</h2>
@@ -249,6 +249,7 @@ export default function ContactPage() {
                         <option value="digital-marketing">Digital Marketing</option>
                         <option value="business-automation">Business Automation</option>
                         <option value="cloud-hosting">Cloud & Hosting</option>
+                        <option value="online-payment-integration">Online Payment Integration</option>
                         <option value="other">Other</option>
                       </select>
                     </div>

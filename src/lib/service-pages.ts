@@ -1095,6 +1095,119 @@ export const servicePages: ServicePageData[] = [
   ],
   "cardDescription": "Managed hosting, website maintenance, backups and cloud setup with clearly agreed support and recovery arrangements."
 },
+{
+  "slug": "online-payment-integration",
+  "label": "Payment Integration",
+  "h1": "Online Payment Integration in Vanuatu",
+  "metaDescription": "Connect online checkout and mobile-wallet payment workflows for your Vanuatu business. Explore Stripe, MyCash, M-Vatu and PayPal with PWD. Contact us to assess your options.",
+  "keywords": [
+    "online payment integration Vanuatu",
+    "payment gateway Vanuatu",
+    "MyCash website integration",
+    "M-Vatu payments Vanuatu",
+    "Stripe integration Vanuatu",
+    "PayPal integration Vanuatu",
+    "online checkout Port Vila"
+  ],
+  "serviceType": "Online Payment Integration",
+  "heroBadge": "Get paid online",
+  "heroSubtitle": "Make it easier for customers to pay for orders, bookings and services. We connect your website or app with suitable card, wallet and mobile-money payment options. Contact us to find the right setup for your business.",
+  "gradient": "from-teal-500 to-blue-600",
+  "icon": "💳",
+  "intro": [
+    "Pacific Wave Digital builds online payment experiences for businesses in Vanuatu and the Pacific. Whether you run a shop in Port Vila, take resort deposits, sell tours or offer online services, we can connect the customer checkout with the order and payment workflow behind it.",
+    "We work with Stripe, MyCash, M-Vatu and PayPal integration options according to your merchant eligibility and the facilities each provider makes available. This can include hosted checkout, payment links, local merchant QR instructions and order reconciliation. An automated gateway and a payment that staff confirm manually are different workflows; we agree which one your business will receive.",
+    "Tell us where your business is registered, which bank or merchant accounts you use, what you sell and where your customers are based. We assess payment acceptance, settlement, currency and provider approval before proposing an implementation. You receive a clear scope for the website work and any account setup still required."
+  ],
+  "benefitsHeading": "A payment flow that fits your business",
+  "benefitsIntro": "From the first checkout screen to confirmation and reconciliation, each step should be clear to customers and your team.",
+  "benefits": [
+    {
+      "icon": "🛒",
+      "title": "Website and app checkout",
+      "description": "Connect payment collection to stores, bookings, invoices or custom applications, with clear order references and next steps."
+    },
+    {
+      "icon": "📱",
+      "title": "Local mobile-money workflows",
+      "description": "Help customers follow approved MyCash or M-Vatu merchant payment steps, with QR or payment instructions and a confirmation process agreed for your setup."
+    },
+    {
+      "icon": "🌍",
+      "title": "International card and wallet options",
+      "description": "Integrate Stripe or PayPal for eligible merchant accounts. We check account country, receiving capability, currency and settlement before choosing the flow."
+    },
+    {
+      "icon": "✅",
+      "title": "Reliable payment confirmation",
+      "description": "Use verified provider notifications where available. Otherwise keep the order pending until staff check the payment; a browser redirect or uploaded receipt alone does not prove settlement."
+    },
+    {
+      "icon": "🔐",
+      "title": "Provider-hosted payment entry",
+      "description": "Use supported hosted payment pages or provider components for card entry, alongside protected server credentials and verified callbacks where available."
+    },
+    {
+      "icon": "🧾",
+      "title": "Testing and handover",
+      "description": "Check successful, failed and cancelled payment paths, confirmation messages and duplicate notifications as applicable, then document the workflow for your team."
+    }
+  ],
+  "processIntro": "We scope the payment route first, then connect and test the experience your customers will use.",
+  "process": [
+    {
+      "step": "01",
+      "title": "Discuss your payment needs",
+      "description": "Tell us about your website or app, products, customers, business registration and existing merchant accounts."
+    },
+    {
+      "step": "02",
+      "title": "Confirm provider eligibility",
+      "description": "Review merchant approval, available integration facilities, currencies, settlement and provider charges. Agree any manual confirmation steps."
+    },
+    {
+      "step": "03",
+      "title": "Build and test the flow",
+      "description": "Implement the approved checkout or payment workflow and verify the relevant success, failure, cancellation and confirmation paths."
+    },
+    {
+      "step": "04",
+      "title": "Launch and hand over",
+      "description": "Complete the agreed launch checks and show your team how to review payments, reconcile orders and handle support or refund requests."
+    }
+  ],
+  "faqs": [
+    {
+      "question": "Can you integrate Stripe, MyCash, M-Vatu and PayPal for a Vanuatu business?",
+      "answer": "We assess all four options and integrate the suitable, approved payment workflow for your website or app. Availability depends on your merchant account, business registration, provider approval and supported integration facilities. Contact PWD so we can confirm what applies to you."
+    },
+    {
+      "question": "Can a Vanuatu-registered business open a Stripe account directly?",
+      "answer": "Vanuatu is not currently listed for direct Stripe merchant onboarding. Stripe integration requires an eligible merchant account in a supported country or region. We assess an existing eligible business and account setup; adding a checkout button does not create eligibility."
+    },
+    {
+      "question": "Can I receive PayPal payments into a Vanuatu bank account?",
+      "answer": "PayPal receiving, withdrawal and banking features depend on the account country and provider rules. We verify your eligible business account and settlement route before proposing PayPal checkout. We do not promise direct receiving or withdrawal to every Vanuatu bank account."
+    },
+    {
+      "question": "Are MyCash and M-Vatu payments automatically confirmed?",
+      "answer": "Both provide mobile-money services in Vanuatu. The website flow depends on the merchant facilities approved for your account. We can scope merchant QR or payment instructions with order references and staff confirmation; automatic status updates are included only where supported access and provider approval are available."
+    },
+    {
+      "question": "Can you add payments to my existing website?",
+      "answer": "Yes. We first review your website platform, checkout, hosting and current provider accounts. We then propose the appropriate integration, confirmation and reconciliation work."
+    },
+    {
+      "question": "How much does payment integration cost?",
+      "answer": "Contact us for a quote based on your platform, providers, checkout and confirmation requirements. Provider transaction charges, currency conversion and account fees are separate from PWD implementation work."
+    }
+  ],
+  "furtherReading": {
+    "label": "Explore our e-commerce website service",
+    "href": "/services/ecommerce"
+  },
+  "cardDescription": "Online checkout and mobile-money workflows with Stripe, MyCash, M-Vatu and PayPal options, subject to merchant eligibility and provider approval."
+},
 ];
 
 export function getServicePage(slug: string): ServicePageData | undefined {

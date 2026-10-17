@@ -1,6 +1,7 @@
 'use client';
 
 import BrandBackdrop from '@/components/BrandBackdrop';
+import PaymentOptions from './PaymentOptions';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -18,7 +19,7 @@ export default function ServicePageContent({ service, relatedServices }: Service
     <>
       {/* Hero */}
       <section className="relative min-h-[55vh] flex items-center overflow-hidden">
-        <BrandBackdrop tone={service.slug === 'ecommerce' ? 'commerce' : ['software-development', 'ai-automation'].includes(service.slug) ? 'learning' : 'brand'} />
+        <BrandBackdrop tone={['ecommerce', 'online-payment-integration'].includes(service.slug) ? 'commerce' : ['software-development', 'ai-automation'].includes(service.slug) ? 'learning' : 'brand'} />
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
             className="absolute top-20 right-20 w-96 h-96 bg-vibrant-orange/20 rounded-full blur-3xl"
@@ -53,11 +54,11 @@ export default function ServicePageContent({ service, relatedServices }: Service
 
             <FadeInView delay={0.3}>
               <div className="flex flex-wrap gap-4">
-                <Link href="/get-started" className="btn-primary text-lg !px-8 !py-4">
-                  Get Started
+                <Link href={service.slug === 'online-payment-integration' ? '/contact#enquiry-form' : '/get-started'} className="btn-primary text-lg !px-8 !py-4">
+                  {service.slug === 'online-payment-integration' ? 'Contact us about payments' : 'Get Started'}
                 </Link>
-                <Link href="/contact" className="btn-secondary text-lg !px-8 !py-4">
-                  Talk to Us
+                <Link href={service.slug === 'online-payment-integration' ? '#payment-options' : '/contact'} className="btn-secondary text-lg !px-8 !py-4">
+                  {service.slug === 'online-payment-integration' ? 'View payment options' : 'Talk to Us'}
                 </Link>
               </div>
             </FadeInView>
@@ -65,7 +66,7 @@ export default function ServicePageContent({ service, relatedServices }: Service
         </div>
 
         {/* Decorative wave */}
-        <div className="absolute bottom-0 left-0 right-0">
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0" aria-hidden="true">
           <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M0 120L60 110C120 100 240 80 360 73.3C480 67 600 73 720 80C840 87 960 93 1080 90C1200 87 1320 73 1380 66.7L1440 60V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z"
@@ -87,6 +88,8 @@ export default function ServicePageContent({ service, relatedServices }: Service
           </div>
         </div>
       </section>
+
+      {service.slug === 'online-payment-integration' && <PaymentOptions />}
 
       {/* Benefits */}
       <section className="section-padding bg-light-gray">
@@ -283,10 +286,10 @@ export default function ServicePageContent({ service, relatedServices }: Service
             </p>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
-                href="/get-started"
+                href={service.slug === 'online-payment-integration' ? '/contact#enquiry-form' : '/get-started'}
                 className="inline-flex items-center justify-center px-10 py-4 bg-white text-vibrant-orange font-bold rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-xl text-lg"
               >
-                Start Your Project
+                {service.slug === 'online-payment-integration' ? 'Discuss payment integration' : 'Start Your Project'}
                 <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
