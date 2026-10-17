@@ -6,7 +6,7 @@ interface RelatedServicesProps {
 
 const servicesByCategory: Record<string, { title: string; description: string; icon: string }[]> = {
   'AI Solutions': [
-    { title: 'AI Chatbots', description: 'Smart customer service that works 24/7', icon: '🤖' },
+    { title: 'AI Chatbots', description: 'AI-assisted enquiries with human escalation', icon: '🤖' },
     { title: 'Business Automation', description: 'Streamline workflows and reduce costs', icon: '⚡' },
     { title: 'Predictive Analytics', description: 'Data-driven decision making', icon: '📊' },
   ],

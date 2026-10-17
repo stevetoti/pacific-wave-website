@@ -4,92 +4,18 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Products',
-  description:
-    'Discover Pacific Wave Digital\'s suite of innovative products: VanuConnect, VanuWay, Learn Bislama, Aelan Basket, TrainerSim, DigiAssist AI, Akwaaba AI, and MEDD-SIM.',
+  title: 'Products and Platforms',
+  description: 'Explore PWD’s digital products, platforms and client work, with links to current product information and project enquiries.',
 };
 
 const products = [
-  {
-    name: 'VanuConnect',
-    tagline: 'Connect. Communicate. Grow.',
-    description:
-      'A comprehensive communication platform connecting Vanuatu businesses with customers through messaging, voice, and video. Designed for reliable connectivity even in low-bandwidth areas across the Pacific.',
-    features: ['Multi-channel messaging', 'Voice & video calls', 'Business directory integration', 'Low-bandwidth optimized', 'End-to-end encryption'],
-    color: 'from-blue-500 to-blue-700',
-    icon: '📱',
-    status: 'Live',
-  },
-  {
-    name: 'VanuWay',
-    tagline: 'Discover Local. Support Local.',
-    description:
-      'Vanuatu\'s premier business directory and service marketplace. VanuWay helps locals and tourists discover trusted businesses, book services, and support the local economy with ease.',
-    features: ['Business listings & reviews', 'Service booking system', 'GPS-powered search', 'Verified business badges', 'Tourist-friendly interface'],
-    color: 'from-green-500 to-green-700',
-    icon: '🗺️',
-    status: 'Live',
-  },
-  {
-    name: 'Learn Bislama',
-    tagline: 'Master the Language of Vanuatu.',
-    description:
-      'An interactive language learning app that helps visitors, expats, and newcomers master Bislama — the lingua franca of Vanuatu. Features AI-powered pronunciation coaching and cultural context lessons.',
-    features: ['Interactive lessons', 'AI pronunciation coaching', 'Cultural context modules', 'Offline mode', 'Progress tracking & gamification'],
-    color: 'from-purple-500 to-purple-700',
-    icon: '📚',
-    status: 'Live',
-  },
-  {
-    name: 'Aelan Basket',
-    tagline: 'Fresh from the Islands to Your Door.',
-    description:
-      'An e-commerce marketplace connecting local Vanuatu farmers, artisans, and small businesses directly with customers. Supporting local livelihoods while delivering fresh produce and handmade goods.',
-    features: ['Local marketplace', 'Delivery management', 'Farmer & artisan profiles', 'Mobile money integration', 'Order tracking'],
-    color: 'from-emerald-500 to-emerald-700',
-    icon: '🧺',
-    status: 'Beta',
-  },
-  {
-    name: 'TrainerSim',
-    tagline: 'Train Smarter. Perform Better.',
-    description:
-      'An AI-powered training simulation platform for sports coaches and athletes. TrainerSim uses machine learning to create personalized training programs and simulate game scenarios for improved performance.',
-    features: ['AI training plans', 'Performance analytics', 'Game scenario simulation', 'Video analysis', 'Team management tools'],
-    color: 'from-red-500 to-red-700',
-    icon: '🏋️',
-    status: 'Beta',
-  },
-  {
-    name: 'DigiAssist AI',
-    tagline: 'Your AI-Powered Business Partner.',
-    description:
-      'An intelligent AI assistant that helps businesses automate customer support, manage schedules, handle emails, and streamline daily operations. Built with advanced language models for natural conversations.',
-    features: ['24/7 AI customer support', 'Email & calendar management', 'Multi-language support', 'Custom knowledge base', 'Integration with business tools'],
-    color: 'from-orange-500 to-orange-700',
-    icon: '🤖',
-    status: 'Live',
-  },
-  {
-    name: 'Akwaaba AI',
-    tagline: 'Welcome to Intelligent Communication.',
-    description:
-      'AI-powered business communication platform designed for the African market. Akwaaba AI provides automated customer engagement through WhatsApp, SMS, and voice in local languages including Twi and Pidgin.',
-    features: ['WhatsApp automation', 'Multi-language AI chatbot', 'SMS campaigns', 'Voice AI assistant', 'Customer insights dashboard'],
-    color: 'from-yellow-500 to-yellow-700',
-    icon: '🌍',
-    status: 'Live',
-  },
-  {
-    name: 'MEDD-SIM',
-    tagline: 'Medical Education. Reimagined.',
-    description:
-      'A cutting-edge medical education and simulation platform that uses AI to provide realistic clinical scenarios for healthcare training. Used by medical schools and hospitals for student assessment and continuing education.',
-    features: ['AI clinical simulations', 'OSCE exam preparation', 'Patient case generator', 'Performance scoring', 'Instructor dashboard'],
-    color: 'from-teal-500 to-teal-700',
-    icon: '🏥',
-    status: 'Live',
-  },
+  { name: 'VanuConnect', tagline: 'Business communication for Vanuatu.', description: 'A PWD business-communication project for Vanuatu organisations. Contact us to discuss the current offering and the channels, setup and support your business needs.', features: ['Business communication', 'Customer engagement workflows', 'Setup and support scoping'], icon: '📱', kind: 'Product project', href: '/contact', cta: 'Ask about VanuConnect' },
+  { name: 'VanuWay', tagline: 'Services for everyday life in Vanuatu.', description: 'A Vanuatu platform bringing together transport, shopping, travel and community services. Visit the product website for current service information and app access.', features: ['Transport and delivery', 'Shopping and marketplace', 'Travel and community services'], icon: '🗺️', kind: 'Product platform', href: 'https://vanuway.com', cta: 'Visit VanuWay' },
+  { name: 'Learn Bislama', tagline: 'Explore the language of Vanuatu.', description: 'A Bislama language-learning platform with course and practice resources. The product website provides current programme information and access options.', features: ['Bislama language learning', 'Course and practice resources', 'Programme information'], icon: '📚', kind: 'Learning platform', href: 'https://learnbislama.com', cta: 'Visit Learn Bislama' },
+  { name: 'Aelan Basket', tagline: 'Online grocery shopping in Port Vila.', description: 'A client website built by Pacific Wave Digital, connecting grocery product discovery, a shopping basket and local delivery information for Port Vila customers.', features: ['Grocery storefront', 'Shopping basket', 'Delivery information'], icon: '🧺', kind: 'Client platform', href: 'https://www.aelanbasket.com', cta: 'Visit Aelan Basket' },
+  { name: 'DigiAssist AI', tagline: 'Tools for running a business.', description: 'A business platform combining website and store tools, customer management and AI-assisted workflows. See the product website for current features, access and pricing.', features: ['Website and store tools', 'Customer management', 'AI-assisted business workflows'], icon: '🤖', kind: 'Business platform', href: 'https://digiassistai.com', cta: 'Visit DigiAssist AI' },
+  { name: 'Akwaaba AI', tagline: 'AI assistance in Twi and English.', description: 'An AI assistant with writing, voice and transcription tools, centred on Asante Twi with English support. Visit its current product website to explore the tools.', features: ['Twi and English assistance', 'Writing and voice tools', 'Transcription'], icon: '🌍', kind: 'AI platform', href: 'https://www.akwaabaai.com', cta: 'Visit Akwaaba AI' },
+  { name: 'MEDD-SIM', tagline: 'Software for medical simulation.', description: 'Medical simulation software developed for MEDD Australia. Contact Pacific Wave Digital to discuss the platform and the appropriate access arrangements.', features: ['Medical simulation software', 'Education workflows', 'Access and implementation scoping'], icon: '🏥', kind: 'Specialist client software', href: '/contact', cta: 'Ask about MEDD-SIM' },
 ];
 
 export default function ProductsPage() {
@@ -103,13 +29,13 @@ export default function ProductsPage() {
           <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-400 rounded-full blur-3xl"></div>
         </div>
         <div className="relative container-max px-4 sm:px-6 lg:px-8 text-center">
-          <span className="text-vibrant-orange font-semibold text-sm uppercase tracking-wider">Our Products</span>
+          <span className="text-vibrant-orange font-semibold text-sm uppercase tracking-wider">Products &amp; Platforms</span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white font-heading mt-4 mb-6">
             Built for the Pacific
             <span className="block text-vibrant-orange">& Beyond</span>
           </h1>
           <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-            A suite of innovative products designed to solve real challenges in the Pacific Islands and emerging markets worldwide.
+            Explore products from our wider ecosystem alongside platforms developed for clients. Follow each product link for current information, or talk to us about access and implementation.
           </p>
         </div>
       </section>
@@ -125,7 +51,7 @@ export default function ProductsPage() {
               >
                 <Image src={`/images/custom/${['Learn Bislama', 'TrainerSim', 'MEDD-SIM'].includes(product.name) ? 'learning' : product.name === 'Aelan Basket' ? 'commerce' : product.name === 'VanuWay' ? 'coastal' : 'brand'}.webp`} alt="" width={1344} height={752} sizes="(max-width: 1023px) 100vw, 50vw" className="w-full h-48 sm:h-56 object-cover" />
                 <div className="p-8">
-                  <div className="flex items-start justify-between mb-4">
+                  <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
                     <div className="flex items-center space-x-4">
                       <span className="text-5xl">{product.icon}</span>
                       <div>
@@ -133,15 +59,7 @@ export default function ProductsPage() {
                         <p className="text-vibrant-orange text-sm font-medium">{product.tagline}</p>
                       </div>
                     </div>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold ${
-                        product.status === 'Live'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-yellow-100 text-yellow-700'
-                      }`}
-                    >
-                      {product.status}
-                    </span>
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-deep-blue">{product.kind}</span>
                   </div>
                   <p className="text-gray-600 leading-relaxed mb-6">{product.description}</p>
                   <div className="space-y-2">
@@ -154,6 +72,7 @@ export default function ProductsPage() {
                       </div>
                     ))}
                   </div>
+                  <Link href={product.href} className="pwd-text-link mt-6">{product.cta} <span aria-hidden="true">↗</span></Link>
                 </div>
               </div>
             ))}

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: '%s | Pacific Wave Digital',
   },
   description:
-    'Pacific Wave Digital is a leading digital agency in Vanuatu specializing in AI-powered business solutions, web development, mobile apps, and digital transformation for Pacific Island businesses.',
+    'Pacific Wave Digital is a digital agency based in Vanuatu specializing in AI-powered business solutions, web development, mobile apps, and digital transformation for Pacific Island businesses.',
   keywords: [
     'Pacific Wave Digital',
     'web development Vanuatu',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     siteName: 'Pacific Wave Digital',
     title: 'Pacific Wave Digital — Digital Innovation for the Pacific',
     description:
-      'Leading digital agency in Vanuatu specializing in AI-powered business solutions, web development, and digital transformation.',
+      'Digital agency based in Vanuatu specializing in AI-powered business solutions, web development, and digital transformation.',
     images: [
       {
         url: '/images/hero-og-share.jpg',
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Pacific Wave Digital — Digital Innovation for the Pacific',
     description:
-      'Leading digital agency in Vanuatu specializing in AI-powered business solutions, web development, and digital transformation.',
+      'Digital agency based in Vanuatu specializing in AI-powered business solutions, web development, and digital transformation.',
     images: ['/images/hero-og-share.jpg'],
   },
   robots: {
@@ -99,7 +99,7 @@ const jsonLd = {
   ],
   priceRange: '$$',
   description:
-    'Leading digital agency in Vanuatu specializing in AI-powered business solutions, web development, mobile apps, and digital transformation.',
+    'Digital agency based in Vanuatu specializing in AI-powered business solutions, web development, mobile apps, and digital transformation.',
 };
 
 export default function RootLayout({

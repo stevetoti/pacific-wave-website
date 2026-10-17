@@ -510,8 +510,8 @@ export default function HomePage() {
                   transition={{ duration: 0.3 }}
                 >
                   <Image
-                    src="/images/about-team.jpg"
-                    alt="Pacific Wave Digital team at work"
+                    src="/images/custom/learning.webp"
+                    alt="Conceptual workbook and glass steps representing digital learning"
                     width={600}
                     height={400}
                     className="object-cover w-full h-[400px]"
@@ -539,7 +539,7 @@ export default function HomePage() {
                 Pioneering Digital Innovation in the Pacific
               </h2>
               <p className="text-gray-600 mb-6 leading-relaxed text-lg">
-                Founded in Port Vila, Vanuatu, Pacific Wave Digital is at the forefront of bringing world-class digital solutions to the Pacific region.
+                Based in Port Vila, Vanuatu, Pacific Wave Digital builds websites, software and digital learning tools for businesses and organisations in the Pacific.
               </p>
               <p className="text-gray-600 mb-8 leading-relaxed">
                 Led by Stephen Totimeh, our team combines global expertise with deep local knowledge to create technology that truly serves our communities.

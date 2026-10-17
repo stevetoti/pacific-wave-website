@@ -206,3 +206,9 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 
 - Stephen confirmed the three named testimonials and headline statistics “are generic not real.” Removed the testimonial array/section, both homepage number rows, repeated TechStack outcome/support metrics and About project-count claims; replaced ten-plus-years badge with actual Port Vila location. Existing verified client project showcases provide factual evidence. Hosting hub now scopes monitoring/support instead of promising 24/7 service.
 - Review requests remain drafts. Audit identifies separate unsourced percentage results in three blog articles and unverified historical/product claims for factual review; no CMS or Google writes made. Validation/release pending.
+
+## 2026-10-17 — [Codex] Remaining source trust corrections prepared
+
+- Removed unsupported founding/launch years and award claim; replaced timeline with verified project links. Conceptual artwork no longer captioned as actual staff or Stephen’s portrait.
+- Product cards now use bounded descriptions, accurate client/product distinctions and direct information/enquiry links instead of conflicting Live/Beta labels. Removed unsupported TrainerSim sports-feature card. Current Akwaaba public site supports Twi/English assistant description; VanuWay product site is public despite older company KB status. Avoided substituting unverified launch claims.
+- Root metadata no longer claims market leadership. Broad shared AI service wording scopes human escalation. Three audited CMS result blocks saved with originals and verified. Validation/release pending.

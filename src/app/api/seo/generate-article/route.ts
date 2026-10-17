@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       `${i + 1}. ${c.domain} - "${c.title}" (${c.url})`
     ).join('\n');
 
-    const prompt = `You are an expert SEO content writer for Pacific Wave Digital, a leading digital agency in Vanuatu specializing in web development, AI solutions, and digital transformation for Pacific Island businesses.
+    const prompt = `You are an expert SEO content writer for Pacific Wave Digital, a digital agency based in Vanuatu specializing in web development, AI solutions, and digital transformation for Pacific Island businesses.
 
 Write a comprehensive, SEO-optimized blog article targeting the keyword: "${keyword}"
 
@@ -53,6 +53,8 @@ REQUIREMENTS:
 6. Reference Vanuatu/Pacific Islands context where relevant
 7. Include a strong call-to-action mentioning Pacific Wave Digital's services
 8. Write in a professional but approachable tone
+9. Do not invent testimonials, customers, awards, founding or launch dates, user/client/project counts, performance percentages, commercial outcomes, uptime guarantees or product availability. Use such claims only when supporting evidence is explicitly supplied. Otherwise explain the workflow and how results should be measured. Label any hypothetical example clearly; never call it a real case study or success story.
+10. Do not promise rankings, sales growth or uninterrupted/round-the-clock service. Do not turn competitor titles, domains or ranking inputs into evidence of business outcomes. Keep the article a draft for human factual review.
 
 OUTPUT FORMAT (return as JSON):
 {
@@ -97,13 +99,13 @@ At Pacific Wave Digital, we take a comprehensive approach to ${keyword}, combini
 
 ## Top Competitors Analysis
 
-Our research shows these are the current leaders for "${keyword}" in Vanuatu:
+Competitor references supplied for the draft topic "${keyword}" (verify before publication):
 
 ${topCompetitors.map((c: Competitor, i: number) => `${i + 1}. **${c.domain}** - ${c.title}`).join('\n')}
 
 ## How Pacific Wave Digital Can Help
 
-Ready to outrank your competition? Pacific Wave Digital offers:
+Planning your next digital project? Pacific Wave Digital offers:
 
 - Professional web development
 - SEO optimization
@@ -162,7 +164,7 @@ Don't let your competition dominate the search results. Contact Pacific Wave Dig
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: 'You are an expert SEO content writer. Always respond with valid JSON only.' },
+          { role: 'system', content: 'You are an SEO content writer. Use only supported factual claims. Never invent customer endorsements, measured outcomes or company history. Clearly label hypothetical examples. Always respond with valid JSON only.' },
           { role: 'user', content: prompt }
         ],
         temperature: 0.7,

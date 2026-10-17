@@ -6,7 +6,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'About Us',
   description:
-    'Learn about Pacific Wave Digital — Vanuatu\'s leading digital agency. Founded by Stephen Totimeh, we bring world-class AI solutions, web development, and digital transformation to the Pacific.',
+    'Learn about Pacific Wave Digital — a digital agency based in Vanuatu. Founded by Stephen Totimeh, we bring world-class AI solutions, web development, and digital transformation to the Pacific.',
   keywords: [
     'Pacific Wave Digital about',
     'web development Vanuatu company',
@@ -49,24 +49,13 @@ const values = [
   },
   {
     title: 'Community',
-    description: 'We are committed to uplifting Pacific Island communities through technology education, local hiring, and pro-bono work.',
+    description: 'We develop practical digital tools and learning resources for Pacific Island businesses and communities.',
     icon: (
       <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
       </svg>
     ),
   },
-];
-
-const timeline = [
-  { year: '2018', event: 'Pacific Wave Digital founded in Port Vila, Vanuatu' },
-  { year: '2019', event: 'Launched VanuConnect — our first commercial product' },
-  { year: '2020', event: 'Expanded AI capabilities and launched DigiAssist AI' },
-  { year: '2021', event: 'VanuWay and Learn Bislama released to the public' },
-  { year: '2022', event: 'Established Global Digital Prime network partnership' },
-  { year: '2023', event: 'MEDD-SIM launched for medical education institutions' },
-  { year: '2024', event: 'Akwaaba AI launched for African markets via Ghana office' },
-  { year: '2025', event: 'Aelan Basket and TrainerSim enter beta' },
 ];
 
 export default function AboutPage() {
@@ -97,8 +86,8 @@ export default function AboutPage() {
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <Image
-                  src="/images/port-vila.jpg"
-                  alt="Port Vila, Vanuatu"
+                  src="/images/custom/coastal.webp"
+                  alt="Conceptual coastal artwork representing PWD’s Pacific focus"
                   width={600}
                   height={400}
                   className="object-cover w-full h-[450px]"
@@ -115,10 +104,10 @@ export default function AboutPage() {
                 From Port Vila to the World
               </h2>
               <p className="text-gray-600 mb-6 leading-relaxed text-lg">
-                Pacific Wave Digital was founded in 2018 by <strong>Stephen Totimeh</strong> with a simple but ambitious vision: to bring world-class digital innovation to the Pacific Islands.
+                Pacific Wave Digital is based in Port Vila, Vanuatu, and led by founder and CEO <strong>Stephen Totimeh</strong>. We build websites, business software and digital learning tools for organisations in Vanuatu and the Pacific.
               </p>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Having seen the transformative power of technology in larger markets, Stephen recognized the untapped potential in the Pacific region. Businesses here face unique challenges — remote locations, connectivity constraints, and limited access to cutting-edge tools — that require equally unique solutions.
+                Our work starts with the people who will use a system: their devices, connectivity, language preferences and day-to-day processes. We use those requirements to scope the website or software and the support it needs.
               </p>
               <p className="text-gray-600 mb-6 leading-relaxed">
                 Our website work includes Aelan Basket, E’Nauwi Beach Resort and Lapita Beach. Our own training centre brings together course enrolment, payments, live teaching and private learning tools.
@@ -165,10 +154,10 @@ export default function AboutPage() {
               </h2>
               <h3 className="text-2xl font-bold text-vibrant-orange font-heading mb-4">Stephen Totimeh</h3>
               <p className="text-gray-600 mb-6 leading-relaxed text-lg">
-                Stephen Totimeh is a visionary technologist and entrepreneur with deep expertise in AI, software engineering, and digital transformation. Originally from Ghana, he established Pacific Wave Digital in Vanuatu to bridge the digital divide in the Pacific region.
+                Stephen Totimeh is the founder and CEO of Pacific Wave Digital. He leads the company’s website, software and AI projects from its Vanuatu base.
               </p>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Under his leadership, the company has developed multiple award-winning products, including MEDD-SIM for medical education and DigiAssist AI for business automation. Stephen&apos;s approach combines technical excellence with a deep understanding of the unique challenges facing Pacific Island businesses.
+                The company’s work includes client websites, business applications and its own online training centre. Explore the portfolio to see specific projects and the features delivered.
               </p>
               <p className="text-gray-600 leading-relaxed">
                 Stephen also leads the Global Digital Prime network, connecting innovation hubs across Vanuatu, the USA, Indonesia, and Ghana to deliver world-class digital solutions to emerging markets.
@@ -177,8 +166,8 @@ export default function AboutPage() {
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <Image
-                  src="/images/business-handshake.jpg"
-                  alt="Stephen Totimeh - CEO of Pacific Wave Digital"
+                  src="/images/custom/brand.webp"
+                  alt="PWD brand artwork with sea-glass waves and navy forms"
                   width={600}
                   height={400}
                   className="object-cover w-full h-[450px]"
@@ -189,56 +178,36 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Timeline */}
       <section className="section-padding gradient-blue">
         <div className="container-max">
-          <div className="text-center mb-16">
-            <span className="text-vibrant-orange font-semibold text-sm uppercase tracking-wider">Our Journey</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-white font-heading mt-3 mb-4">
-              Milestones
-            </h2>
-          </div>
-          <div className="max-w-3xl mx-auto">
-            {timeline.map((item, index) => (
-              <div key={item.year} className="flex items-start space-x-6 mb-8 last:mb-0">
-                <div className="flex-shrink-0">
-                  <div className="w-16 h-16 rounded-full bg-vibrant-orange text-white flex items-center justify-center font-bold text-sm">
-                    {item.year}
-                  </div>
-                </div>
-                <div className="pt-4">
-                  <p className="text-blue-100 text-lg">{item.event}</p>
-                  {index < timeline.length - 1 && (
-                    <div className="w-px h-8 bg-white/20 ml-0 mt-4"></div>
-                  )}
-                </div>
-              </div>
-            ))}
+          <div className="text-center mb-12"><p className="text-orange-200 font-semibold text-sm uppercase tracking-wider">Our work</p><h2 className="text-3xl md:text-4xl font-bold text-white font-heading mt-3">Explore the projects</h2><p className="text-blue-100 max-w-2xl mx-auto mt-4">See the websites and software we have built, with real homepage previews and descriptions of the delivered features.</p></div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[['aelan-basket', 'Aelan Basket', 'Online grocery storefront'], ['enauwi-beach-resort', 'E’Nauwi Beach Resort', 'Resort website'], ['lapita-beach', 'Lapita Beach', 'Accommodation and tours'], ['pwd-training-centre', 'PWD Training Centre', 'Our own learning platform']].map(([slug, name, description]) => <Link key={slug} href={`/portfolio/${slug}`} className="block rounded-2xl border border-white/20 bg-white/5 p-6 hover:bg-white/10 transition-colors"><h3 className="font-bold text-white text-xl mb-3">{name}</h3><p className="text-blue-100 mb-4">{description}</p><span className="text-orange-200 font-semibold">View project ↗</span></Link>)}
           </div>
         </div>
       </section>
 
-      {/* Team Image */}
+      {/* Work illustrations */}
       <section className="section-padding bg-white">
         <div className="container-max">
           <div className="text-center mb-12">
-            <span className="text-vibrant-orange font-semibold text-sm uppercase tracking-wider">Our Team</span>
+            <span className="text-vibrant-orange font-semibold text-sm uppercase tracking-wider">How We Work</span>
             <h2 className="text-3xl md:text-4xl font-bold text-deep-blue font-heading mt-3 mb-4">
-              The People Behind the Innovation
+              Design, development and learning
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              Our diverse team of developers, designers, and AI specialists brings together global talent with deep local understanding.
+              We connect public websites with the workflows behind them, from enquiries and orders to administration and learning.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="relative rounded-2xl overflow-hidden shadow-xl">
-              <Image src="/images/diverse-team.jpg" alt="Our diverse team" width={400} height={300} className="object-cover w-full h-[300px]" />
+              <Image src="/images/custom/brand.webp" alt="Conceptual sea-glass waves illustrating digital design" width={400} height={300} className="object-cover w-full h-[300px]" />
             </div>
             <div className="relative rounded-2xl overflow-hidden shadow-xl">
-              <Image src="/images/team-meeting.jpg" alt="Team collaboration" width={400} height={300} className="object-cover w-full h-[300px]" />
+              <Image src="/images/custom/learning.webp" alt="Conceptual workbook and glass steps illustrating digital learning" width={400} height={300} className="object-cover w-full h-[300px]" />
             </div>
             <div className="relative rounded-2xl overflow-hidden shadow-xl">
-              <Image src="/images/laptop-work.jpg" alt="Working on projects" width={400} height={300} className="object-cover w-full h-[300px]" />
+              <Image src="/images/custom/commerce.webp" alt="Conceptual produce and shopping bag illustrating online retail" width={400} height={300} className="object-cover w-full h-[300px]" />
             </div>
           </div>
         </div>
