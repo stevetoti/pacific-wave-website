@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { trackSavedEnquiry } from '@/lib/analytics/enquiries';
 import { TurnstileWidget } from '@/components/security/TurnstileWidget';
 import { HoneypotField, useFormBotFields } from '@/components/security/FormBotFields';
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '';
@@ -28,6 +29,12 @@ const contactInfo = [
     ),
   },
   {
+    title: 'WhatsApp',
+    value: 'Message us on WhatsApp',
+    href: 'https://wa.me/6785288141',
+    icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72A7.963 7.963 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>,
+  },
+  {
     title: 'Location',
     value: 'Port Vila, Vanuatu',
     href: '#',
@@ -51,6 +58,8 @@ const contactInfo = [
 ];
 
 export default function ContactPage() {
+  const [isReady, setIsReady] = useState(false);
+  useEffect(() => setIsReady(true), []);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -82,6 +91,7 @@ export default function ContactPage() {
       });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.error || 'Unable to save your message');
+      trackSavedEnquiry(result, 'contact', response.status);
       setSubmitted(true);
     } catch (err) { setError(err instanceof Error ? err.message : 'Please try again.'); }
     finally { setSubmitting(false); setTurnstileToken(null); setCaptchaAttempt((n) => n + 1); }
@@ -175,6 +185,8 @@ export default function ContactPage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="bg-light-gray rounded-2xl p-8 md:p-12">
+                  <noscript><p>Enable JavaScript to send this form, or use the email, phone or WhatsApp links to contact us.</p></noscript>
+                  <fieldset disabled={!isReady} aria-busy={!isReady} className="min-w-0">
                   <h2 className="text-2xl font-bold text-deep-blue font-heading mb-8">Tell Us About Your Project</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
@@ -284,6 +296,7 @@ export default function ContactPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
                   </button>
+                  </fieldset>
                 </form>
               )}
             </div>

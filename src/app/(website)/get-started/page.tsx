@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { trackSavedEnquiry } from '@/lib/analytics/enquiries';
 import { TurnstileWidget } from '@/components/security/TurnstileWidget';
 import { HoneypotField, useFormBotFields } from '@/components/security/FormBotFields';
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '';
@@ -217,6 +218,7 @@ export default function GetStartedPage() {
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.error || 'Unable to save your inquiry');
 
+      trackSavedEnquiry(result, 'project_quote', response.status);
       setIsSubmitted(true);
     } catch (err) {
       console.error('Submit error:', err);

@@ -33,6 +33,6 @@ export async function POST(request: Request) {
       if (updateError) throw updateError;
       notification = 'sent';
     } catch (error) { await reportServerError('/api/submissions/notification', error); }
-    return NextResponse.json({ success: true, notification }, { status: 201 });
+    return NextResponse.json({ success: true, submission_id: saved.id, notification }, { status: 201 });
   } catch (error) { return apiError(error, '/api/submissions'); }
 }

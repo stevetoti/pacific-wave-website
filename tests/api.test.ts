@@ -12,18 +12,21 @@ import { z } from 'zod';
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test-database.invalid';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
 process.env.RESEND_API_KEY = 'test-email-key';
+process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = 'test-site-key';
+process.env.TURNSTILE_SECRET_KEY = 'test-secret-key';
 delete process.env.ERROR_NOTIFICATION_EMAILS;
 const realFetch = globalThis.fetch;
 afterEach(() => { globalThis.fetch = realFetch; });
 const request = (body: unknown, token?: string) => new Request('http://localhost/api/test', {
   method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body),
 });
-const valid = { contact_name: 'Example Person', contact_email: 'person@example.com', project_type: 'website' };
+const valid = { contact_name: 'Example Person', contact_email: 'person@example.com', project_type: 'website', turnstile_token: 'test-token', form_started_at: Date.now() - 10000 };
 function transport(options: { role?: string; active?: boolean; dbFailure?: boolean; emailFailure?: boolean; limited?: boolean; wrongSite?: boolean } = {}) {
   const calls: { url: URL; method: string; body: any }[] = [];
   globalThis.fetch = async (input, init) => {
     const req = input instanceof Request ? input : new Request(input, init);
     const url = new URL(req.url);
+    if (url.hostname === 'challenges.cloudflare.com') return Response.json({ success: true });
     const body = req.method === 'GET' ? null : JSON.parse(await req.text() || 'null');
     calls.push({ url, method: req.method, body });
     let data: unknown = [];
@@ -98,7 +101,9 @@ test('successful submission saves first and sends escaped-as-text notification o
   const calls = transport();
   const response = await submit(request({ ...valid, contact_name: '<img src=x>', status: 'converted', site_id: 'other' }));
   assert.equal(response.status, 201);
-  assert.equal((await response.json()).notification, 'sent');
+  const result = await response.json();
+  assert.equal(result.notification, 'sent');
+  assert.equal(result.submission_id, '00000000-0000-4000-8000-000000000002');
   const insert = calls.find(c => c.url.pathname.endsWith('/project_submissions') && c.method === 'POST')!;
   assert.equal(insert.body.status, 'new');
   assert.equal(insert.body.site_id, 'pwd');
@@ -114,4 +119,28 @@ test('rate limit blocks storage and notifications', async () => {
 test('chunked oversized request is rejected before parsing', async () => {
   const req = request({ value: 'a'.repeat(140000) });
   await assert.rejects(readJson(req, z.object({ value: z.string() })), /Request too large/);
+});
+
+test('honeypot fake success has no saved receipt and never emails', async () => {
+  const calls = transport();
+  const response = await submit(request({ ...valid, website: 'spam.invalid' }));
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.equal(result.submission_id, undefined);
+  assert.equal(calls.length, 0);
+});
+test('missing CAPTCHA is rejected before persistence', async () => {
+  const calls = transport();
+  const response = await submit(request({ ...valid, turnstile_token: undefined }));
+  assert.equal(response.status, 400);
+  assert.equal(calls.some(c => c.url.pathname.endsWith('/project_submissions')), false);
+});
+test('notification includes enquiry service notes and preferred contact', async () => {
+  const calls = transport();
+  await submit(request({ ...valid, additional_notes: 'Service: SEO', preferred_contact: 'whatsapp', ai_summary: 'Scoped website project' }));
+  const email = calls.find(c => c.url.hostname === 'api.resend.com')!;
+  assert.match(email.body.text, /Service: SEO/);
+  assert.match(email.body.text, /Preferred contact: whatsapp/);
+  assert.match(email.body.text, /Scoped website project/);
+  assert.ok(email.body.to.includes('steve@pacificwavedigital.com'));
 });

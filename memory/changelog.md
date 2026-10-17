@@ -862,3 +862,12 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 
 - App fb99796, dpl_Ek5GQaK8SyCR8RhE6UQYeeMtN2jv is live on pacificwavedigital.com after staged checks. All 10 live desktop/mobile SEO, menu and release checks pass (3.7 minutes). Sixteen local checks, lint, build/eight route guards and nine staged HTTP checks passed. Google profile batch remains pending approval; no profile edits applied. Google index refresh remains pending.
 - Source retained at .deployment/vanuatu-pacific-seo-20261017, branch codex/pwd-vanuatu-pacific-seo; main must integrate this complete lineage before deploying. No schema/migrations, credentials, signup, payment or email configuration changes. Local test server stopped.
+
+## 2026-10-17 — [Codex] Enquiry tracking started
+
+- User authorised successful-form, phone and WhatsApp tracking and delivery verification. Isolated complete source /private/tmp/pwd-enquiry-tracking-20261017 on codex/pwd-enquiry-tracking from verified 3411333. Preserve production Turnstile, LMS, recipients and existing tracking consent.
+- Both marketing forms use /api/submissions; saved records survive notification failures. Plan generate_lead only for server-confirmed saved receipt, contact_phone_click/contact_whatsapp_click as intent; no form contents or contact identifiers sent in custom event parameters. Honeypot fake-success response must never count.
+
+- Lint, typecheck, build/eight guards and 16 targeted API/tracking tests pass. Six unique desktop/mobile fixture checks pass (initial alert-selector ambiguity fixed in the tests). Production keys removed from local QA runtime; local verification used dummy database/no email credentials. Auto-review rejected a production-credential local server approach; delivery verification will use public deployed forms instead. No weakening of production CAPTCHA.
+
+- The first cold browser run revealed Contact could native-submit before hydration (GET /contact?website=), potentially losing typed input. Added the same hydration-disabled fieldset already used by the wizard plus a no-JavaScript contact fallback; adding a JS-disabled regression check.

@@ -1,5 +1,6 @@
 "use client";
 import Script from "next/script";
+import EnquiryTracking from "./EnquiryTracking";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 const GA_MEASUREMENT_ID =
@@ -24,6 +25,7 @@ export default function GoogleAnalytics() {
   if (!GA_MEASUREMENT_ID || (training && !consent)) return null;
   return (
     <>
+      <EnquiryTracking />
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
         strategy="afterInteractive"

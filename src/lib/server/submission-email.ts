@@ -11,7 +11,7 @@ export async function sendSubmissionEmail(id: string, data: SubmissionInput, fla
       to: Array.from(new Set(['steve@pacificwavedigital.com', ...(process.env.SUBMISSION_NOTIFICATION_EMAILS || 'toti@pacificwavedigital.com').split(',').map(x => x.trim()).filter(Boolean)])),
       reply_to: data.contact_email,
       subject: `New project inquiry: ${data.project_type}`,
-      text: `A new inquiry has been saved.\n\nName: ${data.contact_name}\nEmail: ${data.contact_email}\nPhone: ${data.contact_phone || ''}\nCompany: ${data.company_name || ''}\nBudget: ${data.budget_range || ''}\nTimeline: ${data.timeline || ''}\n\n${data.project_description || ''}\n\n${flags.length ? `Review signals: ${flags.join(', ')} (looks automated — verify before replying)\n\n` : ''}Review: https://pacificwavedigital.com/admin/submissions\nReference: ${id}`,
+      text: `A new inquiry has been saved.\n\nName: ${data.contact_name}\nEmail: ${data.contact_email}\nPhone: ${data.contact_phone || ''}\nCompany: ${data.company_name || ''}\nBudget: ${data.budget_range || ''}\nTimeline: ${data.timeline || ''}\n\n${data.project_description || ''}\n\nPreferred contact: ${data.preferred_contact || ''}\nBest time to call: ${data.best_time_to_call || ''}\nAdditional notes: ${data.additional_notes || ''}\n\n${data.ai_summary || ''}\n\n${flags.length ? `Review signals: ${flags.join(', ')} (looks automated — verify before replying)\n\n` : ''}Review: https://pacificwavedigital.com/admin/submissions\nReference: ${id}`,
     }),
   });
   if (!response.ok) throw new Error(`Email provider rejected notification (${response.status})`);
