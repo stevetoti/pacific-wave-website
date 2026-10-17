@@ -19,7 +19,7 @@ export async function GET() {
       <description><![CDATA[${post.excerpt || ''}]]></description>
       <pubDate>${pubDate}</pubDate>
       <category><![CDATA[${post.category || 'Uncategorized'}]]></category>
-      ${post.image_url ? `<enclosure url="${post.image_url.startsWith('http') ? post.image_url : siteUrl + post.image_url}" type="image/jpeg" />` : ''}
+      ${post.image_url ? `<enclosure url="${post.image_url.startsWith('http') ? post.image_url : siteUrl + post.image_url}" type="${post.image_url.split('?')[0].endsWith('.webp') ? 'image/webp' : post.image_url.split('?')[0].endsWith('.png') ? 'image/png' : 'image/jpeg'}" />` : ''}
     </item>`;
   }).join('');
 
