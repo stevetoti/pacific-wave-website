@@ -185,7 +185,7 @@ export default function ContactPage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="bg-light-gray rounded-2xl p-8 md:p-12">
-                  <noscript><p>Enable JavaScript to send this form, or use the email, phone or WhatsApp links to contact us.</p></noscript>
+                  {!isReady && <p role="status" className="mb-4 text-gray-700">Enable JavaScript to send this form, or use the email, phone or WhatsApp links to contact us.</p>}
                   <fieldset disabled={!isReady} aria-busy={!isReady} className="min-w-0">
                   <h2 className="text-2xl font-bold text-deep-blue font-heading mb-8">Tell Us About Your Project</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

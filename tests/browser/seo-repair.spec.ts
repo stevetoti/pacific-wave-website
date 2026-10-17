@@ -23,8 +23,8 @@ test('commercial pages return canonical HTML for visitors and crawlers', async (
 
 test('contact links, structured data and Analytics use the confirmed PWD details', async ({ page }) => {
   // Observe installation without sending synthetic analytics events to production.
-  await page.route('**/googletagmanager.com/**', route => route.fulfill({ status: 200, body: '' }));
-  await page.route('**/google-analytics.com/**', route => route.abort());
+  await page.route(/^https:\/\/([^/]+\.)?googletagmanager\.com\//, route => route.fulfill({ status: 200, body: '' }));
+  await page.route(/^https:\/\/([^/]+\.)?google-analytics\.com\//, route => route.abort());
   await page.goto('/contact');
   await expect(page.locator('a[href="tel:+6785288141"]').first()).toBeVisible();
   await expect(page.locator('a[href="tel:+6787774567"]')).toHaveCount(0);

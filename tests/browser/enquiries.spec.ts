@@ -1,8 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
 
 async function analyticsFixture(page: Page) {
-  await page.route('**/googletagmanager.com/**', route => route.fulfill({ status: 200, body: '' }));
-  await page.route('**/google-analytics.com/**', route => route.abort());
+  await page.route(/^https:\/\/([^/]+\.)?googletagmanager\.com\//, route => route.fulfill({ status: 200, body: '' }));
+  await page.route(/^https:\/\/([^/]+\.)?google-analytics\.com\//, route => route.abort());
 }
 async function captchaFixture(page: Page) {
   await page.route('https://challenges.cloudflare.com/turnstile/v0/api.js*', route => route.fulfill({ contentType:'application/javascript', body:"window.turnstile={render:function(el,o){queueMicrotask(function(){o.callback('fixture-token')});return 'fixture'},remove:function(){},reset:function(){}};" }));
