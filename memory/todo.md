@@ -361,3 +361,8 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [x] Remove owner-confirmed generic testimonials/statistics; validate type/lint/build and phone/desktop rendering.
 - [ ] Publish and verify core corrections.
 - [ ] Resolve remaining unsourced blog percentages, About timeline dates and product-status conflicts using owner evidence; see GBP audit.
+
+## 2026-10-17 — [Codex] Generic-claim corrections live
+
+- [x] Publish and verify core corrections — [Codex] 2026-10-17: 5a6a2bd / dpl_485FuB2sxbKPZQ5pvUW2mX3UUW2W; ten live phone/desktop checks pass.
+- [ ] Integrate complete codex/pwd-authentic-proof lineage before future main deploys.
