@@ -372,3 +372,7 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [x] Remaining CMS/public-content audit corrected and verified live — [Codex] 2026-10-17: bab5632 / dpl_BB62pibWtPBSGsj7bN5NewRKGjyj, 22 final live checks pass. Supersedes earlier pending remaining-audit entries.
 - [ ] Integrate full codex/pwd-complete-trust-fixes lineage before deploying main; retain all earlier SEO/enquiry/signup/LMS and custom visual repairs.
 - [ ] Genuine review requests remain drafts in GBP repo; no messages sent. Existing index monitor unchanged.
+
+## 2026-10-17 — [Codex] Article display and image repairs completed
+
+- [x] Add four recent homepage articles, compact desktop four-column cards and fix every published article image — [Codex] 2026-10-17: e747b35 / dpl_7f1hHxVkPGGPqen5MLxT8TURhCSz live, 48 final responsive checks plus image-fallback/no-JS/RSS checks pass.
