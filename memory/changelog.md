@@ -1,5 +1,17 @@
 # Changelog — pacific-wave-website
 
+## 2026-10-10 — [Claude Code] Footer: Global Digital Prime group link
+
+Stephen confirmed (2026-10-10) that Global Digital Prime, Inc. (Delaware, USA) is the main
+company of the group and Pacific Wave Digital is a group company. `src/components/Footer.tsx`
+bottom bar now shows "A Global Digital Prime group company" under the copyright line, linking
+to https://www.globaldigitalprime.com (`target="_blank" rel="noopener"`, no nofollow). No legal
+pages, legal names or schema changed. The footer made no HQ/parent claim about GDP (the
+existing "Our Global Network" cards were left as they are). Built from a clean worktree of
+origin/main (e12051f) because `.deployment/training-recovery` holds uncommitted Codex journal
+edits. Lint (file), tsc, build + release-route guard pass; `npm test` 84/88 with only the four
+documented pre-existing contact-form fixture failures. Released by push to main (Git production).
+
 ## 2026-10-01 — [Claude Code] Shared table: anon insert policy on project_submissions closed
 
 Dropped `"Enable insert for everyone"` (anon INSERT, `with check true`) on
