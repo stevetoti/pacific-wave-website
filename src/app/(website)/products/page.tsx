@@ -1,3 +1,5 @@
+import Image from 'next/image';
+import BrandBackdrop from '@/components/BrandBackdrop';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -95,7 +97,7 @@ export default function ProductsPage() {
     <>
       {/* Hero */}
       <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 gradient-blue"></div>
+        <BrandBackdrop tone="brand" />
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-72 h-72 bg-vibrant-orange rounded-full blur-3xl"></div>
           <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-400 rounded-full blur-3xl"></div>
@@ -121,7 +123,7 @@ export default function ProductsPage() {
                 key={product.name}
                 className="bg-white rounded-2xl overflow-hidden border border-gray-100 card-hover"
               >
-                <div className={`h-2 bg-gradient-to-r ${product.color}`}></div>
+                <Image src={`/images/custom/${['Learn Bislama', 'TrainerSim', 'MEDD-SIM'].includes(product.name) ? 'learning' : product.name === 'Aelan Basket' ? 'commerce' : product.name === 'VanuWay' ? 'coastal' : 'brand'}.webp`} alt="" width={1344} height={752} sizes="(max-width: 1023px) 100vw, 50vw" className="w-full h-48 sm:h-56 object-cover" />
                 <div className="p-8">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-4">

@@ -1,3 +1,4 @@
+import BrandBackdrop from '@/components/BrandBackdrop';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -73,7 +74,7 @@ export default function AboutPage() {
     <>
       {/* Hero */}
       <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 gradient-blue"></div>
+        <BrandBackdrop tone="brand" />
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 right-20 w-72 h-72 bg-vibrant-orange rounded-full blur-3xl"></div>
         </div>

@@ -1,5 +1,7 @@
 'use client';
 
+import BrandBackdrop from '@/components/BrandBackdrop';
+
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import FadeInView from '@/components/animations/FadeInView';
@@ -16,7 +18,7 @@ export default function ServicePageContent({ service, relatedServices }: Service
     <>
       {/* Hero */}
       <section className="relative min-h-[55vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-dark-navy via-deep-blue to-dark-navy"></div>
+        <BrandBackdrop tone={service.slug === 'ecommerce' ? 'commerce' : ['software-development', 'ai-automation'].includes(service.slug) ? 'learning' : 'brand'} />
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
             className="absolute top-20 right-20 w-96 h-96 bg-vibrant-orange/20 rounded-full blur-3xl"

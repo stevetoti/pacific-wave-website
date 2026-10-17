@@ -328,6 +328,7 @@ export default function GetStartedPage() {
           <p className="text-gray-600">Tell us about your project and we&apos;ll create a custom solution</p>
         </div>
 
+        <div className="pwd-quote-art"><Image src="/images/custom/brand.webp" alt="" fill sizes="(max-width: 767px) 100vw, 768px" /></div>
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between text-sm text-gray-500 mb-2">

@@ -1,3 +1,4 @@
+import BrandBackdrop from '@/components/BrandBackdrop';
 import NewsletterCTA from '@/components/blog/NewsletterCTA';
 import { Metadata } from 'next';
 import Image from 'next/image';
@@ -29,7 +30,7 @@ export default async function BlogPage() {
       <>
         {/* Hero */}
         <section className="relative min-h-[50vh] flex items-center overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-dark-navy via-deep-blue to-dark-navy"></div>
+          <BrandBackdrop tone="learning" />
           <div className="relative container-max px-4 sm:px-6 lg:px-8 text-center py-20">
             <span className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-vibrant-orange text-sm font-semibold mb-6">
               <span className="w-2 h-2 bg-vibrant-orange rounded-full mr-2 animate-pulse"></span>
@@ -63,7 +64,7 @@ export default async function BlogPage() {
     <>
       {/* Hero */}
       <section className="relative min-h-[50vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-dark-navy via-deep-blue to-dark-navy"></div>
+        <BrandBackdrop tone="learning" />
         <div className="absolute top-20 left-20 w-96 h-96 bg-vibrant-orange/20 rounded-full blur-3xl animate-pulse" />
         <div className="relative container-max px-4 sm:px-6 lg:px-8 text-center py-20">
           <span className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-vibrant-orange text-sm font-semibold mb-6">

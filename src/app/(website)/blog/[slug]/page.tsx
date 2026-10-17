@@ -165,7 +165,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               priority
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-deep-blue to-dark-navy" />
+            <Image src="/images/custom/learning.webp" alt="" fill sizes="100vw" className="object-cover" priority />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-dark-navy via-dark-navy/80 to-dark-navy/40"></div>
         </div>

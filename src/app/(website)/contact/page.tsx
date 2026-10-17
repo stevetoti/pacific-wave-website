@@ -1,5 +1,7 @@
 'use client';
 
+import BrandBackdrop from '@/components/BrandBackdrop';
+
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { trackSavedEnquiry } from '@/lib/analytics/enquiries';
@@ -101,7 +103,7 @@ export default function ContactPage() {
     <>
       {/* Hero */}
       <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 gradient-blue"></div>
+        <BrandBackdrop tone="brand" />
         <div className="absolute inset-0 opacity-10">
           <div className="absolute bottom-10 left-10 w-72 h-72 bg-vibrant-orange rounded-full blur-3xl"></div>
         </div>

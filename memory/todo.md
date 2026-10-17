@@ -344,3 +344,9 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 
 - [x] Publish case-study batch — [Codex] 2026-10-17: 6133820 / dpl_J3ee8mfjbWh4HKA4txTUtiisqS4Y, final live desktop/mobile checks pass. Supersedes pending-release task.
 - [ ] Integrate complete codex/pwd-project-proof lineage before a future main deployment; preserve enquiry/signup/SEO/LMS work.
+
+## 2026-10-17 — [Codex] Visual design release
+
+- [x] Generate four custom Higgsfield images and capture eight actual client/PWD homepages; optimise and implement public-page styling.
+- [x] Validate build, 63 responsive page checks, no-JS visibility and eight mocked enquiry regressions.
+- [ ] Stage, verify and promote visual release; keep complete enquiry/SEO/LMS/signup lineage.

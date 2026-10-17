@@ -902,3 +902,13 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 - App commit 6133820 on codex/pwd-project-proof; production dpl_J3ee8mfjbWh4HKA4txTUtiisqS4Y (https://pacific-wave-website-eoxfscv5c-pacificwaveprojects.vercel.app) promoted to pacificwavedigital.com. Three owner-selected client pages (Aelan Basket, E’Nauwi Beach Resort, Lapita Beach) plus explicitly internal training-centre case study. Portfolio replaces unsupported examples/metrics; relevant services link to project evidence.
 - Type/lint/build/eight route guards, ten authenticated staged HTTP/config checks and final live desktop/mobile browser checks pass: all four pages 200/self-canonical/visible without JS, valid Article/breadcrumb schema, no overflow, portfolio/service links, sitemap, enquiry navigation and unknown-project 404. Analytics blocked during browser QA; no enquiries, emails, payments or customer data changed. Isolated local QA server stopped. No Google profile writes or repeat index requests.
 - Next: genuine client reviews, verify remaining homepage/about testimonials/statistics, genuine local references, mobile performance, post-release country/page/qualified-enquiry comparison. Existing five-page daily index monitor unchanged. New-page index inclusion/ranking impact not yet established by Google Inspection.
+
+## 2026-10-17 — [Codex] Visual redesign implementation
+
+- Four custom Higgsfield artworks completed; eight real public desktop/mobile homepage captures for the three owner-selected clients and PWD training centre. Image-led project collection and reusable browser/mobile preview frames; case-study heroes include real screenshots and descriptive metadata imagery.
+- Custom art added across homepage, about/products/contact/blog, service hub, nine service-detail heroes and quote form. Public marketing stylesheet scoped away from private training tools. No generated client UI or invented results. Optimisation/build/browser checks pending.
+
+## 2026-10-17 — [Codex] Custom visual redesign validated
+
+- Four completed Higgsfield artworks and eight real homepage screenshots optimised to twelve WebP assets. Image-led portfolio/four case studies; custom hero/card imagery across main public marketing pages and all nine services; real client work on homepage. No factual claim expansion or client-site changes.
+- TypeScript/lint/build/eight guards pass; 63 responsive page/size checks pass (21 routes at 375/768/1440), no-JS/footer checks pass and eight mocked enquiry/tracking checks pass (13 seconds). Existing public content made visible during initial render instead of opacity-zero animation wrappers. Visual desktop/mobile review complete. Staging next; previous production remains rollback.

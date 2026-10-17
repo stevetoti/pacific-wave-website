@@ -196,3 +196,8 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 
 - Added server-rendered internal PWD Training Centre case study, portfolio feature and links from web/software development and AI automation; canonical/Article/breadcrumb metadata and sitemap inclusion. Uses verified platform capabilities; no usage/outcome metrics, client endorsement or private workshop details.
 - Existing portfolio claims need owner substantiation; no expansion of those claims. Validation and release pending.
+
+## 2026-10-17 — [Codex] Visual redesign implementation
+
+- Four custom Higgsfield artworks completed; eight real public desktop/mobile homepage captures for the three owner-selected clients and PWD training centre. Image-led project collection and reusable browser/mobile preview frames; case-study heroes include real screenshots and descriptive metadata imagery.
+- Custom art added across homepage, about/products/contact/blog, service hub, nine service-detail heroes and quote form. Public marketing stylesheet scoped away from private training tools. No generated client UI or invented results. Optimisation/build/browser checks pending.

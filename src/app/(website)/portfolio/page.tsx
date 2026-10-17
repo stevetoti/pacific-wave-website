@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
+import ProjectPreview from '@/components/ProjectPreview';
 import { projectCaseStudies } from '@/lib/project-case-studies';
 
 export const metadata: Metadata = {
@@ -9,46 +11,23 @@ export const metadata: Metadata = {
 };
 
 export default function PortfolioPage() {
+  const work = [...projectCaseStudies, { slug: 'pwd-training-centre', name: 'PWD Training Centre', category: 'Own platform · Online learning', location: 'Port Vila, Vanuatu', summary: 'Course enrolment, VUV payment options, live classes and private learning workspaces in one connected platform.' }];
   return (
     <>
-      <section className="gradient-blue py-16 sm:py-24">
-        <div className="container-max px-4 sm:px-6 lg:px-8 text-center">
-          <p className="font-semibold text-orange-200 mb-4">Our work</p>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white font-heading">Websites and software built for Vanuatu</h1>
-          <p className="text-lg text-blue-100 max-w-3xl mx-auto mt-6 leading-relaxed">Explore our work in local retail, tourism and online learning. Each project connects a business’s public website with the next steps its customers need to take.</p>
-        </div>
-      </section>
-      <section className="section-padding bg-white" aria-labelledby="client-projects">
-        <div className="container-max">
-          <h2 id="client-projects" className="text-3xl font-bold text-deep-blue font-heading mb-8">Client website projects</h2>
-          <div className="grid gap-6 lg:grid-cols-3">{projectCaseStudies.map(project => (
-            <article key={project.slug} className="rounded-2xl border border-gray-200 p-6 sm:p-8 flex flex-col">
-              <p className="text-sm font-semibold text-deep-blue mb-3">{project.category}</p>
-              <h3 className="text-2xl font-bold text-deep-blue font-heading mb-3">{project.name}</h3>
-              <p className="text-sm text-gray-500 mb-4">{project.location}</p>
-              <p className="text-gray-600 leading-relaxed mb-6 flex-1">{project.summary}</p>
-              <Link href={`/portfolio/${project.slug}`} className="text-deep-blue font-semibold underline underline-offset-4">Read the {project.name} case study</Link>
-            </article>
-          ))}</div>
-        </div>
-      </section>
-      <section className="section-padding bg-light-gray" aria-labelledby="own-project">
-        <div className="container-max">
-          <div className="rounded-2xl bg-white border border-gray-200 p-6 sm:p-10 max-w-4xl">
-            <p className="text-sm font-semibold text-deep-blue mb-3">PWD’s own platform</p>
-            <h2 id="own-project" className="text-2xl sm:text-3xl font-bold text-deep-blue font-heading mb-4">An online training platform built in Vanuatu</h2>
-            <p className="text-gray-600 leading-relaxed mb-6">See how we connected course enrolment, VUV payment options, live classes, recordings and private student workspaces in the PWD Training Centre.</p>
-            <Link href="/portfolio/pwd-training-centre" className="btn-primary">Read the training centre case study</Link>
-          </div>
-        </div>
-      </section>
-      <section className="section-padding gradient-blue">
-        <div className="container-max text-center">
-          <h2 className="text-3xl font-bold text-white font-heading mb-6">Let’s plan your next project</h2>
-          <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">Tell us about your customers, your workflow and what you want your website or software to help you do.</p>
-          <Link href="/get-started" className="btn-primary">Start your project</Link>
-        </div>
-      </section>
+      <section className="pwd-work-hero"><div className="container-max px-4 sm:px-6 lg:px-8">
+        <p className="pwd-eyebrow">Pacific Wave Digital / Selected work</p>
+        <div className="pwd-work-intro"><h1>Island businesses.<br />Digital possibilities.</h1><p>Websites and software built for Vanuatu. Explore our work in local retail, tourism and online learning, from the first impression to the customer’s next step.</p></div>
+      </div></section>
+      <section className="px-4 sm:px-6 lg:px-8 pb-20 pt-6" style={{ background: '#f6f5f1' }} aria-labelledby="client-projects"><div className="container-max">
+        <h2 id="client-projects" className="sr-only">Client website projects and our own platform</h2>
+        <div className="pwd-work-grid">{work.map((project, index) => (
+          <article key={project.slug} className="pwd-work-card">
+            <Link href={`/portfolio/${project.slug}`} aria-label={`Preview ${project.name} case study`}><ProjectPreview slug={project.slug} name={project.name} compact priority={index === 0} /></Link>
+            <div className="pwd-work-card-copy"><p className="pwd-eyebrow">{project.category} / {project.location}</p><h3>{project.name}</h3><p>{project.summary}</p><Link href={`/portfolio/${project.slug}`} className="pwd-text-link">{project.slug === 'pwd-training-centre' ? 'Read the training centre case study' : `Read the ${project.name} case study`} <span aria-hidden="true">↗</span></Link></div>
+          </article>
+        ))}</div>
+      </div></section>
+      <section className="section-padding bg-white"><div className="container-max pwd-brand-panel"><div className="pwd-brand-panel-copy"><p className="pwd-eyebrow !text-orange-200">Your next chapter</p><h2>Let’s build something worth showing.</h2><p>Bring us your idea, your customers and the way you work. We’ll help shape the website or software that connects them.</p><Link href="/get-started" className="btn-primary">Start your project</Link></div><Image src="/images/custom/brand.webp" alt="Sculptural sea-glass waves in PWD’s coastal brand colours" width={1344} height={752} sizes="(max-width: 767px) 100vw, 50vw" /></div></section>
     </>
   );
 }

@@ -1,3 +1,4 @@
+import ProjectHero from '@/components/ProjectHero';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     description,
     url: canonical,
     type: 'article',
+    images: ['/images/projects/pwd-training-centre-desktop.webp'],
   },
 };
 
@@ -71,25 +73,9 @@ export default function TrainingCentreCaseStudy() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }} />
-      <section className="gradient-blue py-16 sm:py-24">
-        <div className="container-max px-4 sm:px-6 lg:px-8">
-          <nav aria-label="Breadcrumb" className="mb-8 text-sm text-blue-100">
-            <Link href="/portfolio" className="underline underline-offset-4">Portfolio</Link>
-            <span aria-hidden="true" className="mx-3">/</span>
-            <span>PWD Training Centre</span>
-          </nav>
-          <p className="text-orange-200 font-semibold mb-4">Own project · Port Vila, Vanuatu</p>
-          <h1 className="max-w-4xl text-3xl sm:text-4xl lg:text-5xl font-bold text-white font-heading leading-tight">
-            Building PWD’s online training platform in Vanuatu
-          </h1>
-          <p className="max-w-3xl mt-6 text-lg text-blue-100 leading-relaxed">
-            A working example of our software development: connecting course discovery, enrolment, payments and teaching in one web platform.
-          </p>
-          <Link href="/training-center" className="btn-primary mt-8">Explore the training centre</Link>
-        </div>
-      </section>
+      <ProjectHero slug="pwd-training-centre" name="PWD Training Centre" category="Own platform · Online learning" location="Port Vila, Vanuatu" summary="Building PWD’s online training platform in Vanuatu: course discovery, enrolment, payments and teaching in one connected web platform." website="/training-center" ctaLabel="Explore the training centre" />
 
-      <article className="container-max px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+      <article className="pwd-project-body container-max px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <div className="space-y-10 text-gray-600 leading-relaxed">
             <section aria-labelledby="challenge">

@@ -7,6 +7,8 @@ import { motion } from 'framer-motion';
 import FadeInView from '@/components/animations/FadeInView';
 import { StaggerContainer, StaggerItem } from '@/components/animations/StaggerContainer';
 import TechStack from '@/components/TechStack';
+import ProjectPreview from '@/components/ProjectPreview';
+import { projectCaseStudies } from '@/lib/project-case-studies';
 import { getAllSettings, SETTINGS_KEYS } from '@/lib/supabase';
 
 interface VideoItem {
@@ -147,13 +149,13 @@ export default function HomePage() {
       <section className="relative min-h-[95vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/hero-digital-innovation.jpg"
-            alt="Pacific Wave Digital - Modern tech team collaborating with digital dashboards"
+            src="/images/custom/brand.webp"
+            alt="Sculptural sea-glass waves with navy and orange forms"
             fill
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-dark-navy/95 via-deep-blue/85 to-deep-blue/70"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-dark-navy/95 via-deep-blue/85 to-deep-blue/30"></div>
         </div>
         
         {/* Animated background elements */}
@@ -413,6 +415,13 @@ export default function HomePage() {
 
       {/* Tech Stack */}
       <TechStack />
+
+      <section className="section-padding bg-[#f6f5f1]" aria-labelledby="selected-work">
+        <div className="container-max">
+          <div className="flex flex-wrap items-end justify-between gap-5 mb-10"><div><p className="pwd-eyebrow">Designed here. Made for your customers.</p><h2 id="selected-work" className="text-3xl md:text-4xl font-bold text-deep-blue font-heading">Selected work in Vanuatu</h2></div><Link href="/portfolio" className="pwd-text-link">Explore our portfolio <span aria-hidden="true">↗</span></Link></div>
+          <div className="grid gap-8 md:grid-cols-3">{projectCaseStudies.map(project => <article key={project.slug}><Link href={`/portfolio/${project.slug}`} aria-label={`View ${project.name} project`}><ProjectPreview slug={project.slug} name={project.name} compact /></Link><p className="pwd-eyebrow mt-5">{project.category}</p><h3 className="text-xl font-bold text-deep-blue mb-2">{project.name}</h3><Link href={`/portfolio/${project.slug}`} className="pwd-text-link">Read the case study <span aria-hidden="true">↗</span></Link></article>)}</div>
+        </div>
+      </section>
 
       {/* Products Section - Enhanced */}
       <section className="section-padding bg-white">

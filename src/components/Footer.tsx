@@ -64,7 +64,7 @@ export default function Footer() {
       <div className="border-b border-white/10">
         <div className="container-max section-padding !py-16">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={false}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-12"
@@ -77,7 +77,7 @@ export default function Footer() {
           
           <motion.div
             variants={containerVariants}
-            initial="hidden"
+            initial={false}
             whileInView="visible"
             viewport={{ once: true }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
@@ -122,7 +122,7 @@ export default function Footer() {
       <div className="container-max section-padding !py-16">
         <motion.div
           variants={containerVariants}
-          initial="hidden"
+          initial={false}
           whileInView="visible"
           viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12"
@@ -247,7 +247,7 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="container-max px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500">
           <motion.p
-            initial={{ opacity: 0 }}
+            initial={false}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
           >
@@ -264,7 +264,7 @@ export default function Footer() {
             </span>
           </motion.p>
           <motion.p
-            initial={{ opacity: 0 }}
+            initial={false}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             className="mt-2 md:mt-0 flex items-center gap-2"

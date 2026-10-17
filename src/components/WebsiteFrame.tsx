@@ -10,7 +10,7 @@ export default function WebsiteFrame({ children }: { children: React.ReactNode }
   return (
     <>
       {!isTrainingCenter && <Navbar />}
-      <main className={isTrainingCenter ? 'flex-1' : 'flex-1 pt-20'}>{children}</main>
+      <main className={isTrainingCenter ? 'flex-1' : 'pwd-marketing flex-1 pt-20'}>{children}</main>
     </>
   );
 }

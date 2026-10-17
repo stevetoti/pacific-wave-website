@@ -1,3 +1,4 @@
+import ProjectHero from '@/components/ProjectHero';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -18,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${project.name}: Vanuatu Website Case Study`,
     description: project.summary,
     alternates: { canonical: url },
-    openGraph: { title: `${project.name} — PWD Case Study`, description: project.summary, url, type: 'article' },
+    openGraph: { title: `${project.name} — PWD Case Study`, description: project.summary, url, type: 'article', images: [`/images/projects/${project.slug}-desktop.webp`] },
   };
 }
 export default async function ClientCaseStudy({ params }: Props) {
@@ -29,7 +30,7 @@ export default async function ClientCaseStudy({ params }: Props) {
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'Article', headline: `${project.name}: ${project.category} in Vanuatu`, description: project.summary, url, mainEntityOfPage: url,
+      { '@type': 'Article', headline: `${project.name}: ${project.category} in Vanuatu`, description: project.summary, url, mainEntityOfPage: url, image: `${origin}/images/projects/${project.slug}-desktop.webp`,
         author: { '@type': 'Organization', name: 'Pacific Wave Digital', url: origin },
         publisher: { '@type': 'Organization', name: 'Pacific Wave Digital', url: origin } },
       { '@type': 'BreadcrumbList', itemListElement: [
@@ -42,16 +43,8 @@ export default async function ClientCaseStudy({ params }: Props) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }} />
-      <section className="gradient-blue py-16 sm:py-24">
-        <div className="container-max px-4 sm:px-6 lg:px-8">
-          <nav aria-label="Breadcrumb" className="text-sm text-blue-100 mb-8"><Link href="/portfolio" className="underline underline-offset-4">Portfolio</Link><span aria-hidden="true" className="mx-3">/</span><span>{project.name}</span></nav>
-          <p className="text-orange-200 font-semibold mb-4">{project.category} · {project.location}</p>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl text-white font-bold font-heading max-w-4xl">{project.name}</h1>
-          <p className="text-lg text-blue-100 mt-6 max-w-3xl leading-relaxed">{project.summary}</p>
-          <a href={project.website} className="btn-primary mt-8">Visit {project.name}</a>
-        </div>
-      </section>
-      <article className="container-max px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+      <ProjectHero slug={project.slug} name={project.name} category={project.category} location={project.location} summary={project.summary} website={project.website} />
+      <article className="pwd-project-body container-max px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
         <div className="max-w-3xl space-y-10 text-gray-600 leading-relaxed">
           <section><h2 className="text-2xl text-deep-blue font-bold font-heading mb-4">The project</h2><p>{project.context}</p></section>
           <section><h2 className="text-2xl text-deep-blue font-bold font-heading mb-4">How we approached the website</h2><p>{project.approach}</p></section>

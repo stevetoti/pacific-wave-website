@@ -1,5 +1,7 @@
 'use client';
 
+import BrandBackdrop from '@/components/BrandBackdrop';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -36,7 +38,7 @@ const services: HubService[] = [
       'Easy self-service content updates',
       'Tourism & local business focus',
     ],
-    image: '/images/laptop-work.jpg',
+    image: '/images/custom/brand.webp',
     fallbackImage: '/images/coding-screen.jpg',
     gradient: 'from-cyan-500 to-blue-500',
     icon: '🎨',
@@ -55,7 +57,7 @@ const services: HubService[] = [
       'API development & integration',
       'Performance optimization',
     ],
-    image: '/images/services/web-dev.jpg',
+    image: '/images/custom/brand.webp',
     fallbackImage: '/images/coding-screen.jpg',
     gradient: 'from-blue-500 to-cyan-500',
     icon: '💻',
@@ -74,7 +76,7 @@ const services: HubService[] = [
       'Integrations with your existing tools',
       'You own the code',
     ],
-    image: '/images/tech-office.jpg',
+    image: '/images/custom/learning.webp',
     fallbackImage: '/images/coding-screen.jpg',
     gradient: 'from-indigo-500 to-purple-500',
     icon: '⚙️',
@@ -93,7 +95,7 @@ const services: HubService[] = [
       'Email marketing',
       'Plain-language monthly reporting',
     ],
-    image: '/images/services/digital-marketing.jpg',
+    image: '/images/custom/coastal.webp',
     fallbackImage: '/images/digital-marketing.jpg',
     gradient: 'from-green-500 to-emerald-500',
     icon: '📈',
@@ -112,7 +114,7 @@ const services: HubService[] = [
       'Links, citations & reviews',
       'Honest monthly reporting',
     ],
-    image: '/images/digital-marketing.jpg',
+    image: '/images/custom/coastal.webp',
     fallbackImage: '/images/laptop-work.jpg',
     gradient: 'from-orange-500 to-red-500',
     icon: '🔍',
@@ -131,7 +133,7 @@ const services: HubService[] = [
       'Sell to Australia & New Zealand',
       'Export & tourism storefronts',
     ],
-    image: '/images/phone-user.jpg',
+    image: '/images/custom/commerce.webp',
     fallbackImage: '/images/mobile-app.jpg',
     gradient: 'from-purple-500 to-pink-500',
     icon: '🛒',
@@ -150,7 +152,7 @@ const services: HubService[] = [
       'Push notifications & analytics',
       'Offline-first architecture',
     ],
-    image: '/images/services/mobile-apps.jpg',
+    image: '/images/custom/brand.webp',
     fallbackImage: '/images/mobile-app.jpg',
     gradient: 'from-purple-500 to-pink-500',
     icon: '📱',
@@ -169,7 +171,7 @@ const services: HubService[] = [
       'Machine learning model development',
       'AI-powered automation',
     ],
-    image: '/images/services/ai-solutions.jpg',
+    image: '/images/custom/learning.webp',
     fallbackImage: '/images/ai-technology.jpg',
     gradient: 'from-orange-500 to-red-500',
     icon: '🤖',
@@ -188,7 +190,7 @@ const services: HubService[] = [
       'Process optimization',
       'Custom business tools',
     ],
-    image: '/images/services/automation.jpg',
+    image: '/images/custom/learning.webp',
     fallbackImage: '/images/tech-office.jpg',
     gradient: 'from-indigo-500 to-purple-500',
     icon: '⚙️',
@@ -207,7 +209,7 @@ const services: HubService[] = [
       'Database management',
       '24/7 monitoring & support',
     ],
-    image: '/images/services/cloud-hosting.jpg',
+    image: '/images/custom/coastal.webp',
     fallbackImage: '/images/cloud-server.jpg',
     gradient: 'from-cyan-500 to-blue-500',
     icon: '☁️',
@@ -219,7 +221,7 @@ export default function ServicesPage() {
     <>
       {/* Hero - Enhanced with animations */}
       <section className="relative min-h-[70vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-dark-navy via-deep-blue to-dark-navy"></div>
+        <BrandBackdrop tone="brand" />
         
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
