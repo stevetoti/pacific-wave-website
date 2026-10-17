@@ -992,3 +992,8 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 ## 2026-10-18 — [Codex] Couple hero validated
 
 - Full type/lint/build/eight guards and four local screen-size checks pass, including image decode, social preview/canonical, no overflow, contact navigation and no-JS hero. Crops reviewed visually at phone/smaller laptop/wide desktop. Local QA server stopped; committing/staging next.
+
+## 2026-10-18 — [Codex] Couple/laptop/card payment hero live
+
+- App 55592ee on codex/pwd-payment-couple-hero; production dpl_7sEZ5DyS3etXuDSHACNm8RrUzg22 (https://pacific-wave-website-p3cmsx2qq-pacificwaveprojects.vercel.app) promoted to pacificwavedigital.com. New illustrative couple/laptop/credit-card photograph, optimized104KB local WebP; payment-only responsive hero and social preview. Photo above copy through smaller laptops; desktop background/contrast gradient, contact/options CTAs retained. Exact built-in image_gen prompt and source path saved in docs/seo/payment-couple-hero-2026-10-18.md (GBP pwd-prefixed copy).
+- Type/full lint/build/eight guards, four local and four final live responsive checks at390/768/1024/1440px pass, plus staged page/image/canonical/social/contact checks and no-JS hero. Crops visually reviewed. QA server stopped; Analytics blocked, no submissions, emails, payments or Google edits. All prior complete website work preserved; integrate FULL codex/pwd-payment-couple-hero lineage before main deployment. Complete source remains .deployment/enquiry-tracking-20261017. Rollback dpl_7PkQpcAxwvrTZziU4jMq7dBUKae3.

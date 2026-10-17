@@ -380,3 +380,7 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 ## 2026-10-17 — [Codex] Payment service published
 
 - [x] Add online payment integration with four provider visuals and contact links — [Codex] 2026-10-17: 3055f2d / dpl_7PkQpcAxwvrTZziU4jMq7dBUKae3 live; fifteen final responsive checks, no-JS and intercepted enquiry/tracking pass. Provider eligibility is scoped accurately; no merchant or payment settings changed.
+
+## 2026-10-18 — [Codex] Payment hero complete
+
+- [x] Couple behind laptop with credit card hero — [Codex] 2026-10-18: 55592ee / dpl_7sEZ5DyS3etXuDSHACNm8RrUzg22 live; four responsive sizes, image/social/canonical/contact/no-JS checks pass.
