@@ -313,3 +313,9 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [x] Actual Google live tests and priority indexing requests accepted for all three affected services; sitemap confirmed Success — [Codex] 2026-10-17.
 - [ ] After Google's next indexing cycle, inspect canonical selection and index coverage again. Reindexing is requested, not completed.
 - [ ] Integrate complete codex/pwd-seo-tracking-repair branch into main before any main production release; it includes signup bot protection and current main.
+
+## 2026-10-17 — [Codex] Local SEO implementation
+
+- [x] Implement homepage targeting, actual service links, AI/automation and hosting pages with metadata/schema/sitemap.
+- [ ] Lint/type/build and focused SEO + public LMS desktop/mobile release checks; commit/push/stage/promote and verify live.
+- [ ] Apply approved GBP change batch with verified persistence/status; approval is being collected in GBP project.

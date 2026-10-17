@@ -834,3 +834,26 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 - All three affected service URLs passed actual Search Console live tests with successful smartphone fetch, crawl/index allowed and correct declared self-canonical. Google accepted priority indexing requests for web-development, SEO (second submission after transient error) and ecommerce. Indexed canonical selection remains pending; historical betting-domain choice not explained or claimed fixed in Google's index.
 - Sitemap report: Success, last read Oct 15, 33 discovered pages; public sitemap 200. No redundant sitemap resubmission. Root-cause investigation found no current offending source reference/redirect in checked paths; no confirmed active compromise.
 - Source handoff moves this complete release checkout to `.deployment/seo-repair-20261017` under the original PWD website project. Deploy only this branch/current complete source; main still lacks these repairs and signup guard until integrated. Local server stopped.
+
+## 2026-10-17 — [Codex] Vanuatu and Pacific service coverage implemented
+
+- Added distinct AI/automation and hosting/maintenance pages using the established service template, including task-specific scope, FAQs, canonical metadata, schema, sitemap and related links.
+- Homepage title/H1/intro now identify services and Vanuatu/Pacific relevance. Nine service cards have real visible descriptive links; previously the Learn more text was not a link. Nav/footer/hub point to new pages without changing old section anchors.
+- No country doorway pages, invented offices/results/prices or ranking promises. Full LMS and earlier tracking/contact repairs preserved. Verification pending.
+
+## 2026-10-17 — [Codex] Homepage link click obstruction corrected
+
+- Direct Playwright pointer-navigation test exposed a decorative absolute gradient intercepting service-card links. Added pointer-events-none to that decorative layer; keeping the real-click regression assertion.
+- Initial 12/14 render/route checks passed; mobile timeout checks were rerun serially. The new click assertion is a real defect and requires a fresh build and navigation verification before release.
+
+## 2026-10-17 — [Codex] Expanded service navigation hardening
+
+- Retained real-pointer link tests after confirming the decorative overlay interception. Added a scrollable mobile menu to keep the expanded nine-service list and remaining navigation reachable in short viewports.
+- Rebuilding final source; expanded menu-pointer and homepage-pointer tests included. Earlier test results do not count as final verification of this correction.
+
+## 2026-10-17 — [Codex] Pre-release verification
+
+- Final production build and eight route guards passed. Browser checks confirmed real homepage service-card clicks after correcting a decorative overlay that intercepted pointer events; expanded mobile service menu now scrolls. A multi-page release test hit its total time budget on the local machine and will be rerun with sufficient time.
+- GBP batch remains pending explicit approval; no profile changes saved.
+
+- Verification complete: lint/build and all 16 unique desktop/mobile checks pass. First run 15/16; desktop multi-page release check passed when rerun with 180-second total budget (1.2 min). No application change was needed for that timeout.

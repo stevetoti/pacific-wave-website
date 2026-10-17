@@ -16,12 +16,69 @@ interface VideoItem {
 }
 
 const services = [
-  { title: 'Web Development', description: 'Custom websites and web applications built with modern technologies.', icon: '💻', gradient: 'from-blue-500 to-cyan-500' },
-  { title: 'Mobile Apps', description: 'Native and cross-platform apps that deliver seamless experiences.', icon: '📱', gradient: 'from-purple-500 to-pink-500' },
-  { title: 'AI Solutions', description: 'Intelligent automation and chatbots that transform your business.', icon: '🤖', gradient: 'from-orange-500 to-red-500' },
-  { title: 'Digital Marketing', description: 'Strategic campaigns that drive growth and engagement.', icon: '📈', gradient: 'from-green-500 to-emerald-500' },
-  { title: 'Business Automation', description: 'Streamline operations with custom workflow automation.', icon: '⚙️', gradient: 'from-indigo-500 to-purple-500' },
-  { title: 'Cloud & Hosting', description: 'Reliable infrastructure optimized for Pacific connectivity.', icon: '☁️', gradient: 'from-cyan-500 to-blue-500' },
+  {
+    "title": "Web Design",
+    "description": "Mobile-first website design for Vanuatu tourism, retail and professional businesses.",
+    "icon": "🎨",
+    "gradient": "from-blue-500 to-cyan-500",
+    "href": "/services/web-design"
+  },
+  {
+    "title": "Web Development",
+    "description": "Websites and applications built in Port Vila for local and Pacific businesses.",
+    "icon": "💻",
+    "gradient": "from-blue-500 to-cyan-500",
+    "href": "/services/web-development"
+  },
+  {
+    "title": "Custom Software",
+    "description": "Business systems that replace repeated spreadsheet and manual work.",
+    "icon": "⚙️",
+    "gradient": "from-indigo-500 to-purple-500",
+    "href": "/services/software-development"
+  },
+  {
+    "title": "AI & Automation",
+    "description": "Chatbots, business assistants and workflows with human oversight.",
+    "icon": "🤖",
+    "gradient": "from-orange-500 to-red-500",
+    "href": "/services/ai-automation"
+  },
+  {
+    "title": "SEO Services",
+    "description": "Local SEO and search-ready content for Vanuatu and Pacific audiences.",
+    "icon": "🔍",
+    "gradient": "from-green-500 to-emerald-500",
+    "href": "/services/seo"
+  },
+  {
+    "title": "Digital Marketing",
+    "description": "Social media, advertising and email campaigns focused on enquiries.",
+    "icon": "📈",
+    "gradient": "from-green-500 to-emerald-500",
+    "href": "/services/digital-marketing"
+  },
+  {
+    "title": "E-commerce",
+    "description": "Online stores with payment and delivery requirements scoped for your market.",
+    "icon": "🛒",
+    "gradient": "from-orange-500 to-red-500",
+    "href": "/services/ecommerce"
+  },
+  {
+    "title": "Mobile Apps",
+    "description": "Android and iOS apps designed around your users and connectivity needs.",
+    "icon": "📱",
+    "gradient": "from-purple-500 to-pink-500",
+    "href": "/services/mobile-apps"
+  },
+  {
+    "title": "Hosting & Maintenance",
+    "description": "Website hosting, backups and support with a clear maintenance plan.",
+    "icon": "☁️",
+    "gradient": "from-cyan-500 to-blue-500",
+    "href": "/services/cloud-hosting"
+  }
 ];
 
 const products = [
@@ -122,26 +179,26 @@ export default function HomePage() {
                 whileHover={{ scale: 1.05 }}
               >
                 <span className="w-2 h-2 bg-vibrant-orange rounded-full mr-2 animate-pulse"></span>
-                Trusted by 50+ Businesses Across the Pacific
+                Digital solutions from Port Vila, Vanuatu
               </motion.div>
             </FadeInView>
             
             <FadeInView delay={0.1}>
               <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-white font-heading leading-tight mb-6">
-                Transform Your Business
+                Web Design, Apps & AI
                 <motion.span 
                   className="block bg-gradient-to-r from-vibrant-orange via-yellow-400 to-vibrant-orange bg-clip-text text-transparent bg-[length:200%_auto]"
                   animate={{ backgroundPosition: ['0% center', '200% center'] }}
                   transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
                 >
-                  with Digital Innovation
+                  for Vanuatu and the Pacific
                 </motion.span>
               </h1>
             </FadeInView>
             
             <FadeInView delay={0.2}>
               <p className="text-xl md:text-2xl text-blue-100 mb-10 leading-relaxed max-w-2xl">
-                We build AI-powered solutions, modern websites, and mobile apps that empower Pacific Island businesses to thrive in the digital age.
+                Based in Port Vila, Pacific Wave Digital builds websites, custom software and mobile apps, and helps businesses use AI, automation and digital marketing to reach customers across Vanuatu and the Pacific.
               </p>
             </FadeInView>
             
@@ -316,7 +373,7 @@ export default function HomePage() {
                   whileHover={{ y: -10 }}
                 >
                   {/* Gradient background on hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+                  <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
                   
                   <motion.div
                     className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-6 shadow-lg`}
@@ -328,17 +385,12 @@ export default function HomePage() {
                   <h3 className="text-xl font-bold text-deep-blue mb-3 font-heading">{service.title}</h3>
                   <p className="text-gray-600 leading-relaxed">{service.description}</p>
                   
-                  {/* Hover arrow */}
-                  <motion.div
-                    className="mt-4 text-vibrant-orange font-semibold flex items-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    initial={{ x: -10 }}
-                    whileHover={{ x: 0 }}
-                  >
-                    Learn more
-                    <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <Link href={service.href} className="mt-4 text-vibrant-orange font-semibold inline-flex items-center hover:underline focus-visible:underline">
+                    Explore {service.title}
+                    <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
-                  </motion.div>
+                  </Link>
                 </motion.div>
               </StaggerItem>
             ))}

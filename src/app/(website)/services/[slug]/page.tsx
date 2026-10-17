@@ -9,7 +9,7 @@ interface ServicePageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Statically generate all 7 service pages at build time.
+// Statically generate all service pages at build time.
 export function generateStaticParams(): { slug: string }[] {
   return servicePages.map((service) => ({ slug: service.slug }));
 }

@@ -12,6 +12,8 @@ const serviceLinks = [
   { href: '/services/seo', label: 'SEO Services' },
   { href: '/services/ecommerce', label: 'E-commerce' },
   { href: '/services/mobile-apps', label: 'Mobile Apps' },
+  { href: '/services/ai-automation', label: 'AI & Automation' },
+  { href: '/services/cloud-hosting', label: 'Hosting & Maintenance' },
 ];
 
 const navLinks = [
@@ -118,7 +120,7 @@ export default function Navbar() {
 
         {/* Mobile Nav */}
         {isOpen && (
-          <div className="xl:hidden border-t border-gray-100 bg-white">
+          <div className="xl:hidden max-h-[calc(100dvh-5rem)] overflow-y-auto border-t border-gray-100 bg-white">
             <div className="py-4 px-4 space-y-1">
               {navLinks.map((link) =>
                 link.href === '/services' ? (

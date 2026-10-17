@@ -895,6 +895,206 @@ export const servicePages: ServicePageData[] = [
     cardDescription:
       'Android and iOS apps from one codebase — offline-capable, data-light, and built for Pacific users.',
   },
+  {
+  "slug": "ai-automation",
+  "label": "AI & Automation",
+  "h1": "AI Automation in Vanuatu & the Pacific",
+  "metaDescription": "AI chatbots, business assistants and workflow automation from Port Vila. Practical AI solutions for Vanuatu and Pacific businesses, with training and human oversight.",
+  "keywords": [
+    "AI automation Vanuatu",
+    "AI chatbot Vanuatu",
+    "business automation Vanuatu",
+    "AI solutions Pacific Islands"
+  ],
+  "serviceType": "AI and Business Automation",
+  "heroBadge": "AI & Business Automation",
+  "heroSubtitle": "Connect customer enquiries, business information and everyday tasks with AI and workflow automation built around how your team works in Vanuatu and the Pacific.",
+  "gradient": "from-orange-500 to-red-500",
+  "icon": "🤖",
+  "intro": [
+    "An enquiry arrives on your website, a customer follows up on WhatsApp, and the same details are entered into a spreadsheet again. AI automation is useful when it removes that repeated work while keeping your team in control. Pacific Wave Digital builds AI chatbots, business assistants and connected workflows from Port Vila for Vanuatu and Pacific organisations.",
+    "We start with a specific task: answering questions from approved business information, collecting an enquiry, routing a request to the right person, or preparing a routine report. Some tasks need AI to understand language; others need a straightforward integration. We help you choose an approach that fits the task rather than adding AI to every step.",
+    "Before building, we agree what information the system may use, who can access it, and which actions need a person to approve them. We also scope connectivity, language, provider charges and maintenance. A working pilot lets your staff check the results before a wider rollout."
+  ],
+  "benefitsHeading": "Automation that serves your team",
+  "benefitsIntro": "Start with a clear workflow and a measurable outcome, then expand once it works reliably.",
+  "benefits": [
+    {
+      "icon": "💬",
+      "title": "Customer enquiry assistants",
+      "description": "Website or messaging assistants answer from your approved service information and hand enquiries to a person when needed."
+    },
+    {
+      "icon": "🔗",
+      "title": "Connected business workflows",
+      "description": "Link forms, customer records, email and reporting tools to reduce duplicate entry. Integration depends on the access each provider supports."
+    },
+    {
+      "icon": "📄",
+      "title": "Document and report support",
+      "description": "Help staff organise information and draft routine summaries, with review before important decisions or publication."
+    },
+    {
+      "icon": "🛡️",
+      "title": "Human oversight",
+      "description": "Define approval steps, access permissions and escalation paths before the system handles live business tasks."
+    },
+    {
+      "icon": "📶",
+      "title": "Designed for your operating conditions",
+      "description": "Assess device and connectivity needs during scoping. Cloud AI generally needs internet access; fallback workflows are planned where needed."
+    },
+    {
+      "icon": "🎓",
+      "title": "Training and handover",
+      "description": "Staff learn how to use, check and maintain the workflow, including its limits and when to take over."
+    }
+  ],
+  "processIntro": "A focused pilot helps establish value and limits before a larger investment.",
+  "process": [
+    {
+      "step": "01",
+      "title": "Choose a workflow",
+      "description": "Map the task, the people involved and the cost of the current process. Agree the outcome and a practical first scope."
+    },
+    {
+      "step": "02",
+      "title": "Review tools and information",
+      "description": "Confirm integrations, data access, privacy requirements, connectivity and provider costs before development."
+    },
+    {
+      "step": "03",
+      "title": "Build and test a pilot",
+      "description": "Try representative enquiries and exceptions with your staff. Check accuracy, escalation and access before launch."
+    },
+    {
+      "step": "04",
+      "title": "Launch and improve",
+      "description": "Train the team, document the workflow and review results against the agreed outcome. Scope ongoing support separately."
+    }
+  ],
+  "faqs": [
+    {
+      "question": "Can you build an AI chatbot for my Vanuatu business?",
+      "answer": "Yes. We can scope a website or messaging assistant around your approved business information and enquiry process. Channels, integrations and ongoing provider costs are agreed before development."
+    },
+    {
+      "question": "Do all business automations need AI?",
+      "answer": "No. Moving information between systems, sending reminders and generating standard reports often works best with ordinary workflow rules. AI is considered where understanding language or working with varied content adds value."
+    },
+    {
+      "question": "Will an AI assistant work when the internet is down?",
+      "answer": "Most cloud AI services need internet access. We assess connectivity during scoping and agree what users should see or do when a connection or provider is unavailable."
+    },
+    {
+      "question": "Can you support businesses outside Vanuatu?",
+      "answer": "We can scope projects remotely for Pacific businesses, with delivery, language, time zones and support arrangements agreed for each project. Our base is Port Vila; remote delivery does not imply a local office in another country."
+    }
+  ],
+  "furtherReading": {
+    "label": "AI business automation for Pacific Island enterprises",
+    "href": "/blog/ai-business-automation-pacific-islands-2026"
+  },
+  "cardDescription": "AI chatbots, assistants and connected workflows from Port Vila, with human oversight and staff training."
+},
+  {
+  "slug": "cloud-hosting",
+  "label": "Hosting & Maintenance",
+  "h1": "Website Hosting in Vanuatu & the Pacific",
+  "metaDescription": "Managed website hosting, cloud setup, backups and maintenance from Port Vila. Practical hosting support for businesses in Vanuatu and the Pacific Islands.",
+  "keywords": [
+    "website hosting Vanuatu",
+    "website maintenance Vanuatu",
+    "managed hosting Pacific Islands",
+    "cloud hosting Vanuatu"
+  ],
+  "serviceType": "Website Hosting and Maintenance",
+  "heroBadge": "Hosting & Website Maintenance",
+  "heroSubtitle": "Keep your website and business applications maintained with hosting, backups and support scoped around your users, budget and Pacific connectivity.",
+  "gradient": "from-cyan-500 to-blue-500",
+  "icon": "☁️",
+  "intro": [
+    "Your website needs attention after launch: domain renewals, updates, backups, security configuration and someone to help when a service fails. Pacific Wave Digital offers website hosting and maintenance from Port Vila for businesses in Vanuatu and the Pacific. We assess the site you have before recommending a hosting or support arrangement.",
+    "A business website, an online shop and a custom application have different requirements. We review the technology, traffic, stored information and external services, then agree which parts we manage and which remain with your existing providers. Performance work considers visitors on mobile connections as well as overseas customers.",
+    "For a move from an existing host, we plan content, database, email and DNS dependencies before switching. We also review redirects and search URLs so a hosting change does not unnecessarily break customer links. Backup frequency, restore arrangements, monitoring and support hours are specified in the agreed scope."
+  ],
+  "benefitsHeading": "A clear plan for keeping your site running",
+  "benefitsIntro": "Hosting and maintenance should have defined responsibilities, recovery steps and costs.",
+  "benefits": [
+    {
+      "icon": "☁️",
+      "title": "Hosting matched to your website",
+      "description": "Choose infrastructure around the application, audience and budget, including delivery networks where appropriate."
+    },
+    {
+      "icon": "🔐",
+      "title": "Updates and security configuration",
+      "description": "Review certificates, supported software and access arrangements. Agree which updates and checks are included in maintenance."
+    },
+    {
+      "icon": "💾",
+      "title": "Backups and recovery planning",
+      "description": "Define what is backed up, how often it is kept and how a restore will be tested. Include external services where the scope requires them."
+    },
+    {
+      "icon": "⚡",
+      "title": "Mobile performance",
+      "description": "Review image weight, page delivery and caching so the website is more usable on slower connections."
+    },
+    {
+      "icon": "🧭",
+      "title": "Planned migrations",
+      "description": "Map domain, DNS, email and database dependencies before moving a live site, with verification and rollback steps."
+    },
+    {
+      "icon": "🤝",
+      "title": "Support with clear boundaries",
+      "description": "Agree support hours, responsibilities and escalation paths. Hosting-provider availability and support terms remain part of the plan."
+    }
+  ],
+  "processIntro": "We establish the current setup and a recovery plan before changing a live service.",
+  "process": [
+    {
+      "step": "01",
+      "title": "Review the current setup",
+      "description": "Check the website stack, domain, hosting, backups, traffic and any connected services."
+    },
+    {
+      "step": "02",
+      "title": "Agree the support scope",
+      "description": "Confirm included maintenance, provider costs, access, support hours and recovery requirements."
+    },
+    {
+      "step": "03",
+      "title": "Set up or migrate carefully",
+      "description": "Prepare backups, test the target setup and verify key pages and integrations before switching traffic."
+    },
+    {
+      "step": "04",
+      "title": "Maintain and review",
+      "description": "Carry out agreed checks and updates, review recovery arrangements and adjust the plan when the site changes."
+    }
+  ],
+  "faqs": [
+    {
+      "question": "Can you maintain a website built by another developer?",
+      "answer": "We can assess an existing site and confirm whether its technology, source access and hosting can be supported. The assessment identifies any required repairs before an ongoing maintenance arrangement."
+    },
+    {
+      "question": "Will changing hosting affect my email?",
+      "answer": "It can if DNS or email settings are changed incorrectly. We review how your email is provided and include the required preservation or migration steps in the plan."
+    },
+    {
+      "question": "Is hosting the same as website maintenance?",
+      "answer": "No. Hosting provides the infrastructure serving the site. Maintenance covers agreed work such as software updates, checks and repairs. Your proposal should state clearly which services are included."
+    },
+    {
+      "question": "Do you guarantee uninterrupted service?",
+      "answer": "No provider can promise that every website, connection and external service will always be available. We agree suitable hosting, monitoring, backups and response arrangements for your requirements."
+    }
+  ],
+  "cardDescription": "Managed hosting, website maintenance, backups and cloud setup with clearly agreed support and recovery arrangements."
+},
 ];
 
 export function getServicePage(slug: string): ServicePageData | undefined {

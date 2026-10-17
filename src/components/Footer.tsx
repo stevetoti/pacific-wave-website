@@ -22,7 +22,8 @@ const footerLinks = {
     { href: '/services/seo', label: 'SEO Services' },
     { href: '/services/ecommerce', label: 'E-commerce' },
     { href: '/services/mobile-apps', label: 'Mobile Apps' },
-    { href: '/services#ai-solutions', label: 'AI Solutions' },
+    { href: '/services/ai-automation', label: 'AI & Automation' },
+    { href: '/services/cloud-hosting', label: 'Hosting & Maintenance' },
   ],
   legal: [
     { href: '/privacy', label: 'Privacy Policy' },

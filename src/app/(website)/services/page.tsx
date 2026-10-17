@@ -157,6 +157,7 @@ const services: HubService[] = [
   },
   {
     id: 'ai-solutions',
+    href: '/services/ai-automation',
     title: 'AI Solutions',
     description:
       'Harness the power of artificial intelligence to transform your business. From intelligent chatbots to predictive analytics and custom AI models, we bring cutting-edge technology to the Pacific.',
@@ -175,6 +176,7 @@ const services: HubService[] = [
   },
   {
     id: 'business-automation',
+    href: '/services/ai-automation',
     title: 'Business Automation',
     description:
       'Streamline your operations with custom workflow automation. We build intelligent systems that reduce manual tasks, cut costs, and increase efficiency across your entire organization.',
@@ -193,6 +195,7 @@ const services: HubService[] = [
   },
   {
     id: 'cloud-hosting',
+    href: '/services/cloud-hosting',
     title: 'Cloud & Hosting',
     description:
       'Reliable cloud infrastructure and managed hosting optimized for Pacific Island connectivity. We ensure your applications are fast, secure, and always available.',
