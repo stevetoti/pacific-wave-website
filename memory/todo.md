@@ -339,3 +339,8 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [x] Prepare three owner-selected client case studies and internal training-centre case study; validate build and desktop/mobile discoverability.
 - [ ] Publish and verify on production; preserve complete repair/enquiry lineage.
 - [ ] Verify remaining homepage/about testimonials and statistics with owner records before expanding those claims.
+
+## 2026-10-17 — [Codex] Project evidence live
+
+- [x] Publish case-study batch — [Codex] 2026-10-17: 6133820 / dpl_J3ee8mfjbWh4HKA4txTUtiisqS4Y, final live desktop/mobile checks pass. Supersedes pending-release task.
+- [ ] Integrate complete codex/pwd-project-proof lineage before a future main deployment; preserve enquiry/signup/SEO/LMS work.
