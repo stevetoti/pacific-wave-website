@@ -857,3 +857,8 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 - GBP batch remains pending explicit approval; no profile changes saved.
 
 - Verification complete: lint/build and all 16 unique desktop/mobile checks pass. First run 15/16; desktop multi-page release check passed when rerun with 180-second total budget (1.2 min). No application change was needed for that timeout.
+
+## 2026-10-17 — [Codex] SEO release published
+
+- App fb99796, dpl_Ek5GQaK8SyCR8RhE6UQYeeMtN2jv is live on pacificwavedigital.com after staged checks. All 10 live desktop/mobile SEO, menu and release checks pass (3.7 minutes). Sixteen local checks, lint, build/eight route guards and nine staged HTTP checks passed. Google profile batch remains pending approval; no profile edits applied. Google index refresh remains pending.
+- Source retained at .deployment/vanuatu-pacific-seo-20261017, branch codex/pwd-vanuatu-pacific-seo; main must integrate this complete lineage before deploying. No schema/migrations, credentials, signup, payment or email configuration changes. Local test server stopped.

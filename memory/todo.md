@@ -319,3 +319,7 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [x] Implement homepage targeting, actual service links, AI/automation and hosting pages with metadata/schema/sitemap.
 - [ ] Lint/type/build and focused SEO + public LMS desktop/mobile release checks; commit/push/stage/promote and verify live.
 - [ ] Apply approved GBP change batch with verified persistence/status; approval is being collected in GBP project.
+
+- [x] Publish Vanuatu/Pacific keyword pages and verify live desktop/mobile navigation and technical SEO — [Codex] 2026-10-17: fb99796 / dpl_Ek5GQaK8SyCR8RhE6UQYeeMtN2jv.
+- [ ] Receive profile batch approval and apply audited categories/links/service copy; Google review may follow.
+- [ ] Check subsequent GSC indexing and comparable complete periods by country/service page; instrument completed qualified leads separately.

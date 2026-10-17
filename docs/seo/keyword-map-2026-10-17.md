@@ -46,3 +46,7 @@ A contact click is intent, not a completed enquiry. Conversion instrumentation n
 ## Pending Google indexing
 
 The earlier service canonical anomaly remains open until Google's next indexing cycle confirms inclusion and intended canonicals. Current live tests pass; priority requests for web-development, SEO and ecommerce were accepted. New service pages are discoverable through the sitemap and internal links; that does not guarantee indexing or positions.
+
+## Published release — [Codex] 2026-10-17
+
+Application fb99796; deployment dpl_Ek5GQaK8SyCR8RhE6UQYeeMtN2jv promoted to pacificwavedigital.com. All 10 live desktop/mobile SEO, menu and release checks pass (3.7 minutes). Sixteen local checks, lint, build/eight route guards and nine staged HTTP checks passed. Google profile batch remains pending approval; no profile edits applied. Google index refresh remains pending.
