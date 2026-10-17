@@ -12,7 +12,7 @@ test('commercial pages return canonical HTML for visitors and crawlers', async (
       const head = html.split('</head>')[0];
       const canonicals = head.match(/<link[^>]+rel="canonical"[^>]*>/g) || [];
       expect(canonicals, path).toHaveLength(1);
-      const href = canonicals[0].match(/href="([^"]+)"/)?.[1];
+      const href = canonicals[0]?.match(/href="([^"]+)"/)?.[1];
       expect(new URL(href || 'about:blank').href, path).toBe(new URL(path, origin).href);
       expect(html.toLowerCase()).not.toContain('747live.bet');
       expect(head).not.toMatch(/name="robots"[^>]+content="[^"]*noindex/);
