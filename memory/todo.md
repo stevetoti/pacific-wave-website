@@ -305,3 +305,11 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [ ] Verify build/type/lint, focused SEO and required public LMS/release checks; deploy committed/pushed source.
 - [ ] Verify live Analytics receipt, contact/schema/canonical responses; request Google recrawl of affected service pages and check sitemap status.
 - [ ] Google recrawl/reindex completion remains externally controlled; historical unrelated canonical cause not yet established.
+
+## 2026-10-17 — [Codex] Repair release completion
+
+- [x] Verify lint/type/build, 12 local and 12 promoted-live desktop/mobile tests; publish complete committed source — [Codex] 2026-10-17: app 27a4f89, deployment dpl_2NACddmh1vwqDM4PTzrkWMj6hk5U.
+- [x] Correct live Analytics/phone/schema/home canonical and verify GA4 realtime events — [Codex] 2026-10-17.
+- [x] Actual Google live tests and priority indexing requests accepted for all three affected services; sitemap confirmed Success — [Codex] 2026-10-17.
+- [ ] After Google's next indexing cycle, inspect canonical selection and index coverage again. Reindexing is requested, not completed.
+- [ ] Integrate complete codex/pwd-seo-tracking-repair branch into main before any main production release; it includes signup bot protection and current main.
