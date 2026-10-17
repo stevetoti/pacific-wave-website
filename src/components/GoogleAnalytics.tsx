@@ -3,7 +3,7 @@ import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 const GA_MEASUREMENT_ID =
-  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-65F5VLD82W";
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-6SF5VLD82W";
 export default function GoogleAnalytics() {
   const pathname = usePathname();
   const training = pathname === "/vanuatu-training";

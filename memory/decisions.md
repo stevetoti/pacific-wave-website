@@ -174,3 +174,9 @@ User requests recording controls separate from live settings. Separate form and 
 
 ## 2026-10-06 — [Codex] YouTube previews and identification
 Show real YouTube thumbnail cards before player load; keep one selected iframe and the existing privacy-enhanced domain. Scope strict-origin-when-cross-origin to YouTube iframe/link so global no-referrer stays unchanged elsewhere. Basic embeds need no API key. YouTube verification cannot be bypassed or guaranteed away; same-video external fallback helps complete its own sign-in. Both actual published Class 1 IDs returned official oEmbed 200.
+
+## 2026-10-17 — [Codex] Preserve current service canonicals and repair stale crawl through verification
+
+- Current public service HTML declares correct self-canonicals in head with HTTP 200 and no observed external redirect for browser/Googlebot user agents. Do not introduce competing HTTP canonical headers or change bot serving speculatively.
+- Add missing homepage canonical only on its route, preventing layout inheritance from canonicalising unrelated pages to home. Correct business schema with owner-confirmed address/phone and omit unverified geo coordinates.
+- Deploy complete current source including Oct 14 signup protection; original historical checkout is dirty and unsafe as a deployment source.

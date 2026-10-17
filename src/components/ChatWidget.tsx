@@ -9,7 +9,7 @@ const quickResponses = [
   },
   {
     question: 'How can I get a quote?',
-    answer: 'You can reach us through our Contact page, email us at info@pacificwavedigital.com, or call +678 777 4567. We typically respond within 24 hours.',
+    answer: 'You can reach us through our Contact page, email us at info@pacificwavedigital.com, or call +678 528 8141. We typically respond within 24 hours.',
   },
   {
     question: 'Where are you located?',
@@ -46,7 +46,7 @@ export default function ChatWidget() {
     setMessages((prev) => [
       ...prev,
       { text: inputValue, isUser: true },
-      { text: 'This quick-help widget does not send messages to our team. Please use our Contact page, email info@pacificwavedigital.com or call +678 777 4567.', isUser: false },
+      { text: 'This quick-help widget does not send messages to our team. Please use our Contact page, email info@pacificwavedigital.com or call +678 528 8141.', isUser: false },
     ]);
     setInputValue('');
   };

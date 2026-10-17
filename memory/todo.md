@@ -298,3 +298,10 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 ## 2026-10-05 — [Codex] Recording publishing
 - [x] Separate recording save/publish controls from live lesson settings; local real admin/student verification passes.
 - [x] Publish and verify live recording workflow. — [Codex] 2026-10-05: e88022a live; real production desktop/mobile publication/upload playback/privacy checks pass, fixtures cleaned.
+
+## 2026-10-17 — [Codex] PWD SEO repair
+
+- [x] Correct Analytics fallback and contact details; add homepage canonical and regression coverage.
+- [ ] Verify build/type/lint, focused SEO and required public LMS/release checks; deploy committed/pushed source.
+- [ ] Verify live Analytics receipt, contact/schema/canonical responses; request Google recrawl of affected service pages and check sitemap status.
+- [ ] Google recrawl/reindex completion remains externally controlled; historical unrelated canonical cause not yet established.

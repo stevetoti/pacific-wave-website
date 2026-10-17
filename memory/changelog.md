@@ -811,3 +811,17 @@ User confirms published videos work and requests visible video previews. Actual 
 
 ## 2026-10-06 — [Codex] Replay previews verified
 Real YouTube thumbnail cards, play/ready badges, selected inline player and external same-video fallback. Scoped iframe/link referrer override fixes global no-referrer suppression; no API key added. Both actual Class 1 videos returned oEmbed 200. Lint/type/build and ten desktop/mobile browser checks pass (two opt-in skips), including real thumbnails and intercepted outgoing request proving origin Referer despite global header. YouTube player content stubbed for deterministic tests; no claim that provider bot checks are eliminated. Publishing.
+
+## 2026-10-17 — [Codex] Analytics contact and indexing repair underway
+
+- Isolated complete release source from 55b33bc and merged current origin/main f739e27, retaining LMS signup bot protection; original working trees untouched.
+- Corrected GA fallback ID to G-6SF5VLD82W, phone to +678 528 8141 in visible pages/chat/links/JSON-LD, schema address to owner-confirmed Lot 42 Peacock Estate, and removed unverified old geo coordinates.
+- Added homepage-only self-canonical using a server page wrapper around unchanged client content. Service self-canonicals already correct in current live HTML for browser/Googlebot user agents; historical external choice remains unexplained.
+- Added read-only HTTP/browser regression coverage for canonical HTML, crawler parity, tracking configuration and contact facts. Verification/deployment pending.
+
+## 2026-10-17 — [Codex] Local repair verification passed
+
+- Full lint, TypeScript and production build passed; eight required training/admin/API/service routes present before and after build.
+- Twelve desktop/mobile tests passed: SEO canonical HTML/crawler parity, correct Analytics tag and phone/schema, public LMS catalogue/signup/mentorship flows, anonymous API denial and required release navigation/sitemap coverage.
+- Used installed Chromium headless shell 1248 with a local-only verification config because the project's expected 1243 binary was absent. Initial URL assertion was corrected to compare normalised URL values (Next.js omits the homepage slash); no application fault hidden.
+- Actual Google live inspection of web-development succeeds with correct declared canonical, successful smartphone fetch and indexing allowed. Queuing fresh indexing; canonical selection still requires Google's next indexing cycle.

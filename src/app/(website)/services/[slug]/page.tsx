@@ -72,10 +72,10 @@ export default async function ServicePage({ params }: ServicePageProps) {
       name: 'Pacific Wave Digital',
       url: baseUrl,
       email: 'info@pacificwavedigital.com',
-      telephone: '+678-777-4567',
+      telephone: '+678-528-8141',
       address: {
         '@type': 'PostalAddress',
-        streetAddress: 'Lini Highway',
+        streetAddress: 'Lot 42, Peacock Estate',
         addressLocality: 'Port Vila',
         addressCountry: 'VU',
       },

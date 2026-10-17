@@ -105,7 +105,7 @@ export default function TermsPage() {
                 <p>For any questions regarding these Terms of Service, please contact us:</p>
                 <ul className="list-disc pl-6 space-y-2 mt-4">
                   <li>Email: <a href="mailto:info@pacificwavedigital.com" className="text-vibrant-orange hover:underline">info@pacificwavedigital.com</a></li>
-                  <li>Phone: +678 777 4567</li>
+                  <li>Phone: +678 528 8141</li>
                   <li>Address: Lini Highway, Port Vila, Vanuatu</li>
                 </ul>
               </div>

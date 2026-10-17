@@ -79,18 +79,13 @@ const jsonLd = {
   image: 'https://pacificwavedigital.com/images/hero-pacific.jpg',
   '@id': 'https://pacificwavedigital.com',
   url: 'https://pacificwavedigital.com',
-  telephone: '+678-777-4567',
+  telephone: '+678-528-8141',
   email: 'info@pacificwavedigital.com',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'Lini Highway',
+    streetAddress: 'Lot 42, Peacock Estate',
     addressLocality: 'Port Vila',
     addressCountry: 'VU',
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: -17.7334,
-    longitude: 168.3273,
   },
   openingHoursSpecification: {
     '@type': 'OpeningHoursSpecification',

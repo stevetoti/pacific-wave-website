@@ -1,5 +1,8 @@
 # CLAUDE.md — Pacific Wave Digital Website
 
+## 2026-10-17 — [Codex] Analytics contact and canonical repair
+Isolated complete source from live 55b33bc plus origin/main f739e27; preserves training signup Turnstile protection. Correct GA fallback G-6SF5VLD82W and phone +678 528 8141 throughout public copy/links/schema. Schema uses owner-confirmed Lot 42 Peacock Estate without unverified geo coordinates. Homepage-only canonical uses a server wrapper around unchanged client UI. Current service HTTP responses and actual Google live web-development test have correct canonicals/indexability; historical September betting-domain canonical is unexplained and requires recrawl. Lint/type/build and desktop/mobile release verification recorded in memory. Deployment and Google follow-up status below are updated after verification.
+
 ## 2026-10-06 — [Codex] Replay previews verified
 Real YouTube thumbnail cards, play/ready badges, selected inline player and external same-video fallback. Scoped iframe/link referrer override fixes global no-referrer suppression; no API key added. Both actual Class 1 videos returned oEmbed 200. Lint/type/build and ten desktop/mobile browser checks pass (two opt-in skips), including real thumbnails and intercepted outgoing request proving origin Referer despite global header. YouTube player content stubbed for deterministic tests; no claim that provider bot checks are eliminated. Publishing.
 
