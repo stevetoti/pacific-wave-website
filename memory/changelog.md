@@ -876,3 +876,8 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 
 - Actual public Contact and wizard QA records persisted with notification_status=sent. Scoped read-only provider check finds both matching Resend notifications delivered to existing steve@/toti@ recipients, labels/notes present. GA4 Realtime shows generate_lead and key-event receipt; initial totals include QA.
 - Corrected browser-fixture Analytics hostname matching: previous patterns missed www.googletagmanager.com and allowed QA event traffic. Future enquiry/SEO fixtures block full vendor subdomains. No customer events are deleted; initial QA period must be excluded from growth comparisons.
+
+## 2026-10-17 — [Codex] Enquiry tracking release complete
+
+- Live app 587c10e, deployment dpl_EVGYY7surCYFmWFPwXpEHbR2j98X (https://pacific-wave-website-qdys241pr-pacificwaveprojects.vercel.app), promoted to pacificwavedigital.com. Lint/type/build/eight guards, 16 targeted tests, staged desktop/mobile/HTTP checks and all 24 final live checks pass (3.1 min). Two real labelled public-form QA enquiries saved; matching Resend messages delivered to existing owner recipients. GA4 receives generate_lead as key event plus separate phone/WhatsApp clicks; initial totals include QA. No migrations or production credentials changed. Two QA records retained pending explicit cleanup approval.
+- Complete source retained at .deployment/enquiry-tracking-20261017. Local fixture server stopped, temporary staging/QA form tabs closed after screenshots; GA4 retained for follow-up. No local production-credential server or share bypass was created after rejection.

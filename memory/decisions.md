@@ -185,3 +185,9 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 
 - One combined AI/business-automation page covers assistants and connected workflows, avoiding two overlapping thin pages. Hosting/maintenance has a separate scope and search intent. Existing seven service URLs retain their mapping.
 - Prioritise Vanuatu commercial relevance plus useful regional service information. GSC disclosed queries are sparse and omit most clicks, so no volume/rank-demand claims or mass country pages. No changes to ads, paid providers or customer data.
+
+## 2026-10-17 — [Codex] Enquiry measurement definitions
+
+- Count generate_lead only after HTTP 201 with server-generated persisted receipt; deduplicate that receipt locally without sending it to Google. Notification may remain pending without losing saved lead. Phone/WhatsApp clicks are contact intent, not connected calls/conversations.
+- No enquiry PII or full destination URLs in custom event dimensions. Preserve training analytics opt-in and exclude private routes. Existing automatic GA form events do not define successful leads.
+- Keep verified QA evidence; production QA deletion requires explicit approval after auto-review rejection. No bypass share link or production-credential QA server created.

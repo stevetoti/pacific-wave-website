@@ -323,3 +323,9 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [x] Publish Vanuatu/Pacific keyword pages and verify live desktop/mobile navigation and technical SEO — [Codex] 2026-10-17: fb99796 / dpl_Ek5GQaK8SyCR8RhE6UQYeeMtN2jv.
 - [ ] Receive profile batch approval and apply audited categories/links/service copy; Google review may follow.
 - [ ] Check subsequent GSC indexing and comparable complete periods by country/service page; instrument completed qualified leads separately.
+
+## 2026-10-17 — [Codex] Enquiry tracking
+
+- [x] Successful Contact/project enquiries, phone/WhatsApp intent events, GA4 key event, real persistence/delivery and final live regressions verified — [Codex] 2026-10-17.
+- [ ] Await explicit deletion approval for ONLY QA IDs 609d2558-cc6e-4d82-b366-909a04bfa699 and 2d3d7432-401d-475b-9a68-e34760ab1158. Prepared cleanup script /private/tmp/pwd-clean-qa-enquiries.cjs has not run; scope includes exact IDs/site/QA names. Preserve audit/emails.
+- [ ] Exclude documented initial 17 October QA period from lead-growth comparisons. Future fixture vendor patterns corrected.
