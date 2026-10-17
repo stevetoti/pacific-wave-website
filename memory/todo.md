@@ -355,3 +355,9 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 
 - [x] Stage, verify and promote visual redesign — [Codex] 2026-10-17: ceecda8 / dpl_51S8WBwsYGLV4SgWhfmDnX1gaRns. All 63 final live responsive page checks pass. Supersedes pending release above.
 - [ ] Integrate complete codex/pwd-visual-design lineage before future main deployments, including all earlier SEO/enquiry/signup/LMS repairs.
+
+## 2026-10-17 — [Codex] Authentic proof cleanup
+
+- [x] Remove owner-confirmed generic testimonials/statistics; validate type/lint/build and phone/desktop rendering.
+- [ ] Publish and verify core corrections.
+- [ ] Resolve remaining unsourced blog percentages, About timeline dates and product-status conflicts using owner evidence; see GBP audit.

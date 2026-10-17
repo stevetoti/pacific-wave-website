@@ -207,7 +207,7 @@ const services: HubService[] = [
       'CDN configuration',
       'SSL & security hardening',
       'Database management',
-      '24/7 monitoring & support',
+      'Monitoring and support scoped to your needs',
     ],
     image: '/images/custom/coastal.webp',
     fallbackImage: '/images/cloud-server.jpg',

@@ -201,3 +201,8 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 
 - Four custom Higgsfield artworks completed; eight real public desktop/mobile homepage captures for the three owner-selected clients and PWD training centre. Image-led project collection and reusable browser/mobile preview frames; case-study heroes include real screenshots and descriptive metadata imagery.
 - Custom art added across homepage, about/products/contact/blog, service hub, nine service-detail heroes and quote form. Public marketing stylesheet scoped away from private training tools. No generated client UI or invented results. Optimisation/build/browser checks pending.
+
+## 2026-10-17 — [Codex] Owner-confirmed generic claims removed
+
+- Stephen confirmed the three named testimonials and headline statistics “are generic not real.” Removed the testimonial array/section, both homepage number rows, repeated TechStack outcome/support metrics and About project-count claims; replaced ten-plus-years badge with actual Port Vila location. Existing verified client project showcases provide factual evidence. Hosting hub now scopes monitoring/support instead of promising 24/7 service.
+- Review requests remain drafts. Audit identifies separate unsourced percentage results in three blog articles and unverified historical/product claims for factual review; no CMS or Google writes made. Validation/release pending.

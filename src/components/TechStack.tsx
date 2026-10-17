@@ -72,30 +72,7 @@ export default function TechStack() {
           </motion.div>
         </div>
 
-        {/* Stats */}
-        <FadeInView delay={0.3}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16">
-            {[
-              { value: '50+', label: 'Projects Delivered' },
-              { value: '12+', label: 'Technologies' },
-              { value: '99.9%', label: 'Uptime' },
-              { value: '24/7', label: 'Support' },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <motion.div
-                  className="text-4xl md:text-5xl font-bold text-vibrant-orange font-heading"
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-                >
-                  {stat.value}
-                </motion.div>
-                <div className="text-blue-200 text-sm mt-2">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </FadeInView>
+
       </div>
     </section>
   );

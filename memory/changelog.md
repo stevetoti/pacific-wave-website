@@ -918,3 +918,12 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 - Application ceecda8 on codex/pwd-visual-design, production dpl_51S8WBwsYGLV4SgWhfmDnX1gaRns (https://pacific-wave-website-o1tp4mmrm-pacificwaveprojects.vercel.app) promoted to pacificwavedigital.com. Four completed Higgsfield artworks, eight actual desktop/mobile homepage captures, image-led portfolio/four project pages and coordinated custom art across public marketing pages. Real client work also appears on homepage.
 - Type/lint/build/eight release guards, 63 local and 63 final live responsive page/size checks, no-JavaScript visibility, twelve staged WebP assets, ten staged page/config checks and eight mocked enquiry/tracking browser checks all pass. Screenshots visually reviewed. Local credential-free QA server stopped; no new customer records/emails/payments, no client-site changes or Google account writes.
 - Complete source remains website .deployment/enquiry-tracking-20261017; integrate complete codex/pwd-visual-design before future main deploys. Previous deployment dpl_J3ee8mfjbWh4HKA4txTUtiisqS4Y is rollback reference. Existing five-page index monitor unchanged; no claimed ranking/indexing outcome from this visual release.
+
+## 2026-10-17 — [Codex] Owner-confirmed generic claims removed
+
+- Stephen confirmed the three named testimonials and headline statistics “are generic not real.” Removed the testimonial array/section, both homepage number rows, repeated TechStack outcome/support metrics and About project-count claims; replaced ten-plus-years badge with actual Port Vila location. Existing verified client project showcases provide factual evidence. Hosting hub now scopes monitoring/support instead of promising 24/7 service.
+- Review requests remain drafts. Audit identifies separate unsourced percentage results in three blog articles and unverified historical/product claims for factual review; no CMS or Google writes made. Validation/release pending.
+
+## 2026-10-17 — [Codex] Generic-claim correction validated
+
+- Type/lint/build/eight guards and ten local phone/desktop checks pass. Verified project image showcases remain; fake testimonial/star section and unsupported headline/repeated metrics absent. Staging and publication next. Full audit/drafts are in GBP project; no client messages sent or CMS/Google writes made.

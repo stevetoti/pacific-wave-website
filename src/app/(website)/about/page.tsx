@@ -66,7 +66,7 @@ const timeline = [
   { year: '2022', event: 'Established Global Digital Prime network partnership' },
   { year: '2023', event: 'MEDD-SIM launched for medical education institutions' },
   { year: '2024', event: 'Akwaaba AI launched for African markets via Ghana office' },
-  { year: '2025', event: 'Aelan Basket and TrainerSim enter beta; 50+ projects delivered' },
+  { year: '2025', event: 'Aelan Basket and TrainerSim enter beta' },
 ];
 
 export default function AboutPage() {
@@ -121,7 +121,7 @@ export default function AboutPage() {
                 Having seen the transformative power of technology in larger markets, Stephen recognized the untapped potential in the Pacific region. Businesses here face unique challenges — remote locations, connectivity constraints, and limited access to cutting-edge tools — that require equally unique solutions.
               </p>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Today, Pacific Wave Digital has grown into a multi-country operation with a portfolio of proprietary products and a track record of 50+ successful projects across government agencies, private enterprises, and non-profit organizations.
+                Our website work includes Aelan Basket, E’Nauwi Beach Resort and Lapita Beach. Our own training centre brings together course enrolment, payments, live teaching and private learning tools.
               </p>
               <p className="text-gray-600 leading-relaxed">
                 Through our Global Network — spanning Vanuatu, the USA, Indonesia, and Ghana — we bring together diverse talent and perspectives to deliver solutions that make a real difference.

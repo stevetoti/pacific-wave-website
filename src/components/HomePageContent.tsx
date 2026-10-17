@@ -90,19 +90,6 @@ const products = [
   { name: 'MEDD-SIM', description: 'AI-powered medical education and simulation platform.', color: 'from-teal-500 to-teal-700', icon: '🏥' },
 ];
 
-const testimonials = [
-  { quote: 'Pacific Wave Digital transformed our operations. Customer response time dropped 80%!', name: 'Marie Johnson', role: 'Operations Director, Island Resorts Group', image: '👩‍💼' },
-  { quote: 'VanuConnect revolutionized how we communicate with customers across the islands.', name: 'David Kalsakau', role: 'CEO, Vanuatu Trading Co.', image: '👨‍💼' },
-  { quote: 'They understood our unique challenges and built a solution that modernized everything.', name: 'Sarah Natuman', role: 'Director of Digital Services, Govt of Vanuatu', image: '👩‍💻' },
-];
-
-const stats = [
-  { value: '50+', label: 'Projects Delivered', icon: '🚀' },
-  { value: '25+', label: 'Active Clients', icon: '🤝' },
-  { value: '4', label: 'Countries', icon: '🌏' },
-  { value: '99.9%', label: 'Uptime', icon: '⚡' },
-];
-
 const defaultVideos: VideoItem[] = [];
 
 const getYoutubeVideoId = (url: string) => {
@@ -222,30 +209,8 @@ export default function HomePage() {
               </div>
             </FadeInView>
             
-            {/* Animated Stats */}
-            <FadeInView delay={0.4}>
-              <div className="flex flex-wrap gap-8">
-                {stats.map((stat, i) => (
-                  <motion.div
-                    key={stat.label}
-                    className="text-center"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 + i * 0.1 }}
-                  >
-                    <motion.div 
-                      className="text-3xl md:text-4xl font-bold text-white font-heading"
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      {stat.value}
-                    </motion.div>
-                    <div className="text-blue-200 text-sm">{stat.label}</div>
-                  </motion.div>
-                ))}
-              </div>
-            </FadeInView>
           </div>
-          
+
           {/* Code Snippet Mockup */}
           <FadeInView delay={0.5}>
             <motion.div
@@ -321,34 +286,6 @@ export default function HomePage() {
           <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 120L60 110C120 100 240 80 360 73.3C480 67 600 73 720 80C840 87 960 93 1080 90C1200 87 1320 73 1380 66.7L1440 60V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="white"/>
           </svg>
-        </div>
-      </section>
-
-      {/* Stats Bar - Animated */}
-      <section className="bg-white -mt-1 relative z-10">
-        <div className="container-max px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12 border-b border-gray-100">
-            {stats.map((stat, i) => (
-              <FadeInView key={stat.label} delay={i * 0.1}>
-                <motion.div 
-                  className="text-center group cursor-pointer"
-                  whileHover={{ y: -5 }}
-                >
-                  <div className="text-3xl mb-2 group-hover:scale-125 transition-transform">{stat.icon}</div>
-                  <motion.div 
-                    className="text-3xl md:text-4xl font-bold text-deep-blue font-heading"
-                    initial={{ opacity: 0, scale: 0 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ type: 'spring', stiffness: 200, delay: i * 0.1 }}
-                  >
-                    {stat.value}
-                  </motion.div>
-                  <div className="text-gray-500 text-sm mt-1">{stat.label}</div>
-                </motion.div>
-              </FadeInView>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -590,8 +527,8 @@ export default function HomePage() {
                   transition={{ type: 'spring', stiffness: 200, delay: 0.3 }}
                   whileHover={{ scale: 1.1 }}
                 >
-                  <div className="text-4xl font-bold font-heading">10+</div>
-                  <div className="text-sm">Years of Innovation</div>
+                  <div className="text-2xl font-bold font-heading">Port Vila</div>
+                  <div className="text-sm">Vanuatu</div>
                 </motion.div>
               </div>
             </FadeInView>
@@ -616,65 +553,6 @@ export default function HomePage() {
                 </Link>
               </motion.div>
             </FadeInView>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials - Enhanced */}
-      <section className="section-padding bg-gradient-to-br from-dark-navy via-deep-blue to-dark-navy relative overflow-hidden">
-        {/* Animated background */}
-        <div className="absolute inset-0">
-          <motion.div
-            className="absolute top-20 left-20 w-72 h-72 bg-vibrant-orange/10 rounded-full blur-3xl"
-            animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.2, 0.1] }}
-            transition={{ duration: 8, repeat: Infinity }}
-          />
-        </div>
-        
-        <div className="container-max relative z-10">
-          <FadeInView>
-            <div className="text-center mb-16">
-              <span className="text-vibrant-orange font-semibold text-sm uppercase tracking-wider">Testimonials</span>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white font-heading mt-3 mb-4">
-                What Our Clients Say
-              </h2>
-            </div>
-          </FadeInView>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((t, i) => (
-              <FadeInView key={i} delay={i * 0.15}>
-                <motion.div
-                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/10 h-full"
-                  whileHover={{ y: -10, backgroundColor: 'rgba(255,255,255,0.15)' }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="flex mb-4">
-                    {[...Array(5)].map((_, j) => (
-                      <motion.svg
-                        key={j}
-                        className="w-5 h-5 text-vibrant-orange"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.15 + j * 0.1 }}
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </motion.svg>
-                    ))}
-                  </div>
-                  <p className="text-blue-100 mb-6 leading-relaxed italic">&ldquo;{t.quote}&rdquo;</p>
-                  <div className="flex items-center gap-4">
-                    <div className="text-4xl">{t.image}</div>
-                    <div>
-                      <p className="font-semibold text-white">{t.name}</p>
-                      <p className="text-blue-300 text-sm">{t.role}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              </FadeInView>
-            ))}
           </div>
         </div>
       </section>
