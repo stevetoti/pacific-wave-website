@@ -27,3 +27,9 @@ Prior SEO canonicals/structured data/sitemap/phone/GA identity and enquiry event
 ## Release
 
 Complete source branch codex/pwd-visual-design from f443505; staging/publication pending. Previous live dpl_J3ee8mfjbWh4HKA4txTUtiisqS4Y remains rollback reference.
+
+## 2026-10-17 — [Codex] Custom visual redesign live and verified
+
+- Application ceecda8 on codex/pwd-visual-design, production dpl_51S8WBwsYGLV4SgWhfmDnX1gaRns (https://pacific-wave-website-o1tp4mmrm-pacificwaveprojects.vercel.app) promoted to pacificwavedigital.com. Four completed Higgsfield artworks, eight actual desktop/mobile homepage captures, image-led portfolio/four project pages and coordinated custom art across public marketing pages. Real client work also appears on homepage.
+- Type/lint/build/eight release guards, 63 local and 63 final live responsive page/size checks, no-JavaScript visibility, twelve staged WebP assets, ten staged page/config checks and eight mocked enquiry/tracking browser checks all pass. Screenshots visually reviewed. Local credential-free QA server stopped; no new customer records/emails/payments, no client-site changes or Google account writes.
+- Complete source remains website .deployment/enquiry-tracking-20261017; integrate complete codex/pwd-visual-design before future main deploys. Previous deployment dpl_J3ee8mfjbWh4HKA4txTUtiisqS4Y is rollback reference. Existing five-page index monitor unchanged; no claimed ranking/indexing outcome from this visual release.

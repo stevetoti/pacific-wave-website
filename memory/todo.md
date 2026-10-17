@@ -350,3 +350,8 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [x] Generate four custom Higgsfield images and capture eight actual client/PWD homepages; optimise and implement public-page styling.
 - [x] Validate build, 63 responsive page checks, no-JS visibility and eight mocked enquiry regressions.
 - [ ] Stage, verify and promote visual release; keep complete enquiry/SEO/LMS/signup lineage.
+
+## 2026-10-17 — [Codex] Visual design released
+
+- [x] Stage, verify and promote visual redesign — [Codex] 2026-10-17: ceecda8 / dpl_51S8WBwsYGLV4SgWhfmDnX1gaRns. All 63 final live responsive page checks pass. Supersedes pending release above.
+- [ ] Integrate complete codex/pwd-visual-design lineage before future main deployments, including all earlier SEO/enquiry/signup/LMS repairs.
