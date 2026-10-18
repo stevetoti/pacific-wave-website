@@ -360,3 +360,8 @@ Latest complete website app7f12e6c / dpl_2MQSvuQnhpPjmsfJ2dVfH3NoeQpm, branch co
 ### 2026-10-18 [Codex] Weekly ranking handoff
 
 Automatic PWD ranks enabled Monday09:15 Pacific/Efate with10:15 missing-only recovery. See docs/seo/pwd-weekly-ranking-schedule-2026-10-18.md. PWD app41844dd and Toti app3495ae6 are live. First future execution unobserved. Preserve this release before deploying other branches.
+
+
+## 2026-10-19 — [Codex] Resume here — indexing/webdesign release
+
+Complete app94ddbde, branchcodex/pwd-indexing-web-design, live dpl_5f2qL1GXxGFdcazuxBVZCxUQfoCz. Preserve full priorweeklyblog/rank/training/enquiry lineage. wwwprojectdomain nowverified permanent308 toapex withvalidTLS. WebdesignSSRrealclientpreviews/scope/FAQ/contact; blogservicecardsdirectlinks; stablesitemapdates.112tests/type/lint/buildandstage/live/mobilecheckspass. Googleacceptedwebdesignrecrawl; webdesignalreadyindexedcorrectly. Original5serviceGoogleIndex0/5stillpending (3oldexternalcanonicals/2discovered), no provenhistoricalrootcause. See docs/seo/pwd-indexing-web-design-2026-10-19.md. No articlepublicationornewrankcheck; firstscheduled19Octoberjobsunobserved.

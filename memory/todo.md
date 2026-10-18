@@ -435,3 +435,10 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [x] Investigate live crawlability and repair missingwwwTLS/redirect.
 - [ ] Publish verified webdesign/link improvements; check exact live release and one targeted recrawl request if available.
 - [ ] Google Index0/5 unresolved; existing monitor continues. Historicalexternalcanonical cause unproven, GSC crawledHTMLunavailable.
+
+
+## 2026-10-19 — [Codex] Index/webdesign release outcome
+
+- [x] Publish scopedwebdesign/supportinglinks and verifylive — [Codex]2026-10-19:94ddbde/dpl_5f2qL1GXxGFdcazuxBVZCxUQfoCz.
+- [x] Requestoneupdatedwebdesignrecrawl; Googlepriorityqueueaccepted.
+- [ ] FiveGoogleIndexcanonicaloutcomes remain0/5; continueexistingmonitor. Comparewebdesignrankingsafterrecrawl, notimmediately. Approval/reviews/backlog/namedPacificmarkets/realenquirybaselineandfirstscheduledfuturejobsremain.

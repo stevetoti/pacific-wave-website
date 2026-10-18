@@ -1070,3 +1070,8 @@ User-authorised one-off two-keyword recovery succeeds: web development Vanuatu #
 ## 2026-10-19 — [Codex] Index investigation and web-design release validated
 
 Fixed missing www project-domain/TLS via verified308 to apex, HTTPS/path/querypreservation checked. GSC no security/manualactions; three staleSeptemberduplicate/external747phcanonical records and two discovered/unindexed unchanged; actual historicalcause unproven. Webdesignindexed/correctGooglecanonical. Cloud liveGooglefetch allowed/selfcanonical only, notindexsuccess. Server-rendered webdesign improved with real previews/scopedbuyercontent; blogrelatedcards directly linkrelevantservices; sitemapstaticlastmodstable.112tests/type/changedlint/build8guards and localHTTP/mobilechecks pass; releasepending. See docs/seo/pwd-indexing-web-design-2026-10-19.md.
+
+
+## 2026-10-19 — [Codex] Index repairs and improved webdesign live
+
+App94ddbde/dpl_5f2qL1GXxGFdcazuxBVZCxUQfoCz live after112tests/type/changedlint/build8guards,4stagedroutechecks/9contentassertions,10finallivechecks and desktop/mobileimage/overflow/contactnavigation verification. wwwTLS308fixedandverified. Googleacceptedoneupdatedwebdesignrecrawl; originalfiveIndexoutcomesstillpending0/5. No security/manualactions; oldexternalcanonicalcauseunproven. TotiSEO/OpsBoardupdatedhonestly. Report docs/seo/pwd-indexing-web-design-2026-10-19.md. Priorweeklycron/articleapproval/training/enquirysetup preserved. Rollbackdpl_42axQrjJGUUcWnokZDRZAPYxZhXj.
