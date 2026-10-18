@@ -417,3 +417,8 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 ## 2026-10-18 — [Codex] Weekly automatic rank scheduler requested
 
 - Stephen explicitly authorised recurring weekly DataForSEO measurements in Toti Room. Supersedes manual-only decision. Reuse existing protected cron/credentials and existing daily idempotency. Monday09:15Vanuatu primary,10:15missing-only recovery; one completed batch/day and two attempts maximum. New private rank_automation setting gates activation and records real scheduled outcomes; no new paid top-up or messages. Validation/activation pending.
+
+
+## 2026-10-18 — [Codex] Weekly rank schedule
+
+- [ ] Observe first actual scheduled ranking run on 19 October 09:15 Vanuatu and provider recovery outcome. Enabled is verified; future execution is not yet observed.

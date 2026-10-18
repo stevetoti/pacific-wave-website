@@ -1055,3 +1055,8 @@ Four live API/storage access checks and three public route checks pass. No crede
 
 - Protected production GET/api/cron/weekly-rankings scheduled15 22,23 * * 0UTC (Monday09:15/10:15Pacific/Efate). Existing three crons preserved. Off-Monday or before09:15 exits without database/provider access; private rank_automation activation gates paid runs. Existing daily worker handles duplicate deliveries/missing-only recovery and two-attempt cap. Real outcome receipts update rank_automation and scoped cron_jobs registry; failures do not become healthy/zero positions.
 - Eleven focused scheduler/rank tests, TypeScript, changed-file lint and production build/eight route guards pass. No new paid run triggered during tests. Cloud deployment, configuration activation and owner UI check pending.
+
+
+## 2026-10-18 — [Codex] Weekly automatic PWD rankings live
+
+Stephen authorised weekly recurring DataForSEO ranking updates. Deployed production cloud cron Monday 09:15 Pacific/Efate with 10:15 missing-only recovery; private activation and cron registry enabled/read back. Existing 14-keyword Vanuatu/English/desktop scope and daily duplicate/retry caps retained. Toti Room shows actual configuration and scheduled outcomes; owner browser confirmed enabled panel. First future run 19 October remains unobserved. Eleven backend and 27 frontend focused tests plus type/lint/build checks passed. PWD app41844dd/dpl_42axQrjJGUUcWnokZDRZAPYxZhXj; Toti app3495ae6/dpl_G7EMzZwCdZWW4rW8pZiJDKet8wGL. Report docs/seo/pwd-weekly-ranking-schedule-2026-10-18.md. Current 12 valid/2 failed measurements preserved. Persistent-memory CLI missing numpy; shared markdown used.

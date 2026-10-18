@@ -249,3 +249,8 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 ## 2026-10-18 — [Codex] Weekly automatic rank scheduler requested
 
 - Stephen explicitly authorised recurring weekly DataForSEO measurements in Toti Room. Supersedes manual-only decision. Reuse existing protected cron/credentials and existing daily idempotency. Monday09:15Vanuatu primary,10:15missing-only recovery; one completed batch/day and two attempts maximum. New private rank_automation setting gates activation and records real scheduled outcomes; no new paid top-up or messages. Validation/activation pending.
+
+
+## 2026-10-18 — [Codex] Weekly rank schedule
+
+User-authorised weekly cloud updates supersede the earlier manual-only decision; Monday 09:15 Vanuatu plus bounded missing-only 10:15 recovery. Existing credit, no automatic purchase.

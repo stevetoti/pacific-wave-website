@@ -355,3 +355,8 @@ Current complete website app8d787e4, live dpl_BnAarKhqRHXQHTZAUaMF56YY6WVr on co
 ## 2026-10-18 — [Codex] Resume here — owner DataForSEO ranks live
 
 Latest complete website app7f12e6c / dpl_2MQSvuQnhpPjmsfJ2dVfH3NoeQpm, branch codex/pwd-weekly-blog. New owner-only POST/api/seo/rankings powers Toti Room’s manual refresh. Read docs/seo/pwd-dataforseo-rankings-2026-10-18.md. Existing server credentials, no new recurring paid cron;12of14targets measured,2provider40101errors remain. Human article approval and all prior SEO/enquiry/training work preserved.
+
+
+### 2026-10-18 [Codex] Weekly ranking handoff
+
+Automatic PWD ranks enabled Monday09:15 Pacific/Efate with10:15 missing-only recovery. See docs/seo/pwd-weekly-ranking-schedule-2026-10-18.md. PWD app41844dd and Toti app3495ae6 are live. First future execution unobserved. Preserve this release before deploying other branches.
