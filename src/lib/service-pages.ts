@@ -50,9 +50,9 @@ export const servicePages: ServicePageData[] = [
   {
     slug: 'web-design',
     label: 'Web Design',
-    h1: 'Web Design in Vanuatu',
+    h1: 'Web Design in Vanuatu & the Pacific Islands',
     metaDescription:
-      'Professional web design in Vanuatu from a Port Vila based team. Mobile-first website design for tourism, retail, and professional businesses across the Pacific.',
+      'Web design from Port Vila for Vanuatu and Pacific Island businesses. Explore real resort and retail website projects, our process, and request a scoped quote.',
     keywords: [
       'web design Vanuatu',
       'website design Vanuatu',
@@ -63,7 +63,7 @@ export const servicePages: ServicePageData[] = [
     serviceType: 'Web Design',
     heroBadge: 'Web Design',
     heroSubtitle:
-      'Beautiful, mobile-first websites designed in Port Vila for Vanuatu businesses — built to load fast on island connections and convert visitors into customers.',
+      'Mobile-first websites from Port Vila, shaped around your customers, your business and the next step you want visitors to take.',
     gradient: 'from-blue-500 to-cyan-500',
     icon: '🎨',
     intro: [
@@ -131,7 +131,7 @@ export const servicePages: ServicePageData[] = [
         step: '03',
         title: 'Build & content',
         description:
-          'We build the approved design, load your content and photography, and test it on real phones and real connection speeds.',
+          'We build the approved design, prepare your content and images, and check mobile layouts, navigation and enquiry paths before launch.',
       },
       {
         step: '04',
@@ -141,6 +141,14 @@ export const servicePages: ServicePageData[] = [
       },
     ],
     faqs: [
+      {
+        question: 'Do you design websites outside Port Vila and Vanuatu?',
+        answer: 'Yes. We can scope projects remotely for businesses on other Vanuatu islands and across the Pacific. We agree the target audience, content, language, time zones and support arrangements for each project. PWD is based in Port Vila; remote delivery does not mean we have offices in other countries.',
+      },
+      {
+        question: 'What should I prepare before asking for a website quote?',
+        answer: 'Share your current website if you have one, what your business offers, the customers you want to reach and the actions visitors should take. Include required pages, available photos and copy, booking or payment needs, and your preferred timeline. We confirm the scope and quote before starting.',
+      },
       {
         question: 'How much does a website design cost in Vanuatu?',
         answer:
@@ -154,7 +162,7 @@ export const servicePages: ServicePageData[] = [
       {
         question: 'Will my website work well on slow internet connections?',
         answer:
-          'Yes — this is central to how we design. We keep pages light, compress every image, and serve your site from a global content delivery network, so it loads quickly whether your visitor is in Port Vila, on an outer island, or researching their holiday from Sydney.',
+          'We plan image sizes, page weight and delivery around mobile visitors and slower connections. We check the agreed pages before launch and explain any features that depend on external services. Actual loading time also depends on the visitor’s connection and device.',
       },
       {
         question: 'Can I update the website myself after it launches?',

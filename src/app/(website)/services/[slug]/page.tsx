@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import WebDesignPage from '@/components/services/WebDesignPage';
 import ServicePageContent from '@/components/services/ServicePageContent';
 import { getServicePage, servicePages } from '@/lib/service-pages';
 
@@ -106,7 +107,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-      <ServicePageContent service={service} relatedServices={relatedServices} />
+      {service.slug === 'web-design' ? <WebDesignPage service={service} /> : <ServicePageContent service={service} relatedServices={relatedServices} />}
     </>
   );
 }

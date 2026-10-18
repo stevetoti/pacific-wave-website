@@ -4,33 +4,38 @@ interface RelatedServicesProps {
   category: string | null;
 }
 
-const servicesByCategory: Record<string, { title: string; description: string; icon: string }[]> = {
+const servicesByCategory: Record<string, { title: string; description: string; icon: string; href: string }[]> = {
   'AI Solutions': [
-    { title: 'AI Chatbots', description: 'AI-assisted enquiries with human escalation', icon: '🤖' },
-    { title: 'Business Automation', description: 'Streamline workflows and reduce costs', icon: '⚡' },
-    { title: 'Predictive Analytics', description: 'Data-driven decision making', icon: '📊' },
+    { title: 'AI Chatbots', description: 'AI-assisted enquiries with human escalation', icon: '🤖', href: '/services/ai-automation' },
+    { title: 'Business Automation', description: 'Streamline workflows and reduce costs', icon: '⚡', href: '/services/ai-automation' },
+    { title: 'Predictive Analytics', description: 'Data-driven decision making', icon: '📊', href: '/services/ai-automation' },
+  ],
+  'Web Design': [
+    { title: 'Web Design in Vanuatu', description: 'Real client projects, design scope and the next steps', icon: '🌐', href: '/services/web-design' },
+    { title: 'Web Development', description: 'Implementation and custom website features', icon: '💻', href: '/services/web-development' },
+    { title: 'SEO Services', description: 'Search foundations and ongoing review', icon: '🔍', href: '/services/seo' },
   ],
   'Web Development': [
-    { title: 'Custom Websites', description: 'Fast, responsive sites for Pacific businesses', icon: '🌐' },
-    { title: 'E-commerce', description: 'Online stores with local payment support', icon: '🛒' },
-    { title: 'Web Applications', description: 'Powerful tools for your operations', icon: '💻' },
+    { title: 'Web Design in Vanuatu', description: 'Fast, responsive sites for Pacific businesses', icon: '🌐', href: '/services/web-design' },
+    { title: 'E-commerce', description: 'Online stores with local payment support', icon: '🛒', href: '/services/ecommerce' },
+    { title: 'Web Applications', description: 'Powerful tools for your operations', icon: '💻', href: '/services/web-development' },
   ],
   'Mobile Development': [
-    { title: 'iOS & Android Apps', description: 'Native apps built for Pacific conditions', icon: '📱' },
-    { title: 'Offline-First Design', description: 'Works even without internet', icon: '📡' },
-    { title: 'Cross-Platform', description: 'One codebase, all devices', icon: '🔄' },
+    { title: 'iOS & Android Apps', description: 'Native apps built for Pacific conditions', icon: '📱', href: '/services/mobile-apps' },
+    { title: 'Offline-First Design', description: 'Works even without internet', icon: '📡', href: '/services/mobile-apps' },
+    { title: 'Cross-Platform', description: 'One codebase, all devices', icon: '🔄', href: '/services/mobile-apps' },
   ],
   'Digital Marketing': [
-    { title: 'SEO', description: 'Get found by tourists and locals', icon: '🔍' },
-    { title: 'Social Media', description: 'Engage your Pacific audience', icon: '📣' },
-    { title: 'Google Ads', description: 'Target the right customers', icon: '🎯' },
+    { title: 'SEO', description: 'Get found by tourists and locals', icon: '🔍', href: '/services/seo' },
+    { title: 'Social Media', description: 'Engage your Pacific audience', icon: '📣', href: '/services/digital-marketing' },
+    { title: 'Google Ads', description: 'Target the right customers', icon: '🎯', href: '/services/digital-marketing' },
   ],
 };
 
 const defaultServices = [
-  { title: 'Web Development', description: 'Fast, responsive websites', icon: '🌐' },
-  { title: 'AI Solutions', description: 'Smart automation for your business', icon: '🤖' },
-  { title: 'Digital Marketing', description: 'Grow your online presence', icon: '📣' },
+  { title: 'Web Design in Vanuatu', description: 'Explore real client projects and plan your website', icon: '🌐', href: '/services/web-design' },
+  { title: 'AI Solutions', description: 'Smart automation for your business', icon: '🤖', href: '/services/ai-automation' },
+  { title: 'Digital Marketing', description: 'Grow your online presence', icon: '📣', href: '/services/digital-marketing' },
 ];
 
 export default function RelatedServices({ category }: RelatedServicesProps) {
@@ -49,14 +54,15 @@ export default function RelatedServices({ category }: RelatedServicesProps) {
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         {services.map((service, index) => (
-          <div 
-            key={index}
+          <Link
+            href={service.href}
+            key={`${service.href}-${index}`}
             className="bg-white p-4 rounded-xl border border-gray-100 hover:border-vibrant-orange hover:shadow-md transition-all"
           >
             <span className="text-2xl mb-2 block">{service.icon}</span>
             <h4 className="font-semibold text-deep-blue text-sm mb-1">{service.title}</h4>
             <p className="text-gray-500 text-xs">{service.description}</p>
-          </div>
+          </Link>
         ))}
       </div>
 

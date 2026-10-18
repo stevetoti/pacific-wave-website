@@ -1060,3 +1060,13 @@ Four live API/storage access checks and three public route checks pass. No crede
 ## 2026-10-18 — [Codex] Weekly automatic PWD rankings live
 
 Stephen authorised weekly recurring DataForSEO ranking updates. Deployed production cloud cron Monday 09:15 Pacific/Efate with 10:15 missing-only recovery; private activation and cron registry enabled/read back. Existing 14-keyword Vanuatu/English/desktop scope and daily duplicate/retry caps retained. Toti Room shows actual configuration and scheduled outcomes; owner browser confirmed enabled panel. First future run 19 October remains unobserved. Eleven backend and 27 frontend focused tests plus type/lint/build checks passed. PWD app41844dd/dpl_42axQrjJGUUcWnokZDRZAPYxZhXj; Toti app3495ae6/dpl_G7EMzZwCdZWW4rW8pZiJDKet8wGL. Report docs/seo/pwd-weekly-ranking-schedule-2026-10-18.md. Current 12 valid/2 failed measurements preserved. Persistent-memory CLI missing numpy; shared markdown used.
+
+
+## 2026-10-18 — [Codex] Two failed PWD keyword checks recovered
+
+User-authorised one-off two-keyword recovery succeeds: web development Vanuatu #16/73organic; software development Vanuatu #64/94organic with Google's correction to software developer Vanuatu. CostUS$0.028 existingcredit. Now14valid/10found/4notfound-in-coverage/0failed;36historyrows. Twelve earlier observations preserved, dailyattempt2 unchanged, separate private recovery audit; no code/deployment/schedule change. Owner browser/database readback verified. Toti baseline task/OpsBoard updated; all broader tasks remain pending. See GBP docs/seo/pwd-keyword-recovery-and-remaining-2026-10-18.md. Persistent-memory sync remains blocked missingnumpy; markdown handoff retained.
+
+
+## 2026-10-19 — [Codex] Index investigation and web-design release validated
+
+Fixed missing www project-domain/TLS via verified308 to apex, HTTPS/path/querypreservation checked. GSC no security/manualactions; three staleSeptemberduplicate/external747phcanonical records and two discovered/unindexed unchanged; actual historicalcause unproven. Webdesignindexed/correctGooglecanonical. Cloud liveGooglefetch allowed/selfcanonical only, notindexsuccess. Server-rendered webdesign improved with real previews/scopedbuyercontent; blogrelatedcards directly linkrelevantservices; sitemapstaticlastmodstable.112tests/type/changedlint/build8guards and localHTTP/mobilechecks pass; releasepending. See docs/seo/pwd-indexing-web-design-2026-10-19.md.

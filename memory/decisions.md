@@ -254,3 +254,8 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 ## 2026-10-18 — [Codex] Weekly rank schedule
 
 User-authorised weekly cloud updates supersede the earlier manual-only decision; Monday 09:15 Vanuatu plus bounded missing-only 10:15 recovery. Existing credit, no automatic purchase.
+
+
+## 2026-10-19 — [Codex] Index outcome versus current repairs
+
+Repair verified current defects (wwwTLS/redirect, crawlable supporting links) and strengthen real service proof. Preserve correct canonical URLs and existing indexed content. Do not invent historical compromise/rootcause, change/slugs/noindex to forcecanonical, repeatedlysubmitURLs or declare GoogleIndex success from a live test. Webdesign uses staticserverrenderedcontent and realexistingassets.

@@ -422,3 +422,16 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 ## 2026-10-18 — [Codex] Weekly rank schedule
 
 - [ ] Observe first actual scheduled ranking run on 19 October 09:15 Vanuatu and provider recovery outcome. Enabled is verified; future execution is not yet observed.
+
+
+## 2026-10-18 — [Codex] Ranking recovery completed
+
+- [x] Recover both failed terms — [Codex] 2026-10-18:14/14valid, snapshotready, Google correction explicitly recorded. Supersedes earlier two-error follow-up.
+- [ ] Index/canonical outcomes, first scheduled19October executions, article approval/publication, genuine reviews,28old drafts, named-Pacific markets and real enquiry baseline remain.
+
+
+## 2026-10-19 — [Codex] Index/webdesign release follow-up
+
+- [x] Investigate live crawlability and repair missingwwwTLS/redirect.
+- [ ] Publish verified webdesign/link improvements; check exact live release and one targeted recrawl request if available.
+- [ ] Google Index0/5 unresolved; existing monitor continues. Historicalexternalcanonical cause unproven, GSC crawledHTMLunavailable.
