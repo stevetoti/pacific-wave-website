@@ -1034,3 +1034,7 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 ## 2026-10-18 — [Codex] PWD DataForSEO service
 
 - Stephen requested measured rankings in Toti. Added fixed PWD/Vanuatu2548/English/desktop/depth100 owner-authorised manual service with exact-origin CORS, existing admin+Toti-operator checks, private daily CAS lease, deterministic per-keyword history IDs, one completed batch/day and at most two attempts. Credentials remain existing server env. No cron or credit purchase. Rank extraction uses organic rank_group and strict hostname matching; stores returned coverage/task/time/cost, not fabricated missing positions. Existing PWD SEO Hub guards mixed provenance/competitor JSON. Six focused tests/type/changed-filelint/build8guards pass. First attempt saved6of14; slow checks recovering with bounded40s/concurrency3. Verification/deployment pending.
+
+## 2026-10-18 — [Codex] First measured rank baseline
+
+- Provider baseline12/14valid after one bounded recovery; web development Vanuatu and software development Vanuatu remain unavailable due official free error log40101Internal SE Server Error. No zero/out-of-range rank invented. Official40106partial-success responses now retain usable organic positions with explicit coverage/partial flag. Budget retry cap held; no further paid retries today. Initial funded account total spend and private receipt pending final reconciliation.

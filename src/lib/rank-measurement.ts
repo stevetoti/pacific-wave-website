@@ -10,7 +10,7 @@ export function belongsToDomain(url: string, domain: string) {
 export function parseRankResponse(raw: unknown, keyword: string) {
   const response = responseSchema.parse(raw);
   const task = response.tasks[0];
-  if (response.status_code !== 20000 || response.tasks.length !== 1 || task?.status_code !== 20000 || task.result?.length !== 1) throw new Error('DataForSEO did not complete the measurement');
+  if (response.status_code !== 20000 || response.tasks.length !== 1 || ![20000, 40106].includes(task?.status_code) || task.result?.length !== 1) throw new Error(`DataForSEO task ${task?.id || 'unknown'} failed with status ${task?.status_code ?? response.status_code}`);
   const result = task.result[0];
   if (keywordKey(result.keyword) !== keywordKey(keyword) || result.location_code !== RANK_MARKET.locationCode || result.language_code !== RANK_MARKET.languageCode) throw new Error('DataForSEO returned a different query or market');
   const organic = (result.items || []).filter(item => item.type === 'organic' && item.rank_group && item.rank_group > 0);
@@ -19,6 +19,6 @@ export function parseRankResponse(raw: unknown, keyword: string) {
   const match = matches[0];
   const checkedAt = new Date(result.datetime).toISOString();
   return { keyword, position: match?.rank_group ?? null, url: match?.url ?? null, checkedAt,
-    metadata: { source: 'dataforseo' as const, version: 1, taskId: task.id, ...RANK_MARKET, checkedAt, organicCount: organic.length, maxOrganicRank: Math.max(...organic.map(item => item.rank_group!)), outcome: match ? 'ranked' : 'not_found', searchUrl: result.check_url ?? null, correctedQuery: result.spell?.keyword ?? null, correctionType: result.spell?.type ?? null, cost: task.cost ?? 0, rankAbsolute: match?.rank_absolute ?? null },
+    metadata: { source: 'dataforseo' as const, version: 1, providerStatus: task.status_code, partialResults: task.status_code === 40106, taskId: task.id, ...RANK_MARKET, checkedAt, organicCount: organic.length, maxOrganicRank: Math.max(...organic.map(item => item.rank_group!)), outcome: match ? 'ranked' : 'not_found', searchUrl: result.check_url ?? null, correctedQuery: result.spell?.keyword ?? null, correctionType: result.spell?.type ?? null, cost: task.cost ?? 0, rankAbsolute: match?.rank_absolute ?? null },
   };
 }

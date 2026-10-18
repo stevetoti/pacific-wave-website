@@ -32,3 +32,8 @@ test('owner endpoint rejects anonymous and foreign-origin requests before provid
  assert.equal((await POST(new Request('https://pacificwavedigital.com/api/seo/rankings', { method: 'POST', headers: { origin: 'https://evil.test' } }))).status, 403);
  assert.equal(OPTIONS(new Request('https://pacificwavedigital.com/api/seo/rankings', { headers: { origin: 'https://totiroom.pacificwavedigital.com' } })).status, 204);
 });
+
+test('provider partial success preserves usable ranks with explicit partial coverage', () => {
+ const rank = parseRankResponse(fixture([{ type: 'organic', rank_group: 3, url: 'https://pacificwavedigital.com/' }], 40106), 'web design Vanuatu');
+ assert.equal(rank.position, 3); assert.equal(rank.metadata.partialResults, true); assert.equal(rank.metadata.organicCount, 1);
+});
