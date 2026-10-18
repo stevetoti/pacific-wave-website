@@ -245,3 +245,7 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 ## 2026-10-18 — [Codex] Paid rank checks remain explicit and bounded
 
 - Manual owner refresh only, no paid requests on dashboard load and no recurring paid schedule. One completed PWD/Vanuatu/English/desktop batch per local date, two bounded attempts reusing saved IDs. Keep14tracking/active targets separate from5paused historical rows. Positions are organic rank_group with hostname matching and actual returned coverage; provider errors are unavailable rather than out-of-range. No inferred other-country/global/Maps rank. Private provenance is stored alongside rank rows and current snapshot; the legacy PWD competitor-array reader is guarded for compatibility.
+
+## 2026-10-18 — [Codex] Weekly automatic rank scheduler requested
+
+- Stephen explicitly authorised recurring weekly DataForSEO measurements in Toti Room. Supersedes manual-only decision. Reuse existing protected cron/credentials and existing daily idempotency. Monday09:15Vanuatu primary,10:15missing-only recovery; one completed batch/day and two attempts maximum. New private rank_automation setting gates activation and records real scheduled outcomes; no new paid top-up or messages. Validation/activation pending.

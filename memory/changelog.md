@@ -1046,3 +1046,12 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 PWD app7f12e6c / dpl_2MQSvuQnhpPjmsfJ2dVfH3NoeQpm; Toti app0dd7873 / dpl_99sLpkZ16eyDVuYZKTuGJx1yPBkT. Exact staged PWD access checks401anonymous/403foreign-origin/204Toti preflight and Toti route/column/bundle checks pass. Live owner browser confirms14tracked targets,34historyrows,12measured positions/coverage,2checkfailed rows and one unchanged pending article. Owner Refresh reaches the authenticated API and correctly reports daily retry limit without incrementing attempt2 or issuing another paid request. Desktop/table filter and settled390px mobile layout pass (body375px; table680px scrolls inside309px container); viewport restored and filter cleared.
 
 Four live API/storage access checks and three public route checks pass. No credentials/schema/RLS/cron changes, content publication, Google writes or outgoing messages. Screenshots and release receipt in GBP docs/seo/evidence/pwd-dataforseo-*. Initial unpromoted PWD stage9hZNobxmGMUotvMH7bM64sz5jfyL superseded by the final tested stage. Rollback PWD dpl_BnAarKhqRHXQHTZAUaMF56YY6WVr; Toti dpl_GNMGw7R9Axojyw3Bq6BcUTCkTrxm.
+
+## 2026-10-18 — [Codex] Weekly automatic rank scheduler requested
+
+- Stephen explicitly authorised recurring weekly DataForSEO measurements in Toti Room. Supersedes manual-only decision. Reuse existing protected cron/credentials and existing daily idempotency. Monday09:15Vanuatu primary,10:15missing-only recovery; one completed batch/day and two attempts maximum. New private rank_automation setting gates activation and records real scheduled outcomes; no new paid top-up or messages. Validation/activation pending.
+
+## 2026-10-18 — [Codex] Weekly rank cron verified locally
+
+- Protected production GET/api/cron/weekly-rankings scheduled15 22,23 * * 0UTC (Monday09:15/10:15Pacific/Efate). Existing three crons preserved. Off-Monday or before09:15 exits without database/provider access; private rank_automation activation gates paid runs. Existing daily worker handles duplicate deliveries/missing-only recovery and two-attempt cap. Real outcome receipts update rank_automation and scoped cron_jobs registry; failures do not become healthy/zero positions.
+- Eleven focused scheduler/rank tests, TypeScript, changed-file lint and production build/eight route guards pass. No new paid run triggered during tests. Cloud deployment, configuration activation and owner UI check pending.

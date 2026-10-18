@@ -413,3 +413,7 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [x] Configure existing DataForSEO account, fix tracked count, show real positions/pages/times/coverage and verify owner refresh/mobile — [Codex]2026-10-18:12of14measured,8found/4notfound in returned coverage.
 - [ ] Two provider40101SEserver failures remain: web development Vanuatu and software development Vanuatu. Paid retry cap2held; retry via manual Refresh on the next Vanuatu date. No recurring paid schedule was enabled.
 - [ ] Named Pacific-country baseline and qualified-enquiry comparison still pending. Different PWD pages currently rank for several service targets; use this evidence for later content/indexing work. Existing five-page canonical monitor/article/review/backlog follow-ups unchanged.
+
+## 2026-10-18 — [Codex] Weekly automatic rank scheduler requested
+
+- Stephen explicitly authorised recurring weekly DataForSEO measurements in Toti Room. Supersedes manual-only decision. Reuse existing protected cron/credentials and existing daily idempotency. Monday09:15Vanuatu primary,10:15missing-only recovery; one completed batch/day and two attempts maximum. New private rank_automation setting gates activation and records real scheduled outcomes; no new paid top-up or messages. Validation/activation pending.
