@@ -347,3 +347,7 @@ Production dpl_zXaUViQ2ECjk7Ch3CwamjPkV1U1C (pacific-wave-website-enpsr4kd9-paci
 ## 2026-09-18 — [Codex] Lesson thumbnail release
 
 Current production dpl_Eu5HccX8AogwF9wDrQpv5u4YSiyv (pacific-wave-website-ni0edia2m-pacificwaveprojects.vercel.app). Lesson thumbnail uploader, private optimized 16:9 artwork, admin/student lesson previews and covers; Placeholder label is now Draft. Publish remains explicit. Thumbnail migration applied; 43 tests, build/lint and isolated desktop/mobile upload/save/replace/remove/privacy checks passed; fixtures removed. See latest memory/changelog.md and docs/LMS-ADVANCED-ADMIN.md. Local 3100 matches with QA emails disabled. Shared source remains uncommitted/unpushed.
+
+## 2026-10-18 — [Codex] Resume here — Toti Room SEO approvals live
+
+Current complete website app8d787e4, live dpl_BnAarKhqRHXQHTZAUaMF56YY6WVr on codex/pwd-weekly-blog. Weekly drafts now create private immutable review cards in Toti Room; review/approve at https://totiroom.pacificwavedigital.com/seo. Supersedes PWD-admin-only review decision. Approval records consent; a separate operator verifies exact current fingerprint before publication. First post/card158210f2-416e-4efe-96bd-b167aca14d72 remains pending and unpublished. Full central report is in GBP docs/seo/pwd-central-seo-workspace-2026-10-18.md. Preserve this complete branch lineage before future main deploys.

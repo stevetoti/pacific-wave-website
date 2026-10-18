@@ -1024,3 +1024,9 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 
 - Weekly generator now creates/verifies a private Toti Room snapshot before ready/recovered responses; ready runs backfill/reuse their card without generation. Existing post158210f2-416e-4efe-96bd-b167aca14d72 has exactly one pending custom/pwd_weekly_review_v1 card, same ID, complete content/sources/fingerprint. No owner approval or publication. Legacy blog_publish processors cannot select this action type.
 - TypeScript, changed-file lint, seven focused tests including content/image/keyword revision fingerprint, production build/eight guards pass. No schema, credentials, cron cadence or other-site changes. Publication remains separate and requires comparing the current revision to the approved snapshot. Staging/live verification pending.
+
+## 2026-10-18 — [Codex] Toti central SEO release verified
+
+- Live PWD app8d787e4 / dpl_BnAarKhqRHXQHTZAUaMF56YY6WVr; existing crons preserved.8staged/10live HTTP checks pass, ready-run card reused as pending without AI generation, article remains404/public lists excluded. Private database checks deny anonymous approvals/workspace rows. Authenticated PWD SEO Hub shows current draft,19October09:00next slot and live Toti Room review link.
+- Toti app4c489b3 / dpl_GNMGw7R9Axojyw3Bq6BcUTCkTrxm at https://totiroom.pacificwavedigital.com/seo.24frontendtests/type/lint/build/bundle checks and stage/live release checks pass; owner-session rendering still awaits Stephen’s Toti login. Owner AuthGuard/RLS unchanged.
+- Shared records and full unsent client review drafts/status handover in private Ops Board6816efcf-8b53-471e-92f7-14fbad0bcb17. Article158210f2-416e-4efe-96bd-b167aca14d72 pending, never approved/published. No Google, email/client messages, other-site or payment changes. Persistent-memory CLI still missing numpy; markdown journals retained.
