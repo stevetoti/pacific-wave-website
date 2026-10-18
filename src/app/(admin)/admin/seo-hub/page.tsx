@@ -301,7 +301,7 @@ export default function SEOHubPage() {
         if (latestRanking) {
           rankResults[kw.keyword] = {
             position: latestRanking.position,
-            competitors: (latestRanking.competitors as Competitor[]) || [],
+            competitors: Array.isArray(latestRanking.competitors) ? latestRanking.competitors as Competitor[] : [],
             isRanking: latestRanking.position !== null && latestRanking.position > 0,
           };
         }

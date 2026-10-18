@@ -237,3 +237,7 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 ## 2026-10-18 — [Codex] Toti Room central approval requested
 
 - Stephen wants all business SEO records and approvals in Toti Room. Supersedes PWD-editor-only decision above. Adding private immutable article snapshot/fingerprint cards to existing owner-only pending_actions; worker verifies the card before reporting ready. No publisher or approval bypass; publication remains a separate checked step after the owner approves. Existing article stays unpublished.
+
+## 2026-10-18 — [Codex] PWD DataForSEO service
+
+- Stephen requested measured rankings in Toti. Added fixed PWD/Vanuatu2548/English/desktop/depth100 owner-authorised manual service with exact-origin CORS, existing admin+Toti-operator checks, private daily CAS lease, deterministic per-keyword history IDs, one completed batch/day and at most two attempts. Credentials remain existing server env. No cron or credit purchase. Rank extraction uses organic rank_group and strict hostname matching; stores returned coverage/task/time/cost, not fabricated missing positions. Existing PWD SEO Hub guards mixed provenance/competitor JSON. Six focused tests/type/changed-filelint/build8guards pass. First attempt saved6of14; slow checks recovering with bounded40s/concurrency3. Verification/deployment pending.
