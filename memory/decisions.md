@@ -233,3 +233,7 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 
 - Use the website’s existing protected Vercel cron infrastructure and credentials; this avoids the broken local unauthenticated admin call and works while the Mac is off. Daily checks create at most one draft per Monday-based Vanuatu week. Preserve existing admin protection, no auto-publish or outgoing notifications. PWD’s Blog editor is its explicit approval surface; no new Toti Room card is required. The existing shared publisher remains unchanged for other brands.
 - Private seo_settings CAS records store lease/provenance; public keywords contain only reader topics. Current source retrieval and mechanical quality checks assist human factual review, never guarantee accuracy or rankings. Originality checks do not establish measured search volume. Use per-command GitHub owner identity for PWD without switching a shared global MEDD account.
+
+## 2026-10-18 — [Codex] Toti Room central approval requested
+
+- Stephen wants all business SEO records and approvals in Toti Room. Supersedes PWD-editor-only decision above. Adding private immutable article snapshot/fingerprint cards to existing owner-only pending_actions; worker verifies the card before reporting ready. No publisher or approval bypass; publication remains a separate checked step after the owner approves. Existing article stays unpublished.

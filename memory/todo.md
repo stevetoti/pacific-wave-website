@@ -399,3 +399,7 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [ ] Stephen: review first article158210f2-416e-4efe-96bd-b167aca14d72 in PWD admin; publish only after his approval. No article was published during repair.
 - [ ] Observe first scheduled future run19October09:00Pacific/Efate in SEO Hub. Existing per-week receipts and bounded failure states support verification; do not create duplicate drafts manually.
 - [ ] Review historical28draft backlog before reuse, and audit other client websites individually; shared image/approval failures on other brands remain out of scope. Existing five-page indexing monitor unchanged.
+
+## 2026-10-18 — [Codex] Toti Room central approval requested
+
+- Stephen wants all business SEO records and approvals in Toti Room. Supersedes PWD-editor-only decision above. Adding private immutable article snapshot/fingerprint cards to existing owner-only pending_actions; worker verifies the card before reporting ready. No publisher or approval bypass; publication remains a separate checked step after the owner approves. Existing article stays unpublished.

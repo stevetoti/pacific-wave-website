@@ -1,4 +1,5 @@
 import 'server-only';
+import { ensureTotiBlogReview, TOTI_SEO_URL } from './toti-blog-review';
 import { createHash, randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { getSupabaseAdmin, getOpenAI } from './clients';
@@ -6,7 +7,7 @@ import { BLOG_ORIGIN, EDITORIAL_BRIEFS, EDITORIAL_VERSION, WEEKLY_CATEGORY, arti
 
 export interface WeeklyRun {
   week: string; state: 'running' | 'ready' | 'failed'; attempt: number; token: string;
-  startedAt: string; updatedAt: string; postId?: string; title?: string; keyword?: string;
+  startedAt: string; updatedAt: string; postId?: string; approvalId?: string; title?: string; keyword?: string;
   targetUrl?: string; sources?: string[]; briefId?: string; error?: string; checks?: string[];
 }
 const keyFor = (week: string) => `weekly_blog:${week}`;
@@ -73,7 +74,11 @@ export async function runWeeklyBlog(now = new Date(), retryFailed = false) {
   if (process.env.VERCEL_ENV !== 'production') throw new Error('Weekly generation runs only in production');
   const week = vanuatuWeek(now);
   const old = await readRun(week);
-  if (old.run?.state === 'ready') return { state: 'already_ready', postId: old.run.postId };
+  if (old.run?.state === 'ready') {
+    if (!old.run.postId) throw new Error('Ready record has no article');
+    const review = await ensureTotiBlogReview(old.run.postId, old.run.sources);
+    return { state: 'already_ready', postId: old.run.postId, ...review };
+  }
   if (!mayClaim(old.run, now) && !(retryFailed && old.run?.state === 'failed' && old.run.attempt < 3)) return { state: old.run?.attempt === 3 ? 'retry_limit' : 'in_progress' };
   let run: WeeklyRun = { week, state: 'running', attempt: (old.run?.attempt || 0) + 1, token: randomUUID(), startedAt: now.toISOString(), updatedAt: now.toISOString() };
   let raw = JSON.stringify(run);
@@ -89,7 +94,8 @@ export async function runWeeklyBlog(now = new Date(), retryFailed = false) {
     if (recoveryError) throw new Error('Cannot verify existing weekly draft');
     if (recovered?.length) {
       if (recovered.length !== 1) throw new Error('Multiple weekly drafts require review');
-      run = { ...run, state: 'ready', updatedAt: new Date().toISOString(), postId: recovered[0].id, title: recovered[0].title, keyword: recovered[0].focus_keyword };
+      const review = await ensureTotiBlogReview(recovered[0].id, old.run?.sources);
+      run = { ...run, approvalId: review.approvalId, state: 'ready', updatedAt: new Date().toISOString(), postId: recovered[0].id, title: recovered[0].title, keyword: recovered[0].focus_keyword };
       await saveRun(run, raw);
       return { state: 'recovered', postId: run.postId };
     }
@@ -108,7 +114,8 @@ export async function runWeeklyBlog(now = new Date(), retryFailed = false) {
     const content = `${article.content}<h2>Sources and review</h2><ul>${sourceList}</ul><p>Prepared with AI assistance for Pacific Wave Digital. Review current service scope and provider eligibility with our team before acting. The cover is illustrative.</p>`;
     const { data: post, error: postError } = await db().from('blog_posts').insert({ site_id: 'pwd', title: article.title, slug: `pwd-weekly-${week}`, excerpt: article.excerpt, content, category: WEEKLY_CATEGORY, image_url: b.image, image_alt: `Illustrative artwork for ${safeTitle}`, keywords: [...Array.from(new Set([b.keyword, ...article.tags]))], focus_keyword: b.keyword, read_time: Math.max(1, Math.ceil(content.replace(/<[^>]*>/g, ' ').split(/\s+/).length / 200)), published: false, published_at: null }).select('id,published').single();
     if (postError || !post || post.published) throw new Error('Draft persistence could not be verified');
-    run = { ...run, state: 'ready', postId: post.id, title: article.title, updatedAt: new Date().toISOString(), checks: ['Structure and links checked', 'Duplicate titles checked', 'Verified local cover', 'Unpublished draft saved', 'Human fact-check and publication approval required'], error: undefined };
+    const review = await ensureTotiBlogReview(post.id, b.sources);
+    run = { ...run, approvalId: review.approvalId, state: 'ready', postId: post.id, title: article.title, updatedAt: new Date().toISOString(), checks: ['Structure and links checked', 'Duplicate titles checked', 'Verified local cover', 'Unpublished draft saved', 'Toti Room approval saved', 'Human fact-check and publication approval required'], error: undefined };
     await saveRun(run, raw);
     return { state: 'ready', postId: post.id, keyword: b.keyword };
   } catch (error) {
@@ -129,5 +136,5 @@ export async function weeklyBlogStatus(now = new Date()) {
   if (postError) throw new Error('Cannot verify draft queue');
   const drafts = (posts || []).filter(p => !p.published);
   const due = new Date(`${vanuatuWeek(now)}T22:00:00Z`); due.setUTCDate(due.getUTCDate() - 1);
-  return { overdue: !current && now >= due, stalled: current?.state === 'running' && now.getTime() - Date.parse(current.updatedAt) > 15 * 60 * 1000, version: EDITORIAL_VERSION, schedule: 'Monday 09:00 Pacific/Efate', recovery: 'Daily 09:00 check; at most three attempts per week', nextRun: nextWeeklyRun(now), current: current || null, lastSuccess: lastSuccess || null, drafts, reviewUrl: '/admin/blog', approval: 'Review and publish in PWD admin. This job never publishes.' };
+  return { overdue: !current && now >= due, stalled: current?.state === 'running' && now.getTime() - Date.parse(current.updatedAt) > 15 * 60 * 1000, version: EDITORIAL_VERSION, schedule: 'Monday 09:00 Pacific/Efate', recovery: 'Daily 09:00 check; at most three attempts per week', nextRun: nextWeeklyRun(now), current: current || null, lastSuccess: lastSuccess || null, drafts, reviewUrl: TOTI_SEO_URL, approval: 'Review and approve in Toti Room. Publication is a separate verified step; this job never publishes.' };
 }
