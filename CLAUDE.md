@@ -351,3 +351,7 @@ Current production dpl_Eu5HccX8AogwF9wDrQpv5u4YSiyv (pacific-wave-website-ni0edi
 ## 2026-10-18 — [Codex] Resume here — Toti Room SEO approvals live
 
 Current complete website app8d787e4, live dpl_BnAarKhqRHXQHTZAUaMF56YY6WVr on codex/pwd-weekly-blog. Weekly drafts now create private immutable review cards in Toti Room; review/approve at https://totiroom.pacificwavedigital.com/seo. Supersedes PWD-admin-only review decision. Approval records consent; a separate operator verifies exact current fingerprint before publication. First post/card158210f2-416e-4efe-96bd-b167aca14d72 remains pending and unpublished. Full central report is in GBP docs/seo/pwd-central-seo-workspace-2026-10-18.md. Preserve this complete branch lineage before future main deploys.
+
+## 2026-10-18 — [Codex] Resume here — owner DataForSEO ranks live
+
+Latest complete website app7f12e6c / dpl_2MQSvuQnhpPjmsfJ2dVfH3NoeQpm, branch codex/pwd-weekly-blog. New owner-only POST/api/seo/rankings powers Toti Room’s manual refresh. Read docs/seo/pwd-dataforseo-rankings-2026-10-18.md. Existing server credentials, no new recurring paid cron;12of14targets measured,2provider40101errors remain. Human article approval and all prior SEO/enquiry/training work preserved.

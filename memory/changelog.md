@@ -1038,3 +1038,11 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 ## 2026-10-18 — [Codex] First measured rank baseline
 
 - Provider baseline12/14valid after one bounded recovery; web development Vanuatu and software development Vanuatu remain unavailable due official free error log40101Internal SE Server Error. No zero/out-of-range rank invented. Official40106partial-success responses now retain usable organic positions with explicit coverage/partial flag. Budget retry cap held; no further paid retries today. Initial funded account total spend and private receipt pending final reconciliation.
+
+## 2026-10-18 — [Codex] DataForSEO ranks live and owner-verified
+
+## Live release and owner verification
+
+PWD app7f12e6c / dpl_2MQSvuQnhpPjmsfJ2dVfH3NoeQpm; Toti app0dd7873 / dpl_99sLpkZ16eyDVuYZKTuGJx1yPBkT. Exact staged PWD access checks401anonymous/403foreign-origin/204Toti preflight and Toti route/column/bundle checks pass. Live owner browser confirms14tracked targets,34historyrows,12measured positions/coverage,2checkfailed rows and one unchanged pending article. Owner Refresh reaches the authenticated API and correctly reports daily retry limit without incrementing attempt2 or issuing another paid request. Desktop/table filter and settled390px mobile layout pass (body375px; table680px scrolls inside309px container); viewport restored and filter cleared.
+
+Four live API/storage access checks and three public route checks pass. No credentials/schema/RLS/cron changes, content publication, Google writes or outgoing messages. Screenshots and release receipt in GBP docs/seo/evidence/pwd-dataforseo-*. Initial unpromoted PWD stage9hZNobxmGMUotvMH7bM64sz5jfyL superseded by the final tested stage. Rollback PWD dpl_BnAarKhqRHXQHTZAUaMF56YY6WVr; Toti dpl_GNMGw7R9Axojyw3Bq6BcUTCkTrxm.

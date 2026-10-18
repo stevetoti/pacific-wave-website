@@ -407,3 +407,9 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 ## 2026-10-18 — [Codex] PWD DataForSEO service
 
 - Stephen requested measured rankings in Toti. Added fixed PWD/Vanuatu2548/English/desktop/depth100 owner-authorised manual service with exact-origin CORS, existing admin+Toti-operator checks, private daily CAS lease, deterministic per-keyword history IDs, one completed batch/day and at most two attempts. Credentials remain existing server env. No cron or credit purchase. Rank extraction uses organic rank_group and strict hostname matching; stores returned coverage/task/time/cost, not fabricated missing positions. Existing PWD SEO Hub guards mixed provenance/competitor JSON. Six focused tests/type/changed-filelint/build8guards pass. First attempt saved6of14; slow checks recovering with bounded40s/concurrency3. Verification/deployment pending.
+
+## 2026-10-18 — [Codex] Measured keyword positions
+
+- [x] Configure existing DataForSEO account, fix tracked count, show real positions/pages/times/coverage and verify owner refresh/mobile — [Codex]2026-10-18:12of14measured,8found/4notfound in returned coverage.
+- [ ] Two provider40101SEserver failures remain: web development Vanuatu and software development Vanuatu. Paid retry cap2held; retry via manual Refresh on the next Vanuatu date. No recurring paid schedule was enabled.
+- [ ] Named Pacific-country baseline and qualified-enquiry comparison still pending. Different PWD pages currently rank for several service targets; use this evidence for later content/indexing work. Existing five-page canonical monitor/article/review/backlog follow-ups unchanged.

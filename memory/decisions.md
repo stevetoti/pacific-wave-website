@@ -241,3 +241,7 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 ## 2026-10-18 — [Codex] PWD DataForSEO service
 
 - Stephen requested measured rankings in Toti. Added fixed PWD/Vanuatu2548/English/desktop/depth100 owner-authorised manual service with exact-origin CORS, existing admin+Toti-operator checks, private daily CAS lease, deterministic per-keyword history IDs, one completed batch/day and at most two attempts. Credentials remain existing server env. No cron or credit purchase. Rank extraction uses organic rank_group and strict hostname matching; stores returned coverage/task/time/cost, not fabricated missing positions. Existing PWD SEO Hub guards mixed provenance/competitor JSON. Six focused tests/type/changed-filelint/build8guards pass. First attempt saved6of14; slow checks recovering with bounded40s/concurrency3. Verification/deployment pending.
+
+## 2026-10-18 — [Codex] Paid rank checks remain explicit and bounded
+
+- Manual owner refresh only, no paid requests on dashboard load and no recurring paid schedule. One completed PWD/Vanuatu/English/desktop batch per local date, two bounded attempts reusing saved IDs. Keep14tracking/active targets separate from5paused historical rows. Positions are organic rank_group with hostname matching and actual returned coverage; provider errors are unavailable rather than out-of-range. No inferred other-country/global/Maps rank. Private provenance is stored alongside rank rows and current snapshot; the legacy PWD competitor-array reader is guarded for compatibility.
