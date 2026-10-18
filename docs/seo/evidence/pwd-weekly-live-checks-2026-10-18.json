@@ -1,0 +1,56 @@
+{
+  "base": "https://pacificwavedigital.com",
+  "checks": [
+    {
+      "name": "unauthenticated cron denied",
+      "status": 401
+    },
+    {
+      "name": "unauthenticated health denied",
+      "status": 401
+    },
+    {
+      "name": "existing admin generator protected",
+      "status": 401
+    },
+    {
+      "name": "unpublished article hidden",
+      "status": 404
+    },
+    {
+      "name": "local cover",
+      "status": 200
+    },
+    {
+      "name": "draft excluded /",
+      "status": 200
+    },
+    {
+      "name": "draft excluded /blog",
+      "status": 200
+    },
+    {
+      "name": "draft excluded /blog/rss.xml",
+      "status": 200
+    },
+    {
+      "name": "draft excluded /sitemap.xml",
+      "status": 200
+    },
+    {
+      "name": "authenticated repeats reuse draft",
+      "replies": [
+        {
+          "status": 200,
+          "state": "already_ready",
+          "postId": "158210f2-416e-4efe-96bd-b167aca14d72"
+        },
+        {
+          "status": 200,
+          "state": "already_ready",
+          "postId": "158210f2-416e-4efe-96bd-b167aca14d72"
+        }
+      ]
+    }
+  ]
+}

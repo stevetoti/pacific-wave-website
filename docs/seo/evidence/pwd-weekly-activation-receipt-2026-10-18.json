@@ -1,0 +1,60 @@
+{
+  "commit": "60851c8",
+  "deployment": "dpl_4KMVaMtA1FHT1EpJfMu9zTyWndVu",
+  "verifiedAt": "2026-10-18T03:22:02.735Z",
+  "post": {
+    "id": "158210f2-416e-4efe-96bd-b167aca14d72",
+    "title": "Accepting Online Payments in Vanuatu: A Merchant Readiness Checklist",
+    "published": false,
+    "published_at": null,
+    "focus_keyword": "online payments for Vanuatu businesses",
+    "keywords": [
+      "online payments for Vanuatu businesses",
+      "Vanuatu",
+      "online payments",
+      "merchant readiness",
+      "payment integration",
+      "e-commerce",
+      "business solutions",
+      "local payments"
+    ],
+    "image_url": "/images/payments/couple-laptop-card-hero.webp"
+  },
+  "run": {
+    "state": "ready",
+    "week": "2026-10-12",
+    "attempt": 3,
+    "briefId": "payment-readiness"
+  },
+  "registry": {
+    "slug": "company-seo-pwd",
+    "schedule": "0 22 * * *",
+    "timezone": "UTC",
+    "runtime": "server-cron",
+    "description": "PWD cloud weekly draft: Monday09:00Pacific/Efate. Daily same-time recovery/no-op checks; one draft per local week, max3attempts. Review and explicitly publish in PWD admin/blog. Live health: /admin/seo-hub. Legacy local job retired.",
+    "source_path": "pacific-wave-website/src/app/api/cron/weekly-blog/route.ts",
+    "is_enabled": true
+  },
+  "cloud": {
+    "enabled": true,
+    "deploymentId": "dpl_4KMVaMtA1FHT1EpJfMu9zTyWndVu",
+    "definitions": [
+      {
+        "host": "pacific-wave-website-imewd4vsl-pacificwaveprojects.vercel.app",
+        "path": "/api/cron/notifications",
+        "schedule": "* * * * *"
+      },
+      {
+        "host": "pacific-wave-website-imewd4vsl-pacificwaveprojects.vercel.app",
+        "path": "/api/cron/training-campaigns",
+        "schedule": "*/5 * * * *"
+      },
+      {
+        "host": "pacific-wave-website-imewd4vsl-pacificwaveprojects.vercel.app",
+        "path": "/api/cron/weekly-blog",
+        "schedule": "0 22 * * *"
+      }
+    ]
+  },
+  "anonymousDraftRows": 0
+}

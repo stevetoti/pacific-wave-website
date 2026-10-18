@@ -228,3 +228,8 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 ## 2026-10-18 — [Codex] Weekly blog verification and approval boundaries
 
 - First real draft158210f2-416e-4efe-96bd-b167aca14d72 fact-reviewed and held unpublished; repeated runs reuse it.14mapped keywords saved without invented volumes. Existing cloud credentials/cron enabled status verified. Six focused tests pass. Existing worker retirement localb89fda6; no remote configured in BuildProfitAI. Weekly PWD approval is the existing PWD Blog editor, no new Toti Room card or automatic publisher. No emails/Google/video/other-site changes. Final source build and cloud activation verification pending.
+
+## 2026-10-18 — [Codex] Weekly PWD scheduling and approval ownership
+
+- Use the website’s existing protected Vercel cron infrastructure and credentials; this avoids the broken local unauthenticated admin call and works while the Mac is off. Daily checks create at most one draft per Monday-based Vanuatu week. Preserve existing admin protection, no auto-publish or outgoing notifications. PWD’s Blog editor is its explicit approval surface; no new Toti Room card is required. The existing shared publisher remains unchanged for other brands.
+- Private seo_settings CAS records store lease/provenance; public keywords contain only reader topics. Current source retrieval and mechanical quality checks assist human factual review, never guarantee accuracy or rankings. Originality checks do not establish measured search volume. Use per-command GitHub owner identity for PWD without switching a shared global MEDD account.

@@ -392,3 +392,10 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 ## 2026-10-18 — [Codex] Weekly blog verification and approval boundaries
 
 - First real draft158210f2-416e-4efe-96bd-b167aca14d72 fact-reviewed and held unpublished; repeated runs reuse it.14mapped keywords saved without invented volumes. Existing cloud credentials/cron enabled status verified. Six focused tests pass. Existing worker retirement localb89fda6; no remote configured in BuildProfitAI. Weekly PWD approval is the existing PWD Blog editor, no new Toti Room card or automatic publisher. No emails/Google/video/other-site changes. Final source build and cloud activation verification pending.
+
+## 2026-10-18 — [Codex] Weekly PWD release completion
+
+- [x] Secure weekly cloud draft generation, real publishing health and keyword mapping — [Codex]2026-10-18:60851c8 / dpl_4KMVaMtA1FHT1EpJfMu9zTyWndVu live;6tests, build/8guards,9stage/10live checks; duplicate/private-draft checks pass. Legacy PWD workers retired.
+- [ ] Stephen: review first article158210f2-416e-4efe-96bd-b167aca14d72 in PWD admin; publish only after his approval. No article was published during repair.
+- [ ] Observe first scheduled future run19October09:00Pacific/Efate in SEO Hub. Existing per-week receipts and bounded failure states support verification; do not create duplicate drafts manually.
+- [ ] Review historical28draft backlog before reuse, and audit other client websites individually; shared image/approval failures on other brands remain out of scope. Existing five-page indexing monitor unchanged.

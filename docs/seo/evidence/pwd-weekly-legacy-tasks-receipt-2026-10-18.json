@@ -1,0 +1,40 @@
+{
+  "retiredProposals": [
+    {
+      "id": "22618dcb-d696-4c76-9e20-eed8681f9687",
+      "title": "Write article targeting: \"website designing\"",
+      "status": "skipped"
+    },
+    {
+      "id": "fd317b4f-ffd8-4556-9757-1cf8cd6b555a",
+      "title": "Write article targeting: \"web design\"",
+      "status": "skipped"
+    },
+    {
+      "id": "657b322a-9dee-45a7-b3f7-f73f49abeda8",
+      "title": "Write article targeting: \"web development\"",
+      "status": "skipped"
+    },
+    {
+      "id": "9711b428-0ff8-4940-a7b3-3436de50eb7a",
+      "title": "Write article targeting: \"web development vanuatu\"",
+      "status": "skipped"
+    },
+    {
+      "id": "0c49e074-b887-4c2b-983b-b8c6b2b6a959",
+      "title": "Write article targeting: \"web development\"",
+      "status": "skipped"
+    },
+    {
+      "id": "63048d11-0665-4445-bed8-9a8e0dbf2b96",
+      "title": "Write article targeting: \"web development\"",
+      "status": "skipped"
+    },
+    {
+      "id": "f74fb8f7-306a-4605-a09b-6fd4640ab612",
+      "title": "Write article targeting: \"web design for airlines\"",
+      "status": "skipped"
+    }
+  ],
+  "historicalKeywordRowsPaused": 5
+}

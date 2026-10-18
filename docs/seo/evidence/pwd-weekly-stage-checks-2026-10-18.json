@@ -1,0 +1,41 @@
+{
+  "base": "https://pacific-wave-website-imewd4vsl-pacificwaveprojects.vercel.app",
+  "checks": [
+    {
+      "name": "cron auth",
+      "status": 401
+    },
+    {
+      "name": "health auth",
+      "status": 401
+    },
+    {
+      "name": "generator auth",
+      "status": 401
+    },
+    {
+      "name": "draft private",
+      "status": 404
+    },
+    {
+      "name": "cover",
+      "status": 200
+    },
+    {
+      "name": "home",
+      "status": 200
+    },
+    {
+      "name": "blog",
+      "status": 200
+    },
+    {
+      "name": "feed",
+      "status": 200
+    },
+    {
+      "name": "sitemap",
+      "status": 200
+    }
+  ]
+}
