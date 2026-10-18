@@ -384,3 +384,11 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 ## 2026-10-18 — [Codex] Payment hero complete
 
 - [x] Couple behind laptop with credit card hero — [Codex] 2026-10-18: 55592ee / dpl_7sEZ5DyS3etXuDSHACNm8RrUzg22 live; four responsive sizes, image/social/canonical/contact/no-JS checks pass.
+
+## 2026-10-18 — [Codex] Weekly article repair in progress
+
+- Authorised weekly PWD cloud draft generation and private approval dashboard; existing cron secret/admin auth retained. Twelve distinct source-backed briefs and persisted focus keywords. Save Draft corrected to force unpublished; local covers verified. No article published. Verification and activation pending.
+
+## 2026-10-18 — [Codex] Weekly blog verification and approval boundaries
+
+- First real draft158210f2-416e-4efe-96bd-b167aca14d72 fact-reviewed and held unpublished; repeated runs reuse it.14mapped keywords saved without invented volumes. Existing cloud credentials/cron enabled status verified. Six focused tests pass. Existing worker retirement localb89fda6; no remote configured in BuildProfitAI. Weekly PWD approval is the existing PWD Blog editor, no new Toti Room card or automatic publisher. No emails/Google/video/other-site changes. Final source build and cloud activation verification pending.

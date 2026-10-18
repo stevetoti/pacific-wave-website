@@ -21,6 +21,7 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://rndegttgwt
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 const categories = [
+  'Weekly review',
   'AI Solutions',
   'Web Development',
   'Mobile Development',
@@ -853,6 +854,15 @@ export default function EditBlogPost() {
       .map(k => k.trim())
       .filter(k => k.length > 0);
 
+    if (formData.category === 'Weekly review') {
+      if (formData.title.trim().length < 25 || formData.title.length > 100) errors.push({ field: 'title', message: 'Use a descriptive title of 25–100 characters.' });
+      if (formData.excerpt.trim().length < 100 || formData.excerpt.length > 170) errors.push({ field: 'excerpt', message: 'Write a useful summary of 100–170 characters.' });
+      if (!formData.focusKeyword.trim()) errors.push({ field: 'focus keyword', message: 'Record the primary reader topic.' });
+      if (!formData.imageUrl.trim() || !formData.imageAlt.trim()) errors.push({ field: 'image', message: 'Include an image and descriptive alt text.' });
+      if (getWordCount(formData.content) < 650) errors.push({ field: 'content', message: 'Complete the practical guide before publication; our editorial minimum is 650 words.' });
+      return errors;
+    }
+
     // Featured image required
     if (!formData.imageUrl || formData.imageUrl.trim() === '') {
       errors.push({
@@ -922,6 +932,7 @@ export default function EditBlogPost() {
     // Validate before publishing (not for drafts)
     const isPublishing = !saveDraft && formData.published;
     if (isPublishing) {
+      if (!confirm('Approve and publish this article? Confirm that you have reviewed its facts, sources, links and images.')) return;
       const errors = validateForPublishing();
       if (errors.length > 0) {
         setValidationErrors(errors);
@@ -944,21 +955,19 @@ export default function EditBlogPost() {
       content: formData.content,
       category: formData.category,
       image_url: formData.imageUrl,
-      // image_alt and focus_keyword require database migration - uncomment after running:
-      // supabase/migrations/20260228_add_seo_columns.sql
-      // image_alt: formData.imageAlt,
+      image_alt: formData.imageAlt,
       keywords: keywordsArray,
-      // focus_keyword: formData.focusKeyword,
+      focus_keyword: formData.focusKeyword,
       read_time: formData.readTime,
-      published: formData.published,
-      published_at: formData.published ? new Date().toISOString() : null,
+      published: saveDraft ? false : formData.published,
+      published_at: !saveDraft && formData.published ? new Date().toISOString() : null,
       updated_at: new Date().toISOString(),
     };
 
     const { error } = await supabase
       .from('blog_posts')
       .update(updateData)
-      .eq('id', postId);
+      .eq('id', postId).eq('site_id', 'pwd');
 
     if (error) {
       console.error('Error updating post:', error);
@@ -975,7 +984,7 @@ export default function EditBlogPost() {
     const { error } = await supabase
       .from('blog_posts')
       .delete()
-      .eq('id', postId);
+      .eq('id', postId).eq('site_id', 'pwd');
 
     if (error) {
       console.error('Error deleting post:', error);
@@ -1016,14 +1025,14 @@ export default function EditBlogPost() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
           <Link href="/admin/blog" className="text-gray-500 hover:text-deep-blue text-sm mb-2 inline-block">
             ← Back to Posts
           </Link>
           <h1 className="text-3xl font-bold text-gray-900 font-heading">Edit Blog Post</h1>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <AIDropdown onAction={handleAIAction} isLoading={aiLoading} />
           <Link
             href={`/blog/preview/${postId}`}
@@ -1032,8 +1041,9 @@ export default function EditBlogPost() {
           >
             👁️ Preview
           </Link>
+          <button type="button" onClick={(e) => handleSubmit(e, true)} disabled={isSubmitting} className="rounded-lg border px-4 py-3 font-semibold">Save Draft</button>
           <button
-            onClick={handleSubmit}
+            onClick={(e) => handleSubmit(e, false)}
             disabled={isSubmitting}
             className="bg-vibrant-orange text-white px-6 py-3 rounded-lg font-semibold hover:bg-soft-orange transition-colors disabled:opacity-50 flex items-center gap-2"
           >
@@ -1170,14 +1180,14 @@ export default function EditBlogPost() {
           </div>
 
           {/* Focus Keyword Analysis */}
-          <SEOKeywordAnalyzer
+          {formData.category !== 'Weekly review' && <SEOKeywordAnalyzer
             focusKeyword={formData.focusKeyword}
             title={formData.title}
             slug={formData.slug}
             metaDescription={formData.excerpt}
             content={formData.content}
             imageAlt={formData.imageAlt}
-          />
+          />}
 
           {/* Related Articles / Internal Linking */}
           <RelatedArticlesSuggestions
@@ -1412,7 +1422,7 @@ export default function EditBlogPost() {
           </div>
 
           {/* Enhanced SEO Checklist */}
-          <EnhancedSEOChecklist
+          {formData.category !== 'Weekly review' && <EnhancedSEOChecklist
             focusKeyword={formData.focusKeyword}
             title={formData.title}
             slug={formData.slug}
@@ -1421,8 +1431,13 @@ export default function EditBlogPost() {
             keywords={formData.keywords}
             imageUrl={formData.imageUrl}
             imageAlt={formData.imageAlt}
-          />
+          />}
 
+          {formData.category === 'Weekly review' && <div className="rounded-xl border bg-white p-6">
+            <h3 className="font-semibold">Review before approval</h3>
+            <p className="mt-2 text-sm">Check factual accuracy, current sources, original practical value, natural topic coverage, links and images. Exact keyword density and checklist scores are not Google requirements or ranking predictions.</p>
+            <p className="mt-2 text-sm">Keep Draft while reviewing. Select Published and save only after you approve the article.</p>
+          </div>}
           {/* Danger Zone */}
           <div className="bg-red-50 rounded-xl p-6 border border-red-100">
             <h3 className="font-semibold text-red-700 mb-4">Danger Zone</h3>

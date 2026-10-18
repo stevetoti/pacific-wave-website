@@ -4,6 +4,7 @@ import { authFetch } from '@/lib/auth-fetch';
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
+import { WeeklyBlogHealth } from '@/components/admin/WeeklyBlogHealth';
 import { HelpTooltip } from '@/components/admin/HelpTooltip';
 
 interface Competitor {
@@ -2368,7 +2369,9 @@ ${llmsForm.key_pages.map(p => `- [${p.title}](${p.url}): ${p.description}`).join
         </div>
       )}
 
-      {/* SEO Engine Status */}
+      <WeeklyBlogHealth />
+
+      {/* Keyword provider connection is separate from publishing health. */}
       {apiStatus?.connected && (
         <div className="mt-8 p-4 rounded-xl border bg-gradient-to-r from-deep-blue/5 to-vibrant-orange/5 border-deep-blue/20">
           <div className="flex items-center justify-between">
@@ -2377,8 +2380,8 @@ ${llmsForm.key_pages.map(p => `- [${p.title}](${p.url}): ${p.description}`).join
                 SEO
               </div>
               <div>
-                <p className="font-medium text-gray-800">SEO Engine Active</p>
-                <p className="text-sm text-gray-500">Real-time keyword data and ranking tracking enabled</p>
+                <p className="font-medium text-gray-800">Keyword API connected</p>
+                <p className="text-sm text-gray-500">Keyword research connection available; publishing status is shown separately.</p>
               </div>
             </div>
             <button

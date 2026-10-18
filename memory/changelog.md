@@ -997,3 +997,15 @@ Real YouTube thumbnail cards, play/ready badges, selected inline player and exte
 
 - App 55592ee on codex/pwd-payment-couple-hero; production dpl_7sEZ5DyS3etXuDSHACNm8RrUzg22 (https://pacific-wave-website-p3cmsx2qq-pacificwaveprojects.vercel.app) promoted to pacificwavedigital.com. New illustrative couple/laptop/credit-card photograph, optimized104KB local WebP; payment-only responsive hero and social preview. Photo above copy through smaller laptops; desktop background/contrast gradient, contact/options CTAs retained. Exact built-in image_gen prompt and source path saved in docs/seo/payment-couple-hero-2026-10-18.md (GBP pwd-prefixed copy).
 - Type/full lint/build/eight guards, four local and four final live responsive checks at390/768/1024/1440px pass, plus staged page/image/canonical/social/contact checks and no-JS hero. Crops visually reviewed. QA server stopped; Analytics blocked, no submissions, emails, payments or Google edits. All prior complete website work preserved; integrate FULL codex/pwd-payment-couple-hero lineage before main deployment. Complete source remains .deployment/enquiry-tracking-20261017. Rollback dpl_7PkQpcAxwvrTZziU4jMq7dBUKae3.
+
+## 2026-10-18 — [Codex] Weekly article repair in progress
+
+- Authorised weekly PWD cloud draft generation and private approval dashboard; existing cron secret/admin auth retained. Twelve distinct source-backed briefs and persisted focus keywords. Save Draft corrected to force unpublished; local covers verified. No article published. Verification and activation pending.
+
+## 2026-10-18 — [Codex] Weekly blog verification and approval boundaries
+
+- First real draft158210f2-416e-4efe-96bd-b167aca14d72 fact-reviewed and held unpublished; repeated runs reuse it.14mapped keywords saved without invented volumes. Existing cloud credentials/cron enabled status verified. Six focused tests pass. Existing worker retirement localb89fda6; no remote configured in BuildProfitAI. Weekly PWD approval is the existing PWD Blog editor, no new Toti Room card or automatic publisher. No emails/Google/video/other-site changes. Final source build and cloud activation verification pending.
+
+## 2026-10-18 — [Codex] Weekly article release checks passed
+
+- Six focused tests, final TypeScript, lint of every changed application file, production build and8route guards pass. Private workflow metadata removed from public tags, Weekly review category and factual review guidance replace density scores, explicit Save Draft and publication confirmation implemented; source/site scope preserved. Final build log /private/tmp/pwd-weekly-final-validation.log. Committing/pushing codex/pwd-weekly-blog and staging production next. First reviewed draft remains unpublished.

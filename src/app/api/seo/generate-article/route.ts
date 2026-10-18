@@ -67,92 +67,7 @@ OUTPUT FORMAT (return as JSON):
 
 Return ONLY valid JSON, no additional text.`;
 
-    if (!OPENAI_API_KEY) {
-      // Fallback: Create a template article if no OpenAI key
-      const title = `Complete Guide to ${keyword.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} in Vanuatu`;
-      const fallbackContent = {
-        title,
-        excerpt: `Discover everything you need to know about ${keyword} in Vanuatu. Expert insights from Pacific Wave Digital.`,
-        content: `# ${title}
-
-## Introduction
-
-If you're looking for expert ${keyword} services in Vanuatu, you've come to the right place. Pacific Wave Digital specializes in delivering top-tier digital solutions for businesses across the Pacific Islands.
-
-## Why ${keyword.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} Matters
-
-In today's digital landscape, ${keyword} has become essential for businesses looking to grow and compete effectively.
-
-## Our Approach
-
-At Pacific Wave Digital, we take a comprehensive approach to ${keyword}, combining:
-
-- **Local Expertise**: Deep understanding of the Vanuatu market
-- **Global Standards**: International best practices adapted for Pacific businesses
-- **AI-Powered Solutions**: Cutting-edge technology to drive results
-
-## Key Benefits
-
-1. **Increased Visibility**: Stand out in local and regional searches
-2. **Better User Experience**: Modern, responsive designs
-3. **Measurable Results**: Track your ROI with detailed analytics
-
-## Top Competitors Analysis
-
-Competitor references supplied for the draft topic "${keyword}" (verify before publication):
-
-${topCompetitors.map((c: Competitor, i: number) => `${i + 1}. **${c.domain}** - ${c.title}`).join('\n')}
-
-## How Pacific Wave Digital Can Help
-
-Planning your next digital project? Pacific Wave Digital offers:
-
-- Professional web development
-- SEO optimization
-- AI-powered automation
-- Digital marketing strategies
-
-## Conclusion
-
-Don't let your competition dominate the search results. Contact Pacific Wave Digital today to discuss how we can help your business succeed with ${keyword}.
-
----
-
-*Pacific Wave Digital - Digital Innovation for the Pacific*`,
-        tags: [keyword.split(' ')[0], 'Vanuatu', 'Pacific Wave Digital'],
-        targetKeyword: keyword
-      };
-
-      // Create blog post draft
-      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-      
-      const { data: post, error: insertError } = await getSupabaseAdmin()
-        .from('blog_posts')
-        .insert({
-          site_id: 'pwd',
-          title: fallbackContent.title,
-          slug: slug + '-' + Date.now(),
-          excerpt: fallbackContent.excerpt,
-          content: fallbackContent.content,
-          published: false,
-          keywords: fallbackContent.tags,
-          category: 'SEO Content',
-        })
-        .select()
-        .single();
-
-      if (insertError) {
-        console.error('Failed to create blog post:', insertError);
-        return NextResponse.json({ error: 'Failed to create blog post', details: insertError }, { status: 500 });
-      }
-
-      return NextResponse.json({
-        success: true,
-        message: 'Article draft created (template)',
-        post: post,
-        redirectUrl: `/admin/blog/edit/${post.id}`,
-      });
-    }
+    if (!OPENAI_API_KEY) return NextResponse.json({ error: 'AI generation is not configured; no draft created' }, { status: 503 });
 
     // Call OpenAI API
     const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -208,6 +123,7 @@ Don't let your competition dominate the search results. Contact Pacific Wave Dig
         excerpt: articleData.excerpt,
         content: articleData.content,
         published: false,
+        focus_keyword: keyword,
         keywords: articleData.tags || [],
         category: 'SEO Content',
       })

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getBlogCover } from '@/lib/blog-images';
 import { supabase, BlogPost } from '@/lib/supabase';
 
 export default function BlogAdminPage() {
@@ -43,6 +44,7 @@ export default function BlogAdminPage() {
     if (!post) return;
 
     const newPublished = !post.published;
+    if (newPublished && !confirm('Approve and publish this article? Confirm that you have reviewed its facts, sources, links and images.')) return;
     const { error } = await supabase
       .from('blog_posts')
       .update({ 
@@ -50,7 +52,7 @@ export default function BlogAdminPage() {
         published_at: newPublished ? new Date().toISOString() : null,
         updated_at: new Date().toISOString()
       })
-      .eq('id', id);
+      .eq('id', id).eq('site_id', 'pwd');
 
     if (error) {
       console.error('Error updating post:', error);
@@ -68,7 +70,7 @@ export default function BlogAdminPage() {
     const { error } = await supabase
       .from('blog_posts')
       .delete()
-      .eq('id', id);
+      .eq('id', id).eq('site_id', 'pwd');
 
     if (error) {
       console.error('Error deleting post:', error);
@@ -100,7 +102,7 @@ export default function BlogAdminPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 font-heading">Blog Posts</h1>
-          <p className="text-gray-500 mt-1">Manage your blog articles</p>
+          <p className="text-gray-500 mt-1">Weekly articles remain drafts until you review and approve publication.</p>
         </div>
         <Link
           href="/admin/blog/new"
@@ -149,7 +151,7 @@ export default function BlogAdminPage() {
                     <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                       {post.image_url ? (
                         <Image
-                          src={post.image_url}
+                          src={getBlogCover(post)}
                           alt={post.title}
                           width={64}
                           height={48}
@@ -179,7 +181,7 @@ export default function BlogAdminPage() {
                         : 'bg-yellow-100 text-yellow-700'
                     }`}
                   >
-                    {post.published ? 'Published' : 'Draft'}
+                    {post.published ? 'Published' : post.category === 'Weekly review' ? 'Approve & publish' : 'Draft'}
                   </button>
                 </td>
                 <td className="px-6 py-4 text-gray-500 text-sm">
@@ -188,10 +190,10 @@ export default function BlogAdminPage() {
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-end gap-2">
                     <Link
-                      href={`/blog/${post.slug}`}
+                      href={post.published ? `/blog/${post.slug}` : `/admin/blog/edit/${post.id}`}
                       target="_blank"
                       className="p-2 text-gray-400 hover:text-deep-blue transition-colors"
-                      title="View"
+                      title="Review article"
                     >
                       👁️
                     </Link>

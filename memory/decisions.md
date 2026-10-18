@@ -220,3 +220,11 @@ Show real YouTube thumbnail cards before player load; keep one selected iframe a
 ## 2026-10-17 — [Codex] Payment service eligibility wording
 
 - Market payment integration for Vanuatu without claiming every provider directly onboards Vanuatu merchants. Stripe/PayPal require eligible account/country/settlement checks. Mobile-money merchant QR/manual confirmation differs from an automated gateway; promise automation only with supported access and approval. Use authentic logos with no claimed partnership. Service-page content is marketing only; existing live payment configuration remains unchanged.
+
+## 2026-10-18 — [Codex] Weekly article repair in progress
+
+- Authorised weekly PWD cloud draft generation and private approval dashboard; existing cron secret/admin auth retained. Twelve distinct source-backed briefs and persisted focus keywords. Save Draft corrected to force unpublished; local covers verified. No article published. Verification and activation pending.
+
+## 2026-10-18 — [Codex] Weekly blog verification and approval boundaries
+
+- First real draft158210f2-416e-4efe-96bd-b167aca14d72 fact-reviewed and held unpublished; repeated runs reuse it.14mapped keywords saved without invented volumes. Existing cloud credentials/cron enabled status verified. Six focused tests pass. Existing worker retirement localb89fda6; no remote configured in BuildProfitAI. Weekly PWD approval is the existing PWD Blog editor, no new Toti Room card or automatic publisher. No emails/Google/video/other-site changes. Final source build and cloud activation verification pending.
