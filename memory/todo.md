@@ -450,3 +450,6 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [ ] Confirmhourlysitemaprefreshincludespwd-weekly-2026-10-12;RSS/homepage/blogalreadyverified.
 - [ ] ContinuePWDGoogleIndexmonitorandobservefirstscheduledjobs; reviews/oldbacklog/namedmarketsremain.
 - [ ] Nextbusiness:GlobalDigitalPrime, ownerselected; initialread-onlySEOauditstarted,nomeasurementsorprofilechangesyet.
+
+## 2026-10-20 — [Codex] Student signup recovery
+- [ ] Repair verification loading/error/expiry recovery; test desktop/mobile blocked-script retry and signup handoff; stage and verify complete build.
