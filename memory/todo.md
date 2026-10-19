@@ -452,6 +452,6 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [ ] Nextbusiness:GlobalDigitalPrime, ownerselected; initialread-onlySEOauditstarted,nomeasurementsorprofilechangesyet.
 
 ## 2026-10-20 — [Codex] Student signup recovery
-- [ ] Repair verification loading/error/expiry recovery; test desktop/mobile blocked-script retry and signup handoff; stage and verify complete build.
+- [x] Repair verification loading/error/expiry recovery; test desktop/mobile blocked-script retry and signup handoff; stage and verify complete build. — [Codex] 2026-10-20: owner-approved production publication complete, eight live signup checks and two release smoke checks pass; real anonymous desktop/mobile provider acceptance observed.
 
 — [Codex] 2026-10-20: Recovery implementation and ten local + ten staged desktop/mobile checks complete. Production publication remains pending explicit owner approval after automatic approval review rejection. Promote dpl_B63S4UmXK4D9Lmp6hDCX6esVSaA1 only after approval, then verify real widget/live domain. Live app unchanged.

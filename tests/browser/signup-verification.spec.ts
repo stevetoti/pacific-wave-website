@@ -68,6 +68,7 @@ test('stalled verification displays a retry and never enables unverified registr
 
 test('real provider automatically verifies an anonymous student signup', async ({ page }) => {
  test.skip(process.env.PWD_REAL_WIDGET_CHECK !== '1', 'Explicit read-only provider check');
+ test.setTimeout(60_000);
  await page.goto('/training-center/account?mode=signup');
  await expect(page.getByRole('status')).toContainText('Human verification complete', { timeout: 45_000 });
  const submit = page.getByRole('button', { name: 'Create my account', exact: true });
