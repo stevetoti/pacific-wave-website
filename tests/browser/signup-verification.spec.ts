@@ -35,11 +35,20 @@ test('signup recovers a failed verification download without losing student deta
  await expect.poll(() => page.evaluate(() => (window as unknown as { __verificationMounts: number }).__verificationMounts)).toBe(2);
  await expect(submit).toBeEnabled();
  await expect(page.getByRole('status')).toContainText('Human verification complete');
+ // Provider challenge failure after success must clear the old token and recover.
+ await page.evaluate(() => {
+   const fixture = window as unknown as { __verificationOptions: { 'error-callback': () => void } };
+   fixture.__verificationOptions['error-callback']();
+ });
+ await expect(submit).toBeDisabled();
+ await page.getByRole('button', { name: 'Retry human verification' }).click();
+ await expect(submit).toBeEnabled();
  await page.getByRole('button', { name: 'Already a student? Sign in' }).click();
  await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible();
  await page.getByRole('button', { name: /New here/ }).click();
  await expect(submit).toBeEnabled();
- await page.screenshot({ path: `/tmp/signup-verification-${test.info().project.name}.png`, fullPage: true });
+ await submit.scrollIntoViewIfNeeded();
+ await page.screenshot({ path: `/tmp/signup-verification-${test.info().project.name}.png` });
 });
 
 test('stalled verification displays a retry and never enables unverified registration', async ({ page }) => {
@@ -54,4 +63,15 @@ test('stalled verification displays a retry and never enables unverified registr
  await page.getByRole('button', { name: 'Retry human verification' }).click();
  await page.clock.resume();
  await expect(page.getByRole('button', { name: 'Create my account', exact: true })).toBeEnabled();
+});
+
+
+test('real provider automatically verifies an anonymous student signup', async ({ page }) => {
+ test.skip(process.env.PWD_REAL_WIDGET_CHECK !== '1', 'Explicit read-only provider check');
+ await page.goto('/training-center/account?mode=signup');
+ await expect(page.getByRole('status')).toContainText('Human verification complete', { timeout: 45_000 });
+ const submit = page.getByRole('button', { name: 'Create my account', exact: true });
+ await expect(submit).toBeEnabled();
+ await submit.scrollIntoViewIfNeeded();
+ await page.screenshot({ path: `/tmp/signup-live-verification-${test.info().project.name}.png` });
 });
