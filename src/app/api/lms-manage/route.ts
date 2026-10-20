@@ -176,7 +176,7 @@ export async function POST(request: Request) {
           .update({ status: "revoked", reviewed_by: user.id })
           .eq("id", input.id)
           .eq("method", "grant")
-          .eq("status", "granted")
+          .in("status", ["granted", "paid"])
           .select("id"),
       );
       if (!changed?.length)

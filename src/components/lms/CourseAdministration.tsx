@@ -180,7 +180,7 @@ export default function CourseAdministration({
                 <p>
                   {name(g.course_id)} · {g.package_label} · {g.status}
                 </p>
-                {g.status === "granted" && (
+                {["granted", "paid"].includes(g.status) && (
                   <button
                     disabled={busy}
                     className="lms-text"

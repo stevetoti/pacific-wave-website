@@ -4,6 +4,7 @@ import { AlertCircle, BellRing, CheckCircle2, Clock3, FileText, History, Message
 import { authFetch } from "@/lib/auth-fetch";
 import ContactDialog, { type ContactRecipient } from "./ContactDialog";
 import StudentProfile from "./StudentProfile";
+import BulkMarkPaid from "./BulkMarkPaid";
 import { money, paymentReference, type Course, type Order } from "@/lib/lms/types";
 type Account = { user_id: string; email: string; name: string; phone: string; city: string; created_at: string; last_sign_in_at: string | null; role: string };
 type Group = "all" | "enrolled" | "review" | "unpaid" | "other";
@@ -316,6 +317,7 @@ export default function StudentRoster({
             </button>
           ))}
         </div>
+        {admin && <BulkMarkPaid key={course} courseId={course} disabled={busy} onChanged={onChanged} />}
         <div className="sr-bulk">
           <label className="sr-check">
             <input

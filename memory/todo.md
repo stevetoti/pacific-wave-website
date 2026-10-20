@@ -455,3 +455,7 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 - [x] Repair verification loading/error/expiry recovery; test desktop/mobile blocked-script retry and signup handoff; stage and verify complete build. — [Codex] 2026-10-20: owner-approved production publication complete, eight live signup checks and two release smoke checks pass; real anonymous desktop/mobile provider acceptance observed.
 
 — [Codex] 2026-10-20: Recovery implementation and ten local + ten staged desktop/mobile checks complete. Production publication remains pending explicit owner approval after automatic approval review rejection. Promote dpl_B63S4UmXK4D9Lmp6hDCX6esVSaA1 only after approval, then verify real widget/live domain. Live app unchanged.
+
+## 2026-10-20 — [Codex] BLP bulk paid status work
+
+Owner requested and clarified course-scoped bulk button, not automatic future approvals. Exactly 15 pending zero-fee BLP registrations now paid; 2 existing granted and other orders preserved; no emails queued; per-order audit recorded under owner identity. Function migration 20261020_bulk_mark_paid applied. Code/verification in isolated Training Hub/.work/pwd-blp-payments, full source based on 98d8844. Future button still in testing, not live.
