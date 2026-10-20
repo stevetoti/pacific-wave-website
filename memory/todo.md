@@ -459,3 +459,9 @@ Stephen approved five Storian AI months. Published four weekly Participation Cha
 ## 2026-10-20 — [Codex] BLP bulk paid status work
 
 Owner requested and clarified course-scoped bulk button, not automatic future approvals. Exactly 15 pending zero-fee BLP registrations now paid; 2 existing granted and other orders preserved; no emails queued; per-order audit recorded under owner identity. Function migration 20261020_bulk_mark_paid applied. Code/verification in isolated Training Hub/.work/pwd-blp-payments, full source based on 98d8844. Future button still in testing, not live.
+
+## 2026-10-20 — [Codex] BLP bulk payment feature complete
+
+- [x] Mark pending BLP registrations paid with auditable no-fee records.
+- [x] Implement selected-course bulk button, stage, publish and verify actual permissions/save/reload plus desktop/mobile regressions; synthetic fixtures removed.
+- [ ] Integrate full codex/blp-paid-enrolments lineage before future main deployment; source is pushed and current production is complete.

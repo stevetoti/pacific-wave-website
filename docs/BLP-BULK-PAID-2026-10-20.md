@@ -32,11 +32,23 @@ Each batch covers up to 1,000 IDs captured in the preview. Additional pending re
 | BLP recording/progress privacy unchanged | PASS | Two existing BLP behavioral tests |
 | Desktop/mobile preview, cancel, confirmation, reload and visible preview failure | PASS | New browser suite |
 | Course-first roster isolation and public release routes | PASS | Existing desktop/mobile roster/release suites |
-| Real admin/student/instructor permission and persisted API/UI flow | PENDING | Temporary fixture verification underway |
-| Actual deployed feature and final live verification | PENDING | Stage/release not complete |
+| Real admin/student/instructor permission and persisted API/UI flow | PASS | Actual local API/desktop/mobile journey; synthetic fixture cleanup verified |
+| Actual staged feature, permissions, persistence and desktop/mobile regressions | PASS | dpl_HabQfC6SDH1yzQSNqM6DahRXa4h3, actual account test and six browser checks |
+| Final live-domain verification | PASS | Actual live temporary-admin save/reopen/hard reload, student/instructor denial, desktop/mobile and six browser regressions |
 
 Engineering checks: changed-file lint, TypeScript and complete production build/eight route guards pass. Initial local build was blocked by sandbox DNS for font downloads, then passed with authorised network access. An initial browser test had an ambiguous alert selector; the corrected test passes without an application change. Temporary-course cleanup was extended to delete its automatically created community channels before deleting the course; initial synthetic fixtures were removed. No customer rows were used for test mutations.
 
 Source: complete live lineage `98d8844`, isolated checkout `/Users/stephentotimeh/Projects/Training Hub/.work/pwd-blp-payments`, branch `codex/blp-paid-enrolments`. Preserve this complete lineage when integrating into the main website repository. Private acceptance artifacts live under ignored `.deployment/blp-bulk-evidence/` and must never be uploaded or committed.
 
 The initial maintenance script's temporary receipt files were cleared by the browser runner's output cleanup after its assertions passed. The executed command output and persisted audit remain the evidence of that operation. Maintenance evidence paths now use `.deployment/blp-bulk-evidence/` to avoid future collisions.
+
+
+Staged production build: app `9fbf5d7`, deployment `dpl_HabQfC6SDH1yzQSNqM6DahRXa4h3`, https://pacific-wave-website-4y51bqk5l-pacificwaveprojects.vercel.app. Remote full build and eight route guards pass. Live domain has not yet been changed. Source backed up on `codex/blp-paid-enrolments`; original GitHub account restored. Staged acceptance is underway.
+
+
+All five real-account acceptance criteria pass on staging, including anonymous/student/instructor denial, admin preview/write, cross-course rejection, desktop/mobile leave/reopen/hard reload, audit/zero-fee preservation and no email jobs. Synthetic users/courses/orders/audits cleaned. All six staged browser regressions also pass. Publishing the exact tested deployment; no application edits after staging.
+
+
+## Final live release
+
+Application `9fbf5d7` / `dpl_HabQfC6SDH1yzQSNqM6DahRXa4h3` is live on pacificwavedigital.com. Live alias inspection confirms the exact staged build. All five actual-account acceptance criteria and six desktop/mobile browser regressions pass on the live domain; synthetic fixtures cleaned. The mutation is separately audited; application rollback does not undo owner-approved payment statuses. No production settings, payment provider configuration, course prices or enrolment approval defaults changed.
