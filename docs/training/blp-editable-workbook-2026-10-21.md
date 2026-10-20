@@ -22,10 +22,14 @@ Evidence is private and ignored under `.deployment/blp-workbook-evidence/`; synt
 | Blank 24-page PDF, completed PDF and three v5 resources | PASS — real API exports, answer pages rendered and inspected |
 | Own saved entries and Port Vila/Vanuatu in actual tutor context | PASS — authenticated context response; excludes other student/October answers |
 | Types, lint, production build/eight route guards, 18 focused tests | PASS |
-| Staged and live deployment journeys | Pending publication checks; record final results in shared memory |
+| Staged and live deployment journeys | PASS — full actual-account suite on staged URL and live custom domain, including language switch and leave/reopen; all fixtures cleaned |
 
 No real Anam video call was opened by QA; session payload propagation is verified with intercepted provider requests and the live authenticated tutor context. The interface's existing provider consent/quota flow is preserved.
 
 ## Release and rollback
 
 Publish only this complete source lineage; it includes earlier signup, SEO, payments and training fixes. Previous live deployment: `dpl_HabQfC6SDH1yzQSNqM6DahRXa4h3`. Reconcile only the BLP introduction's old morning-tea sentence and changed lesson times/content, retaining all lesson IDs, recordings, publication states and student progress. A private before snapshot is retained for that separate data rollback. Do not overwrite concurrently changed lesson content.
+
+## Published result
+
+Application `f629602`, deployment `dpl_DRHybfhQnHDxNNVqtpN6ZjVqBAUA` is READY and serves `pacificwavedigital.com`. Full staged and live student/teacher acceptance passed; desktop and mobile public release regressions passed locally and live. Published BLP introduction and four changed lesson times now match v5, with E1–E6 instructions in the AI lesson; IDs and recordings preserved. No workbook API errors were returned by the deployment-filtered error log query during the 15-minute verification window. No real video session was opened by QA. Synthetic accounts/orders/answers removed and no notification emails queued.
