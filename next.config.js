@@ -10,7 +10,8 @@ const nextConfig = {
     ] }];
   },
   outputFileTracingIncludes: {
-    "/api/lms-workbook": ["./resources/october-workbook.pdf", "./resources/workbook-font.ttf", "./public/images/training/pwd-logo.png"],
+    "/api/lms-workbook": ["./resources/*-workbook.pdf", "./resources/workbook-font.ttf", "./public/images/training/pwd-logo.png"],
+    "/api/lms-workshop-resources": ["./resources/blp-*.pdf"],
     "/api/lms-coach": ["./public/images/training/pwd-logo.png"],
     "/api/lms-coach/sessions": ["./public/images/training/pwd-logo.png"],
     "/api/cron/training-campaigns": ["./public/images/training/pwd-logo.png"],

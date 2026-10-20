@@ -1075,7 +1075,7 @@ function TrainingCenterContent({
                       </div>
                     )}
                     {current.slug === blpSlug && ["paid", "granted"].includes(courseOrder?.status || "") && <WorkshopResources />}
-                    {current.slug === "vanuatu-october-2026" && ["paid", "granted"].includes(courseOrder?.status || "") && <DigitalWorkbook key={current.id} courseId={current.id} />}
+                    {["vanuatu-october-2026", blpSlug].includes(current.slug) && ["paid", "granted"].includes(courseOrder?.status || "") && <DigitalWorkbook key={current.id} courseId={current.id} courseSlug={current.slug} />}
                     <nav
                       className="lms-admin-tabs"
                       aria-label="Course sections"

@@ -3,13 +3,13 @@ import { z } from 'zod';
 import { teachingAccess } from '@/lib/server/teaching';
 import { checked } from '@/lib/server/lms';
 import { apiError,HttpError } from '@/lib/server/http';
-import { workbook } from '@/lib/lms/workbook-schema';
+import { getWorkbook } from '@/lib/lms/workbook-schema';
 export const dynamic='force-dynamic';
 export async function GET(request:Request){try{
  const q=new URL(request.url).searchParams,courseId=z.uuid().parse(q.get('course'));
  const {db,assertCourse}=await teachingAccess(request);assertCourse(courseId);
  const course=checked(await db.from('pwd_lms_courses').select('slug').eq('id',courseId).maybeSingle());
- if(course?.slug!==workbook.courseSlug)throw new HttpError(404,'No interactive workbook for this course');
+ if(!course || !getWorkbook(course.slug))throw new HttpError(404,'No interactive workbook for this course');
  const target=q.get('student');
  if(target){
   const userId=z.uuid().parse(target);

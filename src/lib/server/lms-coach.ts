@@ -1,6 +1,7 @@
 import "server-only";
 import {coachGreeting} from "@/lib/lms/coach/greeting";
-import { workbook } from "@/lib/lms/workbook-schema";
+import { getWorkbook } from "@/lib/lms/workbook-schema";
+import { blpSlug, blpModules } from "@/lib/lms/blp-workshop";
 import { workbookContext } from "@/lib/lms/workbook-context";
 import {consentVersion} from "@/lib/lms/coach/report";
 import { spokenTime, coachingWindow, programOutline } from "@/lib/lms/coach/schedule";
@@ -97,13 +98,16 @@ export async function coachContext(
     notes = checked(n),
     history = checked(h) || [];
   const preferences = checked(await db.from("pwd_lms_coach_preferences").select("consent_version").eq("user_id",user.id).maybeSingle());
-  const savedWorkbook = course.slug === workbook.courseSlug ? checked(await db.from("pwd_lms_workbook_answers").select("lesson_key,answers,updated_at").eq("course_id", courseId).eq("user_id", user.id)) : [];
+  const workbook = getWorkbook(course.slug);
+  const savedWorkbook = workbook ? checked(await db.from("pwd_lms_workbook_answers").select("lesson_key,answers,updated_at").eq("course_id", courseId).eq("user_id", user.id)) : [];
+  const blp = course.slug === blpSlug;
   const context = {
-    workbook: course.slug === workbook.courseSlug ? workbookContext(savedWorkbook || []) : null,
+    workbook: workbook ? workbookContext(savedWorkbook || [],workbook) : null,
+    learning_location: blp ? {city:"Port Vila",country:"Vanuatu",timezone:"Pacific/Efate",source:"BLP course organiser confirmed workshop and student learning location"} : null,
     as_of: new Date().toISOString(),
-    student: { name: profile?.full_name || order.name, ...profile },
+    student: { name: profile?.full_name || order.name, ...profile, ...(blp ? {city:profile?.city || "Port Vila",country:profile?.country || "Vanuatu",timezone:profile?.timezone || "Pacific/Efate"} : {}) },
     course,
-    schedule: cohort ? { timezone: cohort.timezone, days: cohort.daysLabel, time: cohort.timeLabel, spoken_time: spokenTime(cohort.timeLabel), starts_at: cohort.start, teaching_ends_at: cohort.teachingEnd, action_period_ends: cohort.actionEnd, session_dates: cohort.dates, teaching_hours: cohort.hours, venue: cohort.venue, fixed_timetable: true } : { fixed_timetable: !course.private_sessions, note: "Use published lesson appointments; ask the instructor for any missing dates." },
+    schedule: blp ? {timezone:"Pacific/Efate",date:"2026-10-21",time:"9 am–4 pm",spoken_time:"from nine a.m. to four p.m., Vanuatu time",venue:"Yumiwork Conference Room, Port Vila, Vanuatu",student_exercises:"11 am–12 noon",fixed_timetable:true,sessions:blpModules.map(m=>({time:m.time,title:m.title}))} : cohort ? { timezone: cohort.timezone, days: cohort.daysLabel, time: cohort.timeLabel, spoken_time: spokenTime(cohort.timeLabel), starts_at: cohort.start, teaching_ends_at: cohort.teachingEnd, action_period_ends: cohort.actionEnd, session_dates: cohort.dates, teaching_hours: cohort.hours, venue: cohort.venue, fixed_timetable: true } : { fixed_timetable: !course.private_sessions, note: "Use published lesson appointments; ask the instructor for any missing dates." },
     course_outline: course.slug === "vanuatu-october-2026" ? octoberOutline.map(([title, body], i) => ({title: `Week ${i + 1}: ${title}`, body})) : programOutline(course.slug),
     lessons: lessons.map((x) => ({
       id: x.id,
@@ -168,7 +172,7 @@ export async function mintCoach(
         voiceId,
         llmId,
         systemPrompt: coachPrompt(role, context),
-        tools: [{type:"client",name:"live_research",description:"Search current trustworthy sources for a student's factual question, requirements or learning gap. Ask jurisdiction and relevant context first. Never include names, emails, credentials or private identifiers in a query.",parameters:{type:"object",properties:{topic:{type:"string",description:"A focused factual research question with jurisdiction where relevant"}},required:["topic"]},awaitResult:true,toolTimeoutSeconds:180}],
+        tools: [{type:"client",name:"live_research",description:"Search current trustworthy sources for a student's factual question, requirements or learning gap. Use the supplied learning location; ask jurisdiction only when missing or different. Never include names, emails, workbook answers, credentials or private identifiers in a query.",parameters:{type:"object",properties:{topic:{type:"string",description:"A focused factual research question with jurisdiction where relevant"}},required:["topic"]},awaitResult:true,toolTimeoutSeconds:180}],
         initialMessage: coachGreeting(role,String(context.student.name || ""),context.preferred_language),
         maxSessionLengthSeconds: 900,
         ...(p.avatarModel ? { avatarModel: p.avatarModel } : {}),

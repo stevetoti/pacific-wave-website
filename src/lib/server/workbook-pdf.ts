@@ -2,9 +2,9 @@ import 'server-only';
 import {readFile} from 'node:fs/promises';
 import {PDFDocument,rgb} from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import {workbook} from '@/lib/lms/workbook-schema';
-export async function workbookPdf(rows:{lesson_key:string;answers:Record<string,string|boolean>}[]){
- const doc=await PDFDocument.load(await readFile(process.cwd()+'/resources/october-workbook.pdf'));
+import {workbook as octoberWorkbook,type Workbook} from '@/lib/lms/workbook-schema';
+export async function workbookPdf(rows:{lesson_key:string;answers:Record<string,string|boolean>}[],workbook:Workbook=octoberWorkbook){
+ const doc=await PDFDocument.load(await readFile(process.cwd()+`/resources/${workbook.format==='workshop'?'blp':'october'}-workbook.pdf`));
  doc.registerFontkit(fontkit);
  const font=await doc.embedFont(await readFile(process.cwd()+'/resources/workbook-font.ttf'),{subset:true});
  const logo=await doc.embedPng(await readFile(process.cwd()+'/public/images/training/pwd-logo.png'));
@@ -25,7 +25,7 @@ export async function workbookPdf(rows:{lesson_key:string;answers:Record<string,
   for(const line of lines){if(y<55){page=doc.addPage([595,842]);header();}page.drawText(line,{x:44,y,font,size,color:navy});y-=size+6;}y-=9;
  }
  header();para('Your saved responses',20);para('The complete workbook comes first. This private answer section contains your saved activity responses and self-checks. Unsaved changes are not included.');
- for(const l of workbook.lessons){page=doc.addPage([595,842]);header();para(`Class ${l.number} | ${l.date} | 3–5 pm Vanuatu`,10);para(l.title,17);
+ for(const l of workbook.lessons){page=doc.addPage([595,842]);header();para(`${workbook.format==='workshop'?'Section':'Class'} ${l.number} | ${l.date} | ${l.time || workbook.time}`,10);para(l.title,17);
   const answers=rows.find(r=>r.lesson_key===l.id)?.answers||{};
   for(const f of l.fields){para(f.label,12);para(typeof answers[f.id]==='string' ? String(answers[f.id])||'Not answered' : 'Not answered');}
   para('Self-checks',13);l.checks.forEach((c,i)=>para(`${answers[`${l.id}-check-${i}`]===true?'Completed':'Not checked'}: ${c}`));
