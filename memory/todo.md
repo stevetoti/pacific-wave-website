@@ -471,3 +471,8 @@ Owner requested and clarified course-scoped bulk button, not automatic future ap
 - [x] Publish editable v5 workbook and all six 11–12 exercises, with private saves and teacher review. — [Codex] 2026-10-21: f629602, dpl_DRHybfhQnHDxNNVqtpN6ZjVqBAUA live.
 - [x] Connect own saved answers and Port Vila/Vanuatu to all AI roles. — [Codex] 2026-10-21: actual private context and seven intercepted provider payloads verified; new AI session refreshes saved work.
 - [x] Test real approved/pending/teacher accounts on staged and live desktop/mobile; clean synthetic records. — [Codex] 2026-10-21: all pass, no test emails queued.
+
+
+## 2026-10-21 — [Codex] Two BLP replays
+- [x] Replace nine old lesson tabs with two named sessions and matching thumbnails; verify separate draft/publish controls on desktop/mobile. — [Codex] 2026-10-21: complete live, independent publication verified with isolated fixtures; all cleaned.
+- [ ] Stephen: paste each actual YouTube URL and click Publish recordings for that session. — [Codex] 2026-10-21: owner explicitly chose to fill and publish himself; no real URLs supplied.

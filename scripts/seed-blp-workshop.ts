@@ -1,8 +1,12 @@
 // Run only AFTER deploying privacy-aware catalogue/API code. Never overwrite instructor edits.
 import { createClient } from '@supabase/supabase-js';
 import { readFile } from 'node:fs/promises';
-import { blpSlug, blpModules } from '../src/lib/lms/blp-workshop';
+import { blpSlug } from '../src/lib/lms/blp-workshop';
 import { workshopResources } from '../src/lib/lms/workshop-resources';
+const recordingSessions = [
+  {title:'Morning Session',time:'09:00',body:'Morning recording: business readiness, Google Business Profile, AI for everyday business and E1–E6 exercises.',task:'Complete the morning exercises in your interactive workbook. Add the morning YouTube link in Class recordings and click Publish recordings when ready.'},
+  {title:'Afternoon Session',time:'13:00',body:'Afternoon recording: websites, customer journeys, business documents, cyber security and your 30-day action plan.',task:'Complete the afternoon workbook activities. Add the afternoon YouTube link in Class recordings and click Publish recordings when ready.'},
+];
 const url=process.env.NEXT_PUBLIC_SUPABASE_URL!;
 if(new URL(url).hostname!=='rndegttgwtpkbjtvjgnc.supabase.co') throw Error('Wrong project');
 const db=createClient(url,process.env.SUPABASE_SERVICE_ROLE_KEY!);
@@ -14,10 +18,10 @@ async function main(){
     description:'A practical Business Link Pacific workshop in Digitisation, AI and Cyber Security for Ni-Vanuatu business owners. Wednesday 21 October 2026, 9 am–4 pm, Yumiwork Conference Room (Vanuatu time).',
     introduction:'Welcome to your Business Link Pacific workshop. Register for free; our team confirms participant eligibility before opening your lessons, workbook, AI faculty and private community. The workshop runs Wednesday 21 October 2026, 9 am–4 pm at Yumiwork Conference Room, Port Vila, Vanuatu time. Google Business Profile is 9:35–10:10 am, AI demonstration 10:10–10:45 am, exercise briefing 10:45–11 am and student exercises E1–E6 run 11 am–12 noon. Lunch is 12–1 pm, followed by review and website practice 1–1:35 pm, customers online 1:35–2 pm and afternoon tea 2–2:15 pm. Work through the activities in your workbook, revisit recordings when published and use your 30-day action plan to keep learning. Google verification and official registration may continue after the workshop. Third-party subscriptions are separate. Do not share passwords, codes or private customer information in exercises or chat.',
   }).select('id').single());
-  for(let i=0;i<blpModules.length;i++){
-    const m=blpModules[i];
+  for(let i=0;i<recordingSessions.length;i++){
+    const m=recordingSessions[i];
     const old=checked(await db.from('pwd_lms_lessons').select('id').eq('course_id',course!.id).eq('position',i+1).maybeSingle());
-    if(!old)checked(await db.from('pwd_lms_lessons').insert({course_id:course!.id,title:m.title,position:i+1,starts_at:`2026-10-21T${m.time}:00+11:00`,section_title:'21 October · Live workshop',content:`${m.body}\n\nWorkbook activity\n${m.task}\n\nYour session replay will be added here after your instructor publishes the recording.`,published:true}));
+    if(!old)checked(await db.from('pwd_lms_lessons').insert({course_id:course!.id,title:m.title,position:i+1,starts_at:`2026-10-21T${m.time}:00+11:00`,section_title:'21 October · Workshop recordings',content:`${m.body}\n\nWorkbook activity\n${m.task}\n\nYour session replay will be added here after your instructor publishes the recording.`,published:true,recordings_published:false}));
   }
   const source=process.env.BLP_RESOURCES_DIR;
   if(!source)throw Error('Set BLP_RESOURCES_DIR to the approved output/pdf folder. Course stays unpublished until resources are ready.');
@@ -30,6 +34,6 @@ async function main(){
   }
   // Explicit switch: default is a safe, unpublished draft.
   if(process.argv.includes('--publish')) checked(await db.from('pwd_lms_courses').update({published:true}).eq('id',course!.id).eq('is_private',true).eq('requires_approval',true));
-  console.log({course_id:course!.id,slug:blpSlug,modules:blpModules.length,published:process.argv.includes('--publish')});
+  console.log({course_id:course!.id,slug:blpSlug,modules:recordingSessions.length,published:process.argv.includes('--publish')});
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});

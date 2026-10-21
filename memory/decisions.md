@@ -267,3 +267,7 @@ App 9fbf5d7, production dpl_HabQfC6SDH1yzQSNqM6DahRXa4h3 live on pacificwavedigi
 
 ## 2026-10-21 — [Codex] BLP saved workbook and AI context
 Use existing course/user-scoped workbook storage and revision RPC for BLP v5, without a migration. All tutor roles get labelled, bounded saved answer excerpts at session start; never other students or courses. Default BLP learning context is Port Vila, Vanuatu; preserve explicit profile location and do not infer citizenship/residency/eligibility. Approved v5 PDFs are privately bundled for enrolled course users.
+
+
+## 2026-10-21 — [Codex] BLP replay structure and publication ownership
+Stephen wants exactly two replay lessons: Morning Session and Afternoon Session. He will enter their YouTube links and publish each separately using the existing recording editor. Keep links blank until supplied; retain the editable workbook and teaching curriculum. Do not restore nine old lesson tabs with the seed.
