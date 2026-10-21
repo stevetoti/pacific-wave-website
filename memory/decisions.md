@@ -271,3 +271,7 @@ Use existing course/user-scoped workbook storage and revision RPC for BLP v5, wi
 
 ## 2026-10-21 — [Codex] BLP replay structure and publication ownership
 Stephen wants exactly two replay lessons: Morning Session and Afternoon Session. He will enter their YouTube links and publish each separately using the existing recording editor. Keep links blank until supplied; retain the editable workbook and teaching curriculum. Do not restore nine old lesson tabs with the seed.
+
+
+## 2026-10-21 — [Codex] Recording links and thumbnail path rule
+BLP morning JtBMs3IFGfY and afternoon rQK8ceenl9M are now live, superseding the earlier owner-will-fill note. When attaching lesson thumbnails, use the existing upload endpoint or its exact course-UUID/file-UUID.webp convention. Descriptive filename prefixes fail lessonSchema and block Save lesson even when the image itself loads. Keep the validation intact.
