@@ -476,3 +476,7 @@ Owner requested and clarified course-scoped bulk button, not automatic future ap
 ## 2026-10-21 — [Codex] Two BLP replays
 - [x] Replace nine old lesson tabs with two named sessions and matching thumbnails; verify separate draft/publish controls on desktop/mobile. — [Codex] 2026-10-21: complete live, independent publication verified with isolated fixtures; all cleaned.
 - [x] Stephen: paste each actual YouTube URL and click Publish recordings for that session. — [Codex] 2026-10-21: Stephen later supplied both URLs and asked Codex to add them; both are now published and verified. — [Codex] 2026-10-21: owner explicitly chose to fill and publish himself; no real URLs supplied.
+
+
+## 2026-10-21 — [Codex] Recording announcement
+- [x] Send the owner-authorised recording announcement to enrolled BLP students. — [Codex] 2026-10-21: campaign 9ffe78ef-c4cc-4baa-9214-26378c98f299 completed; 18 delivered, one provider-suppressed. Two pending registrations excluded; suppression retained, no automatic retry.
