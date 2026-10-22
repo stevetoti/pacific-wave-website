@@ -47,3 +47,10 @@
 .pwd-project-hero{padding:24px 0 32px}.pwd-project-breadcrumb{padding-bottom:26px}.pwd-project-heading{grid-template-columns:1fr;gap:22px;margin-bottom:28px}.pwd-project-heading h1{font-size:clamp(2.4rem,10vw,3.5rem)}.pwd-project-summary{font-size:16px}.pwd-device-stage{padding:26px 14% 28px 4%;border-radius:14px}.pwd-browser-bar{height:19px;padding:0 7px}.pwd-browser-bar>div{font-size:6px;padding-right:16px}.pwd-browser-bar>span{width:4px;height:4px}.pwd-phone-window{border-width:3px;border-radius:14px;width:23%;right:3%;bottom:5%}.pwd-phone-speaker{height:6px}.pwd-project-preview figcaption{font-size:10px}.pwd-work-hero{padding:45px 0 35px}.pwd-work-hero .pwd-work-intro{grid-template-columns:1fr;gap:24px}.pwd-work-grid{grid-template-columns:1fr;gap:40px}.pwd-work-card h3{font-size:24px}.pwd-project-preview-compact .pwd-device-stage{padding:26px 14% 26px 4%}.pwd-brand-panel{grid-template-columns:1fr;gap:0}.pwd-brand-panel-copy{padding:28px}.pwd-brand-panel img{min-height:0;max-height:240px}.pwd-quote-art{height:120px}.pwd-brand-backdrop>img{object-position:75% center;opacity:.4}
 }
 @media(prefers-reduced-motion:reduce){.pwd-marketing{scroll-behavior:auto}.pwd-marketing .animate-pulse{animation:none}.pwd-marketing a{transition:none!important}.pwd-marketing .btn-primary:hover{transform:none}}
+/* /quote prints as a clean document: keep only the page content. */
+@media print {
+  body:has(.pwd-quote) :not(main):not(main *):not(:has(main)) { display:none !important; }
+  body:has(.pwd-quote) main { padding-top:0 !important; zoom:.68; }
+  body:has(.pwd-quote) { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
+@page { margin:14mm; }
