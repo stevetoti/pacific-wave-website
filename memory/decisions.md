@@ -275,3 +275,8 @@ Stephen wants exactly two replay lessons: Morning Session and Afternoon Session.
 
 ## 2026-10-21 — [Codex] Recording links and thumbnail path rule
 BLP morning JtBMs3IFGfY and afternoon rQK8ceenl9M are now live, superseding the earlier owner-will-fill note. When attaching lesson thumbnails, use the existing upload endpoint or its exact course-UUID/file-UUID.webp convention. Descriptive filename prefixes fail lessonSchema and block Save lesson even when the image itself loads. Keep the validation intact.
+
+
+## 2026-10-23 — [Codex] Quote release review
+
+Release uses production environment with --skip-domain, then verification before promotion. Retain complete BLP lineage and unlisted/noindex policy.

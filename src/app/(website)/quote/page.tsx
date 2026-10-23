@@ -14,6 +14,8 @@ export const metadata: Metadata = {
   description: 'Pacific Wave Digital website and digital system packages, payment schedule and running costs.',
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
   alternates: { canonical: null },
+  openGraph: { title: 'Packages & Pricing | Pacific Wave Digital', description: 'Website and digital system packages in VUV, payment schedule and estimated running costs.', url: 'https://pacificwavedigital.com/quote', images: [] },
+  twitter: { card: 'summary', title: 'Packages & Pricing | Pacific Wave Digital', description: 'Website and digital system packages in VUV, payment schedule and estimated running costs.', images: [] },
 };
 
 const EMAIL = 'steve@pacificwavedigital.com';
@@ -262,7 +264,7 @@ export default function QuotePage() {
             </div>
             <div className="rounded-2xl bg-light-gray p-5">
               <h3 className="font-bold text-deep-blue">Honest results</h3>
-              <p className="mt-1">Nobody can guarantee a Google ranking. Local and specific searches can reach page one within weeks; competitive terms take longer.</p>
+              <p className="mt-1">Nobody can guarantee a search ranking. Local and specific searches can reach page one within weeks; competitive terms take longer.</p>
             </div>
           </div>
         </div>

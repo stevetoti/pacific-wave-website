@@ -1143,3 +1143,8 @@ Stephen explicitly authorised an email to all BLP students announcing the mornin
 
 ## 2026-10-23 — [Claude Code] Unlisted /quote pricing page (VUV)
 New `src/app/(website)/quote/page.tsx` + `src/lib/quote-packages.ts`: the four master-quote packages (Starter Special VUV 350,000 · Essential 500,000 · Professional 750,000 · Enterprise 1,000,000), 70/30 schedule, VUV 50,000 retainer, master T&Cs. Additions approved by Stephen: basic AI assistant in Essential; bookings/shop assistant + takeover inbox in Professional; 1 SEO article/week (Professional), 2/week (Enterprise); rounded VUV running-cost table with NO vendor/model names. Unlisted: noindex/nofollow, not in nav or sitemap; no bank details (those stay in the PDF quote). "Download PDF" prints a clean 3-page document (print CSS in visual-design.css). Branch claude/pwd-quote-page from codex/blp-two-recording-sessions (live lineage). Not deployed to production — awaiting Stephen's review.
+
+
+## 2026-10-23 — [Codex] Quote release review
+
+Review started from 1fb58e6; live f629602 ancestry confirmed. Removed underlying service names, set quote-specific social metadata, clarified Starter revision exception. Staged production verification pending.

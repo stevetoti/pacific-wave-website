@@ -480,3 +480,8 @@ Owner requested and clarified course-scoped bulk button, not automatic future ap
 
 ## 2026-10-21 — [Codex] Recording announcement
 - [x] Send the owner-authorised recording announcement to enrolled BLP students. — [Codex] 2026-10-21: campaign 9ffe78ef-c4cc-4baa-9214-26378c98f299 completed; 18 delivered, one provider-suppressed. Two pending registrations excluded; suppression retained, no automatic retry.
+
+
+## 2026-10-23 — [Codex] Quote release review
+
+- [ ] Build staged production, verify quote and public regressions, promote and verify live.
