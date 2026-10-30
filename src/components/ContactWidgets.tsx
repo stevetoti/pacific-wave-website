@@ -11,6 +11,7 @@ export default function ContactWidgets() {
     pathname.replace(/\/$/, "") === "/training-center/account" ||
     pathname.replace(/\/$/, "") === "/training-center/checkout" ||
     pathname.startsWith("/training-center/course/") ||
+    pathname.startsWith("/training-center/programs/") ||
     pathname.replace(/\/$/, "") === "/training-center/dashboard" ||
     pathname.replace(/\/$/, "") === "/training-center/sessions" ||
     pathname.replace(/\/$/, "") === "/training-center/teach"

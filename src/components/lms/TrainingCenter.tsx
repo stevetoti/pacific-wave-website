@@ -1,3 +1,4 @@
+import { personalOffer, personalCheckoutNote, softwareSlug, fullProgramSlug } from "@/lib/lms/personal-programs";
 "use client";
 import { initialCohort, novemberCohort, novemberCourseSlug, dayMonth } from "@/lib/training/config";
 import { HoneypotField, useFormBotFields } from "@/components/security/FormBotFields";
@@ -48,7 +49,7 @@ import WorkshopResources from "./WorkshopResources";
 const DigitalWorkbook = dynamic(() => import("./DigitalWorkbook"));
 import ProgramDetail from "./ProgramDetail";
 import { blpSlug, blpModules, workshopRecordingPending } from "@/lib/lms/blp-workshop";
-import { programs, mentorshipSlug } from "@/lib/lms/programs";
+import { programs } from "@/lib/lms/programs";
 const base = "/training-center";
 function classImage(course: Course, lesson: Lesson, index: number) {
   return lesson.thumbnail_url || (course.slug === blpSlug && blpModules[index] ? `/images/training/blp/scene-0${blpModules[index].image}.webp` : undefined) || (["vanuatu-october-2026", novemberCourseSlug].includes(course.slug) && index >= 0 && index < 12 ? `/images/training/classes/class-${String(index+1).padStart(2,"0")}.webp` : undefined);
@@ -274,6 +275,7 @@ function TrainingCenterContent({
     courses.find((c) => c.id === queryCourse || c.slug === queryCourse) ||
     (queryCourse ? undefined : courses[0]);
   const checkoutCohort = [initialCohort, novemberCohort].find((c) => c.id === checkout?.cohort_id);
+  const checkoutPersonal = checkout ? personalOffer(checkout.slug) : undefined;
   const order = orders.find((o) => o.course_id === checkout?.id);
   const courseOrder = orders.find((o) => o.course_id === current?.id);
   useEffect(() => {
@@ -475,8 +477,8 @@ function TrainingCenterContent({
                               <small>
                                 {t(!c.enrollment_open
                                   ? "Details to be announced"
-                                  : c.slug === mentorshipSlug
-                                    ? "Total for 3 months"
+                                  : programs[c.slug]?.personal
+                                    ? "Lessons + follow-up mentorship"
                                     : "One-time course fee")}
                               </small>
                             </strong>
@@ -838,7 +840,7 @@ function TrainingCenterContent({
                       </div>
                       <p>
                         {t(checkout.requires_approval ? "No payment required · Administrator approval needed" : checkout.private_sessions
-                          ? "One-time fee for all 3 months"
+                          ? "One-time fee · Lessons and included mentorship"
                           : "One-time course fee")}
                       </p>
                       {checkoutCohort && (
@@ -858,9 +860,7 @@ function TrainingCenterContent({
                             : `${base}/programs/${checkout.slug}`
                         }
                       ><CourseText text={"Read the full course details →"} /></Link>
-                      {checkout.private_sessions && (
-                        <p><CourseText text={"Includes building one software project during the programme and three free months of Digi Assist AI Pro. Continued Pro use after the free period requires a paid subscription. Sessions are arranged with your mentor, with private recordings for your enrolment."} /></p>
-                      )}
+                      {checkoutPersonal && <><p><CourseText text={personalCheckoutNote(checkoutPersonal)} /></p>{[softwareSlug,fullProgramSlug].includes(checkoutPersonal.slug) && <p>Includes three free months of Digi Assist AI Pro; continued use after the free period requires a paid subscription. Domains, hosting, advertising and other external tools are separate.</p>}</>}
                     </section>
                     <section className="lms-panel lms-checkout-pay">
                       {!email ? (
@@ -1042,7 +1042,7 @@ function TrainingCenterContent({
                     <header className="lms-page-head">
                       <Link href={`${base}/dashboard`}><CourseText text={"← My learning"} /></Link>
                       <p className="lms-eyebrow">
-                        {t(current.kind === "live"
+                        {t(current.private_sessions ? "YOUR ONE-ON-ONE LEARNING" : current.kind === "live"
                           ? "YOUR LIVE COHORT"
                           : "YOUR RECORDED COURSE")}
                       </p>

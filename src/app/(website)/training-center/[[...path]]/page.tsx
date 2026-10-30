@@ -16,7 +16,7 @@ export async function generateMetadata({
     return { title: "Bring your business online | Business Link Pacific", robots: { index: false, follow: false }, alternates: { canonical: null } };
   if (program)
     return {
-      title: `${path[1] === novemberCourseSlug ? novemberCohort.title : path[1] === "one-on-one-mentorship" ? "One on One Mentorship Program" : "How To Start A Profitable Business"} | Pacific Wave Digital`,
+      title: `${path[1] === novemberCourseSlug ? novemberCohort.title : program.personal?.title ?? program.headline} | Pacific Wave Digital`,
       description: program.headline + " " + program.audience,
       alternates: {
         canonical: `https://pacificwavedigital.com/training-center/programs/${path[1]}`,

@@ -1,0 +1,245 @@
+{
+  "foundations": {
+    "slug": "how-to-start-a-profitable-business",
+    "title": "Business Creation & Digital Foundations — One-on-One",
+    "amount": 150000,
+    "mentorshipMonths": 1,
+    "teachingWeeks": 6,
+    "image": "/images/team-meeting.jpg",
+    "headline": "Build your business, from idea to launch.",
+    "audience": "Aspiring entrepreneurs and business owners building a shop, local service, tourism venture or digital business.",
+    "modules": [
+      {
+        "title": "Week 1 · Business foundations",
+        "body": "Validate an idea, choose a model, price your offer, cover registration and banking basics, and create your brand."
+      },
+      {
+        "title": "Week 2 · Website development",
+        "body": "Set up domains, hosting and email; build your website with AI, useful copy, mobile design and SEO basics."
+      },
+      {
+        "title": "Week 3 · Digital marketing",
+        "body": "Plan social media, AI content, email follow-up and analytics."
+      },
+      {
+        "title": "Week 4 · Affiliate marketing",
+        "body": "Choose programmes and a niche, create helpful reviews and disclosures, track referrals and improve conversions."
+      },
+      {
+        "title": "Weeks 5–6 · Advertising and video production",
+        "body": "Work on Meta and Google ads, retargeting and AI promotional video. Capstone: launch and review your live campaign."
+      }
+    ],
+    "sessions": [
+      {
+        "title": "Business idea and customer validation",
+        "body": "Choose a customer problem, interview potential buyers and test demand."
+      },
+      {
+        "title": "Business model, pricing and legal basics",
+        "body": "Plan revenue, costs, pricing, registration and local obligations."
+      },
+      {
+        "title": "Brand and business setup",
+        "body": "Develop your name, logo and story; plan banking and practical setup."
+      },
+      {
+        "title": "Domains, hosting and professional email",
+        "body": "Choose and connect the foundations of your business website."
+      },
+      {
+        "title": "Build your website with AI",
+        "body": "Create useful pages, copy and a clear customer journey using AI tools."
+      },
+      {
+        "title": "Website launch, SEO and analytics",
+        "body": "Check mobile layouts, search visibility and basic visitor measurement."
+      },
+      {
+        "title": "Social media strategy",
+        "body": "Choose channels and plan a useful content calendar."
+      },
+      {
+        "title": "Create content with AI",
+        "body": "Create and review practical social, written and visual content."
+      },
+      {
+        "title": "Email marketing and customer follow-up",
+        "body": "Build a follow-up process and use analytics to improve it."
+      },
+      {
+        "title": "Affiliate niches and programmes",
+        "body": "Select relevant programmes and products suited to your audience."
+      },
+      {
+        "title": "Helpful reviews and clear disclosures",
+        "body": "Create honest reviews and comparisons with affiliate disclosures."
+      },
+      {
+        "title": "Referral tracking and conversions",
+        "body": "Set up links, measure referrals and improve the customer journey."
+      },
+      {
+        "title": "Facebook and Instagram advertising",
+        "body": "Plan targeting, budget and creative around a real offer."
+      },
+      {
+        "title": "AI promotional video production",
+        "body": "Plan and produce a useful promotional video with AI tools."
+      },
+      {
+        "title": "Google Ads and search campaigns",
+        "body": "Understand search intent, keywords, landing pages and budgets."
+      },
+      {
+        "title": "Retargeting and campaign refinement",
+        "body": "Plan retargeting and improve the message and landing-page experience."
+      },
+      {
+        "title": "Launch your campaign",
+        "body": "Publish your business campaign and test the customer journey."
+      },
+      {
+        "title": "Business launch capstone and review",
+        "body": "Review the live campaign, measure early signals and plan mentorship priorities."
+      }
+    ],
+    "outcomes": [
+      "Validate your business idea, offer and pricing",
+      "Plan legal registration, banking and your brand",
+      "Build and launch a professional website with AI",
+      "Use social, email, affiliate marketing and analytics",
+      "Create advertisements and promotional videos, then launch a campaign"
+    ]
+  },
+  "software": {
+    "slug": "one-on-one-mentorship",
+    "title": "AI, Coding & Software Development — One-on-One",
+    "amount": 250000,
+    "mentorshipMonths": 3,
+    "teachingWeeks": 6,
+    "image": "/images/diverse-team.jpg",
+    "headline": "Build the tools your business needs.",
+    "audience": "Business owners, freelancers and learners ready to use AI, build software, improve WordPress sites and offer automation or training services.",
+    "modules": [
+      {
+        "title": "Week 1 · AI and automation foundations",
+        "body": "Master practical prompting, map business workflows and scope automation audits."
+      },
+      {
+        "title": "Week 2 · Business automation",
+        "body": "Build chatbot, booking, CRM, marketing, invoicing and administrative workflows."
+      },
+      {
+        "title": "Week 3 · WordPress and AI-assisted coding",
+        "body": "Build with WordPress and AI, understand code, review changes and debug common errors."
+      },
+      {
+        "title": "Weeks 4–5 · Software, APIs and launch",
+        "body": "Use AI app builders, databases and APIs to build one working software project. Test, debug and deploy; cover pricing, licensing and software services."
+      },
+      {
+        "title": "Week 6 · AI training for institutions",
+        "body": "Design a curriculum, practise workshop facilitation and write proposals for business or institutional audiences. Capstone: show your software and deliver a mini-training."
+      }
+    ],
+    "sessions": [
+      {
+        "title": "AI fundamentals and prompting",
+        "body": "Use AI safely for research, reasoning, content and business tasks."
+      },
+      {
+        "title": "Practical prompt workflows",
+        "body": "Build reusable prompts and review output quality against your goals."
+      },
+      {
+        "title": "Automation mapping and audits",
+        "body": "Map business processes and scope an automation audit as a service."
+      },
+      {
+        "title": "Chatbots, bookings and customer enquiries",
+        "body": "Design a useful chatbot and connect enquiries or booking workflows."
+      },
+      {
+        "title": "CRM and marketing automation",
+        "body": "Organise leads and build practical follow-up and marketing workflows."
+      },
+      {
+        "title": "Invoicing and administrative automation",
+        "body": "Automate a focused repeatable business task and review the result."
+      },
+      {
+        "title": "AI-assisted WordPress planning",
+        "body": "Plan a WordPress website, pages, plugins and a clear customer journey."
+      },
+      {
+        "title": "Build and improve WordPress with AI",
+        "body": "Use AI to build content, layouts and integrations while reviewing quality."
+      },
+      {
+        "title": "AI-assisted coding foundations",
+        "body": "Read, adapt and debug code with AI; understand files, versions and errors."
+      },
+      {
+        "title": "No-code and AI application builders",
+        "body": "Turn a defined problem into an app prototype using appropriate tools."
+      },
+      {
+        "title": "Databases, APIs and integrations",
+        "body": "Connect data, accounts and external services with appropriate access controls."
+      },
+      {
+        "title": "Build your software project",
+        "body": "Implement the core workflow of your own AI tool, app or business programme."
+      },
+      {
+        "title": "Testing and debugging",
+        "body": "Test the main user journey, fix problems and review security basics."
+      },
+      {
+        "title": "Deployment and software launch",
+        "body": "Ship a working project and plan ongoing hosting and maintenance."
+      },
+      {
+        "title": "Pricing, licensing and AI services",
+        "body": "Package and price software, automation audits and delivery services."
+      },
+      {
+        "title": "Design AI training for institutions",
+        "body": "Create a practical curriculum for a business, government or community audience."
+      },
+      {
+        "title": "Workshop delivery and proposals",
+        "body": "Practise facilitation and prepare a clear institutional training proposal."
+      },
+      {
+        "title": "Software and mini-training capstone",
+        "body": "Demonstrate your working software project and deliver a short training session."
+      }
+    ],
+    "outcomes": [
+      "Use practical AI prompting and automation workflows",
+      "Build chatbots, CRM and customer-service automations",
+      "Develop WordPress websites with AI-assisted coding",
+      "Build, test and deploy one working software project using APIs and databases",
+      "Price and deliver software, automation audits and AI training for institutions"
+    ]
+  },
+  "full": {
+    "slug": "full-ai-business-program",
+    "title": "Complete Business & AI Programme — Both Phases",
+    "amount": 350000,
+    "mentorshipMonths": 3,
+    "teachingWeeks": 12,
+    "image": "/images/training/hero.webp",
+    "headline": "Create your business. Then build with AI.",
+    "audience": "Learners who want the complete journey: business creation and marketing, followed by AI, coding, WordPress, software development and institutional training.",
+    "outcomes": [
+      "Everything in Business Creation & Digital Foundations",
+      "Everything in AI, Coding & Software Development",
+      "36 scheduled private lessons across both phases",
+      "Save VUV 50,000 compared with booking separately",
+      "Three months of follow-up mentorship after both training phases"
+    ]
+  }
+}

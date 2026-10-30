@@ -1,3 +1,4 @@
+import { personalOffer, mentorshipExplanation } from "../lms/personal-programs";
 import "server-only";
 import {coachGreeting} from "@/lib/lms/coach/greeting";
 import { getWorkbook } from "@/lib/lms/workbook-schema";
@@ -107,7 +108,7 @@ export async function coachContext(
     as_of: new Date().toISOString(),
     student: { name: profile?.full_name || order.name, ...profile, ...(blp ? {city:profile?.city || "Port Vila",country:profile?.country || "Vanuatu",timezone:profile?.timezone || "Pacific/Efate"} : {}) },
     course,
-    schedule: blp ? {timezone:"Pacific/Efate",date:"2026-10-21",time:"9 am–4 pm",spoken_time:"from nine a.m. to four p.m., Vanuatu time",venue:"Yumiwork Conference Room, Port Vila, Vanuatu",student_exercises:"11 am–12 noon",fixed_timetable:true,sessions:blpModules.map(m=>({time:m.time,title:m.title}))} : cohort ? { timezone: cohort.timezone, days: cohort.daysLabel, time: cohort.timeLabel, spoken_time: spokenTime(cohort.timeLabel), starts_at: cohort.start, teaching_ends_at: cohort.teachingEnd, action_period_ends: cohort.actionEnd, session_dates: cohort.dates, teaching_hours: cohort.hours, venue: cohort.venue, fixed_timetable: true } : { fixed_timetable: !course.private_sessions, note: "Use published lesson appointments; ask the instructor for any missing dates." },
+    schedule: blp ? {timezone:"Pacific/Efate",date:"2026-10-21",time:"9 am–4 pm",spoken_time:"from nine a.m. to four p.m., Vanuatu time",venue:"Yumiwork Conference Room, Port Vila, Vanuatu",student_exercises:"11 am–12 noon",fixed_timetable:true,sessions:blpModules.map(m=>({time:m.time,title:m.title}))} : cohort ? { timezone: cohort.timezone, days: cohort.daysLabel, time: cohort.timeLabel, spoken_time: spokenTime(cohort.timeLabel), starts_at: cohort.start, teaching_ends_at: cohort.teachingEnd, action_period_ends: cohort.actionEnd, session_dates: cohort.dates, teaching_hours: cohort.hours, venue: cohort.venue, fixed_timetable: true } : { fixed_timetable: !course.private_sessions, note: "Use published lesson appointments; ask the instructor for any missing dates.", ...(personalOffer(course.slug) ? {structured_teaching_weeks:personalOffer(course.slug)!.teachingWeeks,scheduled_lessons:personalOffer(course.slug)!.sessions.length,sessions_per_week:3,session_minutes:90,followup_mentorship_months:personalOffer(course.slug)!.mentorshipMonths,mentorship:mentorshipExplanation} : {}) },
     course_outline: course.slug === "vanuatu-october-2026" ? octoberOutline.map(([title, body], i) => ({title: `Week ${i + 1}: ${title}`, body})) : programOutline(course.slug),
     lessons: lessons.map((x) => ({
       id: x.id,

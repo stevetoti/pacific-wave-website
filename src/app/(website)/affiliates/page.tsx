@@ -1,3 +1,5 @@
+import { personalOffers } from "@/lib/lms/personal-programs";
+import { money } from "@/lib/lms/types";
 import "./affiliates.css";
 import AffiliateTermsContent from "@/components/lms/AffiliateTermsContent";
 import { affiliatePayoutSummary, affiliateTermsUpdated } from "@/lib/lms/affiliate-terms";
@@ -64,7 +66,7 @@ const faqs = [
 ];
 const earnings = [
   { title: "Build Your Business in 30 Days with AI", category: "LIVE GROUP TRAINING", image: "/images/training/hero.webp", alt: "Illustration of Pacific entrepreneurs learning business and AI skills", fee: "VUV 35,000", earn: "VUV 5,250" },
-  { title: "One on One Mentorship Program", category: "PERSONAL GUIDANCE", image: "/images/team-meeting.jpg", alt: "Business professionals collaborating on a project", fee: "VUV 250,000", earn: "VUV 37,500" },
+  ...personalOffers.map(p=>({title:p.title,category:p.teachingWeeks===12?"BOTH PHASES":"ONE-ON-ONE TRAINING",image:p.image,alt:"Illustrative business and technology learning scene",fee:money(p.amount,"VUV"),earn:money(Math.floor(p.amount*0.15),"VUV")})),
 ];
 const payoutFacts = [
   { Icon: CalendarDays, value: "Monthly", label: "One payout cycle each month", detail: "After commission review and payout verification." },
