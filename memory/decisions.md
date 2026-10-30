@@ -288,3 +288,6 @@ Live application e7a0740 (review of Claude 1fb58e6), production dpl_7yQApJJNVUB3
 
 ## 2026-10-30 — [Codex] Separate November cohort
 Use a separate course/cohort and workbook keys; retain originalOctober students/history/recordings and legacy admin default. Upcoming public marketing targetsNovember. PreserveMon/Thu/Sat3–5pm andVUV35,000; longer run adds three finalrevision sessions. Clean Git source deployment only; do not archive a QA working directory.
+
+## 2026-10-30 — [Codex] Business course positioning
+Use owner-requested title Build Your Business in 30 Days with AI for the upcoming November cohort. Welcome physical and digital business types. Keep actual full class dates visible and describe final revisions separately. “Profitable” was discussed as an alternative; it was not selected. Historical October course and existing lessons retained.
