@@ -1,5 +1,5 @@
-import { personalOffer, personalCheckoutNote, softwareSlug, fullProgramSlug } from "@/lib/lms/personal-programs";
 "use client";
+import { personalOffer, personalCheckoutNote, softwareSlug, fullProgramSlug } from "@/lib/lms/personal-programs";
 import { initialCohort, novemberCohort, novemberCourseSlug, dayMonth } from "@/lib/training/config";
 import { HoneypotField, useFormBotFields } from "@/components/security/FormBotFields";
 import { TurnstileWidget } from "@/components/security/TurnstileWidget";
