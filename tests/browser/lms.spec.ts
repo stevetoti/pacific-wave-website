@@ -394,7 +394,7 @@ test('course artwork and public mentorship details lead to the correct checkout'
  const mentor=cards.filter({hasText:'AI, Coding & Software Development — One-on-One'});
  await expect(mentor).toContainText('250,000');
  await mentor.getByRole('link',{name:'View course'}).click();
- await expect(page.getByRole('heading',{name:'AI, Coding & Software Development — One-on-One',exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'AI, Coding & Software Development — One-on-One',exact:true,level:1})).toBeVisible();
  await expect(page.getByText('One-time fee · Scheduled lessons and follow-up mentorship')).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  await page.getByRole('link',{name:'Enrol in this programme',exact:true}).click();
@@ -402,7 +402,7 @@ test('course artwork and public mentorship details lead to the correct checkout'
  await expect(page.getByRole('heading',{name:'Create your student account'})).toBeVisible();
  await expect(page.locator('.lms-notice')).toContainText('250,000');
  await page.goto('/training-center/programs/how-to-start-a-profitable-business');
- await expect(page.getByRole('heading',{name:'Business Creation & Digital Foundations — One-on-One',exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Business Creation & Digital Foundations — One-on-One',exact:true,level:1})).toBeVisible();
  await expect(page.getByRole('link',{name:'Enrol in this programme',exact:true})).toBeVisible();
  await expect(page.locator('.lms-program-price')).toContainText('150,000');
 });
