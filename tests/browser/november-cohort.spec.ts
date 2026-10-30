@@ -12,7 +12,7 @@ test.beforeEach(async({context,page,baseURL})=>{
 test('new cohort is first, with correct dates, fee and a course-specific signup',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/training-center');
- const card=page.locator('article').filter({hasText:'Build Your Online Business — November–December 2026'});
+ const card=page.locator('article').filter({hasText:'Build Your Business in 30 Days with AI — November–December 2026'});
  await expect(card).toBeVisible();
  await expect(page.locator('article').first()).toContainText('November–December 2026');
  await expect(card).toContainText('16 November–19 December');
@@ -25,7 +25,7 @@ test('new cohort is first, with correct dates, fee and a course-specific signup'
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  await page.screenshot({path:`/tmp/november-signup-${test.info().project.name}.png`,fullPage:true});
  await page.goto('/vanuatu-training');
- await expect(page.locator('h1')).toContainText('Build Your Online Business');
+ await expect(page.locator('h1')).toContainText('Build Your Business in 30 Days');
  await expect(page.getByText('15',{exact:true})).toBeVisible();
  await expect(page.getByText(/revision on 14, 17 and 19 December/)).toBeVisible();
  await expect(page.getByRole('link',{name:/Join class/})).toHaveAttribute('href',/course=vanuatu-november-2026/);
@@ -44,7 +44,7 @@ test('enrolled student saves a revision, leaves, returns and reloads with the co
  await page.route('**/api/lms/dashboard',r=>r.fulfill({json:{orders:[{id:'synthetic-dashboard-only',course_id:fixture.courseId,user_id:student.id,status:'granted',name:'November QA enrolled'}],progress:[]}}));
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(`/training-center/course/${fixture.courseId}`);
- await expect(page.getByRole('heading',{name:'Build Your Online Business — November–December 2026',exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Build Your Business in 30 Days with AI — November–December 2026',exact:true})).toBeVisible();
  await expect(page.getByText(/Follow 15 dated sessions/)).toBeVisible();
  await page.getByRole('button',{name:'Open workbook',exact:true}).click();
  const select=page.getByLabel('Choose a class',{exact:true});

@@ -32,12 +32,12 @@ import "./training.css";
 import CourseInstructors from "@/components/lms/CourseInstructors";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: { absolute: "Vanuatu AI Business Training | Pacific Wave Digital" },
+  title: { absolute: "Build Your Business in 30 Days with AI | Pacific Wave Digital" },
   description:
-    `Build your online business with practical AI training in Vanuatu. Starts ${dayMonth(initialCohort.start)} ${new Date(initialCohort.start).getUTCFullYear()}. In person and online. ${feeLabel(initialCohort)}. Register your interest.`,
+    `Build your business in 30 days with practical AI training in Vanuatu. Starts ${dayMonth(initialCohort.start)} ${new Date(initialCohort.start).getUTCFullYear()}. In person and online. ${feeLabel(initialCohort)}. Register your interest.`,
   alternates: { canonical: "/vanuatu-training" },
   openGraph: {
-    title: "Build Your Online Business | 16 November–19 December",
+    title: "Build Your Business in 30 Days with AI | 16 November–19 December",
     description:
       `Vanuatu • ${monthLabel(initialCohort,true)}. Practical AI training, in person and online. Course fee: ${feeLabel(initialCohort)}.`,
     url: "/vanuatu-training",
@@ -81,7 +81,7 @@ export default async function TrainingPage() {
     ],
     [
       "What business can I create?",
-      "Examples include digital services, ecommerce, tourism/travel and businesses based on existing skills.",
+      "Work on a shop, local service, tourism venture, trade, digital service or ecommerce idea. The business can serve customers in person, online or both.",
     ],
     [
       "Do I need an existing business?",
@@ -114,19 +114,23 @@ export default async function TrainingPage() {
               Vanuatu • {monthLabel(c,true)}
             </div>
             <h1 className="font-extrabold text-[43px] sm:text-6xl xl:text-[66px] leading-[1.05] tracking-[-.045em]">
-              Build Your Online Business{" "}
+              Build Your Business in 30 Days{" "}
               <span className="text-[#b73d19]">with AI</span>
             </h1>
             <p className="mt-6 text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
-              Turn your idea into a working business with practical AI training.
+              Start or grow a shop, local service, tourism venture or digital business with practical AI training.
               Learn to build your website, set up bookings and customer
               enquiries, create a chatbot, and launch your first offer using
               Digi Assist AI.
             </p>
+            <p className="mt-3 text-sm text-slate-600">
+              A 30-day business-building focus, with three final revision sessions.
+              Full class schedule: 16 November–19 December 2026.
+            </p>
             <div className="flex flex-wrap gap-x-5 gap-y-3 text-sm font-semibold mt-7">
               <span className="flex gap-2">
                 <CalendarDays size={18} />
-                Starts {dayMonth(c.start)}
+                {dayMonth(c.start)}–{dayMonth(c.teachingEnd)}
               </span>
               <span>Mon, Thu & Sat</span>
               <span className="flex gap-2">

@@ -26,7 +26,7 @@ def decorate(c,doc):
  c.setFont('WB',8);c.drawString(87,791,'NOVEMBER–DECEMBER 2026 · PARTICIPANT WORKBOOK')
  c.setStrokeColor(orange);c.setLineWidth(1.5);c.line(42,775,553,775)
  c.setFillColor(navy);c.setFont('WB',8);c.drawString(42,27,'16 November–19 December 2026 | 3–5 pm Vanuatu time');c.drawRightString(553,27,str(doc.page))
-story=[Spacer(1,34),p(w['title'],'title'),p(w['subtitle'],'h1'),p('16 November–19 December 2026','h2'),p('Mondays, Thursdays and Saturdays · 3–5 pm Vanuatu time'),p('15 live sessions · 30 teaching hours · Same 12 core lessons plus three final revision and project-review sessions.'),Spacer(1,20),p('Your working document','h2'),p('Read each lesson, complete the activities and use your own business project throughout. Write answers in English, Bislama or French. Save editable answers in your student dashboard; this PDF is a printable reference.'),p('Never record passwords, bank details or private customer data. Check official requirements and ongoing costs before making business decisions. Results depend on your effort, offer and market.'),PageBreak(),p('Your class timetable','h1')]
+story=[Spacer(1,34),p(w['title'].replace('with AI','with\u00a0AI'),'title'),p(w['subtitle'],'h1'),p('16 November–19 December 2026','h2'),p('Mondays, Thursdays and Saturdays · 3–5 pm Vanuatu time'),p('15 live sessions · 30 teaching hours · Same 12 core lessons plus three final revision and project-review sessions.'),Spacer(1,20),p('Your working document','h2'),p('Read each lesson, complete the activities and use your own business project throughout. Write answers in English, Bislama or French. Save editable answers in your student dashboard; this PDF is a printable reference.'),p('Never record passwords, bank details or private customer data. Check official requirements and ongoing costs before making business decisions. Results depend on your effort, offer and market.'),PageBreak(),p('Your class timetable','h1')]
 for l in w['lessons']:story.append(p(f"{l['number']:02} | {l['date']} | {l['title']}",'small'))
 for l in w['lessons']:
  story += [PageBreak(),p(f"CLASS {l['number']} · {l['date']} · {w['time']}",'small'),p(l['title'],'h1'),p(l['outcome'])]
@@ -41,5 +41,5 @@ for l in w['lessons']:
  story += [p('Check your work','h2')]
  for check in l['checks']:story.append(p('[  ] '+check))
  story += [p('Before the next class','h2'),p(l['homework'])]
-SimpleDocTemplate(str(ROOT/'resources/november-workbook.pdf'),pagesize=(595.28,841.89),leftMargin=44,rightMargin=44,topMargin=85,bottomMargin=48,title='Build Your Online Business | November–December 2026 Workbook',author='Pacific Wave Digital').build(story,onFirstPage=decorate,onLaterPages=decorate)
+SimpleDocTemplate(str(ROOT/'resources/november-workbook.pdf'),pagesize=(595.28,841.89),leftMargin=44,rightMargin=44,topMargin=85,bottomMargin=48,title=w['title']+' | November–December 2026 Workbook',author='Pacific Wave Digital').build(story,onFirstPage=decorate,onLaterPages=decorate)
 print('Created resources/november-workbook.pdf')

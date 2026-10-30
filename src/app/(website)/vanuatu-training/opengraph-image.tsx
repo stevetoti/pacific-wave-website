@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { novemberCohort as c, feeLabel,monthRangeLabel as monthLabel,dayMonth } from "@/lib/training/config";
 export const runtime = "nodejs";
 export const alt =
-  "Pacific Wave Digital — Build Your Online Business with AI. Vanuatu, 16 November–19 December 2026.";
+  "Pacific Wave Digital — Build Your Business in 30 Days with AI. Vanuatu, 16 November–19 December 2026.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export default async function Image() {
@@ -53,10 +53,10 @@ export default async function Image() {
             maxWidth: 1050,
           }}
         >
-          Build Your Online Business with AI
+          Build Your Business in 30 Days with AI
         </div>
         <div style={{ display: "flex", fontSize: 23, marginTop: 30 }}>
-          Starts {dayMonth(c.start)} · In person + online · {c.timeLabel}
+          {dayMonth(c.start)}–{dayMonth(c.teachingEnd)} · {c.timeLabel}
         </div>
         <div
           style={{

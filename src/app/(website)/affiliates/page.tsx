@@ -143,7 +143,7 @@ export default function AffiliatesPage() {
           <h2 className="text-center text-3xl font-bold text-[#233C6F]">What you can earn</h2>
           <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white">
             {[
-              ["Build Your Online Business in 30 Days", "VUV 35,000", "VUV 5,250"],
+              ["Build Your Business in 30 Days with AI", "VUV 35,000", "VUV 5,250"],
               ["One on One Mentorship Program", "VUV 250,000", "VUV 37,500"],
             ].map(([course, fee, earn]) => (
               <div key={course} className="flex flex-col gap-1 border-b border-slate-100 p-5 last:border-0 sm:flex-row sm:items-center sm:justify-between">

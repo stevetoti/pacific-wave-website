@@ -1163,3 +1163,6 @@ New course vanuatu-november-2026 (7705b174-2b6e-4c96-8241-6fb28971d19d), cohort 
 
 ## 2026-10-30 — [Codex] November class live acceptance complete
 Final live six-case desktop/mobile cohort suite and full private API suite pass, plus prior eight browser route regressions (two optional mutation tests skipped), 17 focused tests, type/lint/build and eight release guards. Independent live owner checkout readback passes. Removed all three synthetic users, their two orders, workbook answers and test audit/email rows; zero remnants verified. No messages, real registrations, payments or provider sessions submitted. Report docs/training/november-december-cohort-2026.md records limits and exact deployment.
+
+## 2026-10-30 — [Codex] Broader course name requested
+Stephen requested removing the online-only business positioning and using Build Your Business in 30 Days with AI. Updating upcoming November course title, public marketing, affiliate example and its workbook; retain exact full class dates and business-building focus plus final revision explanation. Existing lesson content, October history, attendance methods, dates and fee preserved.

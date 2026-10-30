@@ -40,9 +40,9 @@ export const programs: Record<
     alt: "Pacific learners building digital skills together",
     label: "NOVEMBER–DECEMBER COHORT",
     duration: "16 November–19 December · 15 live sessions · 30 hours",
-    headline: "Build your online business, with extra time to revise and practise.",
-    audience: "Aspiring entrepreneurs and business owners in Vanuatu and the Pacific.",
-    outcomes: ["Build your online presence", "Complete the same 12 practical lessons", "Revise and improve your project in three final sessions"],
+    headline: "Build Your Business in 30 Days with AI",
+    audience: "Aspiring entrepreneurs and owners of shops, local services, tourism ventures and digital businesses in Vanuatu and the Pacific.",
+    outcomes: ["Develop your offer, reach customers and use AI in everyday business", "Complete the same 12 practical lessons", "Revise and improve your project in three final sessions"],
     modules: novemberOutline.map(([title, body], i) => ({title: `Week ${i + 1}: ${title}`, body})),
   },
   [businessSlug]: {
