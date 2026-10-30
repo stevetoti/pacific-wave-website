@@ -496,3 +496,6 @@ Live application e7a0740 (review of Claude 1fb58e6), production dpl_7yQApJJNVUB3
 
 ## 2026-10-30 — [Codex] Personal programmes complete
 - [x] Clarify and publish150k/250k/350k private programmes, full curriculum and explicit mentorship; staged/live desktop/mobile/private checks pass, synthetic fixtures cleaned. Use complete codex/november-december-cohort lineage before any future deployment.
+
+## 2026-10-30 — [Codex] Expanded personal topics complete
+- [x] Publish detailed business/software/agent topics, project stages and matching illustrations; staged/live desktop/mobile checks pass, existing student records preserved.

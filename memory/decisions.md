@@ -300,3 +300,6 @@ User requested removing singled-out PNG references. Describe affiliate eligibili
 
 ## 2026-10-30 — [Codex] Personal programme fees and mentorship
 Owner confirmedVUV 150,000 foundations plus one month,VUV 250,000 software plus three months,VUV 350,000 both plus three months AFTER BOTH phases. Eachphase six weeks, 18 private 90-minute lessons,three weekly. Human follow-up mentoring is arranged about weekly/as needed, distinct from formal teaching. Reuse unbooked existing IDs/slugs; preserve all real student history and private own-order lessons.
+
+## 2026-10-30 — [Codex] Detailed personal curriculum
+Use the October workbook's substantive business topics in the first private course and explicitly include mastering Digi Assist AI and digital agency setup. The second course builds one student-chosen software project during class and teaches connected AI agents for admin, marketing, video and supported meeting workflows. Reuse approved navy/orange/white service illustrations. Preserve existing lessons/history; only new orders receive refreshed lesson outlines.

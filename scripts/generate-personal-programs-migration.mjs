@@ -40,5 +40,5 @@ BEGIN
 END $$;
 COMMIT;
 `;
-await writeFile(process.argv[2] || 'supabase/migrations/20261030_personal_training_options.sql',sql);
+await writeFile(process.argv[2] || 'supabase/migrations/20261030_personal_curriculum_detail.sql',sql);
 console.log('Generated programme migration from shared offer and lesson data.');
