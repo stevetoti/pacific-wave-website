@@ -1,4 +1,5 @@
 import { publicTrainingCourses, registrationCourse } from "@/lib/server/lms-catalog";
+import { novemberCourseSlug, novemberCohort } from "@/lib/training/config";
 import { programs } from "@/lib/lms/programs";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -15,7 +16,7 @@ export async function generateMetadata({
     return { title: "Bring your business online | Business Link Pacific", robots: { index: false, follow: false }, alternates: { canonical: null } };
   if (program)
     return {
-      title: `${path[1] === "one-on-one-mentorship" ? "One on One Mentorship Program" : "How To Start A Profitable Business"} | Pacific Wave Digital`,
+      title: `${path[1] === novemberCourseSlug ? novemberCohort.title : path[1] === "one-on-one-mentorship" ? "One on One Mentorship Program" : "How To Start A Profitable Business"} | Pacific Wave Digital`,
       description: program.headline + " " + program.audience,
       alternates: {
         canonical: `https://pacificwavedigital.com/training-center/programs/${path[1]}`,

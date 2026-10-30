@@ -1,10 +1,10 @@
 import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { initialCohort as c, feeLabel,monthLabel,dayMonth } from "@/lib/training/config";
+import { novemberCohort as c, feeLabel,monthLabel,dayMonth } from "@/lib/training/config";
 export const runtime = "nodejs";
 export const alt =
-  "Pacific Wave Digital — Build Your Online Business in 30 Days. Vanuatu October 2026.";
+  "Pacific Wave Digital — Build Your Online Business with AI. Vanuatu, 16 November–19 December 2026.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export default async function Image() {
@@ -53,7 +53,7 @@ export default async function Image() {
             maxWidth: 1050,
           }}
         >
-          Build Your Online Business in 30 Days
+          Build Your Online Business with AI
         </div>
         <div style={{ display: "flex", fontSize: 23, marginTop: 30 }}>
           Starts {dayMonth(c.start)} · In person + online · {c.timeLabel}

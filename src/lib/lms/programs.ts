@@ -1,3 +1,5 @@
+import { novemberCourseSlug } from "../training/config";
+import { novemberOutline } from "../training/outline";
 import { blpSlug, blpModules } from "./blp-workshop";
 export const mentorshipSlug = "one-on-one-mentorship";
 export const businessSlug = "how-to-start-a-profitable-business";
@@ -32,6 +34,16 @@ export const programs: Record<
       "Learn alongside a live cohort",
     ],
     modules: [],
+  },
+  [novemberCourseSlug]: {
+    image: "/images/training/hero.webp",
+    alt: "Pacific learners building digital skills together",
+    label: "NOVEMBER–DECEMBER COHORT",
+    duration: "16 November–19 December · 15 live sessions · 30 hours",
+    headline: "Build your online business, with extra time to revise and practise.",
+    audience: "Aspiring entrepreneurs and business owners in Vanuatu and the Pacific.",
+    outcomes: ["Build your online presence", "Complete the same 12 practical lessons", "Revise and improve your project in three final sessions"],
+    modules: novemberOutline.map(([title, body], i) => ({title: `Week ${i + 1}: ${title}`, body})),
   },
   [businessSlug]: {
     image: "/images/team-meeting.jpg",

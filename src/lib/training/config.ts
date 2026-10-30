@@ -1,8 +1,11 @@
+import november from "./november-cohort.json";
 import initial from "./cohort.json";
 export type Cohort = Omit<typeof initial, "registrationState"> & {
   registrationState: "open" | "closed";
 };
 export const initialCohort = initial as Cohort;
+export const novemberCohort = november as Cohort;
+export const novemberCourseSlug = "vanuatu-november-2026";
 export const locations = {
   port_vila: "Port Vila (Efate)",
   efate: "Elsewhere on Efate",

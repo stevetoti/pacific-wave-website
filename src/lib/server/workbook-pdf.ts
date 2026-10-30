@@ -2,9 +2,9 @@ import 'server-only';
 import {readFile} from 'node:fs/promises';
 import {PDFDocument,rgb} from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import {workbook as octoberWorkbook,type Workbook} from '@/lib/lms/workbook-schema';
+import {workbook as octoberWorkbook,workbookFile,type Workbook} from '@/lib/lms/workbook-schema';
 export async function workbookPdf(rows:{lesson_key:string;answers:Record<string,string|boolean>}[],workbook:Workbook=octoberWorkbook){
- const doc=await PDFDocument.load(await readFile(process.cwd()+`/resources/${workbook.format==='workshop'?'blp':'october'}-workbook.pdf`));
+ const doc=await PDFDocument.load(await readFile(process.cwd()+`/resources/${workbookFile(workbook)}`));
  doc.registerFontkit(fontkit);
  const font=await doc.embedFont(await readFile(process.cwd()+'/resources/workbook-font.ttf'),{subset:true});
  const logo=await doc.embedPng(await readFile(process.cwd()+'/public/images/training/pwd-logo.png'));

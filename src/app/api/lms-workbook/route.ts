@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { readFile } from 'node:fs/promises';
 import { student,checked } from '@/lib/server/lms';
 import { apiError,HttpError,readJson } from '@/lib/server/http';
-import { getWorkbook,workbookSaveSchema } from '@/lib/lms/workbook-schema';
+import { getWorkbook,workbookSaveSchema,workbookFile } from '@/lib/lms/workbook-schema';
 import { workbookPdf } from '@/lib/server/workbook-pdf';
 export const dynamic='force-dynamic';
 export const maxDuration=60;
@@ -21,7 +21,7 @@ export async function GET(request:Request){try{
  const {db,user,workbook}=await access(request,courseId);
  // user identity always comes from the verified token, never a query parameter.
  const pdf=q.get('pdf');
- if(pdf==='blank')return pdfResponse(await readFile(process.cwd()+`/resources/${workbook.format==='workshop'?'blp':'october'}-workbook.pdf`),workbook.format==='workshop'?'BLP-Participant-Workbook-v5.pdf':'PWD-October-Workbook.pdf');
+ if(pdf==='blank')return pdfResponse(await readFile(process.cwd()+`/resources/${workbookFile(workbook)}`),workbookFile(workbook));
  const rows=checked(await db.from('pwd_lms_workbook_answers').select('lesson_key,answers,revision,updated_at').eq('user_id',user.id).eq('course_id',courseId));
  if(pdf==='completed')return pdfResponse(await workbookPdf(rows||[],workbook),'PWD-Workbook-With-My-Answers.pdf');
  return NextResponse.json({rows},{headers:{'Cache-Control':'private, no-store'}});

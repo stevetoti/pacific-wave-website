@@ -1,4 +1,4 @@
-import { octoberOutline as paths } from "@/lib/training/outline";
+import { novemberOutline as paths } from "@/lib/training/outline";
 import Link from "next/link";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -19,7 +19,8 @@ import {
 } from "lucide-react";
 
 import {
-  initialCohort,
+  novemberCohort as initialCohort,
+  novemberCourseSlug,
   isOpen,
   feeLabel,
   dateLabel,
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
     `Build your online business with practical AI training in Vanuatu. Starts ${dayMonth(initialCohort.start)} ${new Date(initialCohort.start).getUTCFullYear()}. In person and online. ${feeLabel(initialCohort)}. Register your interest.`,
   alternates: { canonical: "/vanuatu-training" },
   openGraph: {
-    title: "Build Your Online Business in 30 Days",
+    title: "Build Your Online Business | 16 November–19 December",
     description:
       `Vanuatu • ${monthLabel(initialCohort,true)}. Practical AI training, in person and online. Course fee: ${feeLabel(initialCohort)}.`,
     url: "/vanuatu-training",
@@ -60,7 +61,7 @@ export default async function TrainingPage() {
   let c = initialCohort;
   let available = true;
   try {
-    c = await getTrainingCohort();
+    c = await getTrainingCohort(initialCohort.id);
   } catch {
     available = false;
   }
@@ -68,7 +69,7 @@ export default async function TrainingPage() {
   const faqs = [
     [
       "How much does the course cost?",
-      `The one-month course fee is ${feeLabel(c)}, including the listed bonuses. This is not a monthly course subscription.`,
+      `The one-time course fee is ${feeLabel(c)}, including the listed bonuses. This is not a monthly course subscription.`,
     ],
     [
       "Can I join from another island?",
@@ -105,7 +106,7 @@ export default async function TrainingPage() {
   ];
   return (
     <div className="training">
-      {open && <div className="sticky top-20 z-30 border-b border-slate-200 bg-white/95 backdrop-blur px-4 py-3"><div className="max-w-6xl mx-auto flex items-center justify-between gap-3"><div className="text-sm font-semibold">{monthLabel(c)} training<span className="block text-xs font-normal">{feeLabel(c)} · Online or in person</span></div><Link className="training-button !py-3 !px-5" href="/training-center/account?mode=signup&course=vanuatu-october-2026">Join class <ArrowUpRight size={18}/></Link></div></div>}
+      {open && <div className="sticky top-20 z-30 border-b border-slate-200 bg-white/95 backdrop-blur px-4 py-3"><div className="max-w-6xl mx-auto flex items-center justify-between gap-3"><div className="text-sm font-semibold">{monthLabel(c)} training<span className="block text-xs font-normal">{feeLabel(c)} · Online or in person</span></div><Link className="training-button !py-3 !px-5" href={`/training-center/account?mode=signup&course=${novemberCourseSlug}`}>Join class <ArrowUpRight size={18}/></Link></div></div>}
       <section className="training-section !pt-10 md:!pt-16 !pb-12">
         <div className="grid lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-14 items-center">
           <div>
@@ -114,7 +115,7 @@ export default async function TrainingPage() {
             </div>
             <h1 className="font-extrabold text-[43px] sm:text-6xl xl:text-[66px] leading-[1.05] tracking-[-.045em]">
               Build Your Online Business{" "}
-              <span className="text-[#b73d19]">in 30 Days</span>
+              <span className="text-[#b73d19]">with AI</span>
             </h1>
             <p className="mt-6 text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
               Turn your idea into a working business with practical AI training.
@@ -139,7 +140,7 @@ export default async function TrainingPage() {
               <strong className="text-2xl ml-2">{feeLabel(c)}</strong>
             </p>
             <div className="flex flex-col sm:items-start gap-4 mt-6">
-              <a href={open ? "/training-center/account?mode=signup&course=vanuatu-october-2026" : "#register"} className="training-button">
+              <a href={open ? `/training-center/account?mode=signup&course=${novemberCourseSlug}` : "#register"} className="training-button">
                 {open
                   ? `Register for the ${monthLabel(c)} Class`
                   : "View registration information"}{" "}
@@ -272,8 +273,8 @@ export default async function TrainingPage() {
         <p className="training-eyebrow text-[#b73d19] mb-4">
           A practical path to launch
         </p>
-        <h2 className="training-title">Your four-week learning path</h2>
-        <div className="grid md:grid-cols-4 gap-7 mt-10">
+        <h2 className="training-title">Your five-week learning path</h2>
+        <div className="grid md:grid-cols-3 xl:grid-cols-5 gap-7 mt-10">
           {paths.map(([title, text], i) => (
             <div key={title} className="border-t-2 border-[#EF5E33] pt-5">
               <p className="text-xs font-bold tracking-widest text-[#b73d19]">
@@ -288,7 +289,7 @@ export default async function TrainingPage() {
         </div>
         <div className="mt-8 text-sm text-slate-600 space-y-2">
           <p>
-            Live teaching: {dayMonth(c.start)}–{dayMonth(c.teachingEnd)}. Your 30-day action period: {dayMonth(c.start)}–{dayMonth(c.actionEnd)}. This is not 30 live teaching days.
+            Live teaching: {dayMonth(c.start)}–{dayMonth(c.teachingEnd)}. Same 12 core lessons, then revision on 14, 17 and 19 December: 15 sessions and 30 teaching hours. Continue practising through {dayMonth(c.actionEnd)}.
           </p>
           <p>
             Results depend on your effort, offer and market. Income is not
@@ -403,7 +404,7 @@ export default async function TrainingPage() {
           </div>
         </div>
       </section>
-      <CourseInstructors slug="vanuatu-october-2026" />
+      <CourseInstructors slug={novemberCourseSlug} />
       <section className="training-section max-w-4xl">
         <p className="training-eyebrow text-[#b73d19] mb-4">
           Before you register
@@ -472,7 +473,7 @@ export default async function TrainingPage() {
                 </p>
               </div>
             ) : (
-              <div className="training-form p-8"><h3 className="text-2xl font-bold">Your course starts here</h3><p className="my-5 leading-relaxed">Complete one signup form and choose online or in-person training. No email confirmation needed. Pay by card or bank transfer to complete enrollment; bank transfers are reviewed before paid lessons unlock.</p>{open ? <Link className="training-button" href="/training-center/account?mode=signup&course=vanuatu-october-2026">Register & join the class <ArrowUpRight size={18}/></Link> : <p>Registration is closed for this cohort.</p>}<p className="mt-5 text-sm"><Link className="underline" href="/training-center/account">Already registered? Sign in to your student account</Link></p></div>
+              <div className="training-form p-8"><h3 className="text-2xl font-bold">Your course starts here</h3><p className="my-5 leading-relaxed">Complete one signup form and choose online or in-person training. No email confirmation needed. Pay by card or bank transfer to complete enrollment; bank transfers are reviewed before paid lessons unlock.</p>{open ? <Link className="training-button" href={`/training-center/account?mode=signup&course=${novemberCourseSlug}`}>Register & join the class <ArrowUpRight size={18}/></Link> : <p>Registration is closed for this cohort.</p>}<p className="mt-5 text-sm"><Link className="underline" href="/training-center/account">Already registered? Sign in to your student account</Link></p></div>
             )}
           </div>
         </div>

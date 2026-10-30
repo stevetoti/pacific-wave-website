@@ -16,3 +16,5 @@ export const octoberOutline = [
     "Test delivery, improve your business and present your launch project.",
   ],
 ];
+
+export const novemberOutline = [...octoberOutline, ["Revise & strengthen", "Revisit your website, store, chatbot and customer journey. Fix gaps, practise your presentation and agree your next steps."]];

@@ -1,4 +1,5 @@
 "use client";
+import { novemberCourseSlug } from "@/lib/training/config";
 import { HoneypotField, useFormBotFields } from "@/components/security/FormBotFields";
 import { TurnstileWidget } from "@/components/security/TurnstileWidget";
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
@@ -50,7 +51,7 @@ import { blpSlug, blpModules, workshopRecordingPending } from "@/lib/lms/blp-wor
 import { programs, mentorshipSlug } from "@/lib/lms/programs";
 const base = "/training-center";
 function classImage(course: Course, lesson: Lesson, index: number) {
-  return lesson.thumbnail_url || (course.slug === blpSlug && blpModules[index] ? `/images/training/blp/scene-0${blpModules[index].image}.webp` : undefined) || (course.slug === "vanuatu-october-2026" && index >= 0 && index < 12 ? `/images/training/classes/class-${String(index+1).padStart(2,"0")}.webp` : undefined);
+  return lesson.thumbnail_url || (course.slug === blpSlug && blpModules[index] ? `/images/training/blp/scene-0${blpModules[index].image}.webp` : undefined) || (["vanuatu-october-2026", novemberCourseSlug].includes(course.slug) && index >= 0 && index < 12 ? `/images/training/classes/class-${String(index+1).padStart(2,"0")}.webp` : undefined);
 }
 async function api(path: string, body?: unknown) {
   const r = await authFetch(
@@ -415,7 +416,7 @@ function TrainingCenterContent({
                       sizes="(max-width: 800px) 100vw, 45vw"
                     />
                     <div className="lms-float">
-                      <span className="lms-dot" /><CourseText text={"OCTOBER COHORT"} /><small><CourseText text={"Start 5 October · Vanuatu"} /></small>
+                      <span className="lms-dot" /><CourseText text={"NOVEMBER–DECEMBER COHORT"} /><small><CourseText text={"Starts 16 November · Vanuatu"} /></small>
                     </div>
                   </div>
                 </section>
@@ -428,7 +429,7 @@ function TrainingCenterContent({
                     <p><CourseText text={"Real skills. A clear path forward."} /></p>
                   </div>
                   <div className="lms-grid lms-catalog-grid">
-                    {courses.filter(c => !c.is_private).map((c) => (
+                    {courses.filter(c => !c.is_private).sort((a, b) => Number(b.slug === novemberCourseSlug) - Number(a.slug === novemberCourseSlug)).map((c) => (
                       <article className="lms-course-card" key={c.id}>
                         <div className="lms-card-art">
                           <Image
@@ -1075,7 +1076,7 @@ function TrainingCenterContent({
                       </div>
                     )}
                     {current.slug === blpSlug && ["paid", "granted"].includes(courseOrder?.status || "") && <WorkshopResources />}
-                    {["vanuatu-october-2026", blpSlug].includes(current.slug) && ["paid", "granted"].includes(courseOrder?.status || "") && <DigitalWorkbook key={current.id} courseId={current.id} courseSlug={current.slug} />}
+                    {["vanuatu-october-2026", novemberCourseSlug, blpSlug].includes(current.slug) && ["paid", "granted"].includes(courseOrder?.status || "") && <DigitalWorkbook key={current.id} courseId={current.id} courseSlug={current.slug} />}
                     <nav
                       className="lms-admin-tabs"
                       aria-label="Course sections"
