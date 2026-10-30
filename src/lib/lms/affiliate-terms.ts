@@ -8,7 +8,7 @@ export const affiliatePayoutSummary =
 export const affiliateTerms = [
   {
     title: "Joining and earning commission",
-    body: "The programme is open to affiliates worldwide, including Papua New Guinea. Joining is free. Use your personal referral link to promote eligible Pacific Wave Digital courses. The standard commission is 15% of the amount actually paid by an eligible referred student, after discounts. Self-referrals do not earn commission. Refunded or revoked enrolments do not qualify for unpaid commission. Approval to promote courses is separate from verification for payouts.",
+    body: "The programme is open to affiliates worldwide, across the Pacific and beyond. Joining is free. Use your personal referral link to promote eligible Pacific Wave Digital courses. The standard commission is 15% of the amount actually paid by an eligible referred student, after discounts. Self-referrals do not earn commission. Refunded or revoked enrolments do not qualify for unpaid commission. Approval to promote courses is separate from verification for payouts.",
   },
   {
     title: "Who pays you",

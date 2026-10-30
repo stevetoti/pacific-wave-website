@@ -1,13 +1,14 @@
+import "./affiliates.css";
 import AffiliateTermsContent from "@/components/lms/AffiliateTermsContent";
 import { affiliatePayoutSummary, affiliateTermsUpdated } from "@/lib/lms/affiliate-terms";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { ArrowRight, Link2, Share2, Wallet, Check, BadgePercent, Clock3 } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Link2, Share2, Wallet, Check, Clock3, Globe2, ShieldCheck, Banknote, CalendarDays, ChevronDown } from "lucide-react";
 export const metadata: Metadata = {
   title: { absolute: "Affiliate Programme | Pacific Wave Digital Training" },
   description:
-    "Earn 15% commission by referring people to Pacific Wave Digital courses in Vanuatu and the Pacific. Free to join. You don't need to be a student.",
+    "Join the Pacific Wave Digital affiliate programme worldwide. Earn 15% on eligible paid course referrals, with monthly payouts from a US$50 equivalent balance.",
   alternates: { canonical: "/affiliates" },
 };
 const join = "/training-center/account?mode=signup&next=affiliate";
@@ -39,7 +40,7 @@ const faqs = [
   ["Which currency can I receive?", "Commission is recorded in the course payment currency. Global Digital Prime Inc., our USA company, pays in USD or a suitable local currency agreed with you. We confirm the conversion rate and amount before transfer."],
   ["What is the minimum payout?", "US$50 or its equivalent in your payout currency, in approved unpaid commissions. Lower balances carry forward."],
   ["Are fees deducted from my commission?", "No. We transfer your full approved commission and cover transfer and currency-conversion fees."],
-  ["What verification is needed?", "Before your first payout, we verify your legal name, account email, phone, country, payout currency and receiving-account details. The account must be in your name or your registered business’s name. Additional documents are requested securely only when necessary. See the affiliate terms below."],
+  ["What verification is needed?", "Before your first payout, we verify your legal name, account email, phone, country, payout currency and receiving-account details. The account must be in your name or your registered business’s name. Additional documents are requested securely only when necessary. Read the affiliate terms."],
   [
     "Do I need to be a student?",
     "No. Anyone can join: community leaders, teachers, business owners, or anyone who knows people who want to learn digital and AI skills.",
@@ -61,148 +62,78 @@ const faqs = [
     "No. Purchases made with your own account don't earn commission.",
   ],
 ];
+const earnings = [
+  { title: "Build Your Business in 30 Days with AI", category: "LIVE GROUP TRAINING", image: "/images/training/hero.webp", alt: "Illustration of Pacific entrepreneurs learning business and AI skills", fee: "VUV 35,000", earn: "VUV 5,250" },
+  { title: "One on One Mentorship Program", category: "PERSONAL GUIDANCE", image: "/images/team-meeting.jpg", alt: "Business professionals collaborating on a project", fee: "VUV 250,000", earn: "VUV 37,500" },
+];
+const payoutFacts = [
+  { Icon: CalendarDays, value: "Monthly", label: "One payout cycle each month", detail: "After commission review and payout verification." },
+  { Icon: Wallet, value: "US$50", label: "Minimum approved balance", detail: "Or its equivalent. Smaller balances carry forward." },
+  { Icon: Globe2, value: "Your currency", label: "USD or an agreed local currency", detail: "Conversion rate and amount confirmed before transfer." },
+  { Icon: Banknote, value: "Full commission", label: "No transfer-fee deductions", detail: "We cover transfer and currency-conversion fees." },
+];
 export default function AffiliatesPage() {
   return (
-    <main className="bg-white text-slate-800">
-      <section className="relative overflow-hidden bg-[#233C6F] px-4 pb-16 pt-28 text-white md:pb-24 md:pt-36">
-        <div className="pointer-events-none absolute -right-40 -top-40 h-[480px] w-[480px] rounded-full bg-[#EF5E33]/20 blur-3xl" />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
-          <div className="text-center lg:text-left">
-            <p className="mb-4 text-xs font-semibold tracking-widest text-[#EF5E33] sm:text-sm">
-              PACIFIC WAVE DIGITAL TRAINING · AFFILIATE PROGRAMME
-            </p>
-            <h1 className="text-4xl font-bold leading-tight md:text-5xl">
-              Share our courses. Earn 15% on every enrolment.
-            </h1>
-            <p className="mx-auto mt-6 max-w-xl text-lg text-blue-100 lg:mx-0">
-              Help people in Vanuatu and the Pacific learn digital and AI
-              skills, and get paid for every student you bring. Free to join.
-              You don&apos;t need to be a student.
-            </p>
-            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start">
-              <Link
-                href={join}
-                className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-[#EF5E33] px-8 py-4 font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-[#d94d24]"
-              >
-                Become an affiliate <ArrowRight size={18} />
-              </Link>
-              <Link href={signIn} className="font-medium text-blue-100 underline-offset-4 hover:underline">
-                Already have an account? Sign in to join
-              </Link>
+    <main className="affiliate-page">
+      <section className="af-hero">
+        <div className="af-shell af-hero-grid">
+          <div className="af-hero-copy">
+            <p className="af-kicker af-kicker-light"><span /> PACIFIC ROOTS. GLOBAL CONNECTIONS.</p>
+            <h1>Connect people.<br />Earn <span>15%.</span></h1>
+            <p className="af-hero-lead">Introduce your network to practical business, digital and AI training. Get rewarded when an eligible student joins through your link and pays.</p>
+            <div className="af-hero-actions">
+              <Link href={join} className="af-button af-button-orange">Become an affiliate <ArrowUpRight size={20} /></Link>
+              <Link href={signIn} className="af-signin">Already a member? Sign in <ArrowRight size={16} /></Link>
             </div>
+            <div className="af-hero-notes"><span><Check size={16} /> Free to join</span><span><Globe2 size={16} /> Open worldwide</span><span><Clock3 size={16} /> 30-day tracking</span></div>
           </div>
-          <div className="relative mx-auto w-full max-w-xl lg:max-w-none">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/10">
-              <Image
-                src="/images/affiliates/hero.webp"
-                alt="A Pacific Wave Digital affiliate sharing a course link with a friend in a Port Vila café"
-                fill
-                priority
-                sizes="(min-width: 1024px) 560px, 100vw"
-                className="object-cover"
-              />
-            </div>
-            <div className="absolute -bottom-6 left-4 flex items-center gap-3 rounded-2xl bg-white px-5 py-4 text-slate-800 shadow-xl sm:left-6">
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-orange-50 text-[#EF5E33]">
-                <BadgePercent size={22} />
-              </span>
-              <span>
-                <strong className="block text-lg text-[#233C6F]">15% commission</strong>
-                <span className="text-sm text-slate-500">on every paid enrolment</span>
-              </span>
-            </div>
-            <div className="absolute -top-5 right-4 hidden items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-sm font-medium text-[#233C6F] shadow-lg sm:flex">
-              <Clock3 size={16} className="text-[#EF5E33]" /> 30-day referral tracking
-            </div>
+          <div className="af-hero-visual">
+            <div className="af-hero-photo"><Image src="/images/affiliates/hero.webp" alt="Illustration of two Pacific entrepreneurs sharing course information in a café" fill priority sizes="(min-width: 1024px) 560px, 100vw" className="object-cover" /></div>
+            <div className="af-photo-caption"><span className="af-caption-icon"><Link2 size={23} /></span><div><strong>A good connection can open doors.</strong><span>Share training with people who could benefit.</span></div></div>
+            <div className="af-photo-label"><Globe2 size={16} /> Across the Pacific & beyond</div>
           </div>
         </div>
       </section>
-      <section className="px-4 py-20">
-        <div className="mx-auto max-w-6xl">
-          <div className="mx-auto mb-12 max-w-2xl text-center">
-            <p className="text-sm font-semibold tracking-widest text-[#EF5E33]">HOW IT WORKS</p>
-            <h2 className="mt-2 text-3xl font-bold text-[#233C6F] md:text-4xl">Three simple steps</h2>
-          </div>
-          <div className="grid gap-8 md:grid-cols-3">
-            {steps.map(({ Icon, image, alt, title, body }, i) => (
-              <article key={title} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-                <div className="relative aspect-[3/2] overflow-hidden">
-                  <Image src={image} alt={alt} fill sizes="(min-width: 768px) 380px, 100vw" className="object-cover transition duration-500 group-hover:scale-105" />
-                  <span className="absolute left-4 top-4 rounded-full bg-[#233C6F]/90 px-3 py-1 text-xs font-semibold text-white">
-                    Step {i + 1}
-                  </span>
-                </div>
-                <div className="relative p-6 pt-9">
-                  <div className="absolute -top-7 left-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#EF5E33] text-white shadow-lg ring-4 ring-white">
-                    <Icon size={22} />
-                  </div>
-                  <h3 className="text-xl font-bold text-[#233C6F]">{title}</h3>
-                  <p className="mt-2 text-slate-600">{body}</p>
-                </div>
-              </article>
-            ))}
-          </div>
+      <nav className="af-section-nav" aria-label="Affiliate page sections"><div className="af-shell">
+        <span className="af-nav-label">AFFILIATE PROGRAMME</span>
+        <div>{[["How it works", "how-it-works"], ["Earnings", "earnings"], ["Payouts", "payouts"], ["Terms", "affiliate-terms"], ["FAQs", "affiliate-faqs"]].map(([label, id]) => <a href={`#${id}`} key={id}>{label} <ArrowUpRight size={14} /></a>)}</div>
+      </div></nav>
+      <section className="af-section" id="how-it-works">
+        <div className="af-shell">
+          <div className="af-section-heading"><div><p className="af-kicker">A SIMPLE WAY TO START</p><h2>Your network.<br />A new opportunity.</h2></div><p>You don’t need to be a student or a digital expert. Recommend useful training to your community, wherever you are in the world.</p></div>
+          <div className="af-steps">{steps.map(({ Icon, image, alt, title, body }, i) => <article key={title}>
+            <div className="af-step-photo"><Image src={image} alt={`Illustrative scene: ${alt}`} fill sizes="(min-width: 768px) 380px, 100vw" className="object-cover" /><span>0{i + 1}</span></div>
+            <div className="af-step-title"><Icon size={20} /><h3>{title}</h3></div><p>{body}</p>
+          </article>)}</div>
         </div>
       </section>
-      <section className="bg-slate-50 px-4 py-16">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="text-center text-3xl font-bold text-[#233C6F]">What you can earn</h2>
-          <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white">
-            {[
-              ["Build Your Business in 30 Days with AI", "VUV 35,000", "VUV 5,250"],
-              ["One on One Mentorship Program", "VUV 250,000", "VUV 37,500"],
-            ].map(([course, fee, earn]) => (
-              <div key={course} className="flex flex-col gap-1 border-b border-slate-100 p-5 last:border-0 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="font-semibold text-[#233C6F]">{course}</p>
-                  <p className="text-sm text-slate-500">Course fee {fee}</p>
-                </div>
-                <p className="font-bold text-[#EF5E33]">You earn {earn}</p>
-              </div>
-            ))}
-          </div>
-          <p className="mt-4 text-center text-sm text-slate-500">
-            Commission is 15% of the amount the student actually pays, after
-            any discount. Current fees are shown on each course page.
-          </p>
+      <section className="af-section af-earnings" id="earnings">
+        <div className="af-shell">
+          <div className="af-section-heading"><div><p className="af-kicker">A CLEAR REWARD FOR YOUR REFERRALS</p><h2>See what you can earn.</h2></div><p>Your standard commission is 15% of what an eligible referred student actually pays. Here’s what that looks like at the full course fee.</p></div>
+          <div className="af-earnings-grid">{earnings.map(({ title, category, image, alt, fee, earn }) => <article key={title} className="af-earning-card">
+            <div className="af-earning-photo"><Image src={image} alt={alt} fill sizes="(min-width: 768px) 560px, 100vw" className="object-cover" /><span>{category}</span></div>
+            <div className="af-earning-body"><h3>{title}</h3><div className="af-earning-values"><div><span>Course fee</span><strong>{fee}</strong></div><div><span>Your commission · 15%</span><strong>{earn}</strong></div></div></div>
+          </article>)}</div>
+          <p className="af-fine-print">Examples reflect full-price enrolments, not guaranteed earnings. Discounts change the commission. Current course fees apply; unpaid or refunded enrolments do not qualify for payout.</p>
         </div>
       </section>
-      <section id="affiliate-terms" className="scroll-mt-28 bg-slate-50 px-4 py-16">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="text-3xl font-bold text-[#233C6F]">Affiliate terms and conditions</h2>
-          <p className="mb-8 mt-2 text-sm text-slate-500">Updated {affiliateTermsUpdated}</p>
-          <AffiliateTermsContent />
-          <p className="mt-8 text-sm"><Link href="/terms#affiliate-programme" className="underline">Terms of Service</Link> · <Link href="/privacy#affiliate-information" className="underline">Affiliate privacy notice</Link></p>
+      <section className="af-section af-payouts" id="payouts">
+        <div className="af-shell">
+          <div className="af-section-heading"><div><p className="af-kicker af-kicker-light">CLEAR TERMS. NO GUESSWORK.</p><h2>Your work deserves<br />a clear payout.</h2></div><p>Paid through Global Digital Prime Inc., our USA company. Our affiliate programme welcomes people worldwide, across the Pacific and beyond.</p></div>
+          <div className="af-payout-grid">{payoutFacts.map(({ Icon, value, label, detail }) => <div className="af-payout-fact" key={value}><Icon size={25} /><h3>{value}</h3><strong>{label}</strong><p>{detail}</p></div>)}</div>
+          <div className="af-verification"><ShieldCheck size={30} /><div><h3>A simple check before your first payout.</h3><p>Provide your legal name, verified email, phone, country and receiving-account details. The account must be in your or your registered business’s name. Additional documents are requested securely only when necessary.</p></div><a href="#affiliate-terms">Read verification terms <ArrowUpRight size={17} /></a></div>
         </div>
       </section>
-      <section className="px-4 py-16">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="text-center text-3xl font-bold text-[#233C6F]">Questions</h2>
-          <div className="mt-8 space-y-4">
-            {faqs.map(([q, a]) => (
-              <details key={q} className="rounded-xl border border-slate-200 p-5">
-                <summary className="cursor-pointer font-semibold text-[#233C6F]">{q}</summary>
-                <p className="mt-3 text-slate-600">{a}</p>
-              </details>
-            ))}
-          </div>
-          <div className="mt-12 rounded-2xl bg-[#233C6F] p-8 text-center text-white">
-            <ul className="mx-auto mb-6 grid max-w-md gap-2 text-left text-blue-100">
-              {["Free to join, approved instantly", "Your own link for every course", "Track visits, sign-ups and earnings in your dashboard"].map((t) => (
-                <li key={t} className="flex items-center gap-2">
-                  <Check size={18} className="text-[#EF5E33]" /> {t}
-                </li>
-              ))}
-            </ul>
-            <Link
-              href={join}
-              className="inline-flex items-center gap-2 rounded-full bg-[#EF5E33] px-8 py-4 font-semibold text-white transition hover:bg-[#d94d24]"
-            >
-              Join now — it&apos;s free <ArrowRight size={18} />
-            </Link>
-          </div>
+      <section className="af-section af-terms-section" id="affiliate-terms">
+        <div className="af-shell af-terms-grid">
+          <aside className="af-terms-intro"><p className="af-kicker">THE DETAILS, IN PLAIN ENGLISH</p><h2>Affiliate terms<br />and conditions</h2><p>Everything you need to know before you start sharing.</p><span>Updated {affiliateTermsUpdated}</span><div><Link href="/terms#affiliate-programme">Terms of Service <ArrowUpRight size={16} /></Link><Link href="/privacy#affiliate-information">Affiliate privacy notice <ArrowUpRight size={16} /></Link></div></aside>
+          <AffiliateTermsContent accordion />
         </div>
       </section>
+      <section className="af-section af-faq-section" id="affiliate-faqs">
+        <div className="af-shell af-faq-grid"><div><p className="af-kicker">A FEW MORE ANSWERS</p><h2>Good questions.<br />Clear answers.</h2><p>Need a hand? <a href="mailto:steve@pacificwavedigital.com">Talk to our team <ArrowUpRight size={16} /></a></p></div><div className="af-faqs">{faqs.map(([q, a]) => <details key={q}><summary>{q}<ChevronDown size={18} aria-hidden="true" /></summary><p>{a}</p></details>)}</div></div>
+      </section>
+      <section className="af-final"><div className="af-shell af-final-inner"><div><p className="af-kicker">YOUR NEXT CHAPTER STARTS WITH A LINK</p><h2>Make your connections count.</h2><p>Free to join. Open worldwide. A personal link for every eligible course.</p></div><Link href={join} className="af-button af-button-navy">Join the affiliate programme <ArrowUpRight size={20} /></Link></div></section>
     </main>
   );
 }
