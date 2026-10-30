@@ -386,10 +386,10 @@ test("real synthetic student registration, private dashboard, admin lesson editi
   }
 });
 
-test('three image courses and public mentorship details lead to the correct checkout', async ({page}) => {
+test('course artwork and public mentorship details lead to the correct checkout', async ({page}) => {
  await page.goto('/training-center');
  const cards=page.locator('.lms-catalog-grid article');
- await expect(cards).toHaveCount(3);
+ await expect(cards).toHaveCount(4);
  for(const card of await cards.all()) await expect(card.locator('.lms-card-art img')).toBeVisible();
  const mentor=cards.filter({hasText:'One on One Mentorship Program'});
  await expect(mentor).toContainText('250,000');

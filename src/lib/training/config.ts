@@ -67,3 +67,10 @@ export function monthLabel(c: Cohort, year = false) {
 export function dayMonth(date: string) {
   return new Intl.DateTimeFormat('en-GB',{timeZone:'Pacific/Efate',day:'numeric',month:'long'}).format(new Date(date.includes('T')?date:`${date}T15:00:00+11:00`));
 }
+
+export function monthRangeLabel(c: Cohort, year = false) {
+  const first = monthLabel(c);
+  const last = monthLabel({...c, start: c.teachingEnd});
+  const label = first === last ? first : `${first}–${last}`;
+  return year ? `${label} ${new Date(c.start).getUTCFullYear()}` : label;
+}

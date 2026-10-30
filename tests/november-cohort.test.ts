@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { PDFDocument } from 'pdf-lib';
-import { initialCohort, novemberCohort, novemberCourseSlug, isOpen } from '../src/lib/training/config';
+import { initialCohort, novemberCohort, novemberCourseSlug, monthRangeLabel, isOpen } from '../src/lib/training/config';
 import { getWorkbook, workbook, workbookFile, workbookSaveSchema, workbooks } from '../src/lib/lms/workbook-schema';
 import { workbookContext } from '../src/lib/lms/workbook-context';
 import { coachingWindow, programOutline } from '../src/lib/lms/coach/schedule';
@@ -14,6 +14,8 @@ test('new cohort keeps the same days, time and fee with 12 core and 3 final revi
  assert.equal(novemberCohort.timeLabel,initialCohort.timeLabel);
  assert.equal(novemberCohort.dates.length,15);
  assert.equal(novemberCohort.hours,30);
+ assert.equal(monthRangeLabel(novemberCohort),'November–December');
+ assert.equal(monthRangeLabel(initialCohort),'October');
  assert.equal(novemberCohort.dates[0],'2026-11-16');
  assert.deepEqual(novemberCohort.dates.slice(-3),['2026-12-14','2026-12-17','2026-12-19']);
  for(const day of novemberCohort.dates) assert.ok([1,4,6].includes(new Date(day+'T00:00:00Z').getUTCDay()));

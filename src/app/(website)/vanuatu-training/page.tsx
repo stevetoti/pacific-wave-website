@@ -24,7 +24,7 @@ import {
   isOpen,
   feeLabel,
   dateLabel,
-  monthLabel,
+  monthRangeLabel as monthLabel,
   dayMonth,
 } from "@/lib/training/config";
 import { getTrainingCohort } from "@/lib/server/training";
@@ -430,7 +430,7 @@ export default async function TrainingPage() {
               Create your student account, save your registration and continue to checkout. Your dashboard brings your timetable, class recordings and quizzes together.
             </p>
             <div className="border-y border-slate-200 py-6 my-7">
-              <p className="text-sm">One-month course fee</p>
+              <p className="text-sm">One-time course fee</p>
               <p className="text-4xl font-extrabold mt-2">{feeLabel(c)}</p>
               <p className="text-sm text-slate-600 mt-3">
                 Includes the listed software bonus and mentorship.
