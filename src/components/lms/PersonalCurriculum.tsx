@@ -1,19 +1,20 @@
 import Image from "next/image";
 import { ArrowRight, CheckCircle2, Workflow, Video, CalendarDays, BriefcaseBusiness } from "lucide-react";
-import { fullProgramSlug, foundationsSlug, type PersonalOffer } from "@/lib/lms/personal-programs";
+import { fullProgramSlug, foundationsSlug, personalOffer, type PersonalOffer } from "@/lib/lms/personal-programs";
 
 export default function PersonalCurriculum({ offer }: { offer: PersonalOffer }) {
   const includesSoftware = offer.slug !== foundationsSlug;
   const combined = offer.slug === fullProgramSlug;
+  const businessTopics = personalOffer(foundationsSlug)!.topics.length;
   return <>
     <section className="lms-section lms-personal-project" aria-labelledby="personal-project-title">
       <div><p className="lms-eyebrow">LEARN THE SKILLS STEVE USES IN HIS WORK</p><h2 id="personal-project-title">{offer.projectTitle}</h2><p className="lms-personal-lead">{offer.overview}</p><p>{offer.projectDescription}</p></div>
       <ol aria-label="Your practical project journey">{offer.projectSteps.map((step,i)=><li key={step}><span>{String(i+1).padStart(2,"0")}</span><strong>{step}</strong>{i<offer.projectSteps.length-1 && <ArrowRight size={18} aria-hidden="true"/>}</li>)}</ol>
     </section>
-    <section className="lms-section lms-personal-topics" aria-labelledby="personal-topics-title">
+    <section id="course-topics" className="lms-section lms-personal-topics" aria-labelledby="personal-topics-title">
       <p className="lms-eyebrow">PRACTICAL SKILLS · REAL PROJECT WORK</p><h2 id="personal-topics-title">Explore what you’ll learn</h2><p className="lms-personal-lead">{combined ? "Both phases, explained: the business and marketing skills first, then software, AI agents and delivery." : includesSoftware ? "Go from using AI tools to building software and connected workflows around your own work." : "The October cohort’s practical business topics, expanded into a personal learning journey with digital agency setup."}</p>
       <div className="lms-personal-topic-grid">{offer.topics.map((topic,i)=><article className="lms-personal-topic" key={topic.title}>
-        <div className="lms-personal-topic-art"><Image src={topic.image} alt="" fill sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"/><span>{combined ? (i<8?'BUSINESS PHASE':'AI & SOFTWARE PHASE') : String(i+1).padStart(2,'0')}</span></div>
+        <div className="lms-personal-topic-art"><Image src={topic.image} alt="" fill sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"/><span>{combined ? (i<businessTopics?'BUSINESS PHASE':'AI & SOFTWARE PHASE') : String(i+1).padStart(2,'0')}</span></div>
         <div className="lms-personal-topic-copy"><h3>{topic.title}</h3><p>{topic.description}</p><ul>{topic.skills.map(skill=><li key={skill}><CheckCircle2 size={17} aria-hidden="true"/><span>{skill}</span></li>)}</ul></div>
       </article>)}</div>
     </section>

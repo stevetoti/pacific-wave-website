@@ -26,8 +26,12 @@
         "body": "Choose affiliate offers, make honest recommendations, track referrals and use content, email and analytics to improve customer follow-up."
       },
       {
-        "title": "Weeks 5–6 · Video, automation, agency delivery & launch",
-        "body": "Create AI promotional content, connect chatbots and bookings, manage customer documents, refine ads and package your agency services. Present your working business and launch plan."
+        "title": "Week 5 · AI content & customer workflows",
+        "body": "Create AI images and promotional video, connect chatbots and bookings, and practise CRM, quotations, invoice and receipt generation."
+      },
+      {
+        "title": "Week 6 · Agency delivery & business launch",
+        "body": "Refine your campaigns, package your digital agency services and prepare proposals, handover and support. Demonstrate your working business and plan mentorship priorities."
       }
     ],
     "sessions": [
@@ -201,6 +205,16 @@
           "Organise leads, customer follow-up, quotations, invoices and receipts",
           "Test the full customer journey, protect account access and present your launch project"
         ]
+      },
+      {
+        "title": "Invoice & receipt generation",
+        "image": "/images/training/personal/payments.png",
+        "description": "Turn your work into clear business documents and keep track of what customers owe and what they have paid.",
+        "skills": [
+          "Prepare professional quotations and itemised invoices with your business details",
+          "Generate payment receipts and keep customer and transaction records organised",
+          "Practise the quote-to-invoice-to-receipt process using Digi Assist AI"
+        ]
       }
     ]
   },
@@ -227,8 +241,12 @@
         "body": "Build and improve WordPress websites with AI, understand code and integrations, and practise reviewing changes and debugging errors."
       },
       {
-        "title": "Weeks 4–5 · Build, test & deploy your chosen software",
-        "body": "Use app builders, code, databases and APIs to implement your project. Test permissions and the user journey, debug errors, deploy a working version and plan pricing and maintenance."
+        "title": "Week 4 · Build your chosen software",
+        "body": "Create your app screens and main workflow, then connect databases, user accounts, APIs and the AI integrations your project needs."
+      },
+      {
+        "title": "Week 5 · Test, deploy & package your software",
+        "body": "Test permissions and the customer journey, debug problems, deploy a working version and plan pricing, licensing, hosting and maintenance."
       },
       {
         "title": "Week 6 · Demonstration, AI services & institutional training",
@@ -399,11 +417,12 @@
     "headline": "Create your business. Then build with AI.",
     "audience": "Learners who want the complete journey: business creation and marketing, followed by AI, coding, WordPress, software development and institutional training.",
     "outcomes": [
-      "Everything in Business Creation & Digital Foundations",
-      "Everything in AI, Coding & Software Development",
-      "36 scheduled private lessons across both phases",
-      "Save VUV 50,000 compared with booking separately",
-      "Three months of follow-up mentorship after both training phases"
+      "Create your business offer, brand and practical setup plan",
+      "Launch your website or store and connect your customer workflows",
+      "Use digital marketing, affiliate campaigns and agency delivery skills",
+      "Build and deploy one software project of your choice",
+      "Connect AI agents for admin, content, video and supported meetings",
+      "Complete both phases with three months of follow-up mentorship"
     ],
     "overview": "Learn both sets of practical skills in sequence: create and market your business, then build your chosen software and AI agent workflows. The complete package includes both project journeys and three months of mentorship after both phases.",
     "projectTitle": "Create the business. Build the software behind it.",
