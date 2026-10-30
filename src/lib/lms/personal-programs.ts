@@ -3,13 +3,16 @@ export const foundationsSlug = data.foundations.slug;
 export const softwareSlug = data.software.slug;
 export const fullProgramSlug = data.full.slug;
 export type PersonalSession = { title: string; body: string };
+export type PersonalTopic = { title: string; image: string; description: string; skills: string[] };
 export type PersonalOffer = {
   slug: string; title: string; amount: number; teachingWeeks: number; mentorshipMonths: number;
   image: string; headline: string; audience: string; outcomes: string[];
   modules: PersonalSession[]; sessions: PersonalSession[];
+  overview: string; projectTitle: string; projectDescription: string; projectSteps: string[]; topics: PersonalTopic[];
 };
 export const personalOffers: PersonalOffer[] = [data.foundations, data.software, {
   ...data.full,
+  topics: [...data.foundations.topics, ...data.software.topics],
   modules: [...data.foundations.modules, ...data.software.modules.map(m => ({...m,title:m.title.replace(/Week (\d+)/,(_,n:string)=>`Week ${Number(n)+6}`).replace('Weeks 4–5','Weeks 10–11')}))],
   sessions: [...data.foundations.sessions, ...data.software.sessions],
 }];

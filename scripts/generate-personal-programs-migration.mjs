@@ -4,7 +4,7 @@ const offers=[d.foundations,d.software,{...d.full,sessions:[...d.foundations.ses
 const q=s=>"'"+s.replaceAll("'","''")+"'";
 const rows=offers.map(p=>{
  const description=`${p.sessions.length} private 90-minute lessons over ${p.teachingWeeks} weeks, three times a week. Then ${p.mentorshipMonths} month${p.mentorshipMonths===1?'':'s'} of follow-up mentorship${p.teachingWeeks===12?' after both phases':''}. ${p.headline}`;
- const introduction=`Welcome to ${p.title}. VUV ${p.amount.toLocaleString('en-US')} is the one-time fee for ${p.sessions.length} scheduled one-on-one lessons (${p.sessions.length*1.5} teaching hours) over ${p.teachingWeeks} weeks, followed by ${p.mentorshipMonths} month${p.mentorshipMonths===1?'':'s'} of mentorship${p.teachingWeeks===12?' after both phases':''}. Meet Steve three times a week for 90-minute lessons, with practice between sessions. Afterwards, mentorship is project guidance, review and troubleshooting: meet about once a week or arrange help when needed during the included period. Meetings are arranged together. Your assigned session notes and private recordings are available in your own course space. Domains, hosting, advertising and external subscriptions are separate. ${p.slug!==d.foundations.slug?'Includes three free months of Digi Assist AI Pro; continued use after that requires a paid subscription. ':''}No income or sales results are guaranteed.`;
+ const introduction=`Welcome to ${p.title}. ${p.overview} ${p.projectDescription} VUV ${p.amount.toLocaleString('en-US')} is the one-time fee for ${p.sessions.length} scheduled one-on-one lessons (${p.sessions.length*1.5} teaching hours) over ${p.teachingWeeks} weeks, followed by ${p.mentorshipMonths} month${p.mentorshipMonths===1?'':'s'} of mentorship${p.teachingWeeks===12?' after both phases':''}. Meet Steve three times a week for 90-minute lessons, with practice between sessions. Afterwards, mentorship is project guidance, review and troubleshooting: meet about once a week or arrange help when needed during the included period. Meetings are arranged together. Your assigned session notes and private recordings are available in your own course space. Domains, hosting, advertising and external subscriptions are separate. ${p.slug!==d.foundations.slug?'Includes three free months of Digi Assist AI Pro; continued use after that requires a paid subscription. ':''}No income or sales results are guaranteed.`;
  return`(${[p.slug,p.title,description,introduction,'live'].map(q).join(',')},${p.amount},'VUV',true,true,true,false,false)`;
 });
 const plans=Object.fromEntries(offers.map(p=>[p.slug,p.sessions]));
@@ -40,5 +40,5 @@ BEGIN
 END $$;
 COMMIT;
 `;
-await writeFile('supabase/migrations/20261030_personal_training_options.sql',sql);
+await writeFile(process.argv[2] || 'supabase/migrations/20261030_personal_training_options.sql',sql);
 console.log('Generated programme migration from shared offer and lesson data.');

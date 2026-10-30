@@ -7,109 +7,201 @@
     "teachingWeeks": 6,
     "image": "/images/team-meeting.jpg",
     "headline": "Build your business, from idea to launch.",
-    "audience": "Aspiring entrepreneurs and business owners building a shop, local service, tourism venture or digital business.",
+    "audience": "Aspiring entrepreneurs, existing business owners and future digital agency founders. Build a shop, local service, tourism venture, ecommerce business or digital service around your own idea.",
     "modules": [
       {
-        "title": "Week 1 · Business foundations",
-        "body": "Validate an idea, choose a model, price your offer, cover registration and banking basics, and create your brand."
+        "title": "Week 1 · Business setup, agency foundations & Digi Assist AI",
+        "body": "Validate your business idea, plan your brand, pricing, registration and banking, introduce your digital agency offer and master the Digi Assist AI workspace."
       },
       {
-        "title": "Week 2 · Website development",
-        "body": "Set up domains, hosting and email; build your website with AI, useful copy, mobile design and SEO basics."
+        "title": "Week 2 · AI websites & ecommerce",
+        "body": "Connect your domain, hosting and email; create your business website with AI; build a small ecommerce store and test the enquiry-to-order journey."
       },
       {
-        "title": "Week 3 · Digital marketing",
-        "body": "Plan social media, AI content, email follow-up and analytics."
+        "title": "Week 3 · Google, Facebook & advertising",
+        "body": "Prepare an eligible Google listing and search plan, set up your Facebook Page and Instagram content, and plan your first Facebook advertisement."
       },
       {
-        "title": "Week 4 · Affiliate marketing",
-        "body": "Choose programmes and a niche, create helpful reviews and disclosures, track referrals and improve conversions."
+        "title": "Week 4 · Affiliate & digital marketing",
+        "body": "Choose affiliate offers, make honest recommendations, track referrals and use content, email and analytics to improve customer follow-up."
       },
       {
-        "title": "Weeks 5–6 · Advertising and video production",
-        "body": "Work on Meta and Google ads, retargeting and AI promotional video. Capstone: launch and review your live campaign."
+        "title": "Weeks 5–6 · Video, automation, agency delivery & launch",
+        "body": "Create AI promotional content, connect chatbots and bookings, manage customer documents, refine ads and package your agency services. Present your working business and launch plan."
       }
     ],
     "sessions": [
       {
-        "title": "Business idea and customer validation",
-        "body": "Choose a customer problem, interview potential buyers and test demand."
+        "title": "Business idea, customers and business model",
+        "body": "Choose a customer problem, test demand and define your offer, costs, revenue and pricing."
       },
       {
-        "title": "Business model, pricing and legal basics",
-        "body": "Plan revenue, costs, pricing, registration and local obligations."
+        "title": "Business setup, branding and agency foundations",
+        "body": "Check your name and domain, plan registration and banking, develop your brand and choose the services your digital agency could offer."
       },
       {
-        "title": "Brand and business setup",
-        "body": "Develop your name, logo and story; plan banking and practical setup."
+        "title": "Mastering Digi Assist AI",
+        "body": "Practise prompts and the connected website, chatbot, booking, catalogue and business-document workspaces. Build a repeatable way to use AI in your daily work."
       },
       {
         "title": "Domains, hosting and professional email",
-        "body": "Choose and connect the foundations of your business website."
+        "body": "Choose and connect a domain, hosting and business email, keeping ownership and recovery details under your control."
       },
       {
-        "title": "Build your website with AI",
-        "body": "Create useful pages, copy and a clear customer journey using AI tools."
+        "title": "Build your business website with AI",
+        "body": "Use Digi Assist AI to build clear website pages, useful copy, mobile layouts and a working enquiry route. Review quality and basic search visibility."
       },
       {
-        "title": "Website launch, SEO and analytics",
-        "body": "Check mobile layouts, search visibility and basic visitor measurement."
+        "title": "Build an ecommerce website",
+        "body": "Create a small store with products, descriptions and images. Plan payment options, order confirmation, delivery and returns; test the customer journey."
       },
       {
-        "title": "Social media strategy",
-        "body": "Choose channels and plan a useful content calendar."
+        "title": "Google Business Profile, SEO and analytics",
+        "body": "Check listing eligibility and ownership, prepare accurate business details and verification steps, and use website SEO and analytics to plan improvements."
       },
       {
-        "title": "Create content with AI",
-        "body": "Create and review practical social, written and visual content."
-      },
-      {
-        "title": "Email marketing and customer follow-up",
-        "body": "Build a follow-up process and use analytics to improve it."
-      },
-      {
-        "title": "Affiliate niches and programmes",
-        "body": "Select relevant programmes and products suited to your audience."
-      },
-      {
-        "title": "Helpful reviews and clear disclosures",
-        "body": "Create honest reviews and comparisons with affiliate disclosures."
-      },
-      {
-        "title": "Referral tracking and conversions",
-        "body": "Set up links, measure referrals and improve the customer journey."
+        "title": "Facebook Page, Instagram and content planning",
+        "body": "Set up a useful business Page, present your offer and plan content for Facebook and Instagram with a clear customer action."
       },
       {
         "title": "Facebook and Instagram advertising",
-        "body": "Plan targeting, budget and creative around a real offer."
+        "body": "Choose an ad objective, audience, budget, creative and destination. Prepare and review a campaign for your own permitted business offer."
       },
       {
-        "title": "AI promotional video production",
-        "body": "Plan and produce a useful promotional video with AI tools."
+        "title": "Affiliate niches, programmes and disclosures",
+        "body": "Choose relevant affiliate programmes and products, understand commission terms and prepare helpful recommendations with clear disclosures."
       },
       {
-        "title": "Google Ads and search campaigns",
-        "body": "Understand search intent, keywords, landing pages and budgets."
+        "title": "Affiliate content, links and conversion tracking",
+        "body": "Create reviews and comparisons, set up tracked links and review clicks, referrals and conversions. Separate pending, approved and paid income."
       },
       {
-        "title": "Retargeting and campaign refinement",
-        "body": "Plan retargeting and improve the message and landing-page experience."
+        "title": "Digital marketing, email and customer conversations",
+        "body": "Combine useful content, email follow-up and analytics. Practise sales conversations and plan a campaign you can measure and improve."
       },
       {
-        "title": "Launch your campaign",
-        "body": "Publish your business campaign and test the customer journey."
+        "title": "AI images and promotional video production",
+        "body": "Create a branded content brief, script, visual assets and an AI promotional video. Review facts and permissions before publication."
       },
       {
-        "title": "Business launch capstone and review",
-        "body": "Review the live campaign, measure early signals and plan mentorship priorities."
+        "title": "Business chatbots, bookings and service packages",
+        "body": "Build a chatbot from approved business facts, connect enquiries and booking requests, and prepare service packages with a clear handover to you."
+      },
+      {
+        "title": "CRM, quotations, invoices and receipts",
+        "body": "Organise leads and customer records, prepare quotes and invoices, record payments and plan follow-up using the demonstrated Digi Assist tools."
+      },
+      {
+        "title": "Google Ads, retargeting and campaign refinement",
+        "body": "Understand search intent and keywords, plan a budget and retargeting, and improve your ad message, landing page and measurement."
+      },
+      {
+        "title": "Set up and deliver your digital agency services",
+        "body": "Package website, ecommerce, marketing and AI services; price your work, prepare a proposal, onboard a client and plan delivery, handover and support."
+      },
+      {
+        "title": "Business launch, demonstration and review",
+        "body": "Show your offer, website or store, marketing and customer workflow. Review results, improve weak points and agree your first month of mentorship priorities."
       }
     ],
     "outcomes": [
-      "Validate your business idea, offer and pricing",
-      "Plan legal registration, banking and your brand",
-      "Build and launch a professional website with AI",
-      "Use social, email, affiliate marketing and analytics",
-      "Create advertisements and promotional videos, then launch a campaign"
+      "Create a business offer, brand and practical setup plan",
+      "Master Digi Assist AI for websites, chatbots, bookings and business documents",
+      "Build an AI-powered business website and ecommerce store",
+      "Use Google listings, Facebook, digital marketing and affiliate marketing",
+      "Create AI images and promotional video, then launch a campaign",
+      "Package these skills into your own digital agency services"
+    ],
+    "overview": "Learn the practical business skills Steve teaches in the October cohort, with private guidance and more time to apply them to your own business. Work through the connected process: create your offer, master Digi Assist AI, build your website or store, attract customers and organise delivery. You also learn how to package these skills into a digital agency service.",
+    "projectTitle": "Build a business you can demonstrate.",
+    "projectDescription": "Bring your own idea or existing business. During class, build your offer, website or ecommerce store, marketing assets and customer enquiry or order process. Finish by demonstrating the complete customer journey and agreeing your next priorities for mentorship.",
+    "projectSteps": [
+      "Define your customer and offer",
+      "Build your website or store",
+      "Connect marketing and customer follow-up",
+      "Demonstrate, review and improve"
+    ],
+    "topics": [
+      {
+        "title": "Business creation & your digital agency",
+        "image": "/images/training/personal/training.png",
+        "description": "Turn a business idea into a clear offer, then learn to sell the same practical skills as a service.",
+        "skills": [
+          "Business names, customer research, pricing, branding, registration and banking basics",
+          "Set up your digital agency: choose services, create packages and prepare proposals",
+          "Plan client onboarding, delivery, handover, support and recurring service work"
+        ]
+      },
+      {
+        "title": "Mastering Digi Assist AI",
+        "image": "/images/training/personal/ai.png",
+        "description": "Use Digi Assist AI as a connected workspace for your business, rather than learning isolated features.",
+        "skills": [
+          "Write and refine prompts for planning, research, copy and everyday business tasks",
+          "Build pages, a business chatbot, booking flows and a small product catalogue",
+          "Create quotations, invoices and customer records; test how the tools work together"
+        ]
+      },
+      {
+        "title": "AI website building & ecommerce",
+        "image": "/images/training/personal/websites.png",
+        "description": "Build a professional site or store around what your customers actually need.",
+        "skills": [
+          "Domains, hosting, business email, mobile layouts and clear calls to action",
+          "Create and improve website pages, product descriptions and images with AI",
+          "Build a store catalogue, plan payments and delivery, and test enquiries and orders"
+        ]
+      },
+      {
+        "title": "Google listings & search visibility",
+        "image": "/images/training/personal/marketing.png",
+        "description": "Help suitable customers discover your business and know how to contact you.",
+        "skills": [
+          "Check eligibility and ownership before setting up a Google Business Profile",
+          "Prepare accurate categories, contact details, hours, photos and verification steps",
+          "Learn website SEO, useful search content, analytics and improvements after launch"
+        ]
+      },
+      {
+        "title": "Facebook & digital marketing",
+        "image": "/images/training/personal/marketing.png",
+        "description": "Build a practical marketing process from your Facebook Page to a customer conversation.",
+        "skills": [
+          "Set up your Facebook business Page and plan Facebook and Instagram content",
+          "Prepare ads with an objective, audience, budget, creative and working destination",
+          "Combine social media, email follow-up, Google Ads, retargeting and performance review"
+        ]
+      },
+      {
+        "title": "Affiliate marketing",
+        "image": "/images/training/personal/payments.png",
+        "description": "Learn to recommend useful products, use tracked links and understand how commissions work.",
+        "skills": [
+          "Choose a niche, suitable affiliate programmes and offers your audience understands",
+          "Create helpful reviews, comparisons and campaigns with clear affiliate disclosures",
+          "Track clicks, referrals and conversions; distinguish pending, approved and paid commission"
+        ]
+      },
+      {
+        "title": "AI content, images & promotional video",
+        "image": "/images/training/personal/apps.png",
+        "description": "Create the assets your business or agency needs to explain and promote an offer.",
+        "skills": [
+          "Write useful website, social and email copy with AI, then review it for accuracy",
+          "Plan branded images, graphics and a consistent content calendar",
+          "Script and produce an AI promotional video, then use it in a campaign"
+        ]
+      },
+      {
+        "title": "Customer workflows & your launch",
+        "image": "/images/training/personal/websites.png",
+        "description": "Connect your marketing to a business that can respond, take bookings and deliver.",
+        "skills": [
+          "Build a helpful chatbot, booking requests and service packages",
+          "Organise leads, customer follow-up, quotations, invoices and receipts",
+          "Test the full customer journey, protect account access and present your launch project"
+        ]
+      }
     ]
   },
   "software": {
@@ -123,106 +215,178 @@
     "audience": "Business owners, freelancers and learners ready to use AI, build software, improve WordPress sites and offer automation or training services.",
     "modules": [
       {
-        "title": "Week 1 · AI and automation foundations",
-        "body": "Master practical prompting, map business workflows and scope automation audits."
+        "title": "Week 1 · Your software idea, AI skills & agent design",
+        "body": "Choose your own software project, define a practical scope, master prompting and map the tasks your AI agents will carry out."
       },
       {
-        "title": "Week 2 · Business automation",
-        "body": "Build chatbot, booking, CRM, marketing, invoicing and administrative workflows."
+        "title": "Week 2 · AI agents across your work",
+        "body": "Build connected customer, CRM and admin workflows. Learn AI video and content production, meeting preparation, note-taking, action summaries and follow-up."
       },
       {
-        "title": "Week 3 · WordPress and AI-assisted coding",
-        "body": "Build with WordPress and AI, understand code, review changes and debug common errors."
+        "title": "Week 3 · WordPress & AI-assisted coding",
+        "body": "Build and improve WordPress websites with AI, understand code and integrations, and practise reviewing changes and debugging errors."
       },
       {
-        "title": "Weeks 4–5 · Software, APIs and launch",
-        "body": "Use AI app builders, databases and APIs to build one working software project. Test, debug and deploy; cover pricing, licensing and software services."
+        "title": "Weeks 4–5 · Build, test & deploy your chosen software",
+        "body": "Use app builders, code, databases and APIs to implement your project. Test permissions and the user journey, debug errors, deploy a working version and plan pricing and maintenance."
       },
       {
-        "title": "Week 6 · AI training for institutions",
-        "body": "Design a curriculum, practise workshop facilitation and write proposals for business or institutional audiences. Capstone: show your software and deliver a mini-training."
+        "title": "Week 6 · Demonstration, AI services & institutional training",
+        "body": "Show your software and agent workflows, package your services, write a training proposal and deliver a mini-workshop. Plan refinements for your three months of mentorship."
       }
     ],
     "sessions": [
       {
-        "title": "AI fundamentals and prompting",
-        "body": "Use AI safely for research, reasoning, content and business tasks."
+        "title": "AI fundamentals and practical prompting",
+        "body": "Use AI for research, reasoning, content and business tasks. Build reusable prompts and review output against your goals."
       },
       {
-        "title": "Practical prompt workflows",
-        "body": "Build reusable prompts and review output quality against your goals."
+        "title": "Choose and scope your software project",
+        "body": "Choose one software idea, define users, screens and the main workflow, and agree what you will build during class."
       },
       {
-        "title": "Automation mapping and audits",
-        "body": "Map business processes and scope an automation audit as a service."
+        "title": "Design AI agents and automation workflows",
+        "body": "Map the work you want to delegate. Define agent instructions, connected tools, permissions and review steps; scope an automation audit."
       },
       {
-        "title": "Chatbots, bookings and customer enquiries",
-        "body": "Design a useful chatbot and connect enquiries or booking workflows."
+        "title": "Customer-service agents, chatbots and bookings",
+        "body": "Build a useful assistant for enquiries and bookings, ground it in business facts and test handover and follow-up."
       },
       {
-        "title": "CRM and marketing automation",
-        "body": "Organise leads and build practical follow-up and marketing workflows."
+        "title": "CRM, marketing and administrative agents",
+        "body": "Connect leads, email, documents and follow-up. Build focused workflows for quotations, invoices or other repeated administrative tasks."
       },
       {
-        "title": "Invoicing and administrative automation",
-        "body": "Automate a focused repeatable business task and review the result."
+        "title": "AI video, content and meeting assistants",
+        "body": "Connect tools for research, scripts, video production and meeting preparation. Practise supported scheduling, notes, summaries, action lists and follow-up drafts."
       },
       {
         "title": "AI-assisted WordPress planning",
-        "body": "Plan a WordPress website, pages, plugins and a clear customer journey."
+        "body": "Plan a WordPress website, pages, plugins and a clear customer journey for your own business or a client."
       },
       {
         "title": "Build and improve WordPress with AI",
-        "body": "Use AI to build content, layouts and integrations while reviewing quality."
+        "body": "Use AI for content, layouts and useful integrations such as forms, bookings or ecommerce; review quality and troubleshoot errors."
       },
       {
         "title": "AI-assisted coding foundations",
-        "body": "Read, adapt and debug code with AI; understand files, versions and errors."
+        "body": "Read, adapt and debug code with AI. Understand project files, versions, errors and how to review the changes you accept."
       },
       {
         "title": "No-code and AI application builders",
-        "body": "Turn a defined problem into an app prototype using appropriate tools."
+        "body": "Start your chosen software project using appropriate app-building tools. Build its screens and first working user journey."
       },
       {
-        "title": "Databases, APIs and integrations",
-        "body": "Connect data, accounts and external services with appropriate access controls."
+        "title": "Databases, user accounts and APIs",
+        "body": "Connect your project data, accounts and external services, using suitable permissions and access controls."
       },
       {
-        "title": "Build your software project",
-        "body": "Implement the core workflow of your own AI tool, app or business programme."
+        "title": "Build your chosen software project",
+        "body": "Implement the main workflow of your own app or business programme, then connect the integrations or AI agent that support it."
       },
       {
-        "title": "Testing and debugging",
-        "body": "Test the main user journey, fix problems and review security basics."
+        "title": "Testing, debugging and project quality",
+        "body": "Test your main user journey, data access and common failures. Fix problems and review security and reliability basics."
       },
       {
-        "title": "Deployment and software launch",
-        "body": "Ship a working project and plan ongoing hosting and maintenance."
+        "title": "Deploy your software and connected workflows",
+        "body": "Publish a working version, connect the services it needs and plan hosting, maintenance and support."
       },
       {
-        "title": "Pricing, licensing and AI services",
-        "body": "Package and price software, automation audits and delivery services."
+        "title": "Pricing, licensing and AI service delivery",
+        "body": "Package and price your software, automation audits and support. Prepare a clear scope, client handover and service plan."
       },
       {
-        "title": "Design AI training for institutions",
-        "body": "Create a practical curriculum for a business, government or community audience."
+        "title": "Design AI training for businesses and institutions",
+        "body": "Create a practical curriculum around real tasks for a business, government or community audience."
       },
       {
-        "title": "Workshop delivery and proposals",
-        "body": "Practise facilitation and prepare a clear institutional training proposal."
+        "title": "Workshop facilitation and training proposals",
+        "body": "Practise demonstrations, exercises and facilitation; write a clear institutional training proposal."
       },
       {
-        "title": "Software and mini-training capstone",
-        "body": "Demonstrate your working software project and deliver a short training session."
+        "title": "Software, AI agent and mini-training showcase",
+        "body": "Demonstrate your chosen software and connected AI workflow, deliver a short training and plan improvements for the mentorship period."
       }
     ],
     "outcomes": [
-      "Use practical AI prompting and automation workflows",
-      "Build chatbots, CRM and customer-service automations",
-      "Develop WordPress websites with AI-assisted coding",
-      "Build, test and deploy one working software project using APIs and databases",
-      "Price and deliver software, automation audits and AI training for institutions"
+      "Build, test and deploy one software project of your choice in class",
+      "Use AI-assisted coding, databases, accounts and APIs",
+      "Set up AI agents for customer service, marketing and administration",
+      "Create AI video and meeting-assistance workflows with connected tools",
+      "Build and improve WordPress websites and integrations",
+      "Price and deliver software, automation services and institutional AI training"
+    ],
+    "overview": "Learn the AI, coding and delivery skills Steve uses in his own work. Build one software project of your choice during class and connect AI agents to practical business workflows. The training combines building, testing and deployment with content, video, meetings, customer service and administration.",
+    "projectTitle": "Your idea. One software project built in class.",
+    "projectDescription": "Choose a software idea that matters to you: for example, a booking system, stock tracker, customer portal, business dashboard or AI assistant. Agree a practical scope with Steve, then build its main workflow, connect its data, test it and deploy a working version during the programme. Use the three months of mentorship afterwards to refine and extend it.",
+    "projectSteps": [
+      "Choose your software and define its scope",
+      "Build the main workflow with AI and code",
+      "Connect data, tools and AI agents",
+      "Test, deploy and demonstrate your project"
+    ],
+    "topics": [
+      {
+        "title": "Build software of your choice",
+        "image": "/images/training/personal/apps.png",
+        "description": "Work on one chosen project throughout class, from a real problem to a working deployed version.",
+        "skills": [
+          "Define your users, screens, features and the main journey you want to solve",
+          "Use AI app builders and coding tools to turn your idea into a working product",
+          "Demonstrate your project, identify improvements and plan its next stage"
+        ]
+      },
+      {
+        "title": "AI-assisted coding, databases & APIs",
+        "image": "/images/training/personal/apps.png",
+        "description": "Understand what you are building so you can review changes, solve errors and maintain it.",
+        "skills": [
+          "Read and adapt code; understand files, versions, errors and debugging",
+          "Connect databases, user accounts and APIs with appropriate access controls",
+          "Test the main user journey, deploy your software and plan hosting and maintenance"
+        ]
+      },
+      {
+        "title": "AI agents for your everyday work",
+        "image": "/images/training/personal/ai.png",
+        "description": "Set up connected assistants that carry out useful tasks across your business tools.",
+        "skills": [
+          "Map your workload and build agents for enquiries, leads, bookings and customer follow-up",
+          "Connect CRM, documents, email and administrative tasks such as quotations and invoices",
+          "Design clear instructions, tool access, review steps and a route back to you"
+        ]
+      },
+      {
+        "title": "Video, content & meeting workflows",
+        "image": "/images/training/personal/ai.png",
+        "description": "Learn to use AI agents and connected tools for creative work and meeting assistance.",
+        "skills": [
+          "Build a workflow for research, scripts, promotional video and reusable marketing content",
+          "Set up scheduling, meeting preparation, note-taking or transcription tools where supported",
+          "Turn meeting notes into summaries, action lists and follow-up drafts; test the complete workflow"
+        ]
+      },
+      {
+        "title": "WordPress, websites & integrations",
+        "image": "/images/training/personal/websites.png",
+        "description": "Extend your website-building skills into WordPress and connected business systems.",
+        "skills": [
+          "Plan pages, content, plugins and an effective customer journey",
+          "Use AI to improve WordPress layouts, copy and useful functionality",
+          "Connect forms, bookings, ecommerce or other services and troubleshoot common problems"
+        ]
+      },
+      {
+        "title": "Software services & AI training",
+        "image": "/images/training/personal/training.png",
+        "description": "Learn to package what you build and teach practical AI skills to other people.",
+        "skills": [
+          "Price software, licensing, automation audits and ongoing service packages",
+          "Prepare a practical AI curriculum and proposal for businesses or institutions",
+          "Practise workshop facilitation and present your software and a short training session"
+        ]
+      }
     ]
   },
   "full": {
@@ -240,6 +404,15 @@
       "36 scheduled private lessons across both phases",
       "Save VUV 50,000 compared with booking separately",
       "Three months of follow-up mentorship after both training phases"
+    ],
+    "overview": "Learn both sets of practical skills in sequence: create and market your business, then build your chosen software and AI agent workflows. The complete package includes both project journeys and three months of mentorship after both phases.",
+    "projectTitle": "Create the business. Build the software behind it.",
+    "projectDescription": "Complete your business launch project in the first phase, then build one software project of your choice in the second. Connect marketing, customer workflows and AI agents around your goals, with three months of follow-up mentorship after both phases.",
+    "projectSteps": [
+      "Build your business and customer offer",
+      "Launch your website, store and marketing",
+      "Build your chosen software and AI workflows",
+      "Refine both projects during mentorship"
     ]
   }
 }

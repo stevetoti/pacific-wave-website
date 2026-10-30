@@ -1,3 +1,4 @@
+import PersonalCurriculum from "./PersonalCurriculum";
 import BlpWorkshop from "./BlpWorkshop";
 import { blpSlug } from "@/lib/lms/blp-workshop";
 import Image from "next/image";
@@ -36,6 +37,7 @@ export default function ProgramDetail({ course }: { course: Course }) {
           <article className="lms-panel"><MessageCircle size={28}/><h3>Follow-up mentorship</h3><p>{mentorshipExplanation}</p><p><strong>{offer.mentorshipMonths} month{offer.mentorshipMonths===1?'':'s'} included after {offer.slug===fullProgramSlug?'both training phases':'the scheduled lessons'}.</strong> Bring questions, project updates and problems you need help solving.</p></article>
         </div></section>
       </>}
+      {offer && <PersonalCurriculum offer={offer}/>}
       <section className="lms-section lms-program-body"><div><p className="lms-eyebrow">BUILT AROUND YOUR NEXT STEP</p><h2>Who this is for</h2><p>{p.audience}</p><h2>What you’ll work towards</h2><ul className="lms-outcomes">{p.outcomes.map(o=><li key={o}><CheckCircle2 size={20}/><span>{o}</span></li>)}</ul></div>
         <aside className="lms-panel"><h2>Your own learning space</h2><p>{course.introduction}</p>{offer && <><h3>How it works</h3><ol><li>Create your account and choose a programme.</li><li>Pay by card or submit bank-transfer proof.</li><li>Agree your start date and three weekly lesson appointments with Steve.</li><li>Complete the curriculum and practical project, then move into your follow-up mentorship.</li></ol><p>Your private session notes and recordings are assigned to your own enrolment. Bring a laptop, internet access and time to practise.</p></>}</aside>
       </section>

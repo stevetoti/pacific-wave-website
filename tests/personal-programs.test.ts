@@ -20,7 +20,7 @@ test('programme migration seeds 18/18/36 own-order lessons and preserves private
  await db.exec(`CREATE ROLE anon;CREATE ROLE authenticated;CREATE ROLE service_role;CREATE SCHEMA auth;CREATE TABLE auth.users(id uuid PRIMARY KEY);CREATE SCHEMA storage;CREATE TABLE storage.objects(id uuid,bucket_id text);CREATE TABLE storage.buckets(id text PRIMARY KEY,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);CREATE TABLE pwd_training_cohorts(id text PRIMARY KEY);INSERT INTO pwd_training_cohorts VALUES('vanuatu-2026-10');`);
  for(const file of ['20260915_training_center.sql','20260915_mentorship.sql'])await db.exec(await readFile('supabase/migrations/'+file,'utf8'));
  await db.exec(`ALTER TABLE pwd_lms_courses ADD COLUMN is_private boolean DEFAULT false,ADD COLUMN requires_approval boolean DEFAULT false;ALTER TABLE pwd_lms_lessons ADD COLUMN section_title text DEFAULT '',ADD COLUMN recordings_published boolean DEFAULT true;`);
- const migration=await readFile('supabase/migrations/20261030_personal_training_options.sql','utf8');await db.exec(migration);await db.exec(migration);
+ await db.exec(await readFile('supabase/migrations/20261030_personal_training_options.sql','utf8'));const migration=await readFile('supabase/migrations/20261030_personal_curriculum_detail.sql','utf8');await db.exec(migration);await db.exec(migration);
  const user=crypto.randomUUID(),other=crypto.randomUUID();await db.query('INSERT INTO auth.users VALUES($1),($2)',[user,other]);
  for(const p of personalOffers){
   const c=(await db.query<{id:string;amount:number;private_sessions:boolean}>('SELECT * FROM pwd_lms_courses WHERE slug=$1',[p.slug])).rows[0];assert.equal(c.amount,p.amount);assert.equal(c.private_sessions,true);
