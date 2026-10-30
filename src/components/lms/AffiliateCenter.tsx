@@ -267,9 +267,8 @@ export default function AffiliateCenter({ email }: { email: string }) {
               </label>
             </div>
             <label className="af-check">
-              <input type="checkbox" name="agree" required />I will promote
-              honestly, will not spam, and will not use my own link to buy
-              courses for myself. I agree to the <Link href={affiliateTermsUrl} target="_blank" rel="noreferrer" className="underline">affiliate terms and conditions</Link>.
+              <input type="checkbox" name="agree" required />
+              <span>I will promote honestly, will not spam, and will not use my own link to buy courses for myself. I agree to the <Link href={affiliateTermsUrl} target="_blank" rel="noreferrer" className="underline">affiliate terms and conditions</Link>.</span>
             </label>
             <div className="sd-form-actions">
               <span>{a?.status === "rejected" ? "We review re-applications, usually within 2 working days." : "Approval is instant. Your links appear as soon as you join."}</span>
