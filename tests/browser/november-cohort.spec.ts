@@ -70,3 +70,23 @@ test('enrolled student saves a revision, leaves, returns and reloads with the co
  await page.screenshot({path:`/tmp/november-workbook-${test.info().project.name}.png`});
  expect(errors).toEqual([]);
 });
+
+// A signed-in applicant bypasses signup and sees the course summary directly.
+test('pending student checkout shows the selected cohort schedule',async({page,context,baseURL})=>{
+ test.skip(!process.env.NOVEMBER_QA_FIXTURE,'Requires isolated synthetic enrolment fixture.');
+ const fixture=JSON.parse(await readFile(process.env.NOVEMBER_QA_FIXTURE!,'utf8')) as Fixture;
+ const student=fixture.users.find(u=>u.role==='pending')!;
+ await context.addInitScript(({origin,key,session})=>{if(location.origin===origin)localStorage.setItem(key,JSON.stringify(session));},{origin:new URL(baseURL!).origin,key:`sb-${fixture.ref}-auth-token`,session:student.session});
+ await page.route('**/api/lms/dashboard',r=>r.fulfill({json:{orders:[],progress:[]}}));
+ await page.goto('/training-center/checkout?course=vanuatu-november-2026');
+ const summary=page.locator('.lms-checkout-course');
+ await expect(summary).toContainText('15 live classes · 30 teaching hours');
+ await expect(summary).toContainText('16 November–19 December · Mon, Thu & Sat');
+ await expect(summary).toContainText('3–5 pm Vanuatu time');
+ await expect(summary).not.toContainText('October');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+ await page.screenshot({path:`/tmp/november-checkout-${test.info().project.name}.png`,fullPage:true});
+ await page.goto('/training-center/checkout?course=vanuatu-october-2026');
+ await expect(summary).toContainText('12 live classes · 24 teaching hours');
+ await expect(summary).toContainText('5 October–31 October · Mon, Thu & Sat');
+});

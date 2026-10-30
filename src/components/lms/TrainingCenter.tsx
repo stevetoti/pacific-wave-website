@@ -1,5 +1,5 @@
 "use client";
-import { novemberCourseSlug } from "@/lib/training/config";
+import { initialCohort, novemberCohort, novemberCourseSlug, dayMonth } from "@/lib/training/config";
 import { HoneypotField, useFormBotFields } from "@/components/security/FormBotFields";
 import { TurnstileWidget } from "@/components/security/TurnstileWidget";
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
@@ -273,6 +273,7 @@ function TrainingCenterContent({
   const checkout =
     courses.find((c) => c.id === queryCourse || c.slug === queryCourse) ||
     (queryCourse ? undefined : courses[0]);
+  const checkoutCohort = [initialCohort, novemberCohort].find((c) => c.id === checkout?.cohort_id);
   const order = orders.find((o) => o.course_id === checkout?.id);
   const courseOrder = orders.find((o) => o.course_id === current?.id);
   useEffect(() => {
@@ -840,12 +841,12 @@ function TrainingCenterContent({
                           ? "One-time fee for all 3 months"
                           : "One-time course fee")}
                       </p>
-                      {checkout.cohort_id && (
+                      {checkoutCohort && (
                         <>
                           <hr />
                           <p>
-                            <strong><CourseText text={"12 live classes · 24 teaching hours"} /></strong>
-                            <br /><CourseText text={"5–31 October · Mon, Thu & Sat"} /><br /><CourseText text={"3–5 pm Vanuatu time (UTC+11)"} /></p>
+                            <strong><CourseText text={`${checkoutCohort.dates.length} live classes · ${checkoutCohort.hours} teaching hours`} /></strong>
+                            <br /><CourseText text={`${dayMonth(checkoutCohort.start)}–${dayMonth(checkoutCohort.teachingEnd)} · Mon, Thu & Sat`} /><br /><CourseText text={checkoutCohort.timeLabel} /></p>
                           <p><CourseText text={"Yumiwork, Nambatu, near Kaiviti Motel, or online."} /></p>
                           <p><CourseText text={"Includes three free months of Digi Assist AI Pro and one additional mentorship month. Continued Pro use requires a paid subscription after the free period."} /></p>
                         </>
