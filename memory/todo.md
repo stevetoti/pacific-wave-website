@@ -493,3 +493,6 @@ Live application e7a0740 (review of Claude 1fb58e6), production dpl_7yQApJJNVUB3
 
 ## 2026-10-30 — [Codex] November class
 - [x] Add and publish 16 November–19 December course with same lessons and final revision sessions. — [Codex] 2026-10-30: Application f0d8dbc live; date/fee/workbook/checkout checks pass; all synthetic QA records removed and verified.
+
+## 2026-10-30 — [Codex] Personal programmes complete
+- [x] Clarify and publish150k/250k/350k private programmes, full curriculum and explicit mentorship; staged/live desktop/mobile/private checks pass, synthetic fixtures cleaned. Use complete codex/november-december-cohort lineage before any future deployment.

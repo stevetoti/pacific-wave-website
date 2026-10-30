@@ -297,3 +297,6 @@ Owner selected monthly payout, US$50 equivalent approved unpaid minimum with car
 
 ## 2026-10-30 — [Codex] Affiliate page geography and presentation
 User requested removing singled-out PNG references. Describe affiliate eligibility as worldwide, across the Pacific and beyond. Keep all established payout conditions. Use existing brand colours and approved illustrative photography, show payout facts before full terms, preserve full expanded TOS/dashboard terms while public landing uses accessible native accordions. Affiliate page contact widgets stay hidden to keep mobile payout content readable; explicit header/FAQ contact remains.
+
+## 2026-10-30 — [Codex] Personal programme fees and mentorship
+Owner confirmedVUV 150,000 foundations plus one month,VUV 250,000 software plus three months,VUV 350,000 both plus three months AFTER BOTH phases. Eachphase six weeks, 18 private 90-minute lessons,three weekly. Human follow-up mentoring is arranged about weekly/as needed, distinct from formal teaching. Reuse unbooked existing IDs/slugs; preserve all real student history and private own-order lessons.
