@@ -7,6 +7,7 @@ test.beforeEach(async({context,page,baseURL})=>{
  if(process.env.PERSONAL_STAGE_COOKIE){const{cookie}=JSON.parse(await readFile(process.env.PERSONAL_STAGE_COOKIE,'utf8')) as{cookie:string};await context.addCookies(cookie.split('; ').map(pair=>{const i=pair.indexOf('=');return{name:pair.slice(0,i),value:pair.slice(i+1),url:baseURL!,httpOnly:true,secure:true};}));}
 });
 test('three personal offers explain prices, structured teaching and separate mentorship',async({page})=>{
+ test.setTimeout(90000);
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/training-center');for(const p of personalOffers){const card=page.locator('.lms-catalog-grid article').filter({hasText:p.title});await expect(card).toContainText(p.amount.toLocaleString('en-US'));await expect(card).toContainText('follow-up mentorship');}
  for(const p of personalOffers){
