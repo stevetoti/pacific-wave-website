@@ -294,3 +294,6 @@ Use owner-requested title Build Your Business in 30 Days with AI for the upcomin
 
 ## 2026-10-30 — [Codex] Affiliate payout policy
 Owner selected monthly payout, US$50 equivalent approved unpaid minimum with carry-forward, USD or suitable local currency and full commission without transfer/conversion-fee deduction. Payer is Global Digital Prime Inc. (USA). Verification is proportionate before first payout/account changes; additional sensitive documents only when necessary, using an arranged secure channel. Do not collect IDs in payout notes or ordinary email. Staff review/payment remains manual; no monthly transfer date or automatic FX/payout engine was requested.
+
+## 2026-10-30 — [Codex] Affiliate page geography and presentation
+User requested removing singled-out PNG references. Describe affiliate eligibility as worldwide, across the Pacific and beyond. Keep all established payout conditions. Use existing brand colours and approved illustrative photography, show payout facts before full terms, preserve full expanded TOS/dashboard terms while public landing uses accessible native accordions. Affiliate page contact widgets stay hidden to keep mobile payout content readable; explicit header/FAQ contact remains.
