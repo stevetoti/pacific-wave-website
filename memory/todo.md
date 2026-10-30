@@ -499,3 +499,6 @@ Live application e7a0740 (review of Claude 1fb58e6), production dpl_7yQApJJNVUB3
 
 ## 2026-10-30 — [Codex] Expanded personal topics complete
 - [x] Publish detailed business/software/agent topics, project stages and matching illustrations; staged/live desktop/mobile checks pass, existing student records preserved.
+
+## 2026-10-31 — [Codex] Programme layout complete
+- [x] Publish complete topic/roadmap rows and redesigned learning-space section; final staged/live desktop/mobile checks pass.

@@ -303,3 +303,6 @@ Owner confirmedVUV 150,000 foundations plus one month,VUV 250,000 software plus 
 
 ## 2026-10-30 — [Codex] Detailed personal curriculum
 Use the October workbook's substantive business topics in the first private course and explicitly include mastering Digi Assist AI and digital agency setup. The second course builds one student-chosen software project during class and teaches connected AI agents for admin, marketing, video and supported meeting workflows. Reuse approved navy/orange/white service illustrations. Preserve existing lessons/history; only new orders receive refreshed lesson outlines.
+
+## 2026-10-31 — [Codex] Programme layout consistency
+Use complete three-column rows on desktop:9business topics including invoice/receipt generation,6weekly roadmap cards per phase and6outcomes. At narrow sizes stack into one column. Public learning-space content should be short benefit cards and steps rather than repeating the full course introduction. Preserve full student-course introduction and all enrolment terms.
