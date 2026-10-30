@@ -74,7 +74,7 @@ const payoutFacts = [
 ];
 export default function AffiliatesPage() {
   return (
-    <main className="affiliate-page">
+    <div className="affiliate-page">
       <section className="af-hero">
         <div className="af-shell af-hero-grid">
           <div className="af-hero-copy">
@@ -134,6 +134,6 @@ export default function AffiliatesPage() {
         <div className="af-shell af-faq-grid"><div><p className="af-kicker">A FEW MORE ANSWERS</p><h2>Good questions.<br />Clear answers.</h2><p>Need a hand? <a href="mailto:steve@pacificwavedigital.com">Talk to our team <ArrowUpRight size={16} /></a></p></div><div className="af-faqs">{faqs.map(([q, a]) => <details key={q}><summary>{q}<ChevronDown size={18} aria-hidden="true" /></summary><p>{a}</p></details>)}</div></div>
       </section>
       <section className="af-final"><div className="af-shell af-final-inner"><div><p className="af-kicker">YOUR NEXT CHAPTER STARTS WITH A LINK</p><h2>Make your connections count.</h2><p>Free to join. Open worldwide. A personal link for every eligible course.</p></div><Link href={join} className="af-button af-button-navy">Join the affiliate programme <ArrowUpRight size={20} /></Link></div></section>
-    </main>
+    </div>
   );
 }

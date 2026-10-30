@@ -7,6 +7,7 @@ import VoiceWidget from "./VoiceWidget";
 export default function ContactWidgets() {
   const pathname = usePathname();
   if (
+    pathname.replace(/\/$/, "") === "/affiliates" ||
     pathname.replace(/\/$/, "") === "/training-center/account" ||
     pathname.replace(/\/$/, "") === "/training-center/checkout" ||
     pathname.startsWith("/training-center/course/") ||
