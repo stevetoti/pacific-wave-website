@@ -291,3 +291,6 @@ Use a separate course/cohort and workbook keys; retain originalOctober students/
 
 ## 2026-10-30 — [Codex] Business course positioning
 Use owner-requested title Build Your Business in 30 Days with AI for the upcoming November cohort. Welcome physical and digital business types. Keep actual full class dates visible and describe final revisions separately. “Profitable” was discussed as an alternative; it was not selected. Historical October course and existing lessons retained.
+
+## 2026-10-30 — [Codex] Affiliate payout policy
+Owner selected monthly payout, US$50 equivalent approved unpaid minimum with carry-forward, USD or suitable local currency and full commission without transfer/conversion-fee deduction. Payer is Global Digital Prime Inc. (USA). Verification is proportionate before first payout/account changes; additional sensitive documents only when necessary, using an arranged secure channel. Do not collect IDs in payout notes or ordinary email. Staff review/payment remains manual; no monthly transfer date or automatic FX/payout engine was requested.
