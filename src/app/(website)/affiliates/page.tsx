@@ -1,3 +1,5 @@
+import AffiliateTermsContent from "@/components/lms/AffiliateTermsContent";
+import { affiliatePayoutSummary, affiliateTermsUpdated } from "@/lib/lms/affiliate-terms";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
@@ -30,10 +32,14 @@ const steps = [
     image: "/images/affiliates/earn.webp",
     alt: "A small-business owner smiling at a payment notification on her phone",
     title: "Earn 15% commission",
-    body: "When someone pays for a course through your link, you earn 15% of what they paid. We pay you by bank transfer or mobile money.",
+    body: "When someone pays for a course through your link, you earn 15% of what they paid. Payouts are monthly once your approved balance reaches US$50 or its equivalent.",
   },
 ];
 const faqs = [
+  ["Which currency can I receive?", "Commission is recorded in the course payment currency. Global Digital Prime Inc., our USA company, pays in USD or a suitable local currency agreed with you. We confirm the conversion rate and amount before transfer."],
+  ["What is the minimum payout?", "US$50 or its equivalent in your payout currency, in approved unpaid commissions. Lower balances carry forward."],
+  ["Are fees deducted from my commission?", "No. We transfer your full approved commission and cover transfer and currency-conversion fees."],
+  ["What verification is needed?", "Before your first payout, we verify your legal name, account email, phone, country, payout currency and receiving-account details. The account must be in your name or your registered business’s name. Additional documents are requested securely only when necessary. See the affiliate terms below."],
   [
     "Do I need to be a student?",
     "No. Anyone can join: community leaders, teachers, business owners, or anyone who knows people who want to learn digital and AI skills.",
@@ -44,7 +50,7 @@ const faqs = [
   ],
   [
     "When do I get paid?",
-    "Your commission appears in your dashboard as soon as the student's payment is confirmed. After we check it, we pay you by bank transfer or mobile money and mark it paid.",
+    affiliatePayoutSummary,
   ],
   [
     "What if the student gets a refund?",
@@ -159,6 +165,14 @@ export default function AffiliatesPage() {
             Commission is 15% of the amount the student actually pays, after
             any discount. Current fees are shown on each course page.
           </p>
+        </div>
+      </section>
+      <section id="affiliate-terms" className="scroll-mt-28 bg-slate-50 px-4 py-16">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-3xl font-bold text-[#233C6F]">Affiliate terms and conditions</h2>
+          <p className="mb-8 mt-2 text-sm text-slate-500">Updated {affiliateTermsUpdated}</p>
+          <AffiliateTermsContent />
+          <p className="mt-8 text-sm"><Link href="/terms#affiliate-programme" className="underline">Terms of Service</Link> · <Link href="/privacy#affiliate-information" className="underline">Affiliate privacy notice</Link></p>
         </div>
       </section>
       <section className="px-4 py-16">

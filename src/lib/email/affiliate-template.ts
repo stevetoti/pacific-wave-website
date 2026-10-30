@@ -1,3 +1,4 @@
+import { affiliatePayoutSummary } from "../lms/affiliate-terms";
 import { escapeHtml as e } from "./training-template";
 import {
   affiliatePractices,
@@ -71,7 +72,7 @@ export function affiliateWelcomeTemplate({
 <tr><td class="px" style="padding:8px 32px 8px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f8fc;border-radius:14px"><tr><td style="padding:20px">
 <h3 style="font-size:16px;margin:0 0 10px">How you get paid</h3>
-<p style="font-size:14px;line-height:1.6;color:#586980;margin:0">When a student you referred pays, a commission appears in your dashboard as <strong>pending</strong>. Once the payment is final, we approve it and pay you by bank transfer or mobile money, using the payout details you gave us.</p>
+<p style="font-size:14px;line-height:1.6;color:#586980;margin:0">${e(affiliatePayoutSummary)} <a href="https://pacificwavedigital.com/affiliates#affiliate-terms">Read the affiliate terms</a>.</p>
 </td></tr></table>
 </td></tr>
 <tr><td class="px" style="padding:20px 32px 8px">
@@ -91,7 +92,7 @@ ${affiliateRules.map((r) => `<p style="font-size:14px;line-height:1.6;color:#586
     `READY TO SEND\n${message}`,
     "HOW TOP AFFILIATES SUCCEED",
     ...affiliatePractices.map((p, i) => `${i + 1}. ${p.title}: ${p.body}`),
-    "HOW YOU GET PAID\nWhen a referred student pays, your commission shows as pending. Once the payment is final we approve it and pay you by bank transfer or mobile money.",
+    `HOW YOU GET PAID\n${affiliatePayoutSummary}\nTerms: https://pacificwavedigital.com/affiliates#affiliate-terms`,
     "PROGRAMME RULES",
     ...affiliateRules.map((r) => `- ${r}`),
     "Questions? steve@pacificwavedigital.com · +678 528 8141\nPacific Wave Digital · Port Vila, Vanuatu",

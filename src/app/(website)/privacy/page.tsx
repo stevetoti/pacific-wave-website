@@ -13,7 +13,7 @@ export default function PrivacyPage() {
         <div className="absolute inset-0 gradient-blue"></div>
         <div className="relative container-max px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white font-heading mb-4">Privacy Policy</h1>
-          <p className="text-blue-100 text-lg">Last updated: September 15, 2026</p>
+          <p className="text-blue-100 text-lg">Last updated: October 30, 2026</p>
         </div>
       </section>
 
@@ -45,6 +45,11 @@ export default function PrivacyPage() {
                 <p className="mt-4">We use these details to manage your registration, plan attendance and contact you with payment, preparation and joining instructions. Our database and transactional email providers process the information to support these services. Registrations are available only to authorised staff, not other students. We keep records while needed for course administration, follow-up and applicable recordkeeping obligations.</p>
                 <p className="mt-4">Future training updates are optional. You can register without choosing them and withdraw that choice at any time. It does not authorise unrelated third-party marketing or automatic paid software renewal. Contact <a href="mailto:steve@pacificwavedigital.com" className="underline">steve@pacificwavedigital.com</a> to request access, corrections, deletion or to stop training updates. Please avoid including sensitive information in the optional question field.</p>
                 <p className="mt-4">Optional form analytics record only form views and successful saves with a cohort identifier, never your name, email, phone or form answers. Registration works without analytics consent. Training notice version: training-2026-09-15.</p>
+              </div>
+              <div id="affiliate-information" className="scroll-mt-28">
+                <h2 className="text-2xl font-bold text-deep-blue font-heading mb-4">Affiliate and Payout Information</h2>
+                <p>We collect affiliate contact details, promotion information and receiving-account details to operate the programme, attribute referrals, review commissions and pay affiliates. Before the first payout or after receiving details change, we check the legal account-holder name, verified email, phone, country and payout details. Additional identity, account-ownership or business documents are requested only when needed to resolve a mismatch or meet payment-provider requirements, using a secure submission method arranged before collection.</p>
+                <p className="mt-4">Global Digital Prime Inc., our USA company, and the payment providers involved process the information needed to verify and make payouts. This can involve processing outside your country, including in the United States and the receiving country. Access is limited to authorised staff and providers who need it for affiliate administration, verification and payment. We keep these records only while needed for those purposes and applicable recordkeeping obligations. Do not place identity documents, bank passwords, PINs or login codes in payout notes or ordinary email. Contact steve@pacificwavedigital.com for access, corrections or questions.</p>
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-deep-blue font-heading mb-4">3. How We Use Your Information</h2>

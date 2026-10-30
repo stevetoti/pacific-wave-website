@@ -1,3 +1,4 @@
+import AffiliateTermsContent from "@/components/lms/AffiliateTermsContent";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -13,7 +14,7 @@ export default function TermsPage() {
         <div className="absolute inset-0 gradient-blue"></div>
         <div className="relative container-max px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white font-heading mb-4">Terms of Service</h1>
-          <p className="text-blue-100 text-lg">Last updated: January 1, 2025</p>
+          <p className="text-blue-100 text-lg">Last updated: October 30, 2026</p>
         </div>
       </section>
 
@@ -100,8 +101,13 @@ export default function TermsPage() {
                 </p>
               </div>
 
+              <div id="affiliate-programme" className="scroll-mt-28">
+                <h2 className="text-2xl font-bold text-deep-blue font-heading mb-4">11. Affiliate Programme</h2>
+                <p className="mb-6">The following terms apply specifically to affiliate commissions and payouts. You can also read them on our <a href="/affiliates#affiliate-terms" className="underline">public affiliate page</a>.</p>
+                <AffiliateTermsContent />
+              </div>
               <div>
-                <h2 className="text-2xl font-bold text-deep-blue font-heading mb-4">11. Contact Information</h2>
+                <h2 className="text-2xl font-bold text-deep-blue font-heading mb-4">12. Contact Information</h2>
                 <p>For any questions regarding these Terms of Service, please contact us:</p>
                 <ul className="list-disc pl-6 space-y-2 mt-4">
                   <li>Email: <a href="mailto:info@pacificwavedigital.com" className="text-vibrant-orange hover:underline">info@pacificwavedigital.com</a></li>

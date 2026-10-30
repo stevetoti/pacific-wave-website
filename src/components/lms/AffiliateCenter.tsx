@@ -11,6 +11,9 @@ import {
   Wallet,
   Share2,
 } from "lucide-react";
+import Link from "next/link";
+import AffiliateTermsContent from "./AffiliateTermsContent";
+import { affiliatePayoutSummary, affiliateTermsUrl } from "@/lib/lms/affiliate-terms";
 import { authFetch } from "@/lib/auth-fetch";
 import { money } from "@/lib/lms/types";
 import { programs } from "@/lib/lms/programs";
@@ -199,10 +202,12 @@ export default function AffiliateCenter({ email }: { email: string }) {
           required
           minLength={5}
           maxLength={600}
+          aria-describedby="affiliate-payout-help"
           defaultValue={a?.payout_details}
-          placeholder="Bank name, account name and account number — or your mobile money number."
+          placeholder="Country, preferred payout currency, legal account name, bank name, account number and SWIFT/routing details where required — or mobile-money provider and number."
         />
       </label>
+      <p id="affiliate-payout-help" className="af-wide text-sm text-slate-600">Use an account in your name or your registered business’s name. Do not enter ID documents, passwords, PINs or login codes here. Additional verification is arranged securely before payout if needed. <Link href={affiliateTermsUrl} className="underline">Read payout and verification terms</Link>.</p>
     </>
   );
   if (!a || a.status === "rejected")
@@ -226,8 +231,7 @@ export default function AffiliateCenter({ email }: { email: string }) {
               Anyone who opens your link is credited to you for 30 days.
             </li>
             <li>
-              Commissions are paid to your bank or mobile money after the
-              student&apos;s payment is confirmed.
+              {affiliatePayoutSummary}
             </li>
           </ul>
           {a?.status === "rejected" && (
@@ -242,7 +246,7 @@ export default function AffiliateCenter({ email }: { email: string }) {
           <fieldset disabled={busy}>
             <div className="sd-form-grid">
               <label>
-                Full name
+                Full legal name
                 <input name="full_name" required minLength={2} maxLength={120} defaultValue={a?.full_name} />
               </label>
               <label>
@@ -265,7 +269,7 @@ export default function AffiliateCenter({ email }: { email: string }) {
             <label className="af-check">
               <input type="checkbox" name="agree" required />I will promote
               honestly, will not spam, and will not use my own link to buy
-              courses for myself.
+              courses for myself. I agree to the <Link href={affiliateTermsUrl} target="_blank" rel="noreferrer" className="underline">affiliate terms and conditions</Link>.
             </label>
             <div className="sd-form-actions">
               <span>{a?.status === "rejected" ? "We review re-applications, usually within 2 working days." : "Approval is instant. Your links appear as soon as you join."}</span>
@@ -395,6 +399,12 @@ export default function AffiliateCenter({ email }: { email: string }) {
           </a>
         </div>
       </section>
+      <details className="sd-panel af-tips">
+        <summary>Payouts and affiliate terms</summary>
+        <p>{affiliatePayoutSummary}</p>
+        <AffiliateTermsContent />
+        <Link href={affiliateTermsUrl} className="lms-text">Read the public affiliate terms</Link>
+      </details>
       <details className="sd-panel af-tips">
         <summary>
           <Lightbulb size={20} className="af-inline-icon" /> How top affiliates succeed
