@@ -1,3 +1,4 @@
+import { socialVersion } from "../seo/social-constants";
 // Shared affiliate guidance used by the welcome email and the affiliate dashboard.
 export const affiliatePractices: { title: string; body: string }[] = [
   {
@@ -44,4 +45,4 @@ export function affiliateDestination(course: { slug: string; cohort_id: string |
       : "/training-center";
 }
 export const affiliateLink = (origin: string, code: string, to: string) =>
-  `${origin}/go/${code}${to === "/training-center" ? "" : `?to=${to}`}`;
+  `${origin}/go/${code}?to=${encodeURIComponent(to)}&v=${socialVersion}`;

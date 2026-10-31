@@ -1,3 +1,4 @@
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import { novemberOutline as paths } from "@/lib/training/outline";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -36,17 +37,7 @@ export const metadata: Metadata = {
   description:
     `Build your business in 30 days with practical AI training in Vanuatu. Starts ${dayMonth(initialCohort.start)} ${new Date(initialCohort.start).getUTCFullYear()}. In person and online. ${feeLabel(initialCohort)}. Register your interest.`,
   alternates: { canonical: "/vanuatu-training" },
-  openGraph: {
-    title: "Build Your Business in 30 Days with AI | 16 November–19 December",
-    description:
-      `Vanuatu • ${monthLabel(initialCohort,true)}. Practical AI training, in person and online. Course fee: ${feeLabel(initialCohort)}.`,
-    url: "/vanuatu-training",
-
-  },
-  twitter: {
-    card: "summary_large_image",
-
-  },
+  ...socialMetadata("/vanuatu-training"),
 };
 const builds = [
   "A clear business idea, customer and offer",

@@ -1,3 +1,4 @@
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
   title: 'Vanuatu Website Projects and Case Studies',
   description: 'Explore Pacific Wave Digital’s website work for Aelan Basket, E’Nauwi Beach Resort and Lapita Beach, plus our own online training platform in Vanuatu.',
   alternates: { canonical: 'https://pacificwavedigital.com/portfolio' },
+  ...socialMetadata("/portfolio"),
 };
 
 export default function PortfolioPage() {

@@ -10,6 +10,8 @@ export const revalidate = 3600;
 const baseUrl = 'https://pacificwavedigital.com';
 
 const staticPages: MetadataRoute.Sitemap = [
+  { url: `${baseUrl}/training-center/programs/full-ai-business-program`, changeFrequency: "monthly", priority: 0.8 },
+  { url: `${baseUrl}/training-center/programs/vanuatu-november-2026`, changeFrequency: "weekly", priority: 0.8 },
   ...projectCaseStudies.map(project => ({ url: `${baseUrl}/portfolio/${project.slug}`, lastModified: new Date('2026-10-17'), changeFrequency: 'monthly' as const, priority: 0.7 })),
   { url: `${baseUrl}/portfolio/pwd-training-centre`, lastModified: new Date('2026-10-17'), changeFrequency: 'monthly', priority: 0.7 },
   { url: `${baseUrl}/training-center/programs/one-on-one-mentorship`, changeFrequency: 'monthly', priority: 0.8 },

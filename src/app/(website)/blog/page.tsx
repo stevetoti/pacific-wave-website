@@ -1,3 +1,4 @@
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import BrandBackdrop from '@/components/BrandBackdrop';
 import NewsletterCTA from '@/components/blog/NewsletterCTA';
 import ArticleCard from '@/components/blog/ArticleCard';
@@ -8,13 +9,8 @@ export const metadata: Metadata = {
   title: 'Blog & Insights',
   description: 'Practical guides to AI, web development, mobile apps and digital transformation for businesses in Vanuatu and the Pacific.',
   keywords: 'Pacific Island technology blog, Vanuatu digital marketing, AI business solutions Pacific, web development insights',
-  openGraph: {
-    title: 'Blog & Insights | Pacific Wave Digital',
-    description: 'Practical guides to websites, AI and digital tools for Pacific Island businesses.',
-    type: 'website',
-    url: 'https://pacificwavedigital.com/blog',
-  },
   alternates: { canonical: 'https://pacificwavedigital.com/blog' },
+  ...socialMetadata("/blog"),
 };
 
 export const revalidate = 60;

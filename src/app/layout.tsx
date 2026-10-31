@@ -1,3 +1,4 @@
+import { socialImage } from "@/lib/seo/social-cards";
 import type { Metadata } from 'next';
 import './globals.css';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
       'Digital agency based in Vanuatu specializing in AI-powered business solutions, web development, and digital transformation.',
     images: [
       {
-        url: '/images/hero-og-share.jpg',
+        url: socialImage('/'),
         width: 1200,
         height: 630,
         alt: 'Pacific Wave Digital - Digital Innovation for the Pacific',
@@ -54,7 +55,7 @@ export const metadata: Metadata = {
     title: 'Pacific Wave Digital — Digital Innovation for the Pacific',
     description:
       'Digital agency based in Vanuatu specializing in AI-powered business solutions, web development, and digital transformation.',
-    images: ['/images/hero-og-share.jpg'],
+    images: [socialImage('/')],
   },
   robots: {
     index: true,

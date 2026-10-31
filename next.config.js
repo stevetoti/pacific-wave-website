@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   agentRules: false,
+  // Preserve Next16.3.5's HTML-limited bot list and include additional share crawlers.
+  htmlLimitedBots: /[\w-]+-Google|Google-[\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight|TelegramBot|Pinterestbot|Facebot|Viber/i,
   async headers() {
     return [{ source: '/zoom-classroom/:path*', headers: [
       { key: 'Content-Security-Policy', value: "frame-ancestors 'self'" },

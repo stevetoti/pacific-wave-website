@@ -1,3 +1,4 @@
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import BrandBackdrop from '@/components/BrandBackdrop';
 import type { Metadata } from 'next';
 import Image from 'next/image';
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
     'digital transformation Vanuatu',
     'tech company Pacific Islands',
   ],
+  ...socialMetadata("/about"),
 };
 
 const values = [

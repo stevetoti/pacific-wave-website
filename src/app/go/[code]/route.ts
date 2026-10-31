@@ -1,3 +1,4 @@
+import { affiliatePreview } from "@/lib/seo/affiliate-preview";
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/server/clients";
 import { reportServerError } from "@/lib/server/report-error";
@@ -15,10 +16,13 @@ export async function GET(
 ) {
   const url = new URL(request.url);
   const to = safeDestination(url.searchParams.get("to"));
+  const code = (await params).code.toUpperCase();
+  const preview = affiliatePreview(request, code, to);
+  if (preview) return preview;
   const response = NextResponse.redirect(new URL(to, url.origin), 307);
   response.headers.set("Cache-Control", "no-store");
-  const code = (await params).code.toUpperCase();
-  if (!affiliateCode.test(code)) return response;
+  response.headers.set("Vary", "User-Agent");
+  if (request.method === "HEAD" || !affiliateCode.test(code)) return response;
   try {
     const db = getSupabaseAdmin();
     const { data } = await db

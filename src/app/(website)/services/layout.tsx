@@ -1,3 +1,4 @@
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -28,12 +29,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://pacificwavedigital.com/services',
   },
-  openGraph: {
-    title: 'Services | Pacific Wave Digital',
-    description: 'Professional web development, AI automation, mobile apps, and digital marketing for Pacific Island businesses.',
-    type: 'website',
-    url: 'https://pacificwavedigital.com/services',
-  },
+  ...socialMetadata("/services"),
 };
 
 export default function ServicesLayout({

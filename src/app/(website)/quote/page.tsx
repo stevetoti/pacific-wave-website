@@ -1,3 +1,4 @@
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import type { Metadata } from 'next';
 import PrintButton from '@/components/quote/PrintButton';
 import {
@@ -14,8 +15,7 @@ export const metadata: Metadata = {
   description: 'Pacific Wave Digital website and digital system packages, payment schedule and running costs.',
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
   alternates: { canonical: null },
-  openGraph: { title: 'Packages & Pricing | Pacific Wave Digital', description: 'Website and digital system packages in VUV, payment schedule and estimated running costs.', url: 'https://pacificwavedigital.com/quote', images: [] },
-  twitter: { card: 'summary', title: 'Packages & Pricing | Pacific Wave Digital', description: 'Website and digital system packages in VUV, payment schedule and estimated running costs.', images: [] },
+  ...socialMetadata("/quote"),
 };
 
 const EMAIL = 'steve@pacificwavedigital.com';

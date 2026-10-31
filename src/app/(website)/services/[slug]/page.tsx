@@ -1,3 +1,4 @@
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import WebDesignPage from '@/components/services/WebDesignPage';
@@ -32,13 +33,7 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
     alternates: {
       canonical: `${baseUrl}/services/${service.slug}`,
     },
-    openGraph: {
-      title: `${service.h1} | Pacific Wave Digital`,
-      description: service.metaDescription,
-      type: 'website',
-      url: `${baseUrl}/services/${service.slug}`,
-      ...(service.slug === 'online-payment-integration' ? { images: [{ url: '/images/payments/couple-laptop-card-hero.webp', width: 1672, height: 941, alt: 'Illustrative couple using a laptop and credit card' }] } : {}),
-    },
+    ...socialMetadata(`/services/${service.slug}`),
   };
 }
 

@@ -1,3 +1,4 @@
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import ProjectHero from '@/components/ProjectHero';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${project.name}: Vanuatu Website Case Study`,
     description: project.summary,
     alternates: { canonical: url },
-    openGraph: { title: `${project.name} — PWD Case Study`, description: project.summary, url, type: 'article', images: [`/images/projects/${project.slug}-desktop.webp`] },
+    ...socialMetadata(`/portfolio/${project.slug}`, {type:"article"}),
   };
 }
 export default async function ClientCaseStudy({ params }: Props) {

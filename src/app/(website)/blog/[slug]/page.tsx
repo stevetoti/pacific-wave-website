@@ -1,3 +1,4 @@
+import { socialImage } from "@/lib/seo/social-cards";
 import { Metadata } from 'next';
 import Image from 'next/image';
 import BlogImage from '@/components/blog/BlogImage';
@@ -52,9 +53,9 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   }
 
   const publishedDate = post.published_at || post.created_at;
-  const imageUrl = post.image_url?.startsWith('http')
-    ? post.image_url
-    : `https://pacificwavedigital.com${post.image_url}`;
+  // Share crawlers consistently support JPEG/PNG; use the branded fallback for other formats.
+  const sourceImage = post.image_url?.startsWith("https://") ? post.image_url : post.image_url?.startsWith("/") && !post.image_url.startsWith("//") ? `https://pacificwavedigital.com${post.image_url}` : null;
+  const imageUrl = sourceImage && /\.(jpe?g|png)(\?|$)/i.test(sourceImage) ? sourceImage : socialImage("/blog");
 
   return {
     // Root layout's title template appends "| Pacific Wave Digital" —
@@ -66,25 +67,25 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       title: post.title,
       description: post.excerpt || post.title,
       type: 'article',
+      siteName: 'Pacific Wave Digital',
+      url: `https://pacificwavedigital.com/blog/${post.slug}`,
       publishedTime: publishedDate,
       modifiedTime: post.updated_at,
       authors: ['Pacific Wave Digital'],
-      images: post.image_url
-        ? [
+      images: [
             {
               url: imageUrl,
               width: 1200,
               height: 630,
               alt: post.title,
             },
-          ]
-        : [],
+          ],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt || post.title,
-      images: post.image_url ? [imageUrl] : [],
+      images: [imageUrl],
     },
     alternates: {
       canonical: `https://pacificwavedigital.com/blog/${post.slug}`,

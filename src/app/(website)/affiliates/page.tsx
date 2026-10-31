@@ -1,3 +1,4 @@
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import { personalOffers } from "@/lib/lms/personal-programs";
 import { money } from "@/lib/lms/types";
 import "./affiliates.css";
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
   description:
     "Join the Pacific Wave Digital affiliate programme worldwide. Earn 15% on eligible paid course referrals, with monthly payouts from a US$50 equivalent balance.",
   alternates: { canonical: "/affiliates" },
+  ...socialMetadata("/affiliates"),
 };
 const join = "/training-center/account?mode=signup&next=affiliate";
 const signIn = "/training-center/account?mode=signin&next=affiliate";

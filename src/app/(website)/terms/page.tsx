@@ -1,9 +1,11 @@
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import AffiliateTermsContent from "@/components/lms/AffiliateTermsContent";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
   description: 'Pacific Wave Digital Terms of Service — the terms and conditions governing the use of our website and services.',
+  ...socialMetadata("/terms"),
 };
 
 export default function TermsPage() {

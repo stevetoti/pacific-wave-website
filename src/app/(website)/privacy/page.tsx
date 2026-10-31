@@ -1,8 +1,10 @@
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description: 'Pacific Wave Digital Privacy Policy — how we collect, use, and protect your personal information.',
+  ...socialMetadata("/privacy"),
 };
 
 export default function PrivacyPage() {

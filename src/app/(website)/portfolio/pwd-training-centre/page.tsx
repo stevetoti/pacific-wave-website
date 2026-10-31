@@ -1,3 +1,4 @@
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import ProjectHero from '@/components/ProjectHero';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -9,13 +10,7 @@ export const metadata: Metadata = {
   title: 'Online Training Platform in Vanuatu: PWD Case Study',
   description,
   alternates: { canonical },
-  openGraph: {
-    title: 'PWD Training Centre — Vanuatu Software Case Study',
-    description,
-    url: canonical,
-    type: 'article',
-    images: ['/images/projects/pwd-training-centre-desktop.webp'],
-  },
+  ...socialMetadata("/portfolio/pwd-training-centre", {type:"article"}),
 };
 
 const capabilities = [
