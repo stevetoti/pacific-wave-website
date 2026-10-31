@@ -15,11 +15,11 @@ export async function generateMetadata({params, searchParams}: {
   const course=key?await registrationCourse(key):null;
   const program=course&&!course.is_private?programs[course.slug]:undefined;
   if(course&&!course.is_private){
-    const canonical=course.slug==="vanuatu-october-2026"?"/training-center":`/training-center/programs/${course.slug}`;
+    const canonical=course.slug==="vanuatu-october-2026" || !program?"/training-center":`/training-center/programs/${course.slug}`;
     const description=course.description || program?.headline || "Practical business and AI training from Pacific Wave Digital.";
     return {title:{absolute:`${course.title} | Pacific Wave Digital`},description,
       alternates:{canonical:path[0]==="programs"?canonical:null},
-      ...socialMetadata(`/training-center/programs/${course.slug}`,{title:course.title,description}),
+      ...socialMetadata(`/training-center/programs/${course.slug}`,{title:course.title,description,url:`https://pacificwavedigital.com${canonical}`}),
       robots:path[0]==="programs"?{index:true,follow:true}:{index:false,follow:false}};
   }
   return {title:{absolute:"Training Centre | Pacific Wave Digital"},description:"Build practical business and AI skills with Pacific Wave Digital.",
