@@ -10,6 +10,7 @@ export async function processPublication(id:string,retryBlocked=false){
  const {data,error}=await db().from('pending_actions').select('id,action_type,status,company_id,payload').eq('id',id).single();if(error||!data)throw new Error('Approval not found');const action=data as PublicationAction;
  const site=String(action.payload.site_id||'');if(!Object.hasOwn(PUBLICATION_SITES,site)||action.status!=='approved')return {state:'not_approved'};
  const old=await readRun(site,id);const now=new Date();if(!canClaim(old.run,now)&&!(retryBlocked&&old.run?.state==='blocked'))return old.run;
+ if(old.run?.state==='publishing'&&old.run.attempt>=8){const blocked:PublicationRun={...old.run,state:'blocked',error:'Final publication attempt timed out; review and retry publication.',updatedAt:now.toISOString()};const saved=await save(site,id,blocked,old.raw);if(saved)await visible(id,blocked);return saved?blocked:{state:'busy'};}
  let run:PublicationRun={state:'publishing',attempt:retryBlocked&&old.run?.state==='blocked'?1:(old.run?.attempt||0)+1,updatedAt:now.toISOString()};let raw=await save(site,id,run,old.raw);if(!raw)return {state:'busy'};await visible(id,run);
  try{
   const {data:post,error:postError}=await db().from('blog_posts').select('*').eq('id',id).eq('site_id',site).single();if(postError||!post)throw new Error('Approved article not found in its business');

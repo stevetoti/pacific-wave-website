@@ -24,8 +24,9 @@ export function approvedPublication(action:PublicationAction,post:PublicationPos
 }
 export function canClaim(run:PublicationRun|undefined,now:Date) {
  if(!run)return true;
- if(run.state==='published'||run.state==='blocked'||run.attempt>=8)return false;
+ if(run.state==='published'||run.state==='blocked')return false;
  if(run.state==='publishing')return now.getTime()-Date.parse(run.updatedAt)>15*60*1000;
+ if(run.attempt>=8)return false;
  return !run.nextAttempt||Date.parse(run.nextAttempt)<=now.getTime();
 }
 export function articleImages(post:PublicationPost):string[]{
