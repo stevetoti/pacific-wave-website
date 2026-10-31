@@ -502,3 +502,6 @@ Live application e7a0740 (review of Claude 1fb58e6), production dpl_7yQApJJNVUB3
 
 ## 2026-10-31 — [Codex] Programme layout complete
 - [x] Publish complete topic/roadmap rows and redesigned learning-space section; final staged/live desktop/mobile checks pass.
+
+## 2026-10-31 — [Codex] Share previews complete
+- [x] Publish relevant course/public-page OG images, crawler-safe affiliate previews and versioned links; live metadata/image/referral/mobile checks and independent review pass; synthetic records cleaned.

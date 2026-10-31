@@ -306,3 +306,6 @@ Use the October workbook's substantive business topics in the first private cour
 
 ## 2026-10-31 — [Codex] Programme layout consistency
 Use complete three-column rows on desktop:9business topics including invoice/receipt generation,6weekly roadmap cards per phase and6outcomes. At narrow sizes stack into one column. Public learning-space content should be short benefit cards and steps rather than repeating the full course introduction. Preserve full student-course introduction and all enrolment terms.
+
+## 2026-10-31 — [Codex] Social share metadata
+Use complete nested OG/Twitter metadata per public page because Next metadata objects replace parent fields. Serve1200×630 JPEG cards from approved assets. Affiliate crawler requests return metadata before any database tracking; normal human referral behavior stays intact. Preserve private/unlisted boundaries; do not expose private course names in share previews. Regenerate cards when shared course prices/dates change.
