@@ -1,4 +1,5 @@
 import 'server-only';
+import { articleImagePaths, attachSupportingImages } from '../seo-article-images';
 import { ensureTotiBlogReview, TOTI_SEO_URL } from './toti-blog-review';
 import { createHash, randomUUID } from 'node:crypto';
 import { z } from 'zod';
@@ -104,18 +105,20 @@ export async function runWeeklyBlog(now = new Date(), retryFailed = false) {
     const b = chooseBrief(posts) || await additionalBrief(posts);
     run = { ...run, keyword: b.keyword, targetUrl: b.target, sources: b.sources, briefId: b.id };
     const article = await draftArticle(b, posts);
-    const cover = await fetch(`${BLOG_ORIGIN}${b.image}`, { signal: AbortSignal.timeout(10000) });
-    if (!cover.ok || !cover.headers.get('content-type')?.startsWith('image/')) throw new Error('Verified cover image unavailable');
+    for (const image of articleImagePaths(b.image)) {
+      const asset = await fetch(`${BLOG_ORIGIN}${image}`, { signal: AbortSignal.timeout(10000) });
+      if (!asset.ok || !asset.headers.get('content-type')?.startsWith('image/')) throw new Error('One of three required article images is unavailable; draft held');
+    }
     // Stop stale workers before insertion; the lease exceeds the route’s 300s execution limit.
     const current = await readRun(week);
     if (current.raw !== raw) throw new Error('Weekly lease no longer owned');
     const safeTitle = article.title.replace(/[<>&"]/g, '');
     const sourceList = b.sources.map(url => `<li><a href="${url}">${url}</a></li>`).join('');
-    const content = `${article.content}<h2>Sources and review</h2><ul>${sourceList}</ul><p>Prepared with AI assistance for Pacific Wave Digital. Review current service scope and provider eligibility with our team before acting. The cover is illustrative.</p>`;
+    const content = `${attachSupportingImages(article.content)}<h2>Sources and review</h2><ul>${sourceList}</ul><p>Prepared with AI assistance for Pacific Wave Digital. Review current service scope and provider eligibility with our team before acting. The cover is illustrative.</p>`;
     const { data: post, error: postError } = await db().from('blog_posts').insert({ site_id: 'pwd', title: article.title, slug: `pwd-weekly-${week}`, excerpt: article.excerpt, content, category: WEEKLY_CATEGORY, image_url: b.image, image_alt: `Illustrative artwork for ${safeTitle}`, keywords: [...Array.from(new Set([b.keyword, ...article.tags]))], focus_keyword: b.keyword, read_time: Math.max(1, Math.ceil(content.replace(/<[^>]*>/g, ' ').split(/\s+/).length / 200)), published: false, published_at: null }).select('id,published').single();
     if (postError || !post || post.published) throw new Error('Draft persistence could not be verified');
     const review = await ensureTotiBlogReview(post.id, b.sources);
-    run = { ...run, approvalId: review.approvalId, state: 'ready', postId: post.id, title: article.title, updatedAt: new Date().toISOString(), checks: ['Structure and links checked', 'Duplicate titles checked', 'Verified local cover', 'Unpublished draft saved', 'Toti Room approval saved', 'Human fact-check and publication approval required'], error: undefined };
+    run = { ...run, approvalId: review.approvalId, state: 'ready', postId: post.id, title: article.title, updatedAt: new Date().toISOString(), checks: ['Structure and links checked', 'Duplicate titles checked', 'Three distinct owned images verified', 'Unpublished draft saved', 'Toti Room approval saved', 'Human fact-check and publication approval required'], error: undefined };
     await saveRun(run, raw);
     return { state: 'ready', postId: post.id, keyword: b.keyword };
   } catch (error) {

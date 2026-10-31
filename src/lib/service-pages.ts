@@ -79,7 +79,7 @@ export const servicePages: ServicePageData[] = [
         icon: '📱',
         title: 'Mobile-first, always',
         description:
-          'Most browsing in Vanuatu happens on phones over mobile data. We design for the small screen first, so your site works perfectly for the majority of your audience.',
+          'We design and test small screens first, including navigation, readable content and contact forms. We agree suitable devices and connection conditions during project planning.',
       },
       {
         icon: '⚡',
@@ -103,7 +103,7 @@ export const servicePages: ServicePageData[] = [
         icon: '🔍',
         title: 'Search-ready structure',
         description:
-          'Proper headings, metadata, and page structure from day one, so Google can find and rank your site — design and SEO working together, not as an afterthought.',
+          'Clear headings, descriptive metadata, useful service content and crawlable internal links give search engines a consistent page to assess. Indexing and ranking remain Google’s decisions.',
       },
       {
         icon: '🛠️',
@@ -141,6 +141,10 @@ export const servicePages: ServicePageData[] = [
       },
     ],
     faqs: [
+      {
+        question: 'Can you redesign my website while preserving its useful search pages?',
+        answer: 'We start by recording existing URLs, useful content and available Search Console results. We retain relevant pages where possible, map redirects when a URL must change, and check internal links, canonicals and the sitemap after launch. A redesign cannot guarantee unchanged rankings, so we monitor search performance and enquiries after release.',
+      },
       {
         question: 'Do you design websites outside Port Vila and Vanuatu?',
         answer: 'Yes. We can scope projects remotely for businesses on other Vanuatu islands and across the Pacific. We agree the target audience, content, language, time zones and support arrangements for each project. PWD is based in Port Vila; remote delivery does not mean we have offices in other countries.',
