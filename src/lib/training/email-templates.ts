@@ -9,8 +9,9 @@ import {
 import type { Registration } from "./schema";
 export function trainingEmails(r: Registration) {
   const c = r.cohort_snapshot;
-  const accountUrl = "https://pacificwavedigital.com/training-center/account?course=vanuatu-october-2026";
-  const checkoutUrl = "https://pacificwavedigital.com/training-center/checkout?course=vanuatu-october-2026";
+  const courseSlug = c.id === "vanuatu-2026-11" ? "vanuatu-november-2026" : "vanuatu-october-2026";
+  const accountUrl = `https://pacificwavedigital.com/training-center/account?course=${courseSlug}`;
+  const checkoutUrl = `https://pacificwavedigital.com/training-center/checkout?course=${courseSlug}`;
   const result = {
     student: {
       subject: "We received your Vanuatu training registration",

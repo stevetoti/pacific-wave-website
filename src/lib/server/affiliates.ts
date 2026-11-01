@@ -1,3 +1,4 @@
+import { octoberCourseSlug } from "../lms/cohort-registration";
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { reportServerError } from "./report-error";
@@ -13,7 +14,7 @@ export const affiliateCode = /^[A-Z0-9]{4,20}$/;
 // Only training pages may be link destinations, so /go links can never become open redirects.
 export function safeDestination(to: string | null) {
   return to && /^\/(training-center|vanuatu-training)(\/[a-z0-9/-]*)?$/.test(to)
-    ? to
+    ? to === `/training-center/programs/${octoberCourseSlug}` ? "/vanuatu-training" : to
     : "/training-center";
 }
 export function referralCode(request: Request) {

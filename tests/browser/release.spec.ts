@@ -9,7 +9,7 @@ test('SEO service pages and training navigation coexist in the release', async (
   if (await menu.isVisible()) await menu.click();
   await page.getByRole('navigation').getByRole('link', { name: 'Training', exact: true }).click();
   await expect(page).toHaveURL(/\/training-center$/);
-  await expect(page.getByRole('heading', { name: 'Build Your Online Business in 30 Days' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Build Your Business in 30 Days with AI' })).toBeVisible();
   for (const slug of ['web-design', 'web-development', 'software-development', 'digital-marketing', 'seo', 'ecommerce', 'mobile-apps', 'ai-automation', 'cloud-hosting']) {
     const response = await page.goto(`/services/${slug}`);
     expect(response?.status(), slug).toBe(200);

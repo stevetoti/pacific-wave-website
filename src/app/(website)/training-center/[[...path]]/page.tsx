@@ -2,7 +2,8 @@ import { socialMetadata } from "@/lib/seo/social-metadata";
 import { publicTrainingCourses, registrationCourse } from "@/lib/server/lms-catalog";
 import { programs } from "@/lib/lms/programs";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { replacementRegistration } from "@/lib/lms/cohort-registration";
+import { notFound, redirect } from "next/navigation";
 import TrainingCenter from "@/components/lms/TrainingCenter";
 import "../training-center.css";
 export async function generateMetadata({params, searchParams}: {
@@ -11,6 +12,8 @@ export async function generateMetadata({params, searchParams}: {
 }): Promise<Metadata> {
   const {path=[]}=await params;
   const search=await searchParams;
+  const replacement=replacementRegistration(path, typeof search.course==="string"?search.course:undefined, typeof search.mode==="string"?search.mode:undefined, typeof search.verify==="string"?search.verify:undefined);
+  if(replacement) redirect(replacement);
   const key=path[0]==="programs"?path[1]:path[0]==="course"?path[1]:typeof search.course==="string"?search.course:undefined;
   const course=key?await registrationCourse(key):null;
   const program=course&&!course.is_private?programs[course.slug]:undefined;
@@ -34,6 +37,9 @@ export default async function Page({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { path = [] } = await params;
+  const search = await searchParams;
+  const replacement = replacementRegistration(path, typeof search.course === "string" ? search.course : undefined, typeof search.mode === "string" ? search.mode : undefined, typeof search.verify === "string" ? search.verify : undefined);
+  if (replacement) redirect(replacement);
   if (
     path.length &&
     (!["account", "checkout", "dashboard", "course", "programs"].includes(
@@ -47,7 +53,6 @@ export default async function Page({
     (!path[1] || !programs[path[1]] || path[1] === "vanuatu-october-2026")
   )
     notFound();
-  const search = await searchParams;
   const query = Object.fromEntries(
     Object.entries(search).map(([key, value]) => [
       key,

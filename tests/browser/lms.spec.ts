@@ -2,7 +2,7 @@ import { test, expect as baseExpect } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "node:crypto";
 const expect = baseExpect.configure({ timeout: 20000 });
-test("training centre catalogue, October checkout and student entry work on all screen sizes", async ({
+test("training centre catalogue, November checkout and student entry work on all screen sizes", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -13,16 +13,17 @@ test("training centre catalogue, October checkout and student entry work on all 
   ).toBeVisible();
   await expect(
     page.getByRole("heading", {
-      name: "Build Your Online Business in 30 Days",
+      name: "Build Your Business in 30 Days with AI",
     }),
   ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Build Your Online Business in 30 Days", exact: true })).toHaveCount(0);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth + 1,
     ),
   ).toBe(true);
   await page.screenshot({path:`/tmp/lms-catalog-${test.info().project.name}.png`,fullPage:true});
-  await page.locator("article").filter({hasText:"Build Your Online Business in 30 Days"}).getByRole("link", { name: "Register", exact: true }).click();
+  await page.locator("article").filter({hasText:"Build Your Business in 30 Days with AI"}).getByRole("link", { name: "Register", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Create your student account" })).toBeVisible();
   await expect(page.getByLabel("Phone / WhatsApp")).toBeVisible();
   await expect(page.getByLabel("Location (town, island or country)")).toBeVisible();
@@ -389,7 +390,7 @@ test("real synthetic student registration, private dashboard, admin lesson editi
 test('course artwork and public mentorship details lead to the correct checkout', async ({page}) => {
  await page.goto('/training-center');
  const cards=page.locator('.lms-catalog-grid article');
- await expect(cards).toHaveCount(5);
+ await expect(cards).toHaveCount(4);
  for(const card of await cards.all()) await expect(card.locator('.lms-card-art img')).toBeVisible();
  const mentor=cards.filter({hasText:'AI, Coding & Software Development — One-on-One'});
  await expect(mentor).toContainText('250,000');

@@ -1,3 +1,4 @@
+import { isCompletedOctoberCourse } from "@/lib/lms/cohort-registration";
 import { guardPublicForm } from "@/lib/security/form-guard";
 import { clientIpFromHeaders } from "@/lib/security/turnstile";
 import { liveRecordingPending } from "@/lib/lms/lesson-recording";
@@ -61,6 +62,7 @@ export async function GET(request: Request, context: Context) {
           .select("*")
           .eq("published", true)
           .eq("is_private", false)
+          .neq("slug", "vanuatu-october-2026")
           .order("created_at"),
       );
       const banks = checked(
@@ -491,6 +493,7 @@ export async function POST(request: Request, context: Context) {
         user,
         order: initialOrder,
       } = await ownedOrder(request, input.id);
+      if (isCompletedOctoberCourse(initialOrder.course_id)) throw new HttpError(409, "October registration is closed. Please choose the November–December class.");
       await attachReferral(db, request, initialOrder.id);
       await lock(initialOrder.id);
       const order = checked(
@@ -584,6 +587,7 @@ export async function POST(request: Request, context: Context) {
       const id = z.uuid().parse(url.searchParams.get("id"));
       const bank = z.enum(["ANZ", "BRED"]).parse(url.searchParams.get("bank"));
       const { db, user, order: initialOrder } = await ownedOrder(request, id);
+      if (isCompletedOctoberCourse(initialOrder.course_id)) throw new HttpError(409, "October registration is closed. Please choose the November–December class.");
       await attachReferral(db, request, initialOrder.id);
       await lock(initialOrder.id);
       const order = checked(
