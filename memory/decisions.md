@@ -309,3 +309,6 @@ Use complete three-column rows on desktop:9business topics including invoice/rec
 
 ## 2026-10-31 — [Codex] Social share metadata
 Use complete nested OG/Twitter metadata per public page because Next metadata objects replace parent fields. Serve1200×630 JPEG cards from approved assets. Affiliate crawler requests return metadata before any database tracking; normal human referral behavior stays intact. Preserve private/unlisted boundaries; do not expose private course names in share previews. Regenerate cards when shared course prices/dates change.
+
+## 2026-11-01 — [Codex] Finished October cohort
+Owner closed October registration. Keep course published and enrolled student lessons/history intact; hide finished cohort from public discovery/recommendations and direct old enrolment links to November–December. Do not reopen October registration when deploying historical configurations. Other personal training offers remain available.

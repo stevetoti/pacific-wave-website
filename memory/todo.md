@@ -505,3 +505,6 @@ Live application e7a0740 (review of Claude 1fb58e6), production dpl_7yQApJJNVUB3
 
 ## 2026-10-31 — [Codex] Share previews complete
 - [x] Publish relevant course/public-page OG images, crawler-safe affiliate previews and versioned links; live metadata/image/referral/mobile checks and independent review pass; synthetic records cleaned.
+
+## 2026-11-01 — [Codex] October registration retired
+- [x] Close and hide October, update old enrolment links, preserve student access; deployed public/student API and desktop/mobile checks pass; synthetic fixtures removed.
