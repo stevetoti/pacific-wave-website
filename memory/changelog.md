@@ -1220,3 +1220,10 @@ All public pages/courses now have complete OG/Twitter metadata and33 branded1200
 
 ## 2026-11-01 — [Codex] October registration retirement in progress
 Owner requests removing finished October class from course discovery and preventing new registration; November–December is the available public cohort. Closing October course/cohort flags, filtering public catalogue, redirecting old slug/UUID account/checkout/programme links to November and preserving enrolled student lessons/dashboard. Affiliate old programme destinations updated too; other private training offers retained. Verification/publication pending.
+## 2026-10-31 — [Codex] Weekly article image quality gate and search-preserving design guidance
+
+Owner authorisedGoldenSEOimplementation. Addedtwoowned1200x630supportingSVGworkflow/checklistillustrations;newweeklydraftsverifycover+twodistinctimagesbeforepersistenceandattachaccessibleinlinefigures. Approval/publicationgateunchanged. Webdesignremovesunsupportedmajority-browsing/perfect-UXclaims,clarifiesGoogleindex/rankdecisionsandaddsvisibleFAQonpreservingexistingURLs/redirects/monitoring. Current0014110/93aefd3training/affiliatechangespreservedinisolatedclone. Tests/type/lintpass;build/releasepending.
+
+## 2026-11-01 — [Codex] Approval publication implementation
+
+Owner authorised automatic publication of approved blog revisions across six brands. Site-specific adapters and protected durable worker prepared in isolated current-live clones; exact fingerprint/three owned images/live delivery verification and bounded retries required. See GBP docs/seo/approval-publication-rollout-2026-11-01.md for release evidence. Activation pending final checks; original dirty repositories untouched.

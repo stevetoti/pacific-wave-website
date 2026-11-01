@@ -249,6 +249,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <ReactMarkdown
                   rehypePlugins={[rehypeRaw, rehypeSanitize]}
                   components={{
+                    h1: ({ children }) => <h2 className="text-2xl md:text-3xl font-bold text-deep-blue font-heading mt-12 mb-6">{children}</h2>,
                     h2: ({ children }) => {
                       const text = String(children);
                       const id = text
