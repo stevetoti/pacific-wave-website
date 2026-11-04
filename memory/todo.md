@@ -514,3 +514,6 @@ Live application e7a0740 (review of Claude 1fb58e6), production dpl_7yQApJJNVUB3
 
 ## 2026-11-04 — [Codex] Paid welcome complete
 - [x] Automatic paid-status welcome/dashboard/pre-class guide, durable dedup/retry, selected-only persistence and desktop/mobile verification; temporary fixtures removed. Explicitly confirmed prior student welcome delivered.
+
+## 2026-11-04 — [Codex] Onboarding tutor
+- [x] Add welcome-email tutor video/CTA, secure personalised interview and consented instructor review; final deployed browser/real-provider/permission/persistence checks pass and synthetic fixtures cleaned.

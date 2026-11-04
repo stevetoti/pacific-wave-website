@@ -318,3 +318,6 @@ Owner requires individual pending students to be marked paid. Never infer a cour
 
 ## 2026-11-04 — [Codex] Paid student welcome policy supersedes no-email action
 Owner expressly requests an automatic welcome when a selected student is newly marked paid. Queue one per enrolment with useful dashboard and pre-class guidance. Dispatch only dedicated welcome jobs, retain selected-ID safeguards and never sweep unrelated old email jobs. No general historical backfill; one separately confirmed prior student catch-up was authorised and delivered.
+
+## 2026-11-04 — [Codex] Onboarding tutor
+Onboarding sharing is per session with an unchecked explicit approval; only newly shared onboarding is readable by the assigned course teaching team. Never inject private specialist/history/workbook/notes, including asynchronous saves, into shared onboarding. Email uses animated preview linked to a secure course/sign-in return and live session; never auto-start microphone. Update future welcome templates without resending historical frozen payloads.
