@@ -52,6 +52,17 @@ test("bulk marks only the confirmed course's pending snapshot, preserves amounts
   } finally { await f.db.close(); }
 });
 
+test("one selected pending registration changes while another pending student remains untouched", async () => {
+  const f = await fixture();
+  try {
+    const selected = await f.order(), unselected = await f.order();
+    const before = (await f.db.query("SELECT * FROM pwd_lms_orders WHERE id=$1", [unselected])).rows[0];
+    assert.deepEqual((await f.run([selected])).updated_ids, [selected]);
+    assert.deepEqual((await f.db.query("SELECT * FROM pwd_lms_orders WHERE id=$1", [unselected])).rows[0], before);
+    assert.equal((await f.db.query("SELECT * FROM pwd_lms_audit WHERE target_id=$1", [unselected])).rows.length, 0);
+  } finally { await f.db.close(); }
+});
+
 test("cross-course or deleted IDs abort the whole batch, and unknown actors are refused", async () => {
   const f = await fixture();
   try {

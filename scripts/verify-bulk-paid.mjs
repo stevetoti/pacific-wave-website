@@ -26,7 +26,7 @@ async function api(path, token, body) {
   return { status: r.status, data };
 }
 let browser;
-await fs.mkdir('.deployment/blp-bulk-evidence',{recursive:true});
+await fs.mkdir('.deployment/paid-selection-20261104',{recursive:true});
 try {
   const sessions = [];
   for (const role of ['admin','student','instructor']) {
@@ -50,7 +50,7 @@ try {
     ('${ids[1]}','${instructor.user.id}','${courses[0].id}','${instructor.user.email}','Bulk QA instructor','',0,'VUV','pending','grant'),
     ('${ids[2]}','${student.user.id}','${courses[1].id}','${student.user.email}','Bulk QA other','',0,'VUV','pending','grant');commit;`);
   for (const session of [null, student, instructor]) {
-    const r = await api(`/api/lms-bulk-paid?course=${courses[0].id}`, session?.access_token);
+    const r = await api(`/api/lms-bulk-paid?course=${courses[0].id}&order_id=${ids[0]}`, session?.access_token);
     assert.equal(r.status, session ? 403 : 401);
     const write = await api('/api/lms-bulk-paid', session?.access_token, { course_id: courses[0].id, order_ids: [ids[0]], note: 'Forbidden test' });
     assert.equal(write.status, session ? 403 : 401);
@@ -58,8 +58,9 @@ try {
   report.push('PASS anonymous/student/assigned-instructor GET and POST denied');
   const crossed = await api('/api/lms-bulk-paid', admin.access_token, { course_id: courses[0].id, order_ids: [ids[0],ids[2]], note: 'Cross-course test' });
   assert.equal(crossed.status, 409);
-  const preview = await api(`/api/lms-bulk-paid?course=${courses[0].id}`, admin.access_token);
-  assert.equal(preview.status,200); assert.equal(preview.data.order_ids.length,2);
+  const preview = await api(`/api/lms-bulk-paid?course=${courses[0].id}&order_id=${ids[0]}`, admin.access_token);
+  assert.equal(preview.status,200); assert.deepEqual(preview.data.order_ids,[ids[0]]);
+  assert.equal((await api(`/api/lms-bulk-paid?course=${courses[0].id}`,admin.access_token)).status,400);
   const invalid = await api('/api/lms-bulk-paid',admin.access_token,{course_id:courses[0].id,order_ids:[ids[0]],note:''}); assert.equal(invalid.status,400);
   report.push('PASS admin preview, validation and atomic cross-course refusal');
   browser = await chromium.launch({ channel: 'chrome' });
@@ -71,32 +72,34 @@ try {
     await page.goto(base+'/admin/training-center');
     await page.getByRole('button',{name:new RegExp(`${courses[0].title}.*View students`)}).click();
     if (index===0) {
-      await page.getByRole('button',{name:'Mark pending students as paid',exact:true}).click();
+      await page.locator('.sr-row').filter({hasText:'Bulk QA student'}).getByRole('checkbox').check();
+      await page.getByRole('button',{name:'Mark 1 selected student as paid',exact:true}).click();
       const dialog=page.getByRole('dialog');await dialog.waitFor();
-      assert.match(await dialog.innerText(),/2 pending registrations/);
+      assert.match(await dialog.innerText(),/1 selected pending registration/);
       await dialog.getByLabel('Reason for the audit record').fill('Synthetic acceptance: owner-approved no-fee participants');
-      await fs.mkdir('.deployment/blp-bulk-evidence',{recursive:true});
-      await page.screenshot({path:'.deployment/blp-bulk-evidence/desktop-confirmation.png',fullPage:true});
-      await dialog.getByRole('button',{name:'Confirm 2 as paid'}).click();
-      await page.getByText('Marked 2 registrations as paid.',{exact:false}).waitFor();
+      await fs.mkdir('.deployment/paid-selection-20261104',{recursive:true});
+      await page.screenshot({path:'.deployment/paid-selection-20261104/desktop-confirmation.png',fullPage:true});
+      await dialog.getByRole('button',{name:'Confirm 1 as paid'}).click();
+      await page.getByText('Marked 1 registration as paid.',{exact:false}).waitFor();
     }
     await page.getByRole('button',{name:'← Back to courses'}).click();
     await page.getByRole('button',{name:new RegExp(`${courses[0].title}.*View students`)}).click();
     await page.reload();
     await page.getByRole('button',{name:new RegExp(`${courses[0].title}.*View students`)}).click();
     await page.locator('.sr-row').filter({hasText:'Enrolled (paid)'}).first().waitFor();
-    assert.equal(await page.locator('.sr-row').filter({hasText:'Enrolled (paid)'}).count(),2);
+    assert.equal(await page.locator('.sr-row').filter({hasText:'Enrolled (paid)'}).count(),1);
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
-    await page.screenshot({path:`.deployment/blp-bulk-evidence/${index?'mobile':'desktop'}-persisted.png`,fullPage:true});
+    await page.screenshot({path:`.deployment/paid-selection-20261104/${index?'mobile':'desktop'}-persisted.png`,fullPage:true});
     report.push(`PASS ${index?'mobile':'desktop'} actual admin roster after leave/reopen/hard reload`);
     await context.close();
   }
   const rows = await checked(db.from('pwd_lms_orders').select('id,status,amount,method,reviewed_by').in('id',ids));
-  assert.ok(rows.filter(o=>o.id!==ids[2]).every(o=>o.status==='paid'&&o.amount===0&&o.method==='grant'&&o.reviewed_by===admin.user.id));
+  assert.ok(rows.filter(o=>o.id===ids[0]).every(o=>o.status==='paid'&&o.amount===0&&o.method==='grant'&&o.reviewed_by===admin.user.id));
+  assert.equal(rows.find(o=>o.id===ids[1]).status,'pending');
   assert.equal(rows.find(o=>o.id===ids[2]).status,'pending');
   assert.equal((await checked(db.from('pwd_lms_emails').select('id').in('order_id',ids))).length,0);
-  assert.equal((await checked(db.from('pwd_lms_audit').select('id').eq('action','bulk_mark_paid').in('target_id',ids))).length,2);
-  const retry = await api('/api/lms-bulk-paid',admin.access_token,{course_id:courses[0].id,order_ids:ids.slice(0,2),note:'Retry acceptance'});
+  assert.equal((await checked(db.from('pwd_lms_audit').select('id').eq('action','bulk_mark_paid').in('target_id',ids))).length,1);
+  const retry = await api('/api/lms-bulk-paid',admin.access_token,{course_id:courses[0].id,order_ids:[ids[0]],note:'Retry acceptance'});
   assert.equal(retry.status,200);assert.equal(retry.data.updated_count,0);
   report.push('PASS persisted amounts/methods/audits, other course unchanged, no emails queued, idempotent retry');
 } catch (error) {
@@ -116,7 +119,18 @@ try {
   }
   if (userIds.length) await checked(db.from('admin_users').delete().in('id',userIds));
   for (const id of userIds) await checked(db.auth.admin.deleteUser(id));
-  await fs.mkdir('.deployment/blp-bulk-evidence',{recursive:true});
-  await fs.writeFile('.deployment/blp-bulk-evidence/'+(process.env.BULK_PAID_TEST_URL?'deployed':'local')+'-acceptance.json',JSON.stringify({base,report,synthetic_data_cleaned:true,timestamp:new Date().toISOString()},null,2));
+  if (userIds.length && orderIds.length && courses.length) {
+    const counts = await sql(`select
+      (select count(*) from auth.users where id in (${userIds.map(id=>`'${id}'`).join(',')})) users,
+      (select count(*) from admin_users where id in (${userIds.map(id=>`'${id}'`).join(',')})) admins,
+      (select count(*) from pwd_lms_orders where id in (${orderIds.map(id=>`'${id}'`).join(',')})) orders,
+      (select count(*) from pwd_lms_emails where order_id in (${orderIds.map(id=>`'${id}'`).join(',')})) emails,
+      (select count(*) from pwd_lms_courses where id in (${courses.map(c=>`'${c.id}'`).join(',')})) courses`);
+    assert.ok(Object.values(counts[0]).every(n=>Number(n)===0));
+    report.push('PASS cleanup: zero synthetic users/admins/orders/emails/courses remain');
+  }
+
+  await fs.mkdir('.deployment/paid-selection-20261104',{recursive:true});
+  await fs.writeFile('.deployment/paid-selection-20261104/'+(process.env.BULK_PAID_TEST_URL?'deployed':'local')+'-acceptance.json',JSON.stringify({base,report,synthetic_data_cleaned:true,timestamp:new Date().toISOString()},null,2));
 }
 console.log(JSON.stringify({base,report,synthetic_data_cleaned:true}));

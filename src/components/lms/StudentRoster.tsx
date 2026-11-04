@@ -317,7 +317,7 @@ export default function StudentRoster({
             </button>
           ))}
         </div>
-        {admin && <BulkMarkPaid key={course} courseId={course} disabled={busy} onChanged={onChanged} />}
+        {admin && <BulkMarkPaid key={course} courseId={course} selectedOrderIds={orders.filter(o => o.course_id === course && o.status === "pending" && selected.includes(o.id)).map(o => o.id)} disabled={busy} onChanged={async () => { setSelected([]); await onChanged(); }} />}
         <div className="sr-bulk">
           <label className="sr-check">
             <input

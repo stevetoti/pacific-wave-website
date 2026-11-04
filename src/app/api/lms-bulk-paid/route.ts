@@ -12,19 +12,22 @@ const inputSchema = z.object({
   note: z.string().trim().min(3).max(500),
 });
 
-// Preview independently of the admin roster's 500-row display limit or search filters.
+// Never infer a course-wide batch: preview only explicit checked registration IDs.
 export async function GET(request: Request) {
   try {
     const auth = await authorize(request);
     if (auth.response) return auth.response;
-    const courseId = z.uuid().safeParse(new URL(request.url).searchParams.get("course"));
+    const query = new URL(request.url).searchParams;
+    const selected = z.array(z.uuid()).min(1).max(1000).safeParse(query.getAll("order_id"));
+    if (!selected.success) throw new HttpError(400, "Select at least one pending student.");
+    const courseId = z.uuid().safeParse(query.get("course"));
     if (!courseId.success) throw new HttpError(400, "Choose a course.");
     const course = checked(await auth.db.from("pwd_lms_courses").select("id,title,currency,amount").eq("id", courseId.data).maybeSingle());
     if (!course) throw new HttpError(404, "Course not found.");
-    const result = await auth.db.from("pwd_lms_orders").select("id,amount", { count: "exact" })
-      .eq("course_id", course.id).eq("status", "pending").order("created_at").order("id").limit(1000);
+    const result = await auth.db.from("pwd_lms_orders").select("id,amount,name,email")
+      .eq("course_id", course.id).in("id", Array.from(new Set(selected.data))).eq("status", "pending").order("created_at").order("id").limit(1000);
     const orders = checked(result) || [];
-    return json({ course, order_ids: orders.map(o => o.id), total: orders.reduce((sum, o) => sum + o.amount, 0), total_pending: result.count ?? orders.length });
+    return json({ course, order_ids: orders.map(o => o.id), total: orders.reduce((sum, o) => sum + o.amount, 0), registrations: orders.map(o => ({id: o.id, name: o.name, email: o.email})) });
   } catch (error) {
     return apiError(error, "lms-bulk-paid/preview");
   }
