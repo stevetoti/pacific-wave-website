@@ -315,3 +315,6 @@ Owner closed October registration. Keep course published and enrolled student le
 
 ## 2026-11-04 — [Codex] Paid-status actions follow checked registrations
 Owner requires individual pending students to be marked paid. Never infer a course-wide batch from course/search selection. Require explicit checked pending registration IDs; show exact names/count before save and preserve every unchecked registration. Select all shown is an explicit multi-selection, not an automatic fallback.
+
+## 2026-11-04 — [Codex] Paid student welcome policy supersedes no-email action
+Owner expressly requests an automatic welcome when a selected student is newly marked paid. Queue one per enrolment with useful dashboard and pre-class guidance. Dispatch only dedicated welcome jobs, retain selected-ID safeguards and never sweep unrelated old email jobs. No general historical backfill; one separately confirmed prior student catch-up was authorised and delivered.

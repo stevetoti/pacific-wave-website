@@ -511,3 +511,6 @@ Live application e7a0740 (review of Claude 1fb58e6), production dpl_7yQApJJNVUB3
 
 ## 2026-11-04 — [Codex] Individual paid status complete
 - [x] Fix selection-aware mark-paid action; actual live admin single-record persistence, other pending records unchanged, role/no-email/audit checks and desktop/mobile cold review pass; all synthetic records removed.
+
+## 2026-11-04 — [Codex] Paid welcome complete
+- [x] Automatic paid-status welcome/dashboard/pre-class guide, durable dedup/retry, selected-only persistence and desktop/mobile verification; temporary fixtures removed. Explicitly confirmed prior student welcome delivered.
