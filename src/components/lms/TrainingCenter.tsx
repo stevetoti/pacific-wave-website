@@ -1,4 +1,5 @@
 "use client";
+import { onboardingCourse, onboardingPath, onboardingSignIn } from "@/lib/lms/onboarding";
 import { personalOffer, personalCheckoutNote, softwareSlug, fullProgramSlug } from "@/lib/lms/personal-programs";
 import { initialCohort, novemberCohort, novemberCourseSlug, dayMonth } from "@/lib/training/config";
 import { HoneypotField, useFormBotFields } from "@/components/security/FormBotFields";
@@ -91,6 +92,7 @@ function TrainingCenterContent({
   const router = useRouter();
   const view = path[0] || "catalog";
   const coursePathId = path[1];
+  const onboardingReturn = onboardingCourse(query.onboarding);
   const [showFaculty, setShowFaculty] = useState(false);
   const [showChallenges, setShowChallenges] = useState(query.view === "challenges");
   const [courseTab, setCourseTab] = useState(
@@ -203,7 +205,9 @@ function TrainingCenterContent({
     };
   }, [refresh]);
   useEffect(() => {
-    if (
+    if (view === "account" && email && onboardingReturn && !query.verify && !["reset", "update"].includes(authMode)) {
+      router.replace(onboardingPath(onboardingReturn));
+    } else if (
       view === "account" &&
       email &&
       query.next &&
@@ -249,6 +253,7 @@ function TrainingCenterContent({
     ready,
     authReady,
     query.course,
+    onboardingReturn,
     query.next,
     query.verify,
     authMode,
@@ -286,7 +291,7 @@ function TrainingCenterContent({
   const forAffiliate = query.next === "affiliate" && !queryCourse;
   // `next` names the dashboard tab to return to after signing in.
   const nextTab = query.next && /^[a-z_]{2,30}$/.test(query.next) ? query.next : null;
-  const afterAuth = queryCourse
+  const afterAuth = onboardingReturn ? onboardingPath(onboardingReturn) : queryCourse
     ? `${base}/checkout?course=${encodeURIComponent(queryCourse)}`
     : query.next === "teach"
       ? `${base}/teach`
@@ -1034,7 +1039,7 @@ function TrainingCenterContent({
               (!email ? (
                 <div className="lms-panel">
                   <h1><CourseText text={"Sign in to your course"} /></h1>
-                  <Link className="lms-button" href={`${base}/account`}><CourseText text={"Student sign in"} /></Link>
+                  <Link className="lms-button" href={query.tutor === "onboarding" && onboardingCourse(coursePathId) ? onboardingSignIn(coursePathId) : `${base}/account`}><CourseText text={"Student sign in"} /></Link>
                 </div>
               ) : (
                 current && (
@@ -1149,7 +1154,7 @@ function TrainingCenterContent({
                         )}
                       </aside>
                       <section className="lms-panel lms-content">
-                        {["paid", "granted"].includes(courseOrder?.status || "") && <StudentCoaches key={current.id} visible={showFaculty} courseId={current.id} lessonId={active?.published ? active.id : null} lessonTitle={active?.published ? active.title : null} />}
+                        {["paid", "granted"].includes(courseOrder?.status || "") && <StudentCoaches key={current.id} visible={showFaculty || query.tutor === "onboarding"} onboardingRequested={query.tutor === "onboarding"} courseId={current.id} lessonId={active?.published ? active.id : null} lessonTitle={active?.published ? active.title : null} />}
                         {showChallenges && <Challenges key={current.id} courseId={current.id} />}
                         <div hidden={showFaculty || showChallenges}>
                         {!active ? (

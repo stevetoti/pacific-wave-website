@@ -1,3 +1,4 @@
+import {sharedOnboardingContext} from "@/lib/lms/coach/onboarding-context";
 import { personalOffer, mentorshipExplanation } from "../lms/personal-programs";
 import "server-only";
 import {coachGreeting} from "@/lib/lms/coach/greeting";
@@ -139,6 +140,7 @@ export async function mintCoach(
   role: CoachRole,
   context: Awaited<ReturnType<typeof coachContext>>["context"] & {preferred_language?: string},
 ) {
+  const authorizedContext = role === "onboarding" ? sharedOnboardingContext(context) : context;
   const key = process.env.ANAM_API_KEY,
     personaId = process.env[coaches[role].personaEnv];
   if (!key || !personaId)
@@ -172,8 +174,8 @@ export async function mintCoach(
         avatarId,
         voiceId,
         llmId,
-        systemPrompt: coachPrompt(role, context),
-        tools: [{type:"client",name:"live_research",description:"Search current trustworthy sources for a student's factual question, requirements or learning gap. Use the supplied learning location; ask jurisdiction only when missing or different. Never include names, emails, workbook answers, credentials or private identifiers in a query.",parameters:{type:"object",properties:{topic:{type:"string",description:"A focused factual research question with jurisdiction where relevant"}},required:["topic"]},awaitResult:true,toolTimeoutSeconds:180}],
+        systemPrompt: coachPrompt(role, authorizedContext),
+        tools: role === "onboarding" ? [] : [{type:"client",name:"live_research",description:"Search current trustworthy sources for a student's factual question, requirements or learning gap. Use the supplied learning location; ask jurisdiction only when missing or different. Never include names, emails, workbook answers, credentials or private identifiers in a query.",parameters:{type:"object",properties:{topic:{type:"string",description:"A focused factual research question with jurisdiction where relevant"}},required:["topic"]},awaitResult:true,toolTimeoutSeconds:180}],
         initialMessage: coachGreeting(role,String(context.student.name || ""),context.preferred_language),
         maxSessionLengthSeconds: 900,
         ...(p.avatarModel ? { avatarModel: p.avatarModel } : {}),

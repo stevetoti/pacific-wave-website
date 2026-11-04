@@ -130,13 +130,14 @@ export async function POST(req: Request) {
       const session = checked(
         await db
           .from("pwd_lms_coach_sessions")
-          .select("id")
+          .select("id,role")
           .eq("id", input.session_id)
           .eq("course_id", input.course_id)
           .eq("user_id", user.id)
           .maybeSingle(),
       );
       if (!session) throw new HttpError(403, "Session unavailable.");
+      if (session.role === "onboarding") throw new HttpError(400,"Onboarding focuses on your course and goals. Ask a specialist coach for researched factual questions.");
       const reserve = await db.rpc("pwd_coach_reserve_research", {
         p_user: user.id,
         p_session: input.session_id,
@@ -180,6 +181,8 @@ export async function POST(req: Request) {
         409,
         "You have already completed onboarding for this course.",
       );
+    if (input.role === "onboarding" && input.share_onboarding !== true)
+      throw new HttpError(400,"Please approve sharing this onboarding conversation with your course teaching team before starting.");
     const reservation = await db.rpc("pwd_lms_coach_reserve", {
       p_user: user.id,
       p_course: input.course_id,
@@ -210,7 +213,7 @@ export async function POST(req: Request) {
       checked(
         await db
           .from("pwd_lms_coach_sessions")
-          .update({ state: "active" })
+          .update({ state: "active", ...(input.role === "onboarding" ? {onboarding_shared_at:new Date().toISOString()} : {}) })
           .eq("id", id),
       );
       return json({

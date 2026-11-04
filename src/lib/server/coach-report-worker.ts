@@ -33,6 +33,12 @@ export async function processCoachReports(id?: string) {
           .eq("id", job.session_id)
           .single(),
       );
+      const recipientResult=await db.auth.admin.getUserById(session.user_id);
+      if (recipientResult.error) throw recipientResult.error;
+      const recipient=recipientResult.data.user?.email;
+      if (recipient && /@(?:[^@]*\.)?(?:example\.(?:test|invalid)|invalid|test)$/i.test(recipient)) {
+        checked(await db.from("pwd_lms_coach_reports").update({state:"failed",email_state:"skipped",error:"Reserved test recipient; no AI report or email generated",locked_until:null}).eq("session_id",session.id));continue;
+      }
       const consent = checked(
         await db
           .from("pwd_lms_coach_preferences")
@@ -86,7 +92,7 @@ export async function processCoachReports(id?: string) {
           (x: { role: string; content: string }) =>
             x.role === "user" && x.content?.trim(),
         );
-        const research = substantive
+        const research = substantive && session.role !== "onboarding"
           ? await researchTopic(
               JSON.stringify({
                 course: course.title,
@@ -96,7 +102,7 @@ export async function processCoachReports(id?: string) {
               true,
             )
           : {
-              text: "No substantive conversation was captured.",
+              text: substantive ? "Onboarding uses this student’s conversation and authorised course facts; no external research was requested." : "No substantive conversation was captured.",
               sources: [],
               unverified_count: 0,
               searched_at: new Date().toISOString(),
@@ -183,6 +189,9 @@ export async function processCoachReports(id?: string) {
           session.user_id,
         );
         if (error || !data.user.email) throw Error("Student email unavailable");
+        if (/@(?:[^@]*\.)?(?:example\.(?:test|invalid)|invalid|test)$/i.test(data.user.email)) {
+          checked(await db.from("pwd_lms_coach_reports").update({email_state:"skipped",locked_until:null}).eq("session_id",session.id));continue;
+        }
         const live =
           process.env.TRAINING_EMAIL_MODE === "live" &&
           process.env.VERCEL_ENV === "production";

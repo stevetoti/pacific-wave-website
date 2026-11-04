@@ -179,6 +179,7 @@ try {
         action: "start",
         course_id: courses[0].id,
         role: "onboarding",
+        share_onboarding: true,
         consent: false,
       })
     ).status,
@@ -263,7 +264,7 @@ try {
       fullPage: true,
     });
     if (width === 1280) {
-      assert.equal(await page.getByRole("checkbox").count(),0);
+      await page.getByRole("checkbox",{name:/I agree to share this onboarding conversation/}).check();
       assert.equal(await page.getByRole("button",{name:"Approve and meet my coaches"}).count(),0);
       await page
         .getByRole("button", { name: "Start video conversation" })
@@ -326,7 +327,7 @@ try {
       assert.equal(saved.data.onboarding_completed,true);
       assert.equal((await api(users[1],courses[0].id)).data.onboarding_completed,false);
       assert.equal(await page.evaluate(()=>window.qaCameraTrack.readyState),"ended");
-      const repeat=await api(users[0],courses[0].id,{action:"start",course_id:courses[0].id,role:"onboarding",consent:true});assert.equal(repeat.status,409);
+      const repeat=await api(users[0],courses[0].id,{action:"start",course_id:courses[0].id,role:"onboarding",consent:true,share_onboarding:true});assert.equal(repeat.status,409);
       await api(users[0],courses[0].id,{action:"notes",course_id:courses[0].id,notes:"After onboarding"});assert.equal((await api(users[0],courses[0].id)).data.onboarding_completed,true);
       assert.ok(saved.data.history[0].transcript.some(l=>l.role==="user"));
       const sid=saved.data.history[0].id;

@@ -1,3 +1,4 @@
+import {onboardingPath,onboardingPreview} from "../lms/onboarding";
 import { trainingTemplate } from "./training-template";
 import { getWorkbook } from "../lms/workbook-schema";
 type WelcomeCourse = { id: string; title: string; slug: string; private_sessions?: boolean };
@@ -23,5 +24,6 @@ export function paidWelcomeEmail(name: string, course: WelcomeCourse, schedule?:
     title:"Welcome — your learning starts here",
     intro:`Hello ${name}. Your enrolment in ${course.title} is confirmed and your course access is ready. ${upcoming ? "Here is what you can do while you wait for class to start." : "Here is how to get started in your learning space."}`,
     action:"Open my learning dashboard",url:dashboard,secondary:{action:"Go directly to my course",url},details,
+    feature:{title:"Meet your Onboarding Tutor",description:"Watch a short introduction, then speak with your tutor about your motivation, expectations and goals. Your tutor will greet you by name after sign-in and explain how to get the most from the class.",image:`https://pacificwavedigital.com${onboardingPreview}`,url:`https://pacificwavedigital.com${onboardingPath(course.id)}`,action:"Speak with your Onboarding Tutor"},
   })};
 }

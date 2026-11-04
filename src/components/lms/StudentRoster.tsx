@@ -1,4 +1,5 @@
 "use client";
+import OnboardingHistory from "./coach/OnboardingHistory";
 import { useEffect, useMemo, useState } from "react";
 import { AlertCircle, BellRing, CheckCircle2, Clock3, FileText, History, MessageCircle, Search, Send, Trash2, UserPlus, XCircle } from "lucide-react";
 import { authFetch } from "@/lib/auth-fetch";
@@ -40,6 +41,7 @@ export default function StudentRoster({
   onChanged: () => Promise<void>;
 }) {
   const admin = mode === "admin";
+  const [onboardingStudent,setOnboardingStudent] = useState<Order|null>(null);
   const [profile, setProfile] = useState<string | null>(null);
   const [toast, setToast] = useState<{ text: string; userId?: string } | null>(null);
   useEffect(() => {
@@ -101,6 +103,7 @@ export default function StudentRoster({
   };
   const [course, setCourse] = useState("");
   const openCourse = (id: string, nextGroup: Group = "all") => {
+    setOnboardingStudent(null);
     setCourse(id); setGroup(nextGroup); setSearch(""); setSelected([]);
     setContact(null); setProfile(null); setTarget(null);
   };
@@ -178,6 +181,7 @@ export default function StudentRoster({
   const otherRegs = target ? orders.filter((o) => o.user_id === target.userId) : [];
   return (
     <div className="sr">
+      {onboardingStudent && <OnboardingHistory key={`${onboardingStudent.course_id}-${onboardingStudent.user_id}`} courseId={onboardingStudent.course_id} studentId={onboardingStudent.user_id} name={onboardingStudent.name} onClose={()=>setOnboardingStudent(null)} />}
       {notice && <p className="lms-notice" role="status">{notice}</p>}
       {contact && (
         <ContactDialog
@@ -371,6 +375,7 @@ export default function StudentRoster({
                 </div>
                 <div className="sr-actions">
                   <a href={`/training-center/dashboard?tab=messages&with=${o.user_id}`} target="_blank" rel="noreferrer" title="Message in the Training Centre"><MessageCircle size={16} /><span>Message</span></a>
+                  {["paid","granted"].includes(o.status) && <button type="button" className="lms-text" onClick={()=>setOnboardingStudent(o)}>Onboarding</button>}
                   <button type="button" className="lms-text sr-history" onClick={() => setProfile(o.user_id)}><History size={15} /><span>History</span></button>
                   <button type="button" className="sr-contact" onClick={() => setContact({ recipients: [fromOrder(o)], template: ["pending", "rejected"].includes(o.status) ? "payment_reminder" : statusInfo[o.status]?.group === "enrolled" ? "enrolled_next_steps" : "custom" })}>
                     <Send size={15} /> Contact
@@ -416,7 +421,7 @@ export default function StudentRoster({
                     {lastContact(a.user_id) && <small className="sr-last"><Send size={11} /> {lastContact(a.user_id)}</small>}
                   </div>
                   <div className="sr-actions">
-                    <button type="button" className="lms-text sr-history" onClick={() => setProfile(a.user_id)}><History size={15} /><span>History</span></button>
+                  <button type="button" className="lms-text sr-history" onClick={() => setProfile(a.user_id)}><History size={15} /><span>History</span></button>
                     <button type="button" className="sr-contact" onClick={() => setContact({ recipients: [fromAccount(a)], template: "choose_course" })}>
                       <Send size={15} /> Contact
                     </button>
