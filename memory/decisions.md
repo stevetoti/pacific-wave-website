@@ -312,3 +312,6 @@ Use complete nested OG/Twitter metadata per public page because Next metadata ob
 
 ## 2026-11-01 — [Codex] Finished October cohort
 Owner closed October registration. Keep course published and enrolled student lessons/history intact; hide finished cohort from public discovery/recommendations and direct old enrolment links to November–December. Do not reopen October registration when deploying historical configurations. Other personal training offers remain available.
+
+## 2026-11-04 — [Codex] Paid-status actions follow checked registrations
+Owner requires individual pending students to be marked paid. Never infer a course-wide batch from course/search selection. Require explicit checked pending registration IDs; show exact names/count before save and preserve every unchecked registration. Select all shown is an explicit multi-selection, not an automatic fallback.
