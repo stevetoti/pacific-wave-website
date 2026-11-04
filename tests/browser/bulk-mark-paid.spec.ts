@@ -23,7 +23,7 @@ test('paid status uses only individually checked registrations and survives leav
       const body = req.postDataJSON();
       expect(body.course_id).toBe(courseA); expect(body.order_ids).toEqual(expectedIds);
       writes++; body.order_ids.forEach((id: string) => { orders.find(o => o.id === id)!.status = 'paid'; });
-      return route.fulfill({ json: { updated_count: body.order_ids.length, skipped_count: 0 } });
+      return route.fulfill({ json: { updated_count: body.order_ids.length, skipped_count: 0, welcome_queued_count: body.order_ids.length } });
     }
     if (req.method() !== 'GET') throw Error('Unexpected mutation');
     return route.fulfill({ json: url.pathname === '/api/lms/admin' ? { courses, orders, lessons: [], banks: [] } : url.pathname === '/api/lms-students' ? { accounts: [] } : url.pathname === '/api/lms-contact' ? { sms_enabled: false, live: false, latest: {} } : {} });
@@ -43,6 +43,7 @@ test('paid status uses only individually checked registrations and survives leav
   await dialog.getByLabel('Reason for the audit record').fill('BLP owner approval');
   await dialog.getByRole('button', { name: 'Confirm 1 as paid' }).click();
   await expect(page.getByRole('status')).toContainText('Marked 1 registration as paid'); expect(writes).toBe(1);
+  await expect(page.getByRole('status')).toContainText('1 welcome email queued');
   await page.getByRole('button', { name: '← Back to courses' }).click();
   await page.getByRole('button', { name: /BLP bulk QA.*View students/ }).click();
   await expect(page.locator('.sr-row').filter({ hasText: 'Enrolled (paid)' })).toHaveCount(2);

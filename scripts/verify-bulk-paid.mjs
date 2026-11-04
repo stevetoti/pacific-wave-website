@@ -26,7 +26,7 @@ async function api(path, token, body) {
   return { status: r.status, data };
 }
 let browser;
-await fs.mkdir('.deployment/paid-selection-20261104',{recursive:true});
+await fs.mkdir('.deployment/paid-welcome-20261104',{recursive:true});
 try {
   const sessions = [];
   for (const role of ['admin','student','instructor']) {
@@ -77,8 +77,8 @@ try {
       const dialog=page.getByRole('dialog');await dialog.waitFor();
       assert.match(await dialog.innerText(),/1 selected pending registration/);
       await dialog.getByLabel('Reason for the audit record').fill('Synthetic acceptance: owner-approved no-fee participants');
-      await fs.mkdir('.deployment/paid-selection-20261104',{recursive:true});
-      await page.screenshot({path:'.deployment/paid-selection-20261104/desktop-confirmation.png',fullPage:true});
+      await fs.mkdir('.deployment/paid-welcome-20261104',{recursive:true});
+      await page.screenshot({path:'.deployment/paid-welcome-20261104/desktop-confirmation.png',fullPage:true});
       await dialog.getByRole('button',{name:'Confirm 1 as paid'}).click();
       await page.getByText('Marked 1 registration as paid.',{exact:false}).waitFor();
     }
@@ -89,7 +89,7 @@ try {
     await page.locator('.sr-row').filter({hasText:'Enrolled (paid)'}).first().waitFor();
     assert.equal(await page.locator('.sr-row').filter({hasText:'Enrolled (paid)'}).count(),1);
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
-    await page.screenshot({path:`.deployment/paid-selection-20261104/${index?'mobile':'desktop'}-persisted.png`,fullPage:true});
+    await page.screenshot({path:`.deployment/paid-welcome-20261104/${index?'mobile':'desktop'}-persisted.png`,fullPage:true});
     report.push(`PASS ${index?'mobile':'desktop'} actual admin roster after leave/reopen/hard reload`);
     await context.close();
   }
@@ -97,11 +97,13 @@ try {
   assert.ok(rows.filter(o=>o.id===ids[0]).every(o=>o.status==='paid'&&o.amount===0&&o.method==='grant'&&o.reviewed_by===admin.user.id));
   assert.equal(rows.find(o=>o.id===ids[1]).status,'pending');
   assert.equal(rows.find(o=>o.id===ids[2]).status,'pending');
-  assert.equal((await checked(db.from('pwd_lms_emails').select('id').in('order_id',ids))).length,0);
+  const welcomeJobs=await checked(db.from('pwd_lms_emails').select('id,status,state,order_id').in('order_id',ids));
+  assert.equal(welcomeJobs.length,1);assert.equal(welcomeJobs[0].order_id,ids[0]);assert.equal(welcomeJobs[0].status,'welcome');
+  assert.equal(welcomeJobs[0].state,'test_skipped');
   assert.equal((await checked(db.from('pwd_lms_audit').select('id').eq('action','bulk_mark_paid').in('target_id',ids))).length,1);
   const retry = await api('/api/lms-bulk-paid',admin.access_token,{course_id:courses[0].id,order_ids:[ids[0]],note:'Retry acceptance'});
   assert.equal(retry.status,200);assert.equal(retry.data.updated_count,0);
-  report.push('PASS persisted amounts/methods/audits, other course unchanged, no emails queued, idempotent retry');
+  report.push('PASS persisted amounts/methods/audits, other course unchanged, one welcome queued for selected student, test-recipient skipped without provider calls, idempotent retry');
 } catch (error) {
   console.log(JSON.stringify({failed:true,completed:report,error:error instanceof Error?error.message:String(error)}));
   throw error;
@@ -130,7 +132,7 @@ try {
     report.push('PASS cleanup: zero synthetic users/admins/orders/emails/courses remain');
   }
 
-  await fs.mkdir('.deployment/paid-selection-20261104',{recursive:true});
-  await fs.writeFile('.deployment/paid-selection-20261104/'+(process.env.BULK_PAID_TEST_URL?'deployed':'local')+'-acceptance.json',JSON.stringify({base,report,synthetic_data_cleaned:true,timestamp:new Date().toISOString()},null,2));
+  await fs.mkdir('.deployment/paid-welcome-20261104',{recursive:true});
+  await fs.writeFile('.deployment/paid-welcome-20261104/'+(process.env.BULK_PAID_TEST_URL?'deployed':'local')+'-acceptance.json',JSON.stringify({base,report,synthetic_data_cleaned:true,timestamp:new Date().toISOString()},null,2));
 }
 console.log(JSON.stringify({base,report,synthetic_data_cleaned:true}));

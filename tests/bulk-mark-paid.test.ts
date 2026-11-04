@@ -12,10 +12,11 @@ async function fixture() {
     CREATE TABLE pwd_lms_orders(id uuid primary key,course_id uuid,status text,amount int,method text,
       stripe_session text,checkout_lock_until timestamptz,reviewed_by uuid,review_note text,package_label text);
     CREATE TABLE pwd_lms_audit(id uuid default gen_random_uuid(),actor_id uuid,action text,target_id uuid);
-    CREATE TABLE pwd_lms_emails(id uuid default gen_random_uuid(),order_id uuid,status text);
+    CREATE TABLE pwd_lms_emails(id uuid default gen_random_uuid(),order_id uuid,status text,state text default 'pending',locked_until timestamptz,created_at timestamptz default now());
     CREATE FUNCTION pwd_lms_queue_email() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN NEW; END $$;
     CREATE TRIGGER pwd_lms_order_email AFTER INSERT OR UPDATE OF status ON pwd_lms_orders FOR EACH ROW EXECUTE FUNCTION pwd_lms_queue_email();`);
   await db.exec(await readFile("supabase/migrations/20261020_bulk_mark_paid.sql", "utf8"));
+  await db.exec(await readFile("supabase/migrations/20261104_paid_welcome.sql", "utf8"));
   const actor = crypto.randomUUID(), course = crypto.randomUUID(), other = crypto.randomUUID();
   await db.query("INSERT INTO auth.users VALUES($1,'admin@example.test')", [actor]);
   await db.exec("INSERT INTO admin_users VALUES('admin@example.test','pacific-wave-digital',true,'admin')");
@@ -29,7 +30,7 @@ async function fixture() {
   return { db, actor, course, other, order, run };
 }
 
-test("bulk marks only the confirmed course's pending snapshot, preserves amounts, audits, and sends no status emails", async () => {
+test("bulk marks only the confirmed course's pending snapshot, preserves amounts, audits, and queues one welcome per paid student without unrelated status emails", async () => {
   const f = await fixture();
   try {
     const a = await f.order(), b = await f.order("pending", f.course, 35000);
@@ -44,11 +45,12 @@ test("bulk marks only the confirmed course's pending snapshot, preserves amounts
     assert.equal(rows.find(r => r.id === a)?.reviewed_by, f.actor);
     for (const id of [elsewhere, later]) assert.equal(rows.find(r => r.id === id)?.status, "pending");
     assert.equal((await f.db.query("SELECT * FROM pwd_lms_audit")).rows.length, 2);
-    assert.equal((await f.db.query("SELECT * FROM pwd_lms_emails")).rows.length, before);
+    assert.equal((await f.db.query("SELECT * FROM pwd_lms_emails WHERE status='welcome'")).rows.length, 2);
+    assert.equal((await f.db.query("SELECT * FROM pwd_lms_emails WHERE status<>'welcome'")).rows.length, before);
     assert.equal((await f.run([a, b])).updated_count, 0, "retry is idempotent");
     assert.equal((await f.db.query("SELECT * FROM pwd_lms_audit")).rows.length, 2);
     await f.order();
-    assert.equal((await f.db.query("SELECT * FROM pwd_lms_emails")).rows.length, before + 1, "ordinary notifications still queue");
+    assert.equal((await f.db.query("SELECT * FROM pwd_lms_emails")).rows.length, before + 3, "ordinary notifications still queue alongside two welcomes");
   } finally { await f.db.close(); }
 });
 
@@ -86,7 +88,7 @@ test("a changed status or active card checkout is skipped while new pending regi
     await f.db.query("UPDATE pwd_lms_orders SET checkout_lock_until=now()+interval '1 hour' WHERE id=$1", [locked]);
     await f.db.query("UPDATE pwd_lms_orders SET status='refunded' WHERE id=$1", [a]);
     const later = await f.order();
-    assert.deepEqual(await f.run([a, stripe, locked]), { updated_count: 0, updated_ids: [], skipped_count: 3 });
+    assert.deepEqual(await f.run([a, stripe, locked]), { welcome_queued_count: 0, updated_count: 0, updated_ids: [], skipped_count: 3 });
     assert.equal((await f.db.query<{ status: string }>("SELECT status FROM pwd_lms_orders WHERE id=$1", [later])).rows[0].status, "pending");
   } finally { await f.db.close(); }
 });
@@ -103,3 +105,24 @@ test("failed audit rolls back payment status, while duplicated IDs only change a
     assert.equal((await f.db.query("SELECT * FROM pwd_lms_audit")).rows.length, 1);
   } finally { await f.db.close(); }
 });
+
+ test("welcome claims are isolated, leased, deduplicated and bounded", async () => {
+  const f = await fixture();
+  try {
+    const a=await f.order(),b=await f.order();
+    const result=await f.run([a]); assert.equal(result.updated_count,1);
+    assert.equal((await f.db.query("SELECT * FROM pwd_lms_emails WHERE status='welcome' AND order_id=$1",[a])).rows.length,1);
+    await f.run([a]);
+    assert.equal((await f.db.query("SELECT * FROM pwd_lms_emails WHERE status='welcome'")).rows.length,1);
+    assert.equal((await f.db.query("SELECT * FROM pwd_lms_claim_welcomes($1)",[[b]])).rows.length,0);
+    const claimed=(await f.db.query<{status:string;order_id:string;attempts:number}>("SELECT * FROM pwd_lms_claim_welcomes($1)",[[a]])).rows;
+    assert.equal(claimed.length,1);assert.equal(claimed[0].order_id,a);assert.equal(claimed[0].attempts,1);
+    assert.equal((await f.db.query("SELECT * FROM pwd_lms_claim_welcomes($1)",[[a]])).rows.length,0);
+    const legacy=(await f.db.query<{status:string}>("SELECT * FROM pwd_lms_claim_emails()")).rows;
+    assert.ok(legacy.every(row=>row.status!=='welcome'));
+    await f.db.query("UPDATE pwd_lms_emails SET attempts=6,locked_until=now()-interval '1 hour' WHERE status='welcome'");
+    assert.equal((await f.db.query("SELECT * FROM pwd_lms_claim_welcomes(null)")).rows.length,0);
+    assert.equal((await f.db.query<{state:string}>("SELECT state FROM pwd_lms_emails WHERE status='welcome'")).rows[0].state,'failed');
+    assert.equal((await f.db.query<{status:string}>("SELECT status FROM pwd_lms_orders WHERE id=$1",[b])).rows[0].status,'pending');
+  }finally{await f.db.close();}
+ });

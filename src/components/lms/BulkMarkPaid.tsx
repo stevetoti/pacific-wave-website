@@ -52,7 +52,7 @@ export default function BulkMarkPaid({ courseId, selectedOrderIds, disabled, onC
       const result = await response.json();
       if (!response.ok) throw Error(result.error || "Could not mark registrations paid.");
       close();
-      setNotice(`Marked ${result.updated_count} registration${result.updated_count === 1 ? "" : "s"} as paid. ${result.skipped_count ? `${result.skipped_count} skipped because their status changed or a card checkout is active. ` : ""}No emails sent.`);
+      setNotice(`Marked ${result.updated_count} registration${result.updated_count === 1 ? "" : "s"} as paid. ${result.skipped_count ? `${result.skipped_count} skipped because their status changed or a card checkout is active. ` : ""}${result.welcome_queued_count ? `${result.welcome_queued_count} welcome email${result.welcome_queued_count === 1 ? "" : "s"} queued with dashboard and class preparation guidance.` : "No new welcome emails needed."}`);
       try { await onChanged(); } catch { setProblem("Changes were saved. Reload this page to refresh the roster."); }
     } catch (error) {
       setProblem(error instanceof Error ? error.message : "Could not mark registrations paid.");
@@ -74,7 +74,7 @@ export default function BulkMarkPaid({ courseId, selectedOrderIds, disabled, onC
         <p>Only these <strong>{state.data.order_ids.length} selected pending registration{state.data.order_ids.length === 1 ? "" : "s"}</strong> will be marked as paid. Unselected students will stay unchanged.</p>
         <ul>{state.data.registrations.map(row => <li key={row.id}><strong>{row.name}</strong> · {row.email}</li>)}</ul>
         <p>{state.data.total === 0 ? "These registrations have no participant fee. Their amounts stay at zero." : `Recorded total: ${money(state.data.total, state.data.course.currency)}. Confirm payment has been received before continuing.`}</p>
-        <p>Existing paid, approved, rejected and refunded registrations stay unchanged. Active card checkouts are skipped. This updates status and course access without charging cards or sending emails.</p>
+        <p>Existing paid, approved, rejected and refunded registrations stay unchanged. Active card checkouts are skipped. This updates status and course access without charging cards. Each newly paid student will receive a welcome email with dashboard links and preparation steps.</p>
         <label>Reason for the audit record<textarea autoFocus value={note} onChange={event => setNote(event.target.value)} maxLength={500} disabled={working} placeholder="For example: BLP participant approval" /></label>
         {problem && <p className="lms-error" role="alert">{problem}</p>}
         <div className="sr-actions">

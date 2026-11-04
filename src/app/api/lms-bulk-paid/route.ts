@@ -1,9 +1,13 @@
+import { reportServerError } from "@/lib/server/report-error";
+import { after } from "next/server";
+import { sendPaidWelcomes } from "@/lib/server/paid-welcome";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { authorize } from "@/lib/server/auth";
 import { checked } from "@/lib/server/lms";
 import { apiError, HttpError, readJson } from "@/lib/server/http";
 
+export const maxDuration=300;
 export const dynamic = "force-dynamic";
 const json = (data: unknown) => NextResponse.json(data, { headers: { "Cache-Control": "no-store" } });
 const inputSchema = z.object({
@@ -46,7 +50,11 @@ export async function POST(request: Request) {
       if (error.code === "22023") throw new HttpError(409, error.message);
       throw error;
     }
-    // The atomic database operation suppresses its status-email trigger. No sending here.
+    // Payment and one welcome job per enrolment are saved atomically.
+    if (data.updated_ids?.length) {
+      try { after(async () => { try { await sendPaidWelcomes(data.updated_ids); } catch(error) { await reportServerError("lms/welcome-dispatch",error); } }); }
+      catch(error) { await reportServerError("lms/welcome-schedule",error); }
+    }
     return json(data);
   } catch (error) {
     return apiError(error, "lms-bulk-paid/update");
