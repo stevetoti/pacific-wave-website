@@ -299,7 +299,7 @@ export async function GET(request: Request, context: Context) {
     if (action === "admin") {
       const teach = await teachingAccess(request);
       if (!teach.admin) {
-        // Instructors: only their courses, lessons and enrolled students; no payment data.
+        // Instructor rosters use the assignment scope and omit payment details.
         const ids = teach.courseIds!;
         const [courses, lessons, orders] = await Promise.all([
           db.from("pwd_lms_courses").select("*").in("id", ids).order("created_at"),
@@ -307,8 +307,7 @@ export async function GET(request: Request, context: Context) {
           db
             .from("pwd_lms_orders")
             .select("id,user_id,course_id,name,email,phone,attendance,status,created_at")
-            .in("course_id", ids)
-            .in("status", ["paid", "granted"])
+            .or(teach.registrationFilter)
             .order("created_at", { ascending: false })
             .limit(1000),
         ]);

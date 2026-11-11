@@ -3,11 +3,15 @@ import assert from "node:assert/strict";
 import { contactTemplates, fillTemplate, normalizePhone, smsParts } from "../src/lib/lms/contact-templates";
 
 test("outreach templates personalise, count SMS parts and normalise Vanuatu numbers", () => {
-  const vars = { first_name: "Mary", course: "Build Your Online Business in 30 Days", amount: "VUV 35,000", reference: "PWD-1A2B3C4D", link: "pacificwavedigital.com/training-center" };
+  const vars = { first_name: "Mary", course: "Build Your Business in 30 Days with AI — November–December 2026", amount: "VUV 35,000", reference: "PWD-1A2B3C4D", link: "pacificwavedigital.com/training-center/checkout?course=vanuatu-november-2026" };
   const reminder = contactTemplates.find((t) => t.id === "payment_reminder")!;
   const sms = fillTemplate(reminder.sms, vars);
   assert.ok(sms.startsWith("Hi Mary,"));
-  assert.ok(sms.includes("VUV 35,000") && sms.includes("PWD-1A2B3C4D"));
+  assert.ok(sms.includes(`https://${vars.link}`));
+  assert.match(sms, /^[ -~]+$/);
+  const unicodeNameSms = fillTemplate(reminder.sms, { ...vars, first_name: "Māria" });
+  assert.ok(unicodeNameSms.length <= 268, "Unicode reminders fit the provider limit");
+  assert.match(fillTemplate(reminder.email, { ...vars, amount: "" }), /received your payment yet/);
   assert.ok(!/\{[a-z_]+\}/.test(fillTemplate(reminder.email, vars)), "no placeholders left");
   assert.equal(smsParts("x".repeat(160)), 1);
   assert.equal(smsParts("x".repeat(161)), 2);

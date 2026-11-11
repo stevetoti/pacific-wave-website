@@ -76,6 +76,7 @@ export default function StudentRoster({
     return {
       user_id: o.user_id,
       order_id: o.id,
+      emailSmsOnly: !admin && statusInfo[o.status]?.group === "unpaid",
       name: o.name,
       email: o.email,
       phone: o.phone,

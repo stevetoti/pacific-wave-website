@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Bot, Mail, MessageSquareText, Phone, StickyNote, X } from "lucide-react";
 import { authFetch } from "@/lib/auth-fetch";
 import ContactDialog, { type ContactChannel, type ContactRecipient } from "./ContactDialog";
-type Registration = { id: string; course: string; status: string; amount: string | null; reference: string; created_at: string };
-type Student = { user_id: string; name: string; email: string; phone: string; city: string; work: string; joined: string | null; last_sign_in: string | null; registrations: Registration[] };
+type Registration = { id: string; course: string; slug: string; email_sms_only: boolean; status: string; amount: string | null; reference: string; created_at: string };
+type Student = { user_id: string; name: string; email: string; phone: string; city: string; work: string; joined: string | null; last_sign_in: string | null; registrations: Registration[]; can_add_note?: boolean };
 type Entry = { id: string; kind: string; title: string; body: string; status: string; error: string; recipient: string; by: string; automatic: boolean; created_at: string };
 const icons: Record<string, typeof Mail> = { email: Mail, sms: MessageSquareText, whatsapp: Phone, note: StickyNote };
 export const statusText: Record<string, string> = {
@@ -67,10 +67,13 @@ export default function StudentProfile({
     }
   }
   const reg = student?.registrations[0];
+  const paymentPending = reg && ["pending", "rejected"].includes(reg.status);
+  const contactPath = paymentPending ? `checkout?course=${reg.slug}` : "dashboard";
   const recipient: ContactRecipient | null = student
     ? {
         user_id: student.user_id,
         order_id: reg?.id,
+        emailSmsOnly: reg?.email_sms_only,
         name: student.name,
         email: student.email,
         phone: student.phone,
@@ -79,7 +82,7 @@ export default function StudentProfile({
           course: reg?.course || "our training",
           amount: reg?.amount || "",
           reference: reg?.reference || "",
-          link: `${typeof window === "undefined" ? "pacificwavedigital.com" : window.location.host}/training-center/${reg && ["pending", "rejected"].includes(reg.status) ? "checkout" : "dashboard"}`,
+          link: `${typeof window === "undefined" ? "pacificwavedigital.com" : window.location.host}/training-center/${contactPath}`,
         },
       }
     : null;
@@ -111,8 +114,8 @@ export default function StudentProfile({
         {student && (
           <>
             <div className="sp-actions">
-              {([["email", "Email", Mail], ["sms", "SMS", MessageSquareText], ["whatsapp", "WhatsApp", Phone]] as [ContactChannel, string, typeof Mail][]).map(([ch, label, Icon]) => (
-                <button key={ch} type="button" onClick={() => setContact({ channel: ch, template: reg && ["pending", "rejected"].includes(reg.status) ? "payment_reminder" : "custom" })}>
+              {([["email", "Email", Mail], ["sms", "SMS", MessageSquareText], ["whatsapp", "WhatsApp", Phone]] as [ContactChannel, string, typeof Mail][]).filter(([ch]) => ch !== "whatsapp" || !reg?.email_sms_only).map(([ch, label, Icon]) => (
+                <button key={ch} type="button" onClick={() => setContact({ channel: ch, template: paymentPending ? "payment_reminder" : "custom" })}>
                   <Icon size={16} /> {label}
                 </button>
               ))}
@@ -134,11 +137,11 @@ export default function StudentProfile({
                 Account created {student.joined ? new Date(student.joined).toLocaleDateString() : "—"} · {student.last_sign_in ? `last signed in ${new Date(student.last_sign_in).toLocaleDateString()}` : "never signed in"}
               </small>
             </section>
-            <section className="sp-section">
+            {student.can_add_note !== false && <section className="sp-section">
               <h4>Add a private note</h4>
               <textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={2000} rows={2} placeholder="e.g. Called on Monday, will pay by Friday. Only staff can see notes." />
               <button type="button" className="lms-button" disabled={saving || !note.trim()} onClick={saveNote}>{saving ? "Saving…" : "Save note"}</button>
-            </section>
+            </section>}
             <section className="sp-section">
               <h4>Contact history</h4>
               <div className="sr-chips">

@@ -7,6 +7,7 @@ export type ContactChannel = "email" | "sms" | "whatsapp";
 export type ContactRecipient = {
   user_id: string;
   order_id?: string;
+  emailSmsOnly?: boolean;
   name: string;
   email: string;
   phone: string;
@@ -123,7 +124,8 @@ export default function ContactDialog({
       el?.setSelectionRange(at + tag.length, at + tag.length);
     });
   };
-  const channels: [Channel, string, typeof Mail][] = [["email", "Email", Mail], ["sms", "SMS", MessageSquareText], ["whatsapp", "WhatsApp", Phone]];
+  const channels: [Channel, string, typeof Mail][] = [["email", "Email", Mail], ["sms", "SMS", MessageSquareText]];
+  if (!recipients.some((recipient) => recipient.emailSmsOnly)) channels.push(["whatsapp", "WhatsApp", Phone]);
   const initials = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() || "").join("") || "?";
   const needed = parts * reachable.length;
   const lowCredit = channel === "sms" && smsEnabled && smsCredits !== null && smsCredits < needed;

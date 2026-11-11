@@ -20,8 +20,8 @@ export const contactTemplates: ContactTemplate[] = [
     label: "Payment reminder",
     subject: "Your place in {course} is waiting",
     email:
-      "Hi {first_name},\n\nThank you for registering for {course}. Your registration is saved, but we haven't received your payment of {amount} yet.\n\nYou can pay by bank transfer to our ANZ or BRED account, or by Visa or Mastercard. Please use your payment reference {reference} so we can match your payment quickly.\n\nIf you need any help, simply reply to this email or WhatsApp us on +678 528 8141.",
-    sms: "Hi {first_name}, your place in {course} is saved but payment of {amount} is still pending. Pay by bank (ref {reference}) or card: {link} Help: +678 5288141 - Pacific Wave Digital",
+      "Hi {first_name},\n\nThank you for registering for {course}. Your registration is saved, but we haven't received your payment yet.\n\nYou can pay by bank transfer to our ANZ or BRED account, or by Visa or Mastercard. Please use your payment reference {reference} so we can match your payment quickly.\n\nIf you need any help, simply reply to this email or WhatsApp us on +678 528 8141.",
+    sms: "Hi {first_name}, your Pacific Wave Digital course payment is pending. Pay here: https://{link}",
     action: "Complete my payment",
   },
   {

@@ -3,30 +3,47 @@ import { z } from "zod";
 import { checked } from "@/lib/server/lms";
 import { apiError, HttpError, readJson } from "@/lib/server/http";
 import { rateLimit } from "@/lib/server/rate-limit";
-import { teachingAccess, type TeachingAccess } from "@/lib/server/teaching";
+import { enrolledStatuses, teachingAccess, type TeachingAccess } from "@/lib/server/teaching";
 import { outreachLive, sendOutreachEmail, sendOutreachSms, smsConfigured, smsCredits } from "@/lib/server/contact";
 import { contactTemplates, fillTemplate } from "@/lib/lms/contact-templates";
 import { money, paymentReference } from "@/lib/lms/types";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 const json = (d: unknown) => NextResponse.json(d, { headers: { "Cache-Control": "no-store" } });
-// Admins see everyone; instructors only students enrolled in the courses they teach.
-async function studentScope(t: TeachingAccess) {
-  if (t.admin) return null;
-  const rows = checked(
-    await t.db.from("pwd_lms_orders").select("user_id").in("course_id", t.courseIds!).in("status", ["paid", "granted"]),
-  ) || [];
-  return new Set(rows.map((r) => r.user_id as string));
+const scopeError = () => new HttpError(403, "You can only contact eligible students in your courses.");
+
+async function enrolledOrder(t: TeachingAccess, userId: string) {
+  return checked(await t.db.from("pwd_lms_orders").select("id,course_id,status")
+    .eq("user_id", userId)
+    .in("course_id", t.courseIds!)
+    .in("status", enrolledStatuses)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle());
 }
-function assertInScope(scope: Set<string> | null, userId: string) {
-  if (scope && !scope.has(userId)) throw new HttpError(403, "You can only contact students in your courses.");
-}
+
+const contactOrderColumns = "id,user_id,course_id,status,name,email,phone,amount,currency,pwd_lms_courses(title,slug)";
+type ContactOrder = {
+  id: string;
+  user_id: string;
+  course_id: string;
+  status: string;
+  name: string;
+  email: string;
+  phone: string;
+  amount: number;
+  currency: string;
+  pwd_lms_courses: { title: string; slug: string } | null;
+};
+
 async function names(t: TeachingAccess, ids: string[]) {
   const unique = Array.from(new Set(ids.filter(Boolean)));
   if (!unique.length) return new Map<string, string>();
+  let orderQuery = t.db.from("pwd_lms_orders").select("user_id,name").in("user_id", unique);
+  if (!t.admin) orderQuery = orderQuery.or(t.registrationFilter);
   const [profiles, orders] = await Promise.all([
     t.db.from("pwd_lms_profiles").select("user_id,full_name").in("user_id", unique),
-    t.db.from("pwd_lms_orders").select("user_id,name").in("user_id", unique),
+    orderQuery,
   ]);
   const map = new Map<string, string>();
   for (const o of checked(orders) || []) if (o.name) map.set(o.user_id, o.name);
@@ -60,27 +77,35 @@ const statusLabels: Record<string, string> = {
 export async function GET(request: Request) {
   try {
     const t = await teachingAccess(request);
-    const scope = await studentScope(t);
     const url = new URL(request.url);
     const history = url.searchParams.get("history");
     // One student's full timeline: staff messages, notes and automatic system emails.
     if (history) {
       const userId = z.uuid().parse(history);
-      assertInScope(scope, userId);
-      const [log, ordersRes, authUser] = await Promise.all([
-        t.db.from("pwd_lms_contact_log").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(300),
-        t.db.from("pwd_lms_orders").select("id,course_id,email,name,phone,status,amount,currency,created_at,pwd_lms_courses(title)").eq("user_id", userId).order("created_at", { ascending: false }),
-        t.db.auth.admin.getUserById(userId),
-      ]);
-      const orders = (checked(ordersRes) || []) as unknown as { id: string; course_id: string; email: string; name: string; phone: string; status: string; amount: number; currency: string; created_at: string; pwd_lms_courses: { title: string } | null }[];
-      const visibleOrders = t.admin ? orders : orders.filter((o) => t.courseIds!.includes(o.course_id));
+      let orderQuery = t.db.from("pwd_lms_orders")
+        .select(`${contactOrderColumns},created_at`)
+        .eq("user_id", userId).order("created_at", { ascending: false });
+      if (!t.admin) orderQuery = orderQuery.or(t.registrationFilter);
+      const orders = (checked(await orderQuery) || []) as unknown as (ContactOrder & { created_at: string })[];
+      if (!t.admin && !orders.length) throw scopeError();
+
+      const canAddNote = t.admin || orders.some((order) => enrolledStatuses.includes(order.status));
+      const authUser = await t.db.auth.admin.getUserById(userId);
       const emails = Array.from(new Set([authUser.data.user?.email, ...orders.map((o) => o.email)].filter(Boolean) as string[])).map((e) => e.toLowerCase());
-      const [accountEmails, statusEmails, profileRes] = await Promise.all([
-        emails.length ? t.db.from("pwd_lms_account_emails").select("purpose,state,created_at,email").in("email", emails).order("created_at", { ascending: false }).limit(200) : Promise.resolve({ data: [], error: null }),
-        orders.length ? t.db.from("pwd_lms_emails").select("order_id,status,state,created_at").in("order_id", orders.map((o) => o.id)).order("created_at", { ascending: false }).limit(200) : Promise.resolve({ data: [], error: null }),
+      const orderIds = orders.map((order) => order.id);
+      let log = t.db.from("pwd_lms_contact_log").select("*").eq("user_id", userId)
+        .order("created_at", { ascending: false }).limit(300);
+      if (!t.admin) {
+        const ownLegacyNotes = canAddNote ? `,and(order_id.is.null,channel.eq.note,sent_by.eq.${t.user.id})` : "";
+        log = log.or(`order_id.in.(${orderIds.join(",")})${ownLegacyNotes}`);
+      }
+      const [logRes, accountEmails, statusEmails, profileRes] = await Promise.all([
+        log,
+        canAddNote && emails.length ? t.db.from("pwd_lms_account_emails").select("purpose,state,created_at,email").in("email", emails).order("created_at", { ascending: false }).limit(200) : Promise.resolve({ data: [], error: null }),
+        orderIds.length ? t.db.from("pwd_lms_emails").select("order_id,status,state,created_at").in("order_id", orderIds).order("created_at", { ascending: false }).limit(200) : Promise.resolve({ data: [], error: null }),
         t.db.from("pwd_lms_profiles").select("full_name,phone,city,occupation,organization").eq("user_id", userId).maybeSingle(),
       ]);
-      const logRows = checked(log) || [];
+      const logRows = checked(logRes) || [];
       const senders = await names(t, logRows.map((r) => r.sent_by).filter(Boolean));
       const profile = checked(profileRes);
       const title = (id: string) => orders.find((o) => o.id === id)?.pwd_lms_courses?.title || "course";
@@ -132,9 +157,12 @@ export async function GET(request: Request) {
           work: [profile?.occupation, profile?.organization].filter(Boolean).join(" · "),
           joined: authUser.data.user?.created_at || null,
           last_sign_in: authUser.data.user?.last_sign_in_at || null,
-          registrations: visibleOrders.map((o) => ({
+          can_add_note: canAddNote,
+          registrations: orders.map((o) => ({
             id: o.id,
             course: o.pwd_lms_courses?.title || "Course",
+            slug: o.pwd_lms_courses?.slug || "",
+            email_sms_only: !t.canFollowUpRegistration(o, "whatsapp"),
             status: o.status,
             amount: t.admin ? money(o.amount, o.currency) : null,
             reference: paymentReference(o.id),
@@ -146,10 +174,12 @@ export async function GET(request: Request) {
     }
     // Everyone's outreach in one list (instructors: their students only).
     if (url.searchParams.get("log") === "1") {
-      let q = t.db.from("pwd_lms_contact_log").select("*").order("created_at", { ascending: false }).limit(500);
+      const table = t.db.from("pwd_lms_contact_log");
+      let q = (t.admin ? table.select("*") : table.select("*,pwd_lms_orders!inner(id)"))
+        .order("created_at", { ascending: false }).limit(500);
       const channel = url.searchParams.get("channel");
       if (channel && ["email", "sms", "whatsapp", "note"].includes(channel)) q = q.eq("channel", channel);
-      if (scope) q = q.in("user_id", scope.size ? Array.from(scope) : ["00000000-0000-0000-0000-000000000000"]);
+      if (!t.admin) q = q.or(t.registrationFilter, { referencedTable: "pwd_lms_orders" });
       const rows = checked(await q) || [];
       const who = await names(t, [...rows.map((r) => r.user_id), ...rows.map((r) => r.sent_by)]);
       return json({
@@ -170,8 +200,11 @@ export async function GET(request: Request) {
       });
     }
     // Summary: SMS readiness and each student's most recent contact.
-    let q = t.db.from("pwd_lms_contact_log").select("user_id,channel,template,status,created_at").neq("channel", "note").order("created_at", { ascending: false }).limit(2000);
-    if (scope) q = q.in("user_id", scope.size ? Array.from(scope) : ["00000000-0000-0000-0000-000000000000"]);
+    const columns = "user_id,channel,template,status,created_at";
+    const table = t.db.from("pwd_lms_contact_log");
+    let q = (t.admin ? table.select(columns) : table.select(`${columns},pwd_lms_orders!inner(id)`))
+      .neq("channel", "note").order("created_at", { ascending: false }).limit(2000);
+    if (!t.admin) q = q.or(t.registrationFilter, { referencedTable: "pwd_lms_orders" });
     const rows = checked(await q) || [];
     const latest: Record<string, (typeof rows)[number]> = {};
     for (const r of rows) if (!latest[r.user_id] && r.status !== "failed") latest[r.user_id] = r;
@@ -202,13 +235,20 @@ export async function POST(request: Request) {
     const { db, user } = t;
     await rateLimit(request, `lms-contact-${user.id}`, 40);
     const input = await readJson(request, z.union([noteSchema, sendSchema]));
-    const scope = await studentScope(t);
     if (input.action === "note") {
-      assertInScope(scope, input.user_id);
+      let orderId = input.order_id || null;
+      if (!t.admin) {
+        const order = orderId
+          ? checked(await db.from("pwd_lms_orders").select("id,course_id,status")
+              .eq("id", orderId).eq("user_id", input.user_id).maybeSingle())
+          : await enrolledOrder(t, input.user_id);
+        if (!order || !t.canFollowUpRegistration(order, "note")) throw scopeError();
+        orderId = order.id;
+      }
       const row = checked(
         await db.from("pwd_lms_contact_log").insert({
           user_id: input.user_id,
-          order_id: input.order_id || null,
+          order_id: orderId,
           channel: "note",
           template: "note",
           body: input.body,
@@ -218,24 +258,30 @@ export async function POST(request: Request) {
       );
       return json({ success: true, id: row!.id });
     }
-    for (const target of input.targets) assertInScope(scope, target.user_id);
+    const orderIds = input.targets.flatMap((target) => target.order_id ? [target.order_id] : []);
+    const orders = orderIds.length
+      ? (checked(await db.from("pwd_lms_orders").select(contactOrderColumns).in("id", orderIds)) || []) as unknown as ContactOrder[]
+      : [];
+    // Validate every recipient before dispatching the first message.
+    const recipients = await Promise.all(input.targets.map(async (target) => {
+      const order = orders.find((candidate) => candidate.id === target.order_id && candidate.user_id === target.user_id);
+      if (t.admin) return { target, order, logOrderId: order?.id || null };
+      if (target.order_id) {
+        if (!order || !t.canFollowUpRegistration(order, input.channel)) throw scopeError();
+        return { target, order, logOrderId: order.id };
+      }
+      const enrolled = await enrolledOrder(t, target.user_id);
+      if (!enrolled) throw scopeError();
+      return { target, order, logOrderId: enrolled.id };
+    }));
     if (input.channel === "email" && !input.subject) return NextResponse.json({ error: "Add an email subject." }, { status: 400 });
     const template = contactTemplates.find((x) => x.id === input.template) || contactTemplates.at(-1)!;
     const live = outreachLive();
     const origin = live ? "https://pacificwavedigital.com" : process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3100";
-    const orderIds = input.targets.map((x) => x.order_id).filter(Boolean) as string[];
-    const orders = orderIds.length
-      ? checked(await db.from("pwd_lms_orders").select("id,user_id,course_id,name,email,phone,amount,currency,pwd_lms_courses(title,slug)").in("id", orderIds)) || []
-      : [];
     const userIds = Array.from(new Set(input.targets.map((x) => x.user_id)));
     const profiles = checked(await db.from("pwd_lms_profiles").select("user_id,full_name,phone").in("user_id", userIds)) || [];
     const results: { user_id: string; name: string; status: string; error: string }[] = [];
-    for (const target of input.targets) {
-      const o = orders.find((x) => x.id === target.order_id && x.user_id === target.user_id) as
-        | { id: string; course_id: string; name: string; email: string; phone: string; amount: number; currency: string; pwd_lms_courses: { title: string; slug: string } | null }
-        | undefined;
-      // Instructors may only reference registrations in their own courses.
-      if (o && !t.admin && !t.courseIds!.includes(o.course_id)) throw new HttpError(403, "You can only contact students in your courses.");
+    for (const { target, order: o, logOrderId } of recipients) {
       const p = profiles.find((x) => x.user_id === target.user_id);
       let email = o?.email || "";
       if (!email) email = (await db.auth.admin.getUserById(target.user_id)).data.user?.email || "";
@@ -251,7 +297,7 @@ export async function POST(request: Request) {
       const vars = {
         first_name: name.trim().split(/\s+/)[0] || "there",
         course,
-        amount: o ? money(o.amount, o.currency) : "",
+        amount: t.admin && o ? money(o.amount, o.currency) : "",
         reference: o ? paymentReference(o.id) : "",
         link: link.replace(/^https?:\/\//, ""),
       };
@@ -272,7 +318,7 @@ export async function POST(request: Request) {
       }
       await db.from("pwd_lms_contact_log").insert({
         user_id: target.user_id,
-        order_id: o?.id || null,
+        order_id: logOrderId,
         channel: input.channel,
         template: template.id,
         recipient,
