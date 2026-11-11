@@ -321,3 +321,6 @@ Owner expressly requests an automatic welcome when a selected student is newly m
 
 ## 2026-11-04 — [Codex] Onboarding tutor
 Onboarding sharing is per session with an unchecked explicit approval; only newly shared onboarding is readable by the assigned course teaching team. Never inject private specialist/history/workbook/notes, including asynchronous saves, into shared onboarding. Email uses animated preview linked to a secure course/sign-in return and live session; never auto-start microphone. Update future welcome templates without resending historical frozen payloads.
+
+## 2026-11-11 — [Codex] Instructor unpaid follow-up
+Grant unpaid follow-up per instructor assignment with a false default. Allow pending and rejected registrations in the flagged course for email/SMS and scoped history. Payment review, proof and private lesson assignment stay with their existing roles and enrollment requirements.

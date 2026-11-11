@@ -437,3 +437,6 @@ Complete source .deployment/enquiry-tracking-20261017, branch codex/student-sign
 
 ## 2026-10-20 — [Codex] Signup recovery LIVE and checked
 Stephen explicitly approved production publication; earlier approval blocker resolved. Exact app34cd6a2 / dpl_B63S4UmXK4D9Lmp6hDCX6esVSaA1 promoted and live alias confirmed READY. Eight live desktop/mobile signup regressions + two public release smoke checks pass. Anonymous real browser at desktop/390×844 auto-verifies and enables Create my account. Automated real-provider probes did not complete; manual checks recorded separately. No accounts/emails/payments/database changes. Canonical .deployment/enquiry-tracking-20261017, branch codex/student-signup-recovery-20261020; full evidence docs/STUDENT-SIGNUP-RECOVERY-2026-10-20.md. Preserve complete lineage before main deployment.
+
+## 2026-11-11 — [Codex] Annie Toa unpaid follow-up live
+Production d617b11/dpl_8pXwzCqV3kCQjjPSKZaBCmBhwyXp. Annie's November–December course assignment has `can_follow_up_unpaid=true`. Teaching → Students → course → Not paid yet supports Email/SMS for pending/rejected records. Default false on other assignments. Protected and live role/permission checks and independent Chrome desktop/mobile checks passed. No messages sent and synthetic fixtures removed. See docs/training/instructor-unpaid-follow-up-2026-11-11.md.

@@ -517,3 +517,6 @@ Live application e7a0740 (review of Claude 1fb58e6), production dpl_7yQApJJNVUB3
 
 ## 2026-11-04 — [Codex] Onboarding tutor
 - [x] Add welcome-email tutor video/CTA, secure personalised interview and consented instructor review; final deployed browser/real-provider/permission/persistence checks pass and synthetic fixtures cleaned.
+
+## 2026-11-11 — [Codex] Annie Toa unpaid follow-up
+- [x] Grant the scoped instructor permission, verify live API and desktop/mobile, and remove temporary data.

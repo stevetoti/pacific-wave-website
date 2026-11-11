@@ -1266,3 +1266,6 @@ Stephen authorised Annie Toa’s instructor access for student follow-up during 
 
 ## 2026-11-11 — [Codex] Instructor unpaid follow-up in progress
 Implemented course-assignment opt-in for pending and rejected registrations with scoped email/SMS and contact history. Instructor roster continues to omit payment data. Shortened the payment reminder SMS after VanuConnect rejected the previous Unicode message for length. Verification and release pending.
+
+## 2026-11-11 — [Codex] Instructor unpaid follow-up live
+Annie Toa can view pending and rejected registrations and use Email or SMS in Teaching → Students → November–December cohort → Not paid yet. Per-assignment opt-in verified on her one course. Vercel dpl_8pXwzCqV3kCQjjPSKZaBCmBhwyXp serves d617b11. Protected and live API checks and independent desktop/mobile instructor checks passed. The short reminder fits the SMS provider limit. Synthetic fixtures removed and zero sends. Evidence in docs/training/instructor-unpaid-follow-up-2026-11-11.md.
