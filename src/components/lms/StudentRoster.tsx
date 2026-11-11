@@ -345,7 +345,7 @@ export default function StudentRoster({
         </div>
         <div className="sr-table">
           {rows.map((o) => {
-            const s = statusInfo[o.status] || { label: o.status, tone: "muted" };
+            const s = statusInfo[o.status] || { label: o.status, tone: "muted", group: "other" };
             return (
               <article key={o.id} className={`sr-row ${selected.includes(o.id) ? "picked" : ""}`}>
                 <div className="sr-person">
@@ -375,7 +375,7 @@ export default function StudentRoster({
                   {admin && <small>Ref {paymentReference(o.id)}</small>}
                 </div>
                 <div className="sr-actions">
-                  <a href={`/training-center/dashboard?tab=messages&with=${o.user_id}`} target="_blank" rel="noreferrer" title="Message in the Training Centre"><MessageCircle size={16} /><span>Message</span></a>
+                  {(admin || s.group === "enrolled") && <a href={`/training-center/dashboard?tab=messages&with=${o.user_id}`} target="_blank" rel="noreferrer" title="Message in the Training Centre"><MessageCircle size={16} /><span>Message</span></a>}
                   {["paid","granted"].includes(o.status) && <button type="button" className="lms-text" onClick={()=>setOnboardingStudent(o)}>Onboarding</button>}
                   <button type="button" className="lms-text sr-history" onClick={() => setProfile(o.user_id)}><History size={15} /><span>History</span></button>
                   <button type="button" className="sr-contact" onClick={() => setContact({ recipients: [fromOrder(o)], template: ["pending", "rejected"].includes(o.status) ? "payment_reminder" : statusInfo[o.status]?.group === "enrolled" ? "enrolled_next_steps" : "custom" })}>

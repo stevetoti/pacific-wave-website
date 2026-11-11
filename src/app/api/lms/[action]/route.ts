@@ -38,7 +38,7 @@ import {
 } from "@/lib/lms/schema";
 import { csvCell } from "@/lib/training/csv";
 import { attachReferral } from "@/lib/server/affiliates";
-import { teachingAccess } from "@/lib/server/teaching";
+import { enrolledStatuses, teachingAccess } from "@/lib/server/teaching";
 import type { Bank, Lesson } from "@/lib/lms/types";
 export const dynamic = "force-dynamic";
 const json = (data: unknown) =>
@@ -765,6 +765,14 @@ export async function POST(request: Request, context: Context) {
         const courseId =
           input.action === "lesson" ? input.value.course_id : input.course_id;
         teach.assertCourse(courseId);
+        const assignedOrderId = input.action === "lesson" ? input.value.order_id
+          : input.action === "recording_upload" ? input.order_id : null;
+        if (assignedOrderId) {
+          const enrolled = checked(await db.from("pwd_lms_orders").select("id")
+            .eq("id", assignedOrderId).eq("course_id", courseId)
+            .in("status", enrolledStatuses).maybeSingle());
+          if (!enrolled) throw new HttpError(403, "Choose an enrolled student from this course.");
+        }
         if (input.action === "lesson" && input.value.id) {
           const existing = checked(
             await db

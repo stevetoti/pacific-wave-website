@@ -686,7 +686,7 @@ export default function TrainingAdmin({
                       >
                         <option value="">Shared course lesson</option>
                         {orders
-                          .filter((o) => o.course_id === selected)
+                          .filter((o) => o.course_id === selected && (!teaching || o.status === "paid" || o.status === "granted"))
                           .map((o) => (
                             <option key={o.id} value={o.id}>
                               {o.name} · {o.email} · {o.status}
