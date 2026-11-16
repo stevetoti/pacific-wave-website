@@ -4,7 +4,7 @@ Status: prepared locally; **not published**. Base source14895f8 includes live d6
 
 The reading-language provider now lives in the shared Training Centre layout, covering the course, dashboard and separate coaching-session routes. Authored UI in dashboard, workbook, recordings, onboarding, classroom, community and messages uses the existing translation dictionary. Public programme titles/descriptions also use it. Bislama dates retain Vanuatu scheduling and names/number placeholders retain their original values.
 
-All 1,723 authored source strings in `scripts/localization/student-source.json` have Bislama entries, with placeholders/URLs checked. Translations use the existing Language Hub grammar/glossary/gold examples and configured Anthropic model. Stephen explicitly approved this authored-copy/reference-only payload; no student answers, profiles, messages, transcripts or recordings were sent. Structured JSON batches replaced incomplete free-form batches; prior completed entries were retained. Core labels, date names and dynamic templates received Codex review. This is not an independent native-speaker review.
+All 1,763 authored source strings in `scripts/localization/student-source.json` have Bislama entries, with placeholders/URLs checked. Translations use the existing Language Hub grammar/glossary/gold examples and configured Anthropic model. Stephen explicitly approved this authored-copy/reference-only payload; no student answers, profiles, messages, transcripts or recordings were sent. Structured JSON batches replaced incomplete free-form batches; prior completed entries were retained. Core labels, date names and dynamic templates received Codex review. This is not an independent native-speaker review.
 
 ## Acceptance evidence
 
@@ -19,7 +19,7 @@ All 1,723 authored source strings in `scripts/localization/student-source.json` 
 | Zoom card | PASS | Actual classroom card shows translated course/lesson labels and join/fallback buttons; no Zoom session started in this language check |
 | Mobile card | PASS |390 × 844 browser, document width 380 ≤ 390; card labels fit; viewport reset |
 | Production student language journey | BLOCKED | Automatic review rejected a new production fixture because prior approval was scoped to Zoom testing. Used local synthetic data instead; no production account/enrolment created |
-| Publication | NOT PERFORMED | No push, deployment, domain change or database migration |
+| Publication | PASS | Owner authorised; app5d933fc, deployment dpl_DMRAMVahW1j1zwnkg9RWK164SSxs live; no database migration |
 
 TypeScript, changed-file lint, 11 locale/workbook tests and the final production build with all eight route guards pass. Numeric values, variables and URLs are preserved. Temporary `training-center/locale-preview` route was removed before release builds. It is not included in this source. The isolated dev server was stopped.
 
@@ -28,3 +28,7 @@ Browser console hydration warning was attributable to installed Grammarly/body a
 Student-entered text, community messages, named private coaching transcripts/reports, original recordings, raster artwork and existing English PDF downloads are not rewritten. Embedded third-party Zoom/YouTube controls retain their own language support. Newly authored course copy needs dictionary updates; unknown strings still safely fall back to English.
 
 Source path at preparation: `/private/tmp/pwd-bislama-20261116`, branch `codex/bislama-student-experience-20261116`. Durable source/evidence copy and final commit are in the shared journals and workspace `output/bislama-20261116/`.
+
+## Published acceptance — 16 November 2026 [Codex]
+
+Final app5d933fcbabed085c06fdd6b90a6ff11733086046 pushed on feature branch and promoted as dpl_DMRAMVahW1j1zwnkg9RWK164SSxs. Live catalogue, programme detail/project/skills/benefits, complete generated fee explanation and selected Bislama after reload/navigation verified in Chrome. Initial live programme check exposed unwrapped authored blocks; these were corrected before final acceptance. Final protected programme HTTP200; cloud compile/type/98pages/eightguards pass. Eleven locale/workbook tests and changed-file lint pass; final dictionary-only addition reran seven locale tests. Main-website global footer remains English; private student acceptance remains the local synthetic-data evidence above. No live student language fixture created. No database, environment or webhook changes. Rollback before task dpl_8pXwzCqV3kCQjjPSKZaBCmBhwyXp. Screenshot: workspace output/bislama-20261116/live-bislama.png. Earlier preparation-only statements above are historical.
