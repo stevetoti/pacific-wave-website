@@ -1,4 +1,5 @@
 "use client";
+import { CourseText } from "@/components/lms/CourseLanguage";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -148,38 +149,31 @@ export default function CoachSessions() {
             height={48}
           />
         </Link>
-        <span>
-          TRAINING CENTRE
-          <br />
-          <strong>Your coaching library</strong>
+        <span><CourseText text={"TRAINING CENTRE"} /><br />
+          <strong><CourseText text={"Your coaching library"} /></strong>
         </span>
-        <Link href="/training-center/dashboard">My learning →</Link>
+        <Link href="/training-center/dashboard"><CourseText text={"My learning →"} /></Link>
       </header>
       <nav>
-        <Link href="/training-center/sessions">All sessions</Link>
+        <Link href="/training-center/sessions"><CourseText text={"All sessions"} /></Link>
         {detail && (
-          <Link href={`/training-center/course/${detail.session.course_id}`}>
-            Back to course
-          </Link>
+          <Link href={`/training-center/course/${detail.session.course_id}`}><CourseText text={"Back to course"} /></Link>
         )}
       </nav>
       {error && (
         <p role="alert">
           {error}{" "}
-          <Link href="/training-center/account?mode=signin">Sign in</Link>
+          <Link href="/training-center/account?mode=signin"><CourseText text={"Sign in"} /></Link>
         </p>
       )}
       {loading ? (
-        <p>Loading your private sessions…</p>
+        <p><CourseText text={"Loading your private sessions…"} /></p>
       ) : !id ? (
         <>
           <div className={styles.hero}>
-            <p>LEARN · REFLECT · APPLY</p>
-            <h1>Every conversation. A next step.</h1>
-            <p>
-              Your session notes, additional research, source links and branded
-              PDFs—all in one place.
-            </p>
+            <p><CourseText text={"LEARN · REFLECT · APPLY"} /></p>
+            <h1><CourseText text={"Every conversation. A next step."} /></h1>
+            <p><CourseText text={"Your session notes, additional research, source links and branded PDFs—all in one place."} /></p>
           </div>
           <div className={styles.grid}>
             {rows.map((s) => (
@@ -197,51 +191,47 @@ export default function CoachSessions() {
                 <div>
                   <small>
                     {new Date(s.created_at).toLocaleDateString()} ·{" "}
-                    {coaches[s.role].title}
+                    <CourseText text={coaches[s.role].title} />
                   </small>
                   <h2>{s.title || coaches[s.role].title}</h2>
-                  <p>{s.pwd_lms_courses.title}</p>
+                  <p><CourseText text={s.pwd_lms_courses.title} /></p>
                   <span>
-                    {s.pwd_lms_coach_reports?.state === "ready"
+                    <CourseText text={s.pwd_lms_coach_reports?.state === "ready"
                       ? "Read report & download PDF →"
                       : s.pwd_lms_coach_reports?.state === "failed"
                         ? "Report needs attention"
-                        : "Session details →"}
+                        : "Session details →"} />
                   </span>
                 </div>
               </Link>
             ))}
           </div>
           {!rows.length && (
-            <p>Your finished coaching conversations will appear here.</p>
+            <p><CourseText text={"Your finished coaching conversations will appear here."} /></p>
           )}
           <div className={styles.actions}>
             <button
               disabled={!offset}
               onClick={() => setOffset((n) => Math.max(0, n - 20))}
-            >
-              Previous
-            </button>
+            ><CourseText text={"Previous"} /></button>
             <span>
-              {Math.min(offset + 1, total)}–{Math.min(offset + 20, total)} of{" "}
+              {Math.min(offset + 1, total)}–{Math.min(offset + 20, total)}<CourseText text={"of"} />{" "}
               {total}
             </span>
             <button
               disabled={offset + 20 >= total}
               onClick={() => setOffset((n) => n + 20)}
-            >
-              Next
-            </button>
+            ><CourseText text={"Next"} /></button>
           </div>
         </>
       ) : detail ? (
         <article className={styles.report}>
           <p className={styles.eyebrow}>
-            {detail.session.pwd_lms_courses.title}
+            <CourseText text={detail.session.pwd_lms_courses.title} />
           </p>
           <h1>{detail.session.title || coaches[detail.session.role].title}</h1>
           <p>
-            {coaches[detail.session.role].title} ·{" "}
+            <CourseText text={coaches[detail.session.role].title} /> ·{" "}
             {new Date(detail.session.created_at).toLocaleString()}
           </p>
           <div className={styles.actions}>
@@ -254,16 +244,12 @@ export default function CoachSessions() {
             <button
               disabled={busy || !title.trim()}
               onClick={() => void rename()}
-            >
-              Save name
-            </button>
-            <button disabled={busy || !report} onClick={() => void download()}>
-              Download branded PDF
-            </button>
+            ><CourseText text={"Save name"} /></button>
+            <button disabled={busy || !report} onClick={() => void download()}><CourseText text={"Download branded PDF"} /></button>
           </div>
           {report ? (
             <>
-              <h2>Session summary</h2>
+              <h2><CourseText text={"Session summary"} /></h2>
               {text(report.summary)}
               {report.discussion.map((x, i) => (
                 <section key={i}>
@@ -271,7 +257,7 @@ export default function CoachSessions() {
                   {text(x.details)}
                 </section>
               ))}
-              <h2>Learning opportunities</h2>
+              <h2><CourseText text={"Learning opportunities"} /></h2>
               {report.learning_gaps.map((x, i) => (
                 <section key={i}>
                   <h3>{x.topic}</h3>
@@ -279,8 +265,8 @@ export default function CoachSessions() {
                 </section>
               ))}
               <div className={styles.research}>
-                <p className={styles.eyebrow}>BEYOND OUR CONVERSATION</p>
-                <h2>Additional research & learning</h2>
+                <p className={styles.eyebrow}><CourseText text={"BEYOND OUR CONVERSATION"} /></p>
+                <h2><CourseText text={"Additional research & learning"} /></h2>
                 {report.research.length ? (
                   report.research.map((x, i) => (
                     <section key={i}>
@@ -290,13 +276,10 @@ export default function CoachSessions() {
                     </section>
                   ))
                 ) : (
-                  <p>
-                    No additional verified findings are available for this
-                    session.
-                  </p>
+                  <p><CourseText text={"No additional verified findings are available for this session."} /></p>
                 )}
               </div>
-              <h2>Your next steps</h2>
+              <h2><CourseText text={"Your next steps"} /></h2>
               <ol>
                 {report.actions.map((x, i) => (
                   <li key={i}>{plainText(x)}</li>
@@ -304,58 +287,57 @@ export default function CoachSessions() {
               </ol>
               {report.limitations.length > 0 && (
                 <>
-                  <h2>What to confirm</h2>
+                  <h2><CourseText text={"What to confirm"} /></h2>
                   {report.limitations.map((x, i) => (
                     <p key={i}>{plainText(x)}</p>
                   ))}
                 </>
               )}
-              <h2>Sources checked</h2>
+              <h2><CourseText text={"Sources checked"} /></h2>
               {report.sources.map((s) => (
                 <p key={s.id}>
                   <a href={s.url} target="_blank" rel="noopener noreferrer">
                     [{s.id}] {s.title}
                   </a>
                   <br />
-                  <small>
-                    Checked {new Date(s.checked_at).toLocaleDateString()}
+                  <small><CourseText text={"Checked"} />{new Date(s.checked_at).toLocaleDateString()}
                   </small>
                 </p>
               ))}
               <p className={styles.status}>
-                {detail.report?.email_state === "sent"
+                <CourseText text={detail.report?.email_state === "sent"
                   ? "Your report email was accepted for delivery to your account email."
                   : detail.report?.email_state === "failed"
                     ? "The report is ready here, but email delivery needs attention."
                     : detail.report?.email_state === "skipped"
                       ? "This report is saved here; no email was sent."
-                      : "Your report is ready. Email delivery is being prepared."}
+                      : "Your report is ready. Email delivery is being prepared."} />
               </p>
             </>
           ) : (
             <div role="status" className={styles.research}>
               <h2>
-                {!detail.report && detail.session.state === "ended"
+                <CourseText text={!detail.report && detail.session.state === "ended"
                   ? "Your saved conversation"
                   : detail.report?.state === "failed"
                     ? "Your report needs attention"
-                    : "Preparing your learning report"}
+                    : "Preparing your learning report"} />
               </h2>
               <p>
-                {!detail.report && detail.session.state === "ended"
+                <CourseText text={!detail.report && detail.session.state === "ended"
                   ? "This session was saved before researched reports were enabled. You can revisit the original conversation below."
                   : detail.report?.state === "failed"
                     ? "Your conversation is saved. Contact your training team if the report remains unavailable."
-                    : "We’re organizing the discussion, researching learning opportunities and checking source links. You can leave this page; the report will appear here and arrive by email when ready."}
+                    : "We’re organizing the discussion, researching learning opportunities and checking source links. You can leave this page; the report will appear here and arrive by email when ready."} />
               </p>
             </div>
           )}
           {detail.session.state === "ended" && (
             <details>
-              <summary>Original conversation</summary>
+              <summary><CourseText text={"Original conversation"} /></summary>
               {detail.session.transcript?.map((line, i) => (
                 <p key={i}>
-                  <strong>{line.role === "user" ? "You" : "Coach"}:</strong>{" "}
+                  <strong><CourseText text={line.role === "user" ? "You" : "Coach"} />:</strong>{" "}
                   {plainText(line.content)}
                 </p>
               ))}

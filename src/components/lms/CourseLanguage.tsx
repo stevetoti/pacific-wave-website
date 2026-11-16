@@ -14,5 +14,5 @@ export function CourseLanguageProvider({children,enabled=true}:{children:ReactNo
  return <Context.Provider value={{language:active,setLanguage,t}}><div lang={active}>{children}</div></Context.Provider>;
 }
 export const useCourseLanguage=()=>useContext(Context);
-export function CourseText({text}:{text:string}){const {t}=useCourseLanguage();return <> {t(text)} </>;}
+export function CourseText({text}:{text:string|number|null|undefined}){const {t}=useCourseLanguage();return <> {typeof text==='string'?t(text):text} </>;}
 export function CourseLanguagePicker(){const {language,setLanguage,t}=useCourseLanguage();return <div style={{display:'flex',justifyContent:'flex-end',gap:12,alignItems:'center',flexWrap:'wrap',padding:'12px 0 20px'}}><label htmlFor="course-language">Language / Lanwis / Langue</label><select id="course-language" aria-label="Course language" value={language} onChange={e=>setLanguage(parseCourseLanguage(e.target.value))} style={{padding:'10px 14px',border:'1px solid #aebdd2',borderRadius:8,background:'white',color:'#233c6f'}}><option value="en">English</option><option value="bi">Bislama</option><option value="fr">Français</option></select><p style={{width:'100%',textAlign:'right',margin:0,fontSize:13,color:'#52617a'}}>{t('Choose your reading language. Your answers stay as you wrote them.')}</p></div>;}

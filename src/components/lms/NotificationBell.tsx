@@ -137,7 +137,7 @@ export default function NotificationBell() {
       <details className="nb" ref={menu}>
         <summary aria-label={unread ? `Notifications, ${unread} unread` : "Notifications"} title="Notifications">
           <Bell size={21} />
-          {unread > 0 && <span className="msg-badge nb-count">{unread > 99 ? "99+" : unread}</span>}
+          {unread > 0 && <span className="msg-badge nb-count"><CourseText text={unread > 99 ? "99+" : unread} /></span>}
         </summary>
         <div className="nb-panel" role="menu">
           <header>

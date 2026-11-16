@@ -1,4 +1,6 @@
 "use client";
+import {formatCourseDate} from "@/lib/lms/course-date";
+import { CourseText, useCourseLanguage } from "@/components/lms/CourseLanguage";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -92,6 +94,7 @@ export default function StudentDashboard({
   onRefresh: () => Promise<void>;
 }) {
   const router = useRouter();
+  const {language}=useCourseLanguage();
   const [asOf, setAsOf] = useState(0);
   const section = sections.some((s) => s[0] === requestedSection)
     ? requestedSection!
@@ -171,7 +174,7 @@ export default function StudentDashboard({
     .sort((a, b) => Date.parse(a.starts_at!) - Date.parse(b.starts_at!));
   const courseLink = (id: string) => `${base}/course/${id}`;
   const date = (value: string) =>
-    new Date(value).toLocaleDateString("en-GB", {
+    formatCourseDate(value,language, {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -287,11 +290,10 @@ export default function StudentDashboard({
     return (
       <div className="sd-empty">
         <GraduationCap size={38} />
-        <h3>{title}</h3>
-        <p>{body}</p>
+        <h3><CourseText text={title} /></h3>
+        <p><CourseText text={body} /></p>
         {link && (
-          <Link className="lms-button" href={base}>
-            Explore courses <ArrowRight size={17} />
+          <Link className="lms-button" href={base}><CourseText text={"Explore courses"} /><ArrowRight size={17} />
           </Link>
         )}
       </div>
@@ -318,22 +320,21 @@ export default function StudentDashboard({
                   sizes="(max-width:700px) 100vw, 400px"
                 />
                 <span className="sd-status" data-status={o.status}>
-                  {c?.requires_approval && o.status === "pending" ? "Awaiting approval" : statusLabel(o.status)}
+                  <CourseText text={c?.requires_approval && o.status === "pending" ? "Awaiting approval" : statusLabel(o.status)} />
                 </span>
               </div>
               <div className="sd-course-body">
                 <span className="sd-kicker">
-                  {c?.private_sessions
+                  <CourseText text={c?.private_sessions
                     ? "PERSONAL MENTORSHIP"
                     : c?.kind === "live"
                       ? "LIVE TRAINING"
-                      : "RECORDED COURSE"}
+                      : "RECORDED COURSE"} />
                 </span>
-                <h3>{c?.title || "Your course"}</h3>
+                <h3><CourseText text={c?.title || "Your course"} /></h3>
                 <div className="sd-progress-label">
                   <span>
-                    {done} / {total} lessons
-                  </span>
+                    {done} / {total}<CourseText text={"lessons"} /></span>
                   <strong>{pct}%</strong>
                 </div>
                 <progress
@@ -342,9 +343,9 @@ export default function StudentDashboard({
                   value={pct}
                 />
                 <Link className="sd-course-link" href={courseLink(o.course_id)}>
-                  {["paid", "granted"].includes(o.status)
+                  <CourseText text={["paid", "granted"].includes(o.status)
                     ? "Continue learning"
-                    : "View course introduction"}{" "}
+                    : "View course introduction"} />{" "}
                   <ArrowRight size={17} />
                 </Link>
                 {!["paid", "granted"].includes(o.status || "") && (
@@ -352,7 +353,7 @@ export default function StudentDashboard({
                     className="lms-text"
                     href={`${base}/checkout?course=${o.course_id}`}
                   >
-                    {c?.requires_approval ? "View registration status" : "View payment details"}
+                    <CourseText text={c?.requires_approval ? "View registration status" : "View payment details"} />
                   </Link>
                 )}
               </div>
@@ -380,24 +381,21 @@ export default function StudentDashboard({
         <div className="sd-identity">
           {avatar()}
           <strong>{name}</strong>
-          <span>{paid.length ? "Student account" : "Your account"}</span>
-          <Link href={`${base}/dashboard?tab=profile`}>
-            Edit profile <ArrowRight size={13} />
+          <span><CourseText text={paid.length ? "Student account" : "Your account"} /></span>
+          <Link href={`${base}/dashboard?tab=profile`}><CourseText text={"Edit profile"} /><ArrowRight size={13} />
           </Link>
         </div>
-        <label className="sd-mobile-nav">
-          Your dashboard
-          <select
+        <label className="sd-mobile-nav"><CourseText text={"Your dashboard"} /><select
             aria-label="Dashboard section"
             value={section}
             onChange={(e) =>
               router.push(e.target.value === "sessions" ? `${base}/sessions` : `${base}/dashboard?tab=${e.target.value}`)
             }
           >
-            <option value="sessions">Coaching conversations</option>
+            <option value="sessions"><CourseText text={"Coaching conversations"} /></option>
             {sections.map(([key, title]) => (
               <option key={key} value={key}>
-                {title}
+                <CourseText text={title} />
               </option>
             ))}
           </select>
@@ -405,10 +403,9 @@ export default function StudentDashboard({
         <nav aria-label="Student dashboard navigation">
           {teaches && (
             <Link href="/training-center/teach">
-              <Presentation size={18} /> Teaching workspace
-            </Link>
+              <Presentation size={18} /><CourseText text={"Teaching workspace"} /></Link>
           )}
-          <Link href="/training-center/sessions"><MessageCircle size={18}/> Coaching conversations</Link>
+          <Link href="/training-center/sessions"><MessageCircle size={18}/><CourseText text={"Coaching conversations"} /></Link>
           {sections.map(([key, title, Icon]) => (
             <Link
               key={key}
@@ -416,7 +413,7 @@ export default function StudentDashboard({
               href={`${base}/dashboard?tab=${key}`}
             >
               <Icon size={19} />
-              {title}
+              <CourseText text={title} />
               {key === "messages" && messageBadge > 0 && (
                 <span className="msg-badge sd-nav-badge">{messageBadge}</span>
               )}
@@ -425,23 +422,22 @@ export default function StudentDashboard({
         </nav>
         <div className="sd-sidebar-bottom">
           <a href="https://wa.me/6785288141">
-            <LifeBuoy size={18} /> Training support
-          </a>
+            <LifeBuoy size={18} /><CourseText text={"Training support"} /></a>
         </div>
       </aside>
       <section className="sd-main" aria-label="Student dashboard content">
         <header className="sd-title">
           <div>
-            <p className="sd-kicker">MY LEARNING SPACE</p>
+            <p className="sd-kicker"><CourseText text={"MY LEARNING SPACE"} /></p>
             <h1>
-              {section === "overview"
+              <CourseText text={section === "overview"
                 ? `Welcome back, ${first}.`
-                : sections.find((s) => s[0] === section)?.[1]}
+                : sections.find((s) => s[0] === section)?.[1]} />
             </h1>
             <p>
-              {section === "overview"
+              <CourseText text={section === "overview"
                 ? "Make space for your next chapter. One lesson at a time."
-                : "Everything you need for your learning journey, in one place."}
+                : "Everything you need for your learning journey, in one place."} />
             </p>
           </div>
           <button
@@ -461,38 +457,34 @@ export default function StudentDashboard({
         </header>
         {error && (
           <div className="lms-alert" role="alert">
-            {error}
+            <CourseText text={error} />
           </div>
         )}
         {message && (
           <div className="lms-notice" role="status">
-            {message}
+            <CourseText text={message} />
           </div>
         )}
         {loading ? (
-          <div className="sd-panel">Loading your personal learning space…</div>
+          <div className="sd-panel"><CourseText text={"Loading your personal learning space…"} /></div>
         ) : (
           <>
             {section === "overview" && (
               <>
                 <div className="sd-welcome">
                   <div>
-                    <span>LEARN. BUILD. GROW.</span>
-                    <h2>
-                      Your future is a work in progress.
-                      <br />
-                      Keep building it.
-                    </h2>
+                    <span><CourseText text={"LEARN. BUILD. GROW."} /></span>
+                    <h2><CourseText text={"Your future is a work in progress."} /><br /><CourseText text={"Keep building it."} /></h2>
                     <p>
-                      {paid.length
+                      <CourseText text={paid.length
                         ? "Your classes, projects and community are ready when you are."
-                        : "Start with a course that brings your ideas to life."}
+                        : "Start with a course that brings your ideas to life."} />
                     </p>
                     <Link
                       className="lms-button"
                       href={paid[0] ? courseLink(paid[0].course_id) : base}
                     >
-                      {paid[0] ? "Continue learning" : "Find your first course"}{" "}
+                      <CourseText text={paid[0] ? "Continue learning" : "Find your first course"} />{" "}
                       <ArrowRight size={18} />
                     </Link>
                   </div>
@@ -520,7 +512,7 @@ export default function StudentDashboard({
                       <div key={String(label)}>
                         <I size={22} />
                         <strong>{String(value)}</strong>
-                        <span>{String(label)}</span>
+                        <span><CourseText text={String(label)} /></span>
                       </div>
                     );
                   })}
@@ -528,9 +520,8 @@ export default function StudentDashboard({
                 <div className="sd-overview-grid">
                   <section>
                     <div className="sd-section-title">
-                      <h2>Pick up where you left off</h2>
-                      <Link href={`${base}/dashboard?tab=courses`}>
-                        View all <ArrowRight size={15} />
+                      <h2><CourseText text={"Pick up where you left off"} /></h2>
+                      <Link href={`${base}/dashboard?tab=courses`}><CourseText text={"View all"} /><ArrowRight size={15} />
                       </Link>
                     </div>
                     {mine.length
@@ -541,7 +532,7 @@ export default function StudentDashboard({
                         )}
                     {recommendations.length > 0 && (
                       <section className="sd-panel sd-recommendations">
-                        <h3>A next step for you</h3>
+                        <h3><CourseText text={"A next step for you"} /></h3>
                         {recommendations.map((c) => (
                           <Link
                             key={c.id}
@@ -555,7 +546,7 @@ export default function StudentDashboard({
                           >
                             <BookOpen size={20} />
                             <span>
-                              <strong>{c.title}</strong>
+                              <strong><CourseText text={c.title} /></strong>
                               <small>{money(c.amount, c.currency)}</small>
                             </span>
                             <ArrowRight size={18} />
@@ -567,13 +558,10 @@ export default function StudentDashboard({
                   <aside>
                     <section className="sd-panel sd-profile-completion">
                       <Target size={28} />
-                      <h3>Make this space yours</h3>
-                      <p>
-                        Add your photo and learning goals so your profile
-                        reflects your journey.
-                      </p>
+                      <h3><CourseText text={"Make this space yours"} /></h3>
+                      <p><CourseText text={"Add your photo and learning goals so your profile reflects your journey."} /></p>
                       <div className="sd-progress-label">
-                        <span>Profile complete</span>
+                        <span><CourseText text={"Profile complete"} /></span>
                         <strong>{completion}%</strong>
                       </div>
                       <progress
@@ -581,13 +569,12 @@ export default function StudentDashboard({
                         max={100}
                         value={completion}
                       />
-                      <Link href={`${base}/dashboard?tab=profile`}>
-                        Complete my profile <ArrowRight size={16} />
+                      <Link href={`${base}/dashboard?tab=profile`}><CourseText text={"Complete my profile"} /><ArrowRight size={16} />
                       </Link>
                     </section>
                     <section className="sd-panel">
                       <div className="sd-section-title">
-                        <h3>Up next</h3>
+                        <h3><CourseText text={"Up next"} /></h3>
                         <CalendarDays size={20} />
                       </div>
                       {upcoming.slice(0, 2).map((l) => (
@@ -597,24 +584,19 @@ export default function StudentDashboard({
                           key={l.id}
                         >
                           <strong>{date(l.starts_at!)}</strong>
-                          <span>{l.title}</span>
+                          <span><CourseText text={l.title} /></span>
                           <small>
                             {time(l.starts_at!)} · {profile.timezone}
                           </small>
                         </Link>
                       ))}
                       {!upcoming.length && (
-                        <p>
-                          No scheduled sessions yet. Your confirmed class dates
-                          will appear here.
-                        </p>
+                        <p><CourseText text={"No scheduled sessions yet. Your confirmed class dates will appear here."} /></p>
                       )}
                       <Link
                         className="lms-text"
                         href={`${base}/dashboard?tab=schedule`}
-                      >
-                        View my schedule
-                      </Link>
+                      ><CourseText text={"View my schedule"} /></Link>
                     </section>
                   </aside>
                 </div>
@@ -623,16 +605,14 @@ export default function StudentDashboard({
             {section === "courses" && (
               <>
                 <div className="sd-filter">
-                  <label>
-                    Filter courses
-                    <select
+                  <label><CourseText text={"Filter courses"} /><select
                       value={filter}
                       onChange={(e) => setFilter(e.target.value)}
                     >
-                      <option value="all">All courses</option>
-                      <option value="paid">Enrolled</option>
-                      <option value="pending">Awaiting payment</option>
-                      <option value="refunded">Refunded</option>
+                      <option value="all"><CourseText text={"All courses"} /></option>
+                      <option value="paid"><CourseText text={"Enrolled"} /></option>
+                      <option value="pending"><CourseText text={"Awaiting payment"} /></option>
+                      <option value="refunded"><CourseText text={"Refunded"} /></option>
                     </select>
                   </label>
                 </div>
@@ -648,16 +628,12 @@ export default function StudentDashboard({
               <section className="sd-panel">
                 <div className="sd-section-title">
                   <div>
-                    <h2>Your upcoming classes</h2>
-                    <p>
-                      Times shown in {profile.timezone}. Change your time zone
-                      in My profile.
-                    </p>
+                    <h2><CourseText text={"Your upcoming classes"} /></h2>
+                    <p><CourseText text={"Times shown in"} />{profile.timezone}<CourseText text={". Change your time zone in My profile."} /></p>
                   </div>
                   {upcoming.length > 0 && (
                     <button className="lms-button" onClick={calendar}>
-                      <Download size={16} /> Add to calendar
-                    </button>
+                      <Download size={16} /><CourseText text={"Add to calendar"} /></button>
                   )}
                 </div>
                 {upcoming.length
@@ -668,14 +644,13 @@ export default function StudentDashboard({
                           <strong>{date(l.starts_at!)}</strong>
                         </div>
                         <div>
-                          <h3>{l.title}</h3>
-                          <p>{myCourse(l.course_id)?.title}</p>
+                          <h3><CourseText text={l.title} /></h3>
+                          <p><CourseText text={myCourse(l.course_id)?.title || ""} /></p>
                           <span>
                             {time(l.starts_at!)} · {profile.timezone}
                           </span>
                         </div>
-                        <Link href={courseLink(l.course_id)}>
-                          Open course <ArrowRight size={16} />
+                        <Link href={courseLink(l.course_id)}><CourseText text={"Open course"} /><ArrowRight size={16} />
                         </Link>
                       </div>
                     ))
@@ -688,8 +663,8 @@ export default function StudentDashboard({
             )}
             {section === "quizzes" && (
               <section className="sd-panel">
-                <h2>Your quiz achievements</h2>
-                <p>Results from quizzes you have passed in your courses.</p>
+                <h2><CourseText text={"Your quiz achievements"} /></h2>
+                <p><CourseText text={"Results from quizzes you have passed in your courses."} /></p>
                 {quizzes.length
                   ? quizzes.map((p) => {
                       const l = lessons.find((l) => l.id === p.lesson_id);
@@ -697,16 +672,14 @@ export default function StudentDashboard({
                         <div className="sd-result-row" key={p.lesson_id}>
                           <CheckCircle2 size={25} />
                           <div>
-                            <h3>{l?.title || "Completed quiz"}</h3>
+                            <h3><CourseText text={l?.title || "Completed quiz"} /></h3>
                             <p>
-                              {myCourse(l?.course_id || "")?.title} ·{" "}
+                              <CourseText text={myCourse(l?.course_id || "")?.title} /> ·{" "}
                               {date(p.completed_at)}
                             </p>
                           </div>
                           <strong>{p.score}%</strong>
-                          <span className="sd-status" data-status="paid">
-                            Passed
-                          </span>
+                          <span className="sd-status" data-status="paid"><CourseText text={"Passed"} /></span>
                         </div>
                       );
                     })
@@ -721,16 +694,12 @@ export default function StudentDashboard({
               <section className="sd-panel">
                 <div className="sd-section-title">
                   <div>
-                    <h2>Your course purchases</h2>
-                    <p>
-                      Registration references, payment methods and current
-                      payment status.
-                    </p>
+                    <h2><CourseText text={"Your course purchases"} /></h2>
+                    <p><CourseText text={"Registration references, payment methods and current payment status."} /></p>
                   </div>
                   {orders.length > 0 && (
                     <button className="lms-button" onClick={downloadHistory}>
-                      <Download size={16} /> Export history
-                    </button>
+                      <Download size={16} /><CourseText text={"Export history"} /></button>
                   )}
                 </div>
                 {orders.length ? (
@@ -740,8 +709,8 @@ export default function StudentDashboard({
                         <header>
                           <div>
                             <h3>
-                              {myCourse(o.course_id)?.title ||
-                                "Course registration"}
+                              <CourseText text={myCourse(o.course_id)?.title ||
+                                "Course registration"} />
                             </h3>
                             <p>
                               {date(o.created_at)} ·{" "}
@@ -754,25 +723,24 @@ export default function StudentDashboard({
                         </header>
                         <div className="sd-purchase-meta">
                           <span className="sd-status" data-status={o.status}>
-                            {o.status === "granted"
+                            <CourseText text={o.status === "granted"
                               ? "Package access · no payment"
                               : o.method === "coupon"
                                 ? "Full discount"
                                 : o.status === "paid"
                                   ? "Paid"
-                                  : statusLabel(o.status)}
+                                  : statusLabel(o.status)} />
                           </span>
-                          <span>
-                            Reference: <code>{o.id}</code>
+                          <span><CourseText text={"Reference:"} /><code>{o.id}</code>
                           </span>
                         </div>
                         {o.review_note && (
                           <p className="lms-notice">{o.review_note}</p>
                         )}
                         <Link href={`${base}/checkout?course=${o.course_id}`}>
-                          {["paid", "granted"].includes(o.status)
+                          <CourseText text={["paid", "granted"].includes(o.status)
                             ? "View enrolment"
-                            : "Payment details / upload proof"}{" "}
+                            : "Payment details / upload proof"} />{" "}
                           <ArrowRight size={16} />
                         </Link>
                       </article>
@@ -790,11 +758,8 @@ export default function StudentDashboard({
             {section === "messages" && <MessagesCenter />}
             {section === "community" && (
               <section className="sd-panel">
-                <h2>Your learning communities</h2>
-                <p>
-                  Join your classmates, ask your instructor questions and
-                  collaborate in course groups.
-                </p>
+                <h2><CourseText text={"Your learning communities"} /></h2>
+                <p><CourseText text={"Join your classmates, ask your instructor questions and collaborate in course groups."} /></p>
                 {paid.filter((o) => !myCourse(o.course_id)?.private_sessions)
                   .length
                   ? paid
@@ -807,11 +772,8 @@ export default function StudentDashboard({
                         >
                           <MessageCircle size={28} />
                           <div>
-                            <h3>{myCourse(o.course_id)?.title}</h3>
-                            <p>
-                              Course lounge, instructor announcements and your
-                              groups
-                            </p>
+                            <h3><CourseText text={myCourse(o.course_id)?.title || ""} /></h3>
+                            <p><CourseText text={"Course lounge, instructor announcements and your groups"} /></p>
                           </div>
                           <ArrowRight size={20} />
                         </Link>
@@ -836,19 +798,14 @@ export default function StudentDashboard({
                   });
                 }}
               >
-                <h2>Your profile, your story</h2>
-                <p>
-                  Your contact information, bio and learning goals are private
-                  to your student account. These details are not published in
-                  course chat.
-                </p>
+                <h2><CourseText text={"Your profile, your story"} /></h2>
+                <p><CourseText text={"Your contact information, bio and learning goals are private to your student account. These details are not published in course chat."} /></p>
                 <div className="sd-photo-editor">
                   {avatar(96)}
                   <div>
                     <label className="sd-upload">
                       {" "}
-                      <Camera size={17} /> Upload profile photo
-                      <input
+                      <Camera size={17} /><CourseText text={"Upload profile photo"} /><input
                         aria-label="Upload profile photo"
                         type="file"
                         accept="image/jpeg,image/png,image/webp"
@@ -886,10 +843,7 @@ export default function StudentDashboard({
                         }}
                       />
                     </label>
-                    <p>
-                      JPG, PNG or WebP · Max 3 MB. Photos are cropped to a
-                      square.
-                    </p>
+                    <p><CourseText text={"JPG, PNG or WebP · Max 3 MB. Photos are cropped to a square."} /></p>
                     {profile.avatar_url && (
                       <button
                         type="button"
@@ -906,9 +860,7 @@ export default function StudentDashboard({
                             setMessage("Profile photo removed.");
                           })
                         }
-                      >
-                        Remove photo
-                      </button>
+                      ><CourseText text={"Remove photo"} /></button>
                     )}
                   </div>
                 </div>
@@ -924,7 +876,7 @@ export default function StudentDashboard({
                       ["website", "Website (optional)", "url", 500],
                     ].map(([key, label, type, max]) => (
                       <label key={key}>
-                        {label}
+                        <CourseText text={label} />
                         <input
                           name={String(key)}
                           type={String(type)}
@@ -940,9 +892,7 @@ export default function StudentDashboard({
                         />
                       </label>
                     ))}
-                    <label>
-                      Time zone
-                      <select
+                    <label><CourseText text={"Time zone"} /><select
                         value={draft.timezone}
                         onChange={(e) =>
                           setDraft({ ...draft, timezone: e.target.value })
@@ -960,9 +910,7 @@ export default function StudentDashboard({
                       </select>
                     </label>
                   </div>
-                  <label>
-                    About me
-                    <textarea
+                  <label><CourseText text={"About me"} /><textarea
                       name="bio"
                       maxLength={1000}
                       value={draft.bio}
@@ -972,9 +920,7 @@ export default function StudentDashboard({
                       placeholder="Tell us about your background, interests and experience."
                     />
                   </label>
-                  <label>
-                    My learning goals
-                    <textarea
+                  <label><CourseText text={"My learning goals"} /><textarea
                       name="learning_goals"
                       maxLength={2000}
                       value={draft.learning_goals}
@@ -985,12 +931,8 @@ export default function StudentDashboard({
                     />
                   </label>
                   <div className="sd-form-actions">
-                    <span>
-                      Only your full name is required. Add other details at your
-                      pace.
-                    </span>
-                    <button className="lms-button">
-                      Save profile <CheckCircle2 size={17} />
+                    <span><CourseText text={"Only your full name is required. Add other details at your pace."} /></span>
+                    <button className="lms-button"><CourseText text={"Save profile"} /><CheckCircle2 size={17} />
                     </button>
                   </div>
                 </fieldset>
@@ -998,28 +940,26 @@ export default function StudentDashboard({
             )}
             {section === "settings" && (
               <section className="sd-panel">
-                <h2>Account & security</h2>
+                <h2><CourseText text={"Account & security"} /></h2>
                 <div className="sd-account-row">
                   <div>
-                    <h3>Email address</h3>
+                    <h3><CourseText text={"Email address"} /></h3>
                     <p>{email}</p>
                   </div>
-                  <span className="sd-status" data-status="paid">
-                    Verified
-                  </span>
+                  <span className="sd-status" data-status="paid"><CourseText text={"Verified"} /></span>
                 </div>
                 <div className="sd-account-row">
                   <div>
-                    <h3>Account created</h3>
+                    <h3><CourseText text={"Account created"} /></h3>
                     <p>
-                      {joined ? date(joined) : "Welcome to the training centre"}
+                      <CourseText text={joined ? date(joined) : "Welcome to the training centre"} />
                     </p>
                   </div>
                 </div>
                 <div className="sd-account-row">
                   <div>
-                    <h3>Password</h3>
-                    <p>Request a secure email link to choose a new password.</p>
+                    <h3><CourseText text={"Password"} /></h3>
+                    <p><CourseText text={"Request a secure email link to choose a new password."} /></p>
                   </div>
                   <button
                     className="lms-button"
@@ -1038,28 +978,18 @@ export default function StudentDashboard({
                         );
                       })
                     }
-                  >
-                    Send reset email
-                  </button>
+                  ><CourseText text={"Send reset email"} /></button>
                 </div>
-                <p>
-                  Need to change your email address or get help with your
-                  account?{" "}
-                  <a href="mailto:steve@pacificwavedigital.com">
-                    Contact training support
-                  </a>
+                <p><CourseText text={"Need to change your email address or get help with your account?"} />{" "}
+                  <a href="mailto:steve@pacificwavedigital.com"><CourseText text={"Contact training support"} /></a>
                   .
                 </p>
-                <Link href="/privacy#training-registrations">
-                  Training privacy notice
-                </Link>
+                <Link href="/privacy#training-registrations"><CourseText text={"Training privacy notice"} /></Link>
               </section>
             )}
           </>
         )}
-        <footer className="sd-footer">
-          Pacific Wave Digital · Your next chapter starts here.
-        </footer>
+        <footer className="sd-footer"><CourseText text={"Pacific Wave Digital · Your next chapter starts here."} /></footer>
       </section>
     </div>
   );

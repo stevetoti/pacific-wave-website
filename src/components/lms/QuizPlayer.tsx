@@ -84,12 +84,12 @@ export default function QuizPlayer({
     <section className="qb-player">
       <h3><CourseText text={"Check your understanding"} /></h3>
       <p><CourseText text={"Pass mark:"} />{lesson.quiz_settings?.pass_mark ?? 70}<CourseText text={"%."} />{" "}
-        {lesson.quiz_settings?.max_attempts
+        <CourseText text={lesson.quiz_settings?.max_attempts
           ? `${lesson.quiz_settings.max_attempts} attempts allowed.`
-          : "Unlimited attempts."}{" "}
-        {lesson.quiz_settings?.time_limit_minutes
+          : "Unlimited attempts."} />{" "}
+        <CourseText text={lesson.quiz_settings?.time_limit_minutes
           ? `${lesson.quiz_settings.time_limit_minutes} minutes per attempt. The timer continues if you leave this page.`
-          : "Complete this quiz at your own pace."}
+          : "Complete this quiz at your own pace."} />
       </p>
       {error && (
         <p role="alert" className="lms-alert">
@@ -225,8 +225,8 @@ export default function QuizPlayer({
           {history.map((a) => (
             <p key={a.id}>
               {new Date(a.started_at).toLocaleString()}<CourseText text={"·"} />{" "}
-              {a.state === "review" ? "Awaiting instructor review" : a.state}
-              {a.score !== null ? ` · ${a.score}%` : ""}
+              <CourseText text={a.state === "review" ? "Awaiting instructor review" : a.state} />
+              <CourseText text={a.score !== null ? ` · ${a.score}%` : ""} />
               {a.feedback && (
                 <>
                   <br /><CourseText text={"Instructor feedback:"} />{a.feedback}

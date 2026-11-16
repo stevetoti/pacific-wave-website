@@ -1,4 +1,5 @@
 "use client";
+import { CourseText, useCourseLanguage } from "@/components/lms/CourseLanguage";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { createPortal } from "react-dom";
@@ -18,6 +19,7 @@ type ClassroomProps = {
 };
 const fallbackArtwork = "/images/training/hero.webp";
 export default function ZoomClassroom({ lessonId, meetingUrl, title, courseTitle, artwork, schedule, classNumber }: ClassroomProps) {
+  const { t } = useCourseLanguage();
   const [state, setState] = useState<"idle" | "loading" | "open">("idle");
   const [error, setError] = useState("");
   const [focused, setFocused] = useState(false);
@@ -69,38 +71,38 @@ export default function ZoomClassroom({ lessonId, meetingUrl, title, courseTitle
   return <section className="pwd-live-card" aria-label="Live classroom">
     {artworkImage("pwd-live-card-art")}
     <div className="pwd-live-card-content">
-      <span className="pwd-live-eyebrow"><Video size={15} /> PWD LIVE CLASSROOM</span>
-      <h3>{title}</h3>
-      <p>{courseTitle}</p>
+      <span className="pwd-live-eyebrow"><Video size={15} /><CourseText text={"PWD LIVE CLASSROOM"} /></span>
+      <h3>{t(title)}</h3>
+      <p>{t(courseTitle)}</p>
       <div className="pwd-live-actions">
-        {embeddable && <button ref={trigger} className="lms-button" disabled={state === "loading"} onClick={connect}>{state === "loading" ? "Opening classroom…" : "Join inside dashboard"}</button>}
-        <a className="lms-button secondary" href={meetingUrl} target="_blank" rel="noopener noreferrer"><ExternalLink size={16} />{embeddable ? "Open in Zoom" : "Join live class"}</a>
+        {embeddable && <button ref={trigger} className="lms-button" disabled={state === "loading"} onClick={connect}><CourseText text={state === "loading" ? "Opening classroom…" : "Join inside dashboard"} /></button>}
+        <a className="lms-button secondary" href={meetingUrl} target="_blank" rel="noopener noreferrer"><ExternalLink size={16} /><CourseText text={embeddable ? "Open in Zoom" : "Join live class"} /></a>
       </div>
-      {error && state !== "open" && <p role="alert">{error}</p>}
+      {error && state !== "open" && <p role="alert"><CourseText text={error} /></p>}
     </div>
     {state === "open" && createPortal(<dialog ref={dialog} className={"pwd-live-overlay" + (focused ? " pwd-live-focused" : "")} aria-label={title + " — Live classroom"} onCancel={event => { event.preventDefault(); close(); }}>
       <header className="pwd-classroom-header">
-        <div className="pwd-classroom-brand"><Image src="/images/training/pwd-logo.png" alt="Pacific Wave Digital logo" width={44} height={44} /><div><strong>Pacific Wave Digital</strong><span>TRAINING CENTRE</span></div></div>
-        <div className="pwd-classroom-heading"><span>{courseTitle}</span><strong>{title}</strong></div>
+        <div className="pwd-classroom-brand"><Image src="/images/training/pwd-logo.png" alt="Pacific Wave Digital logo" width={44} height={44} /><div><strong><CourseText text={"Pacific Wave Digital"} /></strong><span><CourseText text={"TRAINING CENTRE"} /></span></div></div>
+        <div className="pwd-classroom-heading"><span>{t(courseTitle)}</span><strong>{t(title)}</strong></div>
         <div className="pwd-classroom-controls">
-          <button onClick={() => setFocused(value => !value)} aria-pressed={focused} aria-label={focused ? "Show class details" : "Focus on meeting"}>{focused ? <PanelLeft size={18} /> : <Maximize2 size={18} />}<span>{focused ? "Class details" : "Focus view"}</span></button>
-          <button ref={closeButton} onClick={close} aria-label="Leave classroom and return to course"><X size={19} /><span>Return to course</span></button>
+          <button onClick={() => setFocused(value => !value)} aria-pressed={focused} aria-label={t(focused ? "Show class details" : "Focus on meeting")}>{focused ? <PanelLeft size={18} /> : <Maximize2 size={18} />}<span><CourseText text={focused ? "Class details" : "Focus view"} /></span></button>
+          <button ref={closeButton} onClick={close} aria-label={t("Leave classroom and return to course")}><X size={19} /><span><CourseText text={"Return to course"} /></span></button>
         </div>
       </header>
       <div className="pwd-classroom-body">
         <aside className="pwd-classroom-details" aria-label="Class details">
           {artworkImage("pwd-classroom-art")}
           <div className="pwd-classroom-course">
-            <span className="pwd-live-eyebrow">YOUR LIVE CLASSROOM</span>
-            <h2>{courseTitle}</h2>
-            <div className="pwd-classroom-lesson"><span className="pwd-classroom-number">{String(classNumber).padStart(2,"0")}</span><div><span>THIS SESSION</span><h3>{title}</h3></div></div>
-            {schedule && <p className="pwd-classroom-schedule"><CalendarDays size={17} /><span>{schedule}<small>Vanuatu time · UTC+11</small></span></p>}
+            <span className="pwd-live-eyebrow"><CourseText text={"YOUR LIVE CLASSROOM"} /></span>
+            <h2>{t(courseTitle)}</h2>
+            <div className="pwd-classroom-lesson"><span className="pwd-classroom-number">{String(classNumber).padStart(2,"0")}</span><div><span><CourseText text={"THIS SESSION"} /></span><h3>{t(title)}</h3></div></div>
+            {schedule && <p className="pwd-classroom-schedule"><CalendarDays size={17} /><span>{schedule}<small><CourseText text={"Vanuatu time · UTC+11"} /></small></span></p>}
           </div>
-          <div className="pwd-classroom-tips"><h3>Make yourself comfortable</h3><p><Headphones size={18} /><span>Use headphones for clearer sound.</span></p><p><Video size={18} /><span>Your camera is optional. Keep it off to save data.</span></p><p><Monitor size={18} /><span>Use Focus view for more room to follow demonstrations.</span></p></div>
-          <div className="pwd-classroom-signoff"><span className="pwd-classroom-dot" /> Learning together, wherever you are.</div>
+          <div className="pwd-classroom-tips"><h3><CourseText text={"Make yourself comfortable"} /></h3><p><Headphones size={18} /><span><CourseText text={"Use headphones for clearer sound."} /></span></p><p><Video size={18} /><span><CourseText text={"Your camera is optional. Keep it off to save data."} /></span></p><p><Monitor size={18} /><span><CourseText text={"Use Focus view for more room to follow demonstrations."} /></span></p></div>
+          <div className="pwd-classroom-signoff"><span className="pwd-classroom-dot" /><CourseText text={"Learning together, wherever you are."} /></div>
         </aside>
         <div className="pwd-classroom-meeting">
-          {error && <div className="pwd-live-error" role="alert">{error} <a href={meetingUrl} target="_blank" rel="noopener noreferrer">Open in Zoom</a></div>}
+          {error && <div className="pwd-live-error" role="alert">{error} <a href={meetingUrl} target="_blank" rel="noopener noreferrer"><CourseText text={"Open in Zoom"} /></a></div>}
           <iframe ref={frame} title="Zoom live classroom" src="/zoom-classroom/frame.html" allow="camera; microphone; fullscreen; display-capture; autoplay; clipboard-write" allowFullScreen referrerPolicy="no-referrer" />
         </div>
       </div>

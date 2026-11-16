@@ -1,4 +1,6 @@
 "use client";
+import {formatCourseDate} from "@/lib/lms/course-date";
+import type {CourseLanguage} from "@/lib/lms/course-language";
 import { onboardingCourse, onboardingPath, onboardingSignIn } from "@/lib/lms/onboarding";
 import { personalOffer, personalCheckoutNote, softwareSlug, fullProgramSlug } from "@/lib/lms/personal-programs";
 import { initialCohort, novemberCohort, novemberCourseSlug, dayMonth } from "@/lib/training/config";
@@ -7,7 +9,7 @@ import { TurnstileWidget } from "@/components/security/TurnstileWidget";
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
 import YouTubeRecordings from "./YouTubeRecordings";
 import { liveRecordingPending } from "@/lib/lms/lesson-recording";
-import { CourseText, CourseLanguageProvider, CourseLanguagePicker, useCourseLanguage } from '@/components/lms/CourseLanguage';
+import { CourseText, useCourseLanguage } from '@/components/lms/CourseLanguage';
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
@@ -70,12 +72,12 @@ async function api(path: string, body?: unknown) {
   if (!r.ok) throw new Error(data.error || "Please try again.");
   return data;
 }
-const when = (s: string, language = "en") =>
-  new Date(s).toLocaleString(language === "fr" ? "fr-FR" : "en-GB", {
+const when = (s: string, language: CourseLanguage = "en") =>
+  formatCourseDate(s, language, {
     timeZone: "Pacific/Efate",
-    weekday: language === "bi" ? undefined : "short",
+    weekday: "short",
     day: "numeric",
-    month: language === "bi" ? "numeric" : "short",
+    month: "short",
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -336,7 +338,6 @@ function TrainingCenterContent({
   return (
     <div className={`lms ${view === "dashboard" ? "lms-dashboard-page" : ""}`}>
       <div className="lms-shell">
-        {view === "course" && <CourseLanguagePicker />}
         <nav className="lms-nav" aria-label="Training navigation">
           <Link href={base} className="lms-brand">
             <Image
@@ -450,12 +451,12 @@ function TrainingCenterContent({
                             sizes="(max-width: 700px) 100vw, (max-width: 1050px) 50vw, 400px"
                           />
                           <span>
-                            {!c.enrollment_open
+                            <CourseText text={!c.enrollment_open
                               ? "COMING SOON"
                               : programs[c.slug]?.label ||
                                 (c.kind === "live"
                                   ? "LIVE COHORT"
-                                  : "ON DEMAND")}
+                                  : "ON DEMAND")} />
                           </span>
                         </div>
                         <div className="lms-card-body">
@@ -466,19 +467,19 @@ function TrainingCenterContent({
                                 ? "LEARN TOGETHER"
                                 : "LEARN AT YOUR PACE")}
                           </p>
-                          <h3>{c.title}</h3>
-                          <p>{c.description}</p>
+                          <h3><CourseText text={c.title} /></h3>
+                          <p><CourseText text={c.description} /></p>
                           {programs[c.slug] && (
                             <p className="lms-meta">
                               <CalendarDays size={16} />
-                              {programs[c.slug].duration}
+                              <CourseText text={programs[c.slug].duration} />
                             </p>
                           )}
                           <div className="lms-card-bottom">
                             <strong>
-                              {c.enrollment_open
+                              <CourseText text={c.enrollment_open
                                 ? money(c.amount, c.currency)
-                                : "Coming soon"}
+                                : "Coming soon"} />
                               <small>
                                 {t(!c.enrollment_open
                                   ? "Details to be announced"
@@ -560,7 +561,7 @@ function TrainingCenterContent({
                     <div className="lms-notice">
                       <strong>{checkout.title}</strong>
                       <p>
-                        {checkout.requires_approval ? "Free registration · Admin approval required" : checkout.amount === 0 ? "Participant access included" : `${money(checkout.amount, checkout.currency)} · One-time course fee`}
+                        <CourseText text={checkout.requires_approval ? "Free registration · Admin approval required" : checkout.amount === 0 ? "Participant access included" : `${money(checkout.amount, checkout.currency)} · One-time course fee`} />
                       </p>
                     </div>
                   )}
@@ -779,7 +780,7 @@ function TrainingCenterContent({
                       )}
                       {authMode === "signup" && <>
                         <HoneypotField value={bot.honeypot} onChange={bot.setHoneypot} />
-                        {TURNSTILE_SITE_KEY ? <TurnstileWidget key={captchaAttempt} siteKey={TURNSTILE_SITE_KEY} onVerify={setTurnstileToken} theme="light" /> : <p role="alert">Registration is temporarily unavailable. Please contact us for help.</p>}
+                        {TURNSTILE_SITE_KEY ? <TurnstileWidget key={captchaAttempt} siteKey={TURNSTILE_SITE_KEY} onVerify={setTurnstileToken} theme="light" /> : <p role="alert"><CourseText text={"Registration is temporarily unavailable. Please contact us for help."} /></p>}
                       </>}
                       <button className="lms-button" disabled={authMode === "signup" && !turnstileToken}>
                         {t(busy
@@ -865,7 +866,7 @@ function TrainingCenterContent({
                             : `${base}/programs/${checkout.slug}`
                         }
                       ><CourseText text={"Read the full course details →"} /></Link>
-                      {checkoutPersonal && <><p><CourseText text={personalCheckoutNote(checkoutPersonal)} /></p>{[softwareSlug,fullProgramSlug].includes(checkoutPersonal.slug) && <p>Includes three free months of Digi Assist AI Pro; continued use after the free period requires a paid subscription. Domains, hosting, advertising and other external tools are separate.</p>}</>}
+                      {checkoutPersonal && <><p><CourseText text={personalCheckoutNote(checkoutPersonal)} /></p>{[softwareSlug,fullProgramSlug].includes(checkoutPersonal.slug) && <p><CourseText text={"Includes three free months of Digi Assist AI Pro; continued use after the free period requires a paid subscription. Domains, hosting, advertising and other external tools are separate."} /></p>}</>}
                     </section>
                     <section className="lms-panel lms-checkout-pay">
                       {!email ? (
@@ -1073,9 +1074,9 @@ function TrainingCenterContent({
                       courseOrder?.status || "",
                     ) && (
                       <div className="lms-notice">
-                        {courseOrder?.status === "review"
+                        <CourseText text={courseOrder?.status === "review"
                           ? "Your bank transfer is awaiting verification."
-                          : current.requires_approval ? (courseOrder?.status === "revoked" ? "Your workshop access has been removed. Contact the team if you need help." : "Awaiting approval. Our team will confirm you are a workshop participant before opening lessons, resources, AI coaches and chat. No payment is required.") : "Complete payment to unlock published lessons."}{" "}<CourseText text={"Your introduction and timetable are available now."} />{" "}
+                          : current.requires_approval ? (courseOrder?.status === "revoked" ? "Your workshop access has been removed. Contact the team if you need help." : "Awaiting approval. Our team will confirm you are a workshop participant before opening lessons, resources, AI coaches and chat. No payment is required.") : "Complete payment to unlock published lessons."} />{" "}<CourseText text={"Your introduction and timetable are available now."} />{" "}
                         <Link href={`${base}/checkout?course=${current.id}`}>
                           {t(current.requires_approval ? "Registration details →" : "Payment details →")}
                         </Link>
@@ -1120,7 +1121,7 @@ function TrainingCenterContent({
                         >
                           <BookOpen size={18} /><CourseText text={"Start here: introduction"} /></button>
                         <button className={`lms-lesson lms-faculty-nav ${showFaculty ? "selected" : ""}`} onClick={()=>{setShowFaculty(true);setShowChallenges(false);}}><GraduationCap size={20}/><span><CourseText text={"Meet your AI Faculty"} /><small><CourseText text={"Start with your onboarding tutor"} /></small></span></button>
-                        <button className={`lms-lesson lms-faculty-nav ${showChallenges ? "selected" : ""}`} onClick={()=>{setShowChallenges(true);setShowFaculty(false);}}><Trophy size={20}/><span>Challenges<small>Put your skills to work. Earn rewards.</small></span></button>
+                        <button className={`lms-lesson lms-faculty-nav ${showChallenges ? "selected" : ""}`} onClick={()=>{setShowChallenges(true);setShowFaculty(false);}}><Trophy size={20}/><span><CourseText text={"Challenges"} /><small><CourseText text={"Put your skills to work. Earn rewards."} /></small></span></button>
                         <Link className="lms-lesson" href={`/training-center/sessions?course=${current.id}`}><BookOpen size={18}/><CourseText text={"My coaching conversations"} /></Link>
                         {lessons.map((l, i) => (
                           <button
@@ -1133,9 +1134,9 @@ function TrainingCenterContent({
                               {l.section_title && (
                                 <small>{t(l.section_title)}</small>
                               )}
-                              {progress.some((p) => p.lesson_id === l.id)
+                              <CourseText text={progress.some((p) => p.lesson_id === l.id)
                                 ? "✓ "
-                                : `${i + 1}. `}
+                                : `${i + 1}. `} />
                               {t(l.title)}
                               <small>
                                 {l.starts_at
@@ -1179,9 +1180,9 @@ function TrainingCenterContent({
                         ) : (
                           <>
                             <p className="lms-eyebrow">
-                              {active.starts_at
+                              <CourseText text={active.starts_at
                                 ? `${when(active.starts_at, language)} · VANUATU TIME`
-                                : "ON-DEMAND LESSON"}
+                                : "ON-DEMAND LESSON"} />
                             </p>
                             {classImage(current,active,lessons.findIndex(l=>l.id===active.id)) && (
                               <LessonThumbnail
@@ -1311,5 +1312,5 @@ function TrainingCenterContent({
 }
 
 export default function TrainingCenter(props: Parameters<typeof TrainingCenterContent>[0]) {
- return <CourseLanguageProvider enabled={props.path[0] === "course"}><TrainingCenterContent {...props}/></CourseLanguageProvider>;
+ return <TrainingCenterContent {...props}/>;
 }

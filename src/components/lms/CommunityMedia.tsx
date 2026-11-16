@@ -1,4 +1,5 @@
 "use client";
+import { CourseText } from "@/components/lms/CourseLanguage";
 import { useEffect, useRef, useState } from "react";
 import { Download, Mic, Square } from "lucide-react";
 import { authFetch } from "@/lib/auth-fetch";
@@ -37,7 +38,7 @@ export function MediaView({
   if (kind === "file" || failed)
     return (
       <button type="button" className="chat-file" onClick={onDownload}>
-        <Download size={15} /> {file.name} <small>{Math.ceil(file.size / 1024)} KB</small>
+        <Download size={15} /> {file.name} <small>{Math.ceil(file.size / 1024)}<CourseText text={"KB"} /></small>
       </button>
     );
   if (!url) return <div className={`cm-media-loading ${kind}`} aria-label={`Loading ${kind}`} />;

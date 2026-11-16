@@ -492,9 +492,9 @@ canPost ? (
                   {(reply || edit) && (
                     <div className="chat-composing-context">
                       <span>
-                        {edit
+                        <CourseText text={edit
                           ? "Editing your message"
-                          : `Replying to ${reply?.author_name}`}
+                          : `Replying to ${reply?.author_name}`} />
                       </span>
                       <button
                         type="button"
@@ -521,7 +521,7 @@ canPost ? (
                     </div>
                   ) : (
                     <label htmlFor={`message-${courseId}`}>
-                      {edit ? "Edit message" : `Message ${roomTitle(active)}`}
+                      <CourseText text={edit ? "Edit message" : `Message ${roomTitle(active)}`} />
                     </label>
                   )}
                   <textarea
@@ -715,11 +715,11 @@ canPost ? (
               <option key={c.id} value={c.id}>
                 {roomTitle(c)}
                 <CourseText text={c.private ? " · Private" : ""} />
-                {Number(c.mentions) > 0
+                <CourseText text={Number(c.mentions) > 0
                   ? ` · @${c.mentions}`
                   : Number(c.unread) > 0
                     ? ` · ${c.unread} unread`
-                    : ""}
+                    : ""} />
               </option>
             ))}
           </select>
@@ -778,7 +778,7 @@ canPost ? (
                         ),
                       )}
                     </span>
-                    {people.length ? `${people.length} people` : "Loading people…"}<CourseText text={"·"} />{" "}
+                    <CourseText text={people.length ? `${people.length} people` : "Loading people…"} /><CourseText text={"·"} />{" "}
                     <CourseText text={active.private ? "Private conversation" : "Students & instructors"} /><CourseText text={"·"} /><u><CourseText text={showPeople ? "Hide" : "See everyone"} /></u>
                   </button>
                 </div>
@@ -1052,7 +1052,7 @@ canPost ? (
                                 }
                               >
                                 {emoji}
-                                {r?.count ? ` ${r.count}` : ""}
+                                <CourseText text={r?.count ? ` ${r.count}` : ""} />
                               </button>
                             );
                           })}
@@ -1184,11 +1184,11 @@ canPost ? (
           }}
         >
           <h3>
-            {manage === "create"
+            <CourseText text={manage === "create"
               ? "Create a course group"
               : manage === "members"
                 ? `Members of ${active?.name}`
-                : "Conversation settings"}
+                : "Conversation settings"} />
           </h3>
           <fieldset disabled={busy}>
             {manage !== "members" && (

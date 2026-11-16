@@ -27,3 +27,37 @@ test('both course dictionaries cover every authored source string and preserve p
   }
  }
 });
+
+test('translated templates retain names and unknown user-authored text',()=>{
+ const dictionaries={bi:{'Welcome back, {name}.':'Welkam bakegen, {name}.','This class has {count} parts. Select a video below to watch in order.':'Klas ia i gat {count} pat. Wajem long oda.'}};
+ assert.equal(translateCourseText('Welcome back, Jean Claude.','bi',dictionaries),'Welkam bakegen, Jean Claude.');
+ assert.equal(translateCourseText('This class has 3 parts. Select a video below to watch in order.','bi',dictionaries),'Klas ia i gat 3 pat. Wajem long oda.');
+ assert.equal(translateCourseText('My original answer: I sell cakes.','bi',dictionaries),'My original answer: I sell cakes.');
+ assert.equal(translateCourseText('Unknown private message','bi',dictionaries),'Unknown private message');
+});
+
+test('November headings and student classroom controls have Bislama translations',()=>{
+ const bi=JSON.parse(readFileSync('src/lib/lms/locales/bi.json','utf8')) as Record<string,string>;
+ for(const text of ['Build Your Business in 30 Days with AI — November–December 2026','Core lessons · Week 1','Join inside dashboard','My courses','My schedule']){
+  assert.ok(bi[text]);assert.notEqual(translateCourseText(text,'bi',{bi}),text);
+ }
+});
+
+import {formatCourseDate} from '../src/lib/lms/course-date';
+test('Bislama dates keep Vanuatu scheduling while translating weekday and month names',()=>{
+ const options={timeZone:'Pacific/Efate',weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'} as const;
+ const value='2026-11-16T04:00:00Z';
+ assert.match(formatCourseDate(value,'bi',options),/Mande.*16.*Novemba.*15:00/);
+ assert.match(formatCourseDate(value,'en',options),/Mon.*16.*Nov.*15:00/);
+ assert.match(formatCourseDate(value,'fr',options),/16.*nov.*15:00/);
+});
+
+test('Bislama covers the current student interface and authored course copy without losing variables or URLs',()=>{
+ const source=JSON.parse(readFileSync('scripts/localization/student-source.json','utf8')) as string[];
+ const dictionary=JSON.parse(readFileSync('src/lib/lms/locales/bi.json','utf8')) as Record<string,string>;
+ for(const text of source){
+  assert.ok(dictionary[text]?.trim(),`Bislama translation missing: ${text}`);
+  for(const number of text.match(/\d+(?:[,.]\d+)*/g)||[])assert.ok(dictionary[text].includes(number),`Translation changed numeric value ${number}`);
+  for(const token of text.match(/\{[a-z_]+\}|https?:\/\/[^\s)]+/gi)||[])assert.ok(dictionary[text].includes(token),`Translation lost ${token}`);
+ }
+});

@@ -1,4 +1,5 @@
 "use client";
+import { CourseText } from "@/components/lms/CourseLanguage";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
@@ -96,7 +97,7 @@ function Attachment({ file }: { file: FileMeta }) {
     return <img className="msg-image" src={url} alt={file.name} onClick={download} />;
   return (
     <button type="button" className="msg-file" onClick={download}>
-      <Paperclip size={15} /> {file.name} <small>{Math.ceil(file.size / 1024)} KB</small>
+      <Paperclip size={15} /> {file.name} <small>{Math.ceil(file.size / 1024)}<CourseText text={"KB"} /></small>
     </button>
   );
 }
@@ -243,20 +244,16 @@ export default function MessagesCenter() {
     if (p.connection === "connected")
       return (
         <button type="button" className="lms-button" onClick={() => openWith(p.user_id)}>
-          <MessageCircle size={16} /> Message
-        </button>
+          <MessageCircle size={16} /><CourseText text={"Message"} /></button>
       );
-    if (p.connection === "sent") return <span className="msg-pill">Request sent</span>;
+    if (p.connection === "sent") return <span className="msg-pill"><CourseText text={"Request sent"} /></span>;
     if (p.connection === "received")
       return (
-        <button type="button" className="lms-button" onClick={() => setView("requests")}>
-          Respond to request
-        </button>
+        <button type="button" className="lms-button" onClick={() => setView("requests")}><CourseText text={"Respond to request"} /></button>
       );
     return (
       <button type="button" className="lms-button msg-connect" onClick={() => { setNoteFor(p.user_id); setNote(""); }}>
-        <UserPlus size={16} /> Connect
-      </button>
+        <UserPlus size={16} /><CourseText text={"Connect"} /></button>
     );
   };
   if (!overview)
@@ -300,7 +297,7 @@ export default function MessagesCenter() {
                         <Check size={14} className="msg-tick" aria-label="Sent" />
                       ))}
                     <span className="msg-preview-text">
-                      {t.last_mine ? "You: " : ""}
+                      <CourseText text={t.last_mine ? "You: " : ""} />
                       {t.preview}
                     </span>
                   </small>
@@ -313,13 +310,13 @@ export default function MessagesCenter() {
             ))}
             {staffContacts.length > 0 && (
               <>
-                <p className="msg-list-title">{overview.contacts[0]?.role === "instructor" ? "Your instructors" : "Your students"}</p>
+                <p className="msg-list-title"><CourseText text={overview.contacts[0]?.role === "instructor" ? "Your instructors" : "Your students"} /></p>
                 {staffContacts.slice(0, 50).map((c) => (
                   <button key={c.person.user_id} type="button" className="msg-item" onClick={() => openWith(c.person.user_id)}>
                     <Avatar person={c.person} />
                     <span className="msg-item-body">
                       <strong>{c.person.full_name}</strong>
-                      <small>{c.role === "instructor" ? "Instructor · message directly" : c.person.headline || "Student"}</small>
+                      <small><CourseText text={c.role === "instructor" ? "Instructor · message directly" : c.person.headline || "Student"} /></small>
                     </span>
                   </button>
                 ))}
@@ -328,11 +325,9 @@ export default function MessagesCenter() {
             {!overview.threads.length && !staffContacts.length && (
               <div className="msg-empty">
                 <MessageCircle size={28} />
-                <p>No conversations yet.</p>
+                <p><CourseText text={"No conversations yet."} /></p>
                 {overview.can_browse && (
-                  <button type="button" className="lms-button" onClick={() => setView("people")}>
-                    Find classmates
-                  </button>
+                  <button type="button" className="lms-button" onClick={() => setView("people")}><CourseText text={"Find classmates"} /></button>
                 )}
               </div>
             )}
@@ -341,8 +336,8 @@ export default function MessagesCenter() {
             {!active ? (
               <div className="msg-empty msg-pane-empty">
                 <MessageCircle size={36} />
-                <h3>Your messages</h3>
-                <p>Choose a conversation, or connect with classmates in Find people.</p>
+                <h3><CourseText text={"Your messages"} /></h3>
+                <p><CourseText text={"Choose a conversation, or connect with classmates in Find people."} /></p>
               </div>
             ) : (
               <>
@@ -364,14 +359,12 @@ export default function MessagesCenter() {
                           if (reason && reason.trim().length >= 3)
                             run(() => api("", { action: "report", thread_id: detail.id, reason: reason.trim() }), "Thanks. Our team will review this conversation.");
                         }}>
-                          <Flag size={15} /> Report conversation
-                        </button>
+                          <Flag size={15} /><CourseText text={"Report conversation"} /></button>
                         <button type="button" onClick={() => {
                           if (confirm(`Remove your connection with ${detail.person.full_name}?`))
                             run(async () => { await api("", { action: "remove_connection", user_id: detail.person.user_id }); await loadThread(detail.id, true); }, "Connection removed.");
                         }}>
-                          <X size={15} /> Remove connection
-                        </button>
+                          <X size={15} /><CourseText text={"Remove connection"} /></button>
                         <button type="button" onClick={() => {
                           if (detail.blocked_by_me || confirm(`Block ${detail.person.full_name}? They won't be able to message or find you.`))
                             run(async () => {
@@ -379,7 +372,7 @@ export default function MessagesCenter() {
                               await Promise.all([loadThread(detail.id, true), loadOverview()]);
                             }, detail.blocked_by_me ? "Unblocked." : "Blocked.");
                         }}>
-                          <ShieldOff size={15} /> {detail.blocked_by_me ? "Unblock" : "Block"}
+                          <ShieldOff size={15} /> <CourseText text={detail.blocked_by_me ? "Unblock" : "Block"} />
                         </button>
                       </div>
                     </details>
@@ -391,9 +384,7 @@ export default function MessagesCenter() {
                       const d = await api(`?thread=${active}&before=${messages[0]?.id}`);
                       setMessages((m) => [...d.messages, ...m]);
                       setMore(d.more);
-                    })}>
-                      Load earlier messages
-                    </button>
+                    })}><CourseText text={"Load earlier messages"} /></button>
                   )}
                   {messages.map((m, i) => {
                     const day = new Date(m.created_at).toDateString();
@@ -404,7 +395,7 @@ export default function MessagesCenter() {
                         <div className={`msg-bubble-row ${m.mine ? "mine" : ""}`}>
                           <div className={`msg-bubble ${m.pending ? "pending" : ""}`}>
                             {m.deleted ? (
-                              <em>Message removed</em>
+                              <em><CourseText text={"Message removed"} /></em>
                             ) : (
                               <>
                                 {m.file && <Attachment file={m.file} />}
@@ -412,7 +403,7 @@ export default function MessagesCenter() {
                               </>
                             )}
                             <small>
-                              <span>{m.pending ? "Sending…" : time(m.created_at)}</span>
+                              <span><CourseText text={m.pending ? "Sending…" : time(m.created_at)} /></span>
                               {m.mine && !m.pending && !m.deleted &&
                                 (m.seen ? (
                                   <CheckCheck size={17} className="msg-tick seen" aria-label="Read" />
@@ -432,17 +423,17 @@ export default function MessagesCenter() {
                         </div>
                         {m.mine && m.id === lastSeenMine && (
                           <p className="msg-seen">
-                            <CheckCheck size={15} /> Seen{detail ? ` by ${detail.person.full_name.split(" ")[0]}` : ""}
+                            <CheckCheck size={15} /><CourseText text={"Seen"} />{detail ? ` by ${detail.person.full_name.split(" ")[0]}` : ""}
                           </p>
                         )}
                       </div>
                     );
                   })}
-                  {detail && !messages.length && <p className="msg-day">Say hello to {detail.person.full_name.split(" ")[0]}.</p>}
+                  {detail && !messages.length && <p className="msg-day"><CourseText text={"Say hello to"} />{detail.person.full_name.split(" ")[0]}.</p>}
                 </div>
                 {detail && !detail.can_message ? (
                   <p className="msg-closed">
-                    {detail.blocked_by_me ? "You blocked this person. Unblock them to send messages." : "You can't send messages in this conversation right now."}
+                    <CourseText text={detail.blocked_by_me ? "You blocked this person. Unblock them to send messages." : "You can't send messages in this conversation right now."} />
                   </p>
                 ) : (
                   <form className="msg-compose" onSubmit={(e) => { e.preventDefault(); send(); }}>
@@ -479,7 +470,7 @@ export default function MessagesCenter() {
       )}
       {view === "requests" && (
         <div className="msg-section">
-          <h3>Invitations</h3>
+          <h3><CourseText text={"Invitations"} /></h3>
           {overview.requests.length ? (
             overview.requests.map((r) => (
               <article key={r.id} className="msg-request">
@@ -490,31 +481,28 @@ export default function MessagesCenter() {
                   {r.note && <p className="msg-note">“{r.note}”</p>}
                 </div>
                 <div className="msg-actions">
-                  <button type="button" className="lms-text" disabled={busy} onClick={() => run(async () => { await api("", { action: "respond", id: r.id, accept: false }); await loadOverview(); window.dispatchEvent(new Event("student-messages-updated")); }, "Request ignored.")}>
-                    Ignore
-                  </button>
+                  <button type="button" className="lms-text" disabled={busy} onClick={() => run(async () => { await api("", { action: "respond", id: r.id, accept: false }); await loadOverview(); window.dispatchEvent(new Event("student-messages-updated")); }, "Request ignored.")}><CourseText text={"Ignore"} /></button>
                   <button type="button" className="lms-button" disabled={busy} onClick={() => run(async () => {
                     await api("", { action: "respond", id: r.id, accept: true });
                     await loadOverview();
                     window.dispatchEvent(new Event("student-messages-updated"));
                   }, `You're now connected with ${r.person.full_name}. You can message them from Chats or Find people.`)}>
-                    <Check size={16} /> Accept
-                  </button>
+                    <Check size={16} /><CourseText text={"Accept"} /></button>
                 </div>
               </article>
             ))
           ) : (
-            <p className="msg-muted">No pending invitations.</p>
+            <p className="msg-muted"><CourseText text={"No pending invitations."} /></p>
           )}
           {overview.sent.length > 0 && (
             <>
-              <h3>Sent</h3>
+              <h3><CourseText text={"Sent"} /></h3>
               {overview.sent.map((r) => (
                 <article key={r.id} className="msg-request">
                   <Avatar person={r.person} size={40} />
                   <div className="msg-item-body">
                     <strong>{r.person.full_name}</strong>
-                    <small>Sent {time(r.created_at)} · waiting for a reply</small>
+                    <small><CourseText text={"Sent"} />{time(r.created_at)}<CourseText text={"· waiting for a reply"} /></small>
                   </div>
                 </article>
               ))}
@@ -550,8 +538,8 @@ export default function MessagesCenter() {
                   }}>
                     <textarea value={note} maxLength={300} onChange={(e) => setNote(e.target.value)} placeholder={`Add a note (optional): e.g. "Hi ${p.full_name.split(" ")[0]}, we're in the same course…"`} />
                     <div>
-                      <button type="button" className="lms-text" onClick={() => setNoteFor(null)}>Cancel</button>
-                      <button className="lms-button" disabled={busy}>Send request</button>
+                      <button type="button" className="lms-text" onClick={() => setNoteFor(null)}><CourseText text={"Cancel"} /></button>
+                      <button className="lms-button" disabled={busy}><CourseText text={"Send request"} /></button>
                     </div>
                   </form>
                 ) : (
@@ -560,11 +548,9 @@ export default function MessagesCenter() {
               </article>
             ))}
           </div>
-          {!directory.length && <p className="msg-muted">No students match your search.</p>}
+          {!directory.length && <p className="msg-muted"><CourseText text={"No students match your search."} /></p>}
           {dirMore && (
-            <button type="button" className="lms-text" onClick={() => searchPeople(query, directory.length).catch((e) => setError(e.message))}>
-              Show more people
-            </button>
+            <button type="button" className="lms-text" onClick={() => searchPeople(query, directory.length).catch((e) => setError(e.message))}><CourseText text={"Show more people"} /></button>
           )}
         </div>
       )}
@@ -577,39 +563,35 @@ export default function MessagesCenter() {
             await loadOverview();
           }, "Settings saved.");
         }}>
-          <h3>Privacy & notifications</h3>
+          <h3><CourseText text={"Privacy & notifications"} /></h3>
           <label className="af-check">
             <input type="checkbox" name="directory" defaultChecked={overview.settings.directory_visible} />
             <span>
-              <strong>Show me in the student directory</strong>
-              <small className="af-muted">Classmates can find you and send connection requests. Your email and phone number are never shown.</small>
+              <strong><CourseText text={"Show me in the student directory"} /></strong>
+              <small className="af-muted"><CourseText text={"Classmates can find you and send connection requests. Your email and phone number are never shown."} /></small>
             </span>
           </label>
           <label className="af-check">
             <input type="checkbox" name="emails" defaultChecked={overview.settings.message_emails} />
             <span>
-              <strong>Email me about new messages, mentions, announcements and connection requests</strong>
-              <small className="af-muted">Quick bursts of messages arrive as one email, and we don&apos;t email you while you&apos;re reading the chat.</small>
+              <strong><CourseText text={"Email me about new messages, mentions, announcements and connection requests"} /></strong>
+              <small className="af-muted"><CourseText text={"Quick bursts of messages arrive as one email, and we don&apos;t email you while you&apos;re reading the chat."} /></small>
             </span>
           </label>
-          <button className="lms-button" disabled={busy}>Save settings</button>
+          <button className="lms-button" disabled={busy}><CourseText text={"Save settings"} /></button>
           {overview.blocked.length > 0 && (
             <>
-              <h3>Blocked people</h3>
+              <h3><CourseText text={"Blocked people"} /></h3>
               {overview.blocked.map((p) => (
                 <article key={p.user_id} className="msg-request">
                   <Avatar person={p} size={40} />
                   <div className="msg-item-body"><strong>{p.full_name}</strong></div>
-                  <button type="button" className="lms-text" disabled={busy} onClick={() => run(async () => { await api("", { action: "unblock", user_id: p.user_id }); await loadOverview(); }, `${p.full_name} unblocked.`)}>
-                    Unblock
-                  </button>
+                  <button type="button" className="lms-text" disabled={busy} onClick={() => run(async () => { await api("", { action: "unblock", user_id: p.user_id }); await loadOverview(); }, `${p.full_name} unblocked.`)}><CourseText text={"Unblock"} /></button>
                 </article>
               ))}
             </>
           )}
-          <p className="msg-muted">
-            Direct messages are private between you and the other person. Our team only reviews a conversation if someone reports it.
-          </p>
+          <p className="msg-muted"><CourseText text={"Direct messages are private between you and the other person. Our team only reviews a conversation if someone reports it."} /></p>
         </form>
       )}
     </section>

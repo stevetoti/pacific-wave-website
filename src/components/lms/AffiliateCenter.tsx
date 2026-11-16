@@ -1,4 +1,5 @@
 "use client";
+import { CourseText } from "@/components/lms/CourseLanguage";
 import { useCallback, useEffect, useState } from "react";
 import {
   Copy,
@@ -181,13 +182,9 @@ export default function AffiliateCenter({ email }: { email: string }) {
   );
   const payoutFields = (
     <>
-      <label>
-        Phone / WhatsApp
-        <input name="phone" type="tel" required minLength={5} maxLength={40} defaultValue={a?.phone} />
+      <label><CourseText text={"Phone / WhatsApp"} /><input name="phone" type="tel" required minLength={5} maxLength={40} defaultValue={a?.phone} />
       </label>
-      <label>
-        How should we pay you?
-        <select name="payout_method" defaultValue={a?.payout_method || "bank"}>
+      <label><CourseText text={"How should we pay you?"} /><select name="payout_method" defaultValue={a?.payout_method || "bank"}>
           {Object.entries(methodLabel).map(([v, l]) => (
             <option key={v} value={v}>
               {l}
@@ -195,9 +192,7 @@ export default function AffiliateCenter({ email }: { email: string }) {
           ))}
         </select>
       </label>
-      <label className="af-wide">
-        Payout details
-        <textarea
+      <label className="af-wide"><CourseText text={"Payout details"} /><textarea
           name="payout_details"
           required
           minLength={5}
@@ -207,7 +202,7 @@ export default function AffiliateCenter({ email }: { email: string }) {
           placeholder="Country, preferred payout currency, legal account name, bank name, account number and SWIFT/routing details where required — or mobile-money provider and number."
         />
       </label>
-      <p id="affiliate-payout-help" className="af-wide text-sm text-slate-600">Use an account in your name or your registered business’s name. Do not enter ID documents, passwords, PINs or login codes here. Additional verification is arranged securely before payout if needed. <Link href={affiliateTermsUrl} className="underline">Read payout and verification terms</Link>.</p>
+      <p id="affiliate-payout-help" className="af-wide text-sm text-slate-600"><CourseText text={"Use an account in your name or your registered business’s name. Do not enter ID documents, passwords, PINs or login codes here. Additional verification is arranged securely before payout if needed."} /><Link href={affiliateTermsUrl} className="underline"><CourseText text={"Read payout and verification terms"} /></Link>.</p>
     </>
   );
   if (!a || a.status === "rejected")
@@ -217,46 +212,31 @@ export default function AffiliateCenter({ email }: { email: string }) {
         <section className="sd-panel">
           <div className="sd-section-title">
             <div>
-              <h2>Earn by sharing our courses</h2>
-              <p>
-                Get your own course links. When someone enrols and pays
-                through your link, you earn <strong>15% commission</strong> on
-                the amount they pay.
-              </p>
+              <h2><CourseText text={"Earn by sharing our courses"} /></h2>
+              <p><CourseText text={"Get your own course links. When someone enrols and pays through your link, you earn"} /><strong><CourseText text={"15% commission"} /></strong><CourseText text={"on the amount they pay."} /></p>
             </div>
           </div>
           <ul className="af-points">
-            <li>Share your link on WhatsApp, Facebook or anywhere you like.</li>
-            <li>
-              Anyone who opens your link is credited to you for 30 days.
-            </li>
+            <li><CourseText text={"Share your link on WhatsApp, Facebook or anywhere you like."} /></li>
+            <li><CourseText text={"Anyone who opens your link is credited to you for 30 days."} /></li>
             <li>
               {affiliatePayoutSummary}
             </li>
           </ul>
           {a?.status === "rejected" && (
-            <div className="lms-alert">
-              Your previous application was not approved. You can update your
-              details and apply again.
-            </div>
+            <div className="lms-alert"><CourseText text={"Your previous application was not approved. You can update your details and apply again."} /></div>
           )}
         </section>
         <form className="sd-panel sd-profile-form" onSubmit={(e) => submit(e, "apply")}>
-          <h2>Join the affiliate programme</h2>
+          <h2><CourseText text={"Join the affiliate programme"} /></h2>
           <fieldset disabled={busy}>
             <div className="sd-form-grid">
-              <label>
-                Full legal name
-                <input name="full_name" required minLength={2} maxLength={120} defaultValue={a?.full_name} />
+              <label><CourseText text={"Full legal name"} /><input name="full_name" required minLength={2} maxLength={120} defaultValue={a?.full_name} />
               </label>
-              <label>
-                Account email
-                <input value={email} disabled readOnly />
+              <label><CourseText text={"Account email"} /><input value={email} disabled readOnly />
               </label>
               {payoutFields}
-              <label className="af-wide">
-                How will you promote our courses?
-                <textarea
+              <label className="af-wide"><CourseText text={"How will you promote our courses?"} /><textarea
                   name="promotion_plan"
                   required
                   minLength={10}
@@ -268,11 +248,11 @@ export default function AffiliateCenter({ email }: { email: string }) {
             </div>
             <label className="af-check">
               <input type="checkbox" name="agree" required />
-              <span>I will promote honestly, will not spam, and will not use my own link to buy courses for myself. I agree to the <Link href={affiliateTermsUrl} target="_blank" rel="noreferrer" className="underline">affiliate terms and conditions</Link>.</span>
+              <span><CourseText text={"I will promote honestly, will not spam, and will not use my own link to buy courses for myself. I agree to the"} /><Link href={affiliateTermsUrl} target="_blank" rel="noreferrer" className="underline"><CourseText text={"affiliate terms and conditions"} /></Link>.</span>
             </label>
             <div className="sd-form-actions">
-              <span>{a?.status === "rejected" ? "We review re-applications, usually within 2 working days." : "Approval is instant. Your links appear as soon as you join."}</span>
-              <button className="lms-button">{a?.status === "rejected" ? "Send application" : "Join now"}</button>
+              <span><CourseText text={a?.status === "rejected" ? "We review re-applications, usually within 2 working days." : "Approval is instant. Your links appear as soon as you join."} /></span>
+              <button className="lms-button"><CourseText text={a?.status === "rejected" ? "Send application" : "Join now"} /></button>
             </div>
           </fieldset>
         </form>
@@ -283,14 +263,14 @@ export default function AffiliateCenter({ email }: { email: string }) {
       <section className="sd-panel">
         {alerts}
         <h2>
-          {a.status === "pending"
+          <CourseText text={a.status === "pending"
             ? "Your application is being reviewed"
-            : "Your affiliate links are paused"}
+            : "Your affiliate links are paused"} />
         </h2>
         <p>
-          {a.status === "pending"
+          <CourseText text={a.status === "pending"
             ? "Thanks for applying. We will email you when your affiliate links are ready."
-            : "New referrals are not being tracked right now. Commissions you already earned are unaffected. Contact training support if you have questions."}
+            : "New referrals are not being tracked right now. Commissions you already earned are unaffected. Contact training support if you have questions."} />
         </p>
       </section>
     );
@@ -333,12 +313,9 @@ export default function AffiliateCenter({ email }: { email: string }) {
       <section className="sd-panel">
         <div className="sd-section-title">
           <div>
-            <h2>Your affiliate links</h2>
-            <p>
-              Your code is <strong>{a.code}</strong>. You earn{" "}
-              {a.commission_rate}% of what each referred student pays.
-              Referrals are remembered for 30 days.
-            </p>
+            <h2><CourseText text={"Your affiliate links"} /></h2>
+            <p><CourseText text={"Your code is"} /><strong>{a.code}</strong><CourseText text={". You earn"} />{" "}
+              {a.commission_rate}<CourseText text={"% of what each referred student pays. Referrals are remembered for 30 days."} /></p>
           </div>
         </div>
         <div className="af-links">
@@ -354,7 +331,7 @@ export default function AffiliateCenter({ email }: { email: string }) {
                 <div className="af-actions">
                   <button type="button" className="lms-button" onClick={() => copy(url)}>
                     {copied === url ? <Check size={16} /> : <Copy size={16} />}
-                    {copied === url ? "Copied" : "Copy link"}
+                    <CourseText text={copied === url ? "Copied" : "Copy link"} />
                   </button>
                   <a
                     className="lms-text"
@@ -362,16 +339,14 @@ export default function AffiliateCenter({ email }: { email: string }) {
                     rel="noreferrer"
                     href={`https://wa.me/?text=${encodeURIComponent(`${l.title} — Pacific Wave Digital Training: ${url}`)}`}
                   >
-                    <Share2 size={15} /> WhatsApp
-                  </a>
+                    <Share2 size={15} /><CourseText text={"WhatsApp"} /></a>
                   <a
                     className="lms-text"
                     target="_blank"
                     rel="noreferrer"
                     href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`}
                   >
-                    <Share2 size={15} /> Facebook
-                  </a>
+                    <Share2 size={15} /><CourseText text={"Facebook"} /></a>
                 </div>
               </div>
             );
@@ -382,32 +357,29 @@ export default function AffiliateCenter({ email }: { email: string }) {
         <div className="sd-section-title">
           <div>
             <h2>
-              <MessageSquareText size={20} className="af-inline-icon" /> Ready-to-send message
-            </h2>
-            <p>Copy this, or better still, add a line about why you recommend it.</p>
+              <MessageSquareText size={20} className="af-inline-icon" /><CourseText text={"Ready-to-send message"} /></h2>
+            <p><CourseText text={"Copy this, or better still, add a line about why you recommend it."} /></p>
           </div>
         </div>
         <blockquote className="af-message">{shareMessage(link("/training-center"))}</blockquote>
         <div className="af-actions">
           <button type="button" className="lms-button" onClick={() => copy(shareMessage(link("/training-center")))}>
             {copied === shareMessage(link("/training-center")) ? <Check size={16} /> : <Copy size={16} />}
-            {copied === shareMessage(link("/training-center")) ? "Copied" : "Copy message"}
+            <CourseText text={copied === shareMessage(link("/training-center")) ? "Copied" : "Copy message"} />
           </button>
           <a className="lms-text" target="_blank" rel="noreferrer" href={`https://wa.me/?text=${encodeURIComponent(shareMessage(link("/training-center")))}`}>
-            <Share2 size={15} /> Send on WhatsApp
-          </a>
+            <Share2 size={15} /><CourseText text={"Send on WhatsApp"} /></a>
         </div>
       </section>
       <details className="sd-panel af-tips">
-        <summary>Payouts and affiliate terms</summary>
+        <summary><CourseText text={"Payouts and affiliate terms"} /></summary>
         <p>{affiliatePayoutSummary}</p>
         <AffiliateTermsContent />
-        <Link href={affiliateTermsUrl} className="lms-text">Read the public affiliate terms</Link>
+        <Link href={affiliateTermsUrl} className="lms-text"><CourseText text={"Read the public affiliate terms"} /></Link>
       </details>
       <details className="sd-panel af-tips">
         <summary>
-          <Lightbulb size={20} className="af-inline-icon" /> How top affiliates succeed
-        </summary>
+          <Lightbulb size={20} className="af-inline-icon" /><CourseText text={"How top affiliates succeed"} /></summary>
         <ol className="af-practices">
           {affiliatePractices.map((p) => (
             <li key={p.title}>
@@ -416,7 +388,7 @@ export default function AffiliateCenter({ email }: { email: string }) {
             </li>
           ))}
         </ol>
-        <h3>Programme rules</h3>
+        <h3><CourseText text={"Programme rules"} /></h3>
         <ul className="af-points">
           {affiliateRules.map((r) => (
             <li key={r}>{r}</li>
@@ -426,10 +398,8 @@ export default function AffiliateCenter({ email }: { email: string }) {
       <section className="sd-panel">
         <div className="sd-section-title">
           <div>
-            <h2>Your earnings</h2>
-            <p>
-              Pending: {totals(commissions, ["pending"])} · Approved, awaiting
-              payout: {totals(commissions, ["approved"])} · Paid:{" "}
+            <h2><CourseText text={"Your earnings"} /></h2>
+            <p><CourseText text={"Pending:"} />{totals(commissions, ["pending"])}<CourseText text={"· Approved, awaiting payout:"} />{totals(commissions, ["approved"])}<CourseText text={"· Paid:"} />{" "}
               {totals(commissions, ["paid"])}
             </p>
           </div>
@@ -439,11 +409,11 @@ export default function AffiliateCenter({ email }: { email: string }) {
             <table>
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Course</th>
-                  <th>Student paid</th>
-                  <th>Your commission</th>
-                  <th>Status</th>
+                  <th><CourseText text={"Date"} /></th>
+                  <th><CourseText text={"Course"} /></th>
+                  <th><CourseText text={"Student paid"} /></th>
+                  <th><CourseText text={"Your commission"} /></th>
+                  <th><CourseText text={"Status"} /></th>
                 </tr>
               </thead>
               <tbody>
@@ -465,20 +435,20 @@ export default function AffiliateCenter({ email }: { email: string }) {
             </table>
           </div>
         ) : (
-          <p>No commissions yet. They appear here once a referred student pays.</p>
+          <p><CourseText text={"No commissions yet. They appear here once a referred student pays."} /></p>
         )}
       </section>
       <section className="sd-panel">
-        <h2>People who signed up through your link</h2>
+        <h2><CourseText text={"People who signed up through your link"} /></h2>
         {referrals.length ? (
           <div className="ec-table">
             <table>
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Student</th>
-                  <th>Course</th>
-                  <th>Status</th>
+                  <th><CourseText text={"Date"} /></th>
+                  <th><CourseText text={"Student"} /></th>
+                  <th><CourseText text={"Course"} /></th>
+                  <th><CourseText text={"Status"} /></th>
                 </tr>
               </thead>
               <tbody>
@@ -489,13 +459,13 @@ export default function AffiliateCenter({ email }: { email: string }) {
                     <td>{courseTitle(r.course_id)}</td>
                     <td>
                       <span className="sd-status" data-status={r.status}>
-                        {["paid", "granted"].includes(r.status)
+                        <CourseText text={["paid", "granted"].includes(r.status)
                           ? "Enrolled"
                           : r.status === "review"
                             ? "Payment in review"
                             : r.status === "refunded"
                               ? "Refunded"
-                              : "Not paid yet"}
+                              : "Not paid yet"} />
                       </span>
                     </td>
                   </tr>
@@ -504,21 +474,19 @@ export default function AffiliateCenter({ email }: { email: string }) {
             </table>
           </div>
         ) : (
-          <p>No sign-ups yet. Share your links to get started.</p>
+          <p><CourseText text={"No sign-ups yet. Share your links to get started."} /></p>
         )}
       </section>
       <section className="sd-panel">
         <div className="sd-account-row">
           <div>
-            <h2>Payout details</h2>
+            <h2><CourseText text={"Payout details"} /></h2>
             <p>
               {methodLabel[a.payout_method]} · {a.payout_details}
             </p>
           </div>
           {!editingPayout && (
-            <button type="button" className="lms-text" onClick={() => setEditingPayout(true)}>
-              Change
-            </button>
+            <button type="button" className="lms-text" onClick={() => setEditingPayout(true)}><CourseText text={"Change"} /></button>
           )}
         </div>
         {editingPayout && (
@@ -526,10 +494,8 @@ export default function AffiliateCenter({ email }: { email: string }) {
             <fieldset disabled={busy}>
               <div className="sd-form-grid">{payoutFields}</div>
               <div className="sd-form-actions">
-                <button type="button" className="lms-text" onClick={() => setEditingPayout(false)}>
-                  Cancel
-                </button>
-                <button className="lms-button">Save payout details</button>
+                <button type="button" className="lms-text" onClick={() => setEditingPayout(false)}><CourseText text={"Cancel"} /></button>
+                <button className="lms-button"><CourseText text={"Save payout details"} /></button>
               </div>
             </fieldset>
           </form>
