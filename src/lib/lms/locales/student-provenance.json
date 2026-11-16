@@ -1,9 +1,9 @@
 {
   "generated_on": "2026-11-16",
-  "source_sha256": "128671c81338f8851698be88eca2c904ea60f6746a0cf8c8d9c51fdb4a9798ff",
+  "source_sha256": "2e221ff955d90cbdb64bc90ddea9bb4ae01c1983fe790c47fcfa95b6be740475",
   "bislama_reference": "Language Hub Bislama grammar, glossary and 152 curated gold translation pairs",
   "method": "AI translation grounded in gold references; new course translations not individually human-reviewed",
   "model": "claude-opus-4-8",
-  "strings": 1760,
+  "strings": 1763,
   "privacy": "Authored course/interface copy only; no student answers, profiles or conversations"
 }
