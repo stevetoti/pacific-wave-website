@@ -1,11 +1,9 @@
 {
   "generated_on": "2026-11-16",
-  "source_sha256": "b785764e5835e9a25e43541809c7523773911281229aaec6b5ead08cf4edbe64",
+  "source_sha256": "128671c81338f8851698be88eca2c904ea60f6746a0cf8c8d9c51fdb4a9798ff",
   "bislama_reference": "Language Hub Bislama grammar, glossary and 152 curated gold translation pairs",
   "method": "AI translation grounded in gold references; new course translations not individually human-reviewed",
   "model": "claude-opus-4-8",
-  "strings": 1719,
-  "privacy": "Authored course/interface copy only; no student answers, profiles or conversations",
-  "covered_source_strings": 1723,
-  "manual_review": "Core title/join/date labels and dynamic count/name templates reviewed by Codex; no independent native-speaker review"
+  "strings": 1760,
+  "privacy": "Authored course/interface copy only; no student answers, profiles or conversations"
 }

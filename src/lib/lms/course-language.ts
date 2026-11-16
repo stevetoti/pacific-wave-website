@@ -3,6 +3,9 @@ export function parseCourseLanguage(value: unknown): CourseLanguage {
   return value === 'bi' || value === 'fr' ? value : 'en';
 }
 const templates = [
+  { key: '{count} hours of scheduled teaching', match: /^(\d+) hours of scheduled teaching$/, variables: ['count'] },
+  { key: '{count} months of follow-up mentorship after your lessons, with reviews and help when you need it.', match: /^(\d+) months? of follow-up mentorship after your lessons, with reviews and help when you need it\.$/, variables: ['count'] },
+  { key: '{count} months of follow-up mentorship after both phases, with reviews and help when you need it.', match: /^(\d+) months? of follow-up mentorship after both phases, with reviews and help when you need it\.$/, variables: ['count'] },
   { key: 'Week {number}', match: /^Week (\d+)$/, variables: ['number'] },
   { key: '{count} lessons', match: /^(\d+) lessons$/, variables: ['count'] },
   { key: '{count} weeks', match: /^(\d+) weeks$/, variables: ['count'] },

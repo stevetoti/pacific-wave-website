@@ -16,13 +16,13 @@ export default function PersonalLearningSpace({ offer }: { offer: PersonalOffer 
   ];
   return <>
     <section className="lms-section lms-personal-fit" aria-labelledby="personal-fit-title">
-      <div className="lms-personal-fit-intro"><UserRoundCheck size={28} aria-hidden="true"/><div><p className="lms-eyebrow"><CourseText text={"BUILT AROUND YOUR NEXT STEP"} /></p><h2 id="personal-fit-title"><CourseText text={"Who this is for"} /></h2><p>{offer.audience}</p></div></div>
+      <div className="lms-personal-fit-intro"><UserRoundCheck size={28} aria-hidden="true"/><div><p className="lms-eyebrow"><CourseText text={"BUILT AROUND YOUR NEXT STEP"} /></p><h2 id="personal-fit-title"><CourseText text={"Who this is for"} /></h2><p><CourseText text={offer.audience} /></p></div></div>
       <h3><CourseText text={"What you’ll work towards"} /></h3>
-      <ul className="lms-personal-outcome-grid">{offer.outcomes.map(outcome=><li key={outcome}><CheckCircle2 size={20} aria-hidden="true"/><span>{outcome}</span></li>)}</ul>
+      <ul className="lms-personal-outcome-grid">{offer.outcomes.map(outcome=><li key={outcome}><CheckCircle2 size={20} aria-hidden="true"/><span><CourseText text={outcome} /></span></li>)}</ul>
     </section>
     <section id="learning-space" className="lms-section lms-personal-space" aria-labelledby="personal-space-title">
       <div className="lms-personal-section-heading"><div><p className="lms-eyebrow"><CourseText text={"A CLEAR PLAN. YOUR OWN PACE OF PRACTICE."} /></p><h2 id="personal-space-title"><CourseText text={"Your own learning space"} /></h2><p><CourseText text={"Private lessons, practical project work and personal support in one place."} /></p></div><Laptop size={44} aria-hidden="true"/></div>
-      <div className="lms-personal-space-grid">{benefits.map(({Icon,title,body})=><article key={title}><Icon size={25} aria-hidden="true"/><h3>{title}</h3><p>{body}</p></article>)}</div>
+      <div className="lms-personal-space-grid">{benefits.map(({Icon,title,body})=><article key={title}><Icon size={25} aria-hidden="true"/><h3><CourseText text={title} /></h3><p><CourseText text={body} /></p></article>)}</div>
       <div className="lms-personal-start"><h3><CourseText text={"How it works"} /></h3><ol>{steps.map((step,i)=><li key={step.title}><span className="lms-personal-step-number">{String(i+1).padStart(2,"0")}</span><div><h4><CourseText text={step.title} /></h4><p><CourseText text={step.body} /></p></div>{i<2 && <ArrowRight size={18} aria-hidden="true"/>}</li>)}</ol></div>
       <div className="lms-personal-preparation"><span><Laptop size={19} aria-hidden="true"/><CourseText text={"Bring a laptop and internet access"} /></span><span><CalendarDays size={19} aria-hidden="true"/><CourseText text={"Set aside time to practise between lessons"} /></span></div>
     </section>
