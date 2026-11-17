@@ -516,7 +516,7 @@ export default function TrainingAdmin({
                 </section>
                 {editLesson && (
                   <div key={editLesson.id || "new"}>
-                  {editLesson.id ? <LessonRecordingsEditor lesson={lessons.find(l => l.id === editLesson.id)!} privateSessions={Boolean(selectedCourse?.private_sessions)} onSaved={load} /> : <p className="lms-notice">Save this lesson first, then add and publish its recordings.</p>}
+                  {editLesson.id ? <LessonRecordingsEditor key={editLesson.id} lesson={lessons.find(l => l.id === editLesson.id)!} privateSessions={Boolean(selectedCourse?.private_sessions)} onSaved={load} /> : <p className="lms-notice">Save this lesson first, then add and publish its recordings.</p>}
                   <form
                     className="lms-panel"
                     key={editLesson.id || "new"}
