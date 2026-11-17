@@ -7,6 +7,7 @@ import { initialCohort, novemberCohort, novemberCourseSlug, dayMonth } from "@/l
 import { HoneypotField, useFormBotFields } from "@/components/security/FormBotFields";
 import { TurnstileWidget } from "@/components/security/TurnstileWidget";
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
+import ZoomRecording from "./ZoomRecording";
 import YouTubeRecordings from "./YouTubeRecordings";
 import { liveRecordingPending } from "@/lib/lms/lesson-recording";
 import { CourseText, useCourseLanguage } from '@/components/lms/CourseLanguage';
@@ -1260,6 +1261,7 @@ function TrainingCenterContent({
                                     )}
                                   </>
                                 )}
+                                <ZoomRecording lesson={active} />
                                 <YouTubeRecordings key={active.id} lesson={active} />
                                 <div className="lms-prose">
                                   {t(active.content)}

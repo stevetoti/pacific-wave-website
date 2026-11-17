@@ -1,3 +1,4 @@
+import { hasZoomRecording } from "./zoom-recordings";
 import { lessonYouTubeIds } from "./youtube-recordings";
 export const blpSlug = 'blp-digital-skills-workshop';
 export const blpModules = [
@@ -13,6 +14,6 @@ export const blpModules = [
 ];
 
 // Published workshop topics stay previews until an instructor attaches a recording.
-export function workshopRecordingPending(course: { slug: string }, lesson: { recordings_published?: boolean; has_recording?: boolean; recording_path?: string | null; youtube_ids?: string[] | null; youtube_id?: string | null }) {
-  return course.slug === blpSlug && (lesson.recordings_published === false || (!lesson.has_recording && !lesson.recording_path && !lessonYouTubeIds(lesson).length));
+export function workshopRecordingPending(course: { slug: string }, lesson: { recordings_published?: boolean; has_recording?: boolean; recording_path?: string | null; zoom_recording_url?: string | null; youtube_ids?: string[] | null; youtube_id?: string | null }) {
+  return course.slug === blpSlug && (lesson.recordings_published === false || (!lesson.has_recording && !lesson.recording_path && !lessonYouTubeIds(lesson).length && !hasZoomRecording(lesson)));
 }

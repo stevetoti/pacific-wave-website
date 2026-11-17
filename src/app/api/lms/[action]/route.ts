@@ -1,3 +1,4 @@
+import { studentZoomRecording, zoomRecordingUrlSchema, zoomRecordingPasscodeSchema } from "@/lib/lms/zoom-recordings";
 import { isCompletedOctoberCourse } from "@/lib/lms/cohort-registration";
 import { guardPublicForm } from "@/lib/security/form-guard";
 import { clientIpFromHeaders } from "@/lib/security/turnstile";
@@ -130,7 +131,8 @@ export async function GET(request: Request, context: Context) {
       ]);
       const orders = checked(orderRows),
         progress = checked(progressRows);
-      after(sendLmsEmails);
+      // Admin-created isolated QA identities must never dispatch the shared email queue.
+      if (user.app_metadata?.lms_qa_no_email !== true) after(sendLmsEmails);
       return json({ orders, progress });
     }
     if (action === "course") {
@@ -162,6 +164,7 @@ export async function GET(request: Request, context: Context) {
       ) as Lesson[];
       const lessons = rows.map((l) => ({
         ...l,
+        ...studentZoomRecording(l, order.status),
         recording_path: "",
         zoom_passcode: "",
         has_recording:
@@ -743,7 +746,7 @@ export async function POST(request: Request, context: Context) {
           }),
           z.object({ action: z.literal("course"), value: courseSchema }),
           z.object({ action: z.literal("lesson"), value: lessonSchema }),
-          z.object({ action: z.literal("recordings"), lesson_id: z.uuid(), course_id: z.uuid(), youtube_ids: z.array(z.string().regex(/^[A-Za-z0-9_-]{11}$/)).max(20), recording_path: z.string().regex(/^$|^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(mp4|webm)$/), publish: z.boolean() }),
+          z.object({ action: z.literal("recordings"), lesson_id: z.uuid(), course_id: z.uuid(), youtube_ids: z.array(z.string().regex(/^[A-Za-z0-9_-]{11}$/)).max(20), recording_path: z.string().regex(/^$|^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(mp4|webm)$/), zoom_recording_url: zoomRecordingUrlSchema.optional(), zoom_recording_passcode: zoomRecordingPasscodeSchema.optional(), publish: z.boolean() }),
           z.object({ action: z.literal("recordings_unpublish"), lesson_id: z.uuid(), course_id: z.uuid() }),
           z.object({
             action: z.literal("banks"),
@@ -820,18 +823,21 @@ export async function POST(request: Request, context: Context) {
         return json({ success: true });
       }
       if (input.action === "recordings" || input.action === "recordings_unpublish") {
-        const lesson = checked(await db.from("pwd_lms_lessons").select("id,course_id,order_id,published").eq("id", input.lesson_id).eq("course_id", input.course_id).maybeSingle());
+        const lesson = checked(await db.from("pwd_lms_lessons").select("id,course_id,order_id,published,zoom_recording_url,zoom_recording_passcode").eq("id", input.lesson_id).eq("course_id", input.course_id).maybeSingle());
         if (!lesson) throw new HttpError(404, "Lesson not found in this course.");
         if (input.action === "recordings_unpublish") {
           checked(await db.from("pwd_lms_lessons").update({ recordings_published: false }).eq("id", lesson.id));
           return json({ success: true, published: false });
         }
         const course = checked(await db.from("pwd_lms_courses").select("private_sessions").eq("id", lesson.course_id).single());
-        if (course?.private_sessions && (!lesson.order_id || input.youtube_ids.length)) throw new HttpError(400, "Mentorship recordings must use a private upload for the assigned student.");
+        const zoomUrl = input.zoom_recording_url ?? lesson.zoom_recording_url;
+        const zoomPasscode = input.zoom_recording_passcode ?? lesson.zoom_recording_passcode;
+        if (!zoomUrl && zoomPasscode) throw new HttpError(400, "Add the Zoom recording link or remove its passcode.");
+        if (course?.private_sessions && (!lesson.order_id || input.youtube_ids.length || zoomUrl)) throw new HttpError(400, "Mentorship recordings must use a private upload for the assigned student.");
         if (input.recording_path && !input.recording_path.startsWith(`${lesson.order_id || lesson.course_id}/`)) throw new HttpError(400, "Choose a recording uploaded for this course or student.");
-        if (input.publish && !input.youtube_ids.length && !input.recording_path) throw new HttpError(400, "Add a YouTube link or upload a video before publishing.");
+        if (input.publish && !input.youtube_ids.length && !input.recording_path && !zoomUrl) throw new HttpError(400, "Add a Zoom recording link, a YouTube link or upload a video before publishing.");
         if (input.publish && !lesson.published) throw new HttpError(400, "Publish the lesson in its settings first, then publish the recordings.");
-        checked(await db.from("pwd_lms_lessons").update({ youtube_ids: input.youtube_ids, youtube_id: input.youtube_ids[0] || "", recording_path: input.recording_path, recordings_published: input.publish }).eq("id", lesson.id));
+        checked(await db.from("pwd_lms_lessons").update({ youtube_ids: input.youtube_ids, youtube_id: input.youtube_ids[0] || "", recording_path: input.recording_path, zoom_recording_url: zoomUrl, zoom_recording_passcode: zoomPasscode, recordings_published: input.publish }).eq("id", lesson.id));
         return json({ success: true, published: input.publish });
       }
       if (input.action === "recording_upload") {

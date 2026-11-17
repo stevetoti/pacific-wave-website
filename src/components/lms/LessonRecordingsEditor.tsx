@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { authFetch } from '@/lib/auth-fetch';
 import { supabase } from '@/lib/supabase';
+import { hasZoomRecording, parseZoomRecording } from '@/lib/lms/zoom-recordings';
 import { lessonYouTubeIds, parseYouTubeRecording } from '@/lib/lms/youtube-recordings';
 import type { Lesson } from '@/lib/lms/types';
 import YouTubeRecordingFields from './YouTubeRecordingFields';
@@ -10,7 +11,7 @@ export default function LessonRecordingsEditor({ lesson, privateSessions, onSave
   lesson: Lesson; privateSessions: boolean; onSaved: () => Promise<void>;
 }) {
   const [path, setPath] = useState(lesson.recording_path || '');
-  const [published, setPublished] = useState(lesson.recordings_published !== false && Boolean(path || lessonYouTubeIds(lesson).length));
+  const [published, setPublished] = useState(lesson.recordings_published !== false && Boolean(path || lessonYouTubeIds(lesson).length || hasZoomRecording(lesson)));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -27,11 +28,17 @@ export default function LessonRecordingsEditor({ lesson, privateSessions, onSave
     const intent = (e.nativeEvent as SubmitEvent).submitter?.getAttribute('value') || 'draft';
     setBusy(true); setError(''); setMessage('');
     try {
-      const links = new FormData(form).getAll('youtube_links').map(String).map(v => v.trim()).filter(Boolean);
+      const fields = new FormData(form);
+      const zoomInput = String(fields.get('zoom_recording_url') || '').trim();
+      const zoomUrl = zoomInput ? parseZoomRecording(zoomInput) : '';
+      if (zoomInput && !zoomUrl) throw Error('Enter a valid HTTPS Zoom cloud recording share or play link.');
+      const zoomPasscode = String(fields.get('zoom_recording_passcode') || '').trim();
+      if (!zoomUrl && zoomPasscode) throw Error('Add the Zoom recording link or remove its passcode.');
+      const links = fields.getAll('youtube_links').map(String).map(v => v.trim()).filter(Boolean);
       const parsed = links.map(parseYouTubeRecording);
       if (parsed.some(v => !v)) throw Error('Enter a valid YouTube video link or 11-character ID for every part.');
       const ids = Array.from(new Set(parsed.filter((v): v is string => v !== null)));
-      const d = await request({ action: 'recordings', lesson_id: lesson.id, course_id: lesson.course_id, youtube_ids: ids, recording_path: path, publish: intent === 'publish' });
+      const d = await request({ action: 'recordings', lesson_id: lesson.id, course_id: lesson.course_id, youtube_ids: ids, recording_path: path, zoom_recording_url: zoomUrl, zoom_recording_passcode: zoomPasscode, publish: intent === 'publish' });
       setPublished(d.published); setDirty(false);
       setMessage(d.published ? 'Recordings published. Approved students can now watch them in this class.' : 'Recording draft saved. Students cannot watch it until you publish.');
       await onSaved();
@@ -44,7 +51,15 @@ export default function LessonRecordingsEditor({ lesson, privateSessions, onSave
     {error && <p role="alert" className="lms-alert">{error}</p>}
     {message && <p role="status" className="lms-notice">{message}</p>}
     <fieldset disabled={busy} style={{ minWidth: 0 }}>
-      {!privateSessions && <YouTubeRecordingFields lesson={lesson} />}
+      {!privateSessions && <>
+        <fieldset style={{ minWidth: 0, marginBottom: 24 }}>
+          <legend>Zoom cloud recording</legend>
+          <p className="lms-muted">Paste the recording’s share link, not the live meeting link. Students open it in Zoom’s player without downloading. Anyone with the link and passcode may be able to forward them.</p>
+          <label>Zoom recording link<input name="zoom_recording_url" type="url" maxLength={2048} defaultValue={lesson.zoom_recording_url || ''} placeholder="https://zoom.us/rec/share/…" /></label>
+          <label>Recording passcode<input name="zoom_recording_passcode" maxLength={100} autoComplete="off" defaultValue={lesson.zoom_recording_passcode || ''} /></label>
+        </fieldset>
+        <YouTubeRecordingFields lesson={lesson} />
+      </>}
       <h3>{privateSessions ? 'Private recording upload' : 'Or upload a recording'}</h3>
       <p className="lms-muted">MP4 or WebM, up to 500 MB. Uploading prepares a draft; click Publish recordings when ready.</p>
       <input aria-label="Upload class recording" type="file" accept="video/mp4,video/webm" onChange={async e => {
