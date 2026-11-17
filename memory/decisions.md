@@ -324,3 +324,6 @@ Onboarding sharing is per session with an unchecked explicit approval; only newl
 
 ## 2026-11-11 — [Codex] Instructor unpaid follow-up
 Grant unpaid follow-up per instructor assignment with a false default. Allow pending and rejected registrations in the flagged course for email/SMS and scoped history. Payment review, proof and private lesson assignment stay with their existing roles and enrollment requirements.
+
+## 2026-11-17 — [Codex] Recording source options
+Owner wants Zoom cloud share links without downloading, with YouTube retained for recordings stored elsewhere. Treat replays separately from live Zoom joining. Links/passcodes appear only to paid/granted enrolments after explicit recording publication; private one-to-one programmes keep private uploads. External Zoom sharing rules still apply.

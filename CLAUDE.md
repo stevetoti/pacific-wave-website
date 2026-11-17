@@ -1,3 +1,6 @@
+## Resume here — 2026-11-17 [Codex] Zoom cloud replays live
+Current appfbfcc8a / dpl_BgprrpkoVvxFFdZRHT7GrBxFoURA, pushed codex/zoom-cloud-recordings-20261117. Complete source `.deployment/bislama-release-20261116`; preserve its full Bislama/SEO/November lineage. Owner-confirmed Zoom replay published on November–December Day One; YouTube/upload retained.15tests/type/lint/build/eightguards and actual admin/student paid/unpaid/draft/mobile/language checks pass; QA fully removed/no emails. See docs/training/zoom-cloud-recordings-2026-11-17.md. Never roll back to pre-feature5d933fc with nonempty Zoom recording columns: old course projection lacks redaction for them. Back up/clear first or preserve new gate.
+
 ## 2026-11-16 — [Codex] Bislama student portal prepared, not published
 Shared training-layout language, expanded authored UI/programme dictionary, Bislama dates and safe dynamic templates are on local branch codex/bislama-student-experience-20261116. User approved authored-copy-only Anthropic translation; no learner data sent. Local real-component/synthetic-data browser checks pass, including answer preservation and mobile labels. No production fixture created for this language task, no deployment/database change. See docs/training/bislama-student-experience-2026-11-16.md and latest shared journals; preserve current production lineage before releasing.
 

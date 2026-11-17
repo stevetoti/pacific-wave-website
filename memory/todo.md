@@ -520,3 +520,6 @@ Live application e7a0740 (review of Claude 1fb58e6), production dpl_7yQApJJNVUB3
 
 ## 2026-11-11 — [Codex] Annie Toa unpaid follow-up
 - [x] Grant the scoped instructor permission, verify live API and desktop/mobile, and remove temporary data.
+
+## 2026-11-17 — [Codex] Zoom cloud class replays
+- [x] Add Zoom recording option beside YouTube/upload and publish owner-confirmed link on November–December Day One. — [Codex] 2026-11-17: Live admin persistence, paid/unpaid/draft API/browser, language/mobile checks pass; QA removed/no emails; other lessons/live meetings preserved.
