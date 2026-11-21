@@ -22,7 +22,7 @@ async function setup(page: Page, code = 'ACCOUNT_EXISTS') {
     }
     return route.fulfill({ json: route.request().url().includes('/user') ? user : { access_token: token, refresh_token: 'fixture-refresh', expires_in: 3600, token_type: 'bearer', user } });
   });
-  await page.route('**/api/lms-*', route => route.fulfill({ json: { notifications: [], messages: [], unread: 0 } }));
+  await page.route('**/api/lms-*', route => route.fulfill({ json: { items: [], notifications: [], messages: [], unread: 0 } }));
   await page.route('**/api/lms-profile**', route => route.fulfill({ json: { profile: { full_name: 'Returning Student', avatar_url: '' } } }));
   await page.route('**/api/lms/**', async route => {
     const action = new URL(route.request().url()).pathname.split('/').at(-1);
@@ -91,9 +91,9 @@ for (const code of ['ACCOUNT_EXISTS', 'ACCOUNT_CREATED_SIGN_IN']) test(`${code} 
   expect(fixture.counts().signins).toBe(0);
   await page.getByLabel('Password', { exact: true }).fill('Wrong-Password-123!');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await checkedExpect(page.getByRole('alert')).toContainText('Invalid login credentials');
+  await checkedExpect(page.locator('.lms-alert[role=alert]')).toContainText('Invalid login credentials');
   await page.getByRole('button', { name: 'Forgot password?' }).click();
-  await checkedExpect(page.getByRole('alert')).toHaveCount(0);
+  await checkedExpect(page.locator('.lms-alert[role=alert]')).toHaveCount(0);
   await checkedExpect(page.getByLabel('Email address', { exact: true })).toHaveValue(address);
   await page.getByRole('button', { name: 'Send reset email' }).click();
   await checkedExpect(page.getByRole('status')).toContainText('password reset email will arrive');
@@ -115,7 +115,7 @@ test('unrelated registration errors stay on signup and keep entered details', as
   const fixture = await setup(page, 'OTHER_ERROR');
   await page.goto(`/training-center/account?mode=signup&course=${slug}`);
   await fillSignup(page);
-  await checkedExpect(page.getByRole('alert')).toContainText('Your account was created');
+  await checkedExpect(page.locator('.lms-alert[role=alert]')).toContainText('Your account was created');
   await checkedExpect(page.getByRole('heading', { name: 'Create your student account' })).toBeVisible();
   await checkedExpect(page.getByLabel('Email address', { exact: true })).toHaveValue(address);
   expect(fixture.counts().signins).toBe(0);
