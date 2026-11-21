@@ -128,3 +128,21 @@ test('unrelated registration errors stay on signup and keep entered details', as
   await checkedExpect(page.getByLabel('Email address', { exact: true })).toHaveValue(address);
   expect(fixture.counts().signins).toBe(0);
 });
+
+test('sign-in fields wait for hydration so early entries cannot be silently cleared', async ({page})=>{
+ const fixture=await setup(page);
+ let release!:()=>void;
+ const ready=new Promise<void>(resolve=>{release=resolve;});
+ await page.route('**/_next/static/**/*.js',async route=>{await ready;await route.continue();});
+ try{
+  await page.goto(`/training-center/account?mode=signin&course=${slug}`,{waitUntil:'commit'});
+  await checkedExpect(page.getByLabel('Email address',{exact:true})).toBeDisabled();
+  await checkedExpect(page.getByLabel('Password',{exact:true})).toBeDisabled();
+ }finally{release();}
+ await checkedExpect(page.getByLabel('Email address',{exact:true})).toBeEnabled();
+ await page.getByLabel('Email address',{exact:true}).fill(address);
+ await page.getByLabel('Password',{exact:true}).fill('Existing-Password-123!');
+ await page.getByRole('button',{name:'Sign in',exact:true}).click();
+ await checkedExpect(page.getByRole('heading',{name:'How to pay'})).toBeVisible();
+ expect(fixture.counts().signins).toBe(1);expect(fixture.errors).toEqual([]);
+});
