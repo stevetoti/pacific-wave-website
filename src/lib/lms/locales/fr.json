@@ -891,5 +891,9 @@
   "Taken a class with us before? Use the same account for every course.": "Vous avez déjà suivi un cours avec nous ? Utilisez le même compte pour tous vos cours.",
   "Sign in to your existing account": "Connectez-vous à votre compte existant",
   "You already have an account. Sign in with your existing password to continue, or choose Forgot password.": "Vous avez déjà un compte. Connectez-vous avec votre mot de passe actuel pour continuer, ou choisissez Mot de passe oublié.",
-  "Your account is ready. Sign in to finish your course registration.": "Votre compte est prêt. Connectez-vous pour terminer votre inscription au cours."
+  "Your account is ready. Sign in to finish your course registration.": "Votre compte est prêt. Connectez-vous pour terminer votre inscription au cours.",
+  "Confirm your details": "Confirmez vos coordonnées",
+  "Your saved account details are ready. Confirm below to continue to payment.": "Les coordonnées de votre compte sont déjà renseignées. Confirmez ci-dessous pour passer au paiement.",
+  "Edit my details": "Modifier mes coordonnées",
+  "Continue to payment": "Passer au paiement"
 }

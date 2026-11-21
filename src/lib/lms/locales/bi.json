@@ -1861,5 +1861,9 @@
   "Taken a class with us before? Use the same account for every course.": "Yu bin tekem wan klas wetem mifala finis? Yusum sem akaon blong olgeta kos.",
   "Sign in to your existing account": "Saen in long akaon we yu gat finis",
   "You already have an account. Sign in with your existing password to continue, or choose Forgot password.": "Yu gat wan akaon finis. Saen in wetem paswod blong yu blong gohed, o jusum Fogetem paswod.",
-  "Your account is ready. Sign in to finish your course registration.": "Akaon blong yu i redi. Saen in blong finisim rejistresen blong kos blong yu."
+  "Your account is ready. Sign in to finish your course registration.": "Akaon blong yu i redi. Saen in blong finisim rejistresen blong kos blong yu.",
+  "Confirm your details": "Konfem ol ditel blong yu",
+  "Your saved account details are ready. Confirm below to continue to payment.": "Ol ditel blong akaon blong yu oli redi finis. Konfem daon ia blong gohed long pem.",
+  "Edit my details": "Jenis ol ditel blong mi",
+  "Continue to payment": "Gohed long pem"
 }

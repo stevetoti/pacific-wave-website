@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { test, expect, type Page } from '@playwright/test';
 
 test.use({ navigationTimeout: 60000 });
@@ -7,6 +8,12 @@ const slug = 'one-on-one-mentorship';
 const course = { id: 'c3ac2a74-1775-409b-8c16-8b8109cc313c', slug, title: 'AI, Coding & Software Development — One-on-One', description: 'Private software training', amount: 250000, currency: 'VUV', published: true, enrollment_open: true, private_sessions: true };
 const address = 'returning-student@example.com';
 async function setup(page: Page, code = 'ACCOUNT_EXISTS') {
+  if (process.env.PWD_STAGING_ACCESS_FILE) {
+    const { secret } = JSON.parse(readFileSync(process.env.PWD_STAGING_ACCESS_FILE, 'utf8'));
+    const origin = new URL(test.info().project.use.baseURL!).origin;
+    const access = new URL(origin); access.searchParams.set('_vercel_share', secret);
+    await page.goto(access.toString(), { waitUntil: 'domcontentloaded' });
+  }
   const user = { id: '22222222-2222-4222-8222-222222222222', email: address, aud: 'authenticated', role: 'authenticated', created_at: new Date().toISOString(), app_metadata: { provider: 'email' }, user_metadata: {} };
   const encode = (value: unknown) => Buffer.from(JSON.stringify(value)).toString('base64url');
   const token = `${encode({ alg: 'HS256', typ: 'JWT' })}.${encode({ sub: user.id, exp: Math.floor(Date.now()/1000)+3600, role: 'authenticated' })}.fixture`;
@@ -32,9 +39,10 @@ async function setup(page: Page, code = 'ACCOUNT_EXISTS') {
       return route.fulfill({ status: code === 'ACCOUNT_CREATED_SIGN_IN' ? 503 : 409, json: { success: false, code, error: code === 'ACCOUNT_EXISTS' ? 'An account already uses this email.' : 'Your account was created, but registration could not finish.' } });
     }
     if (action === 'registration_course') return route.fulfill({ json: { course } });
-    if (action === 'catalog') return route.fulfill({ json: { courses: [course], banks: [], stripe: false, sandbox: false } });
-    if (action === 'dashboard') return route.fulfill({ json: { orders: enrolled ? [{ id: '33333333-3333-4333-8333-333333333333', course_id: course.id, status: 'pending', amount: 250000, currency: 'VUV', name: 'Returning Student', phone: '+678 5551234', attendance: 'online' }] : [], progress: [] } });
-    if (action === 'order') { enrolled = true; expect(route.request().postDataJSON().course_id).toBe(course.id); return route.fulfill({ json: { success: true } }); }
+    if (action === 'catalog') return route.fulfill({ json: { courses: [course], banks: [], stripe: true, sandbox: false } });
+    if (action === 'dashboard') return route.fulfill({ json: { registration: {name:'Returning Student',phone:'+678 5551234',attendance:'online'}, orders: enrolled ? [{ id: '33333333-3333-4333-8333-333333333333', course_id: course.id, status: 'pending', amount: 250000, currency: 'VUV', name: 'Returning Student', phone: '+678 5551234', attendance: 'online' }] : [], progress: [] } });
+    if (action === 'order') { enrolled = true; expect(route.request().postDataJSON()).toMatchObject({course_id:course.id,use_saved_details:true,expected_user_id:user.id}); return route.fulfill({ json: { success: true } }); }
+    if (action === 'checkout') { expect(route.request().postDataJSON().id).toBe('33333333-3333-4333-8333-333333333333'); return route.fulfill({json:{url:'https://checkout.stripe.com/c/pay/cs_test_browser_fixture'}}); }
     return route.fulfill({ json: {} });
   });
   return { counts: () => ({ signups, signins, recoveries }), errors };
@@ -66,15 +74,14 @@ test('returning students can sign in above signup fields without human verificat
   await page.getByLabel('Password', { exact: true }).fill('Existing-Password-123!');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   await checkedExpect(page).toHaveURL(new RegExp(`/checkout\\?course=${slug}`));
-  await checkedExpect(page.getByRole('heading', { name: 'Your registration details' })).toBeVisible();
-  await page.getByLabel('Full name', { exact: true }).fill('Returning Student');
-  await page.getByLabel('Phone / WhatsApp').fill('+678 5551234');
-  await page.getByLabel('How will you attend?', { exact: true }).selectOption('online');
-  await page.locator('input[type=checkbox]').check();
-  await page.getByRole('button', { name: /Save.*registration/ }).click();
+  await checkedExpect(page.getByRole('heading', { name: 'How to pay' })).toBeVisible();
   await checkedExpect(page.getByRole('heading', { name: 'Your registration details' })).toHaveCount(0);
+  await checkedExpect(page.getByRole('button', {name:'Pay VUV 250,000 by card'})).toBeVisible();
   await page.reload();
-  await checkedExpect(page.getByRole('heading', { name: 'Your registration details' })).toHaveCount(0);
+  await checkedExpect(page.getByRole('heading', { name: 'How to pay' })).toBeVisible();
+  await page.route('https://checkout.stripe.com/**', route=>route.fulfill({contentType:'text/html',body:'<h1>Secure Stripe checkout</h1>'}));
+  await page.getByRole('button', {name:'Pay VUV 250,000 by card'}).click();
+  await checkedExpect(page).toHaveURL(/checkout.stripe.com\/c\/pay\/cs_test_browser_fixture/);
   expect(fixture.counts()).toEqual({ signups: 0, signins: 1, recoveries: 0 });
   expect(fixture.errors).toEqual([]);
 });
@@ -97,6 +104,7 @@ for (const code of ['ACCOUNT_EXISTS', 'ACCOUNT_CREATED_SIGN_IN']) test(`${code} 
   await checkedExpect(page.getByLabel('Email address', { exact: true })).toHaveValue(address);
   await page.getByRole('button', { name: 'Send reset email' }).click();
   await checkedExpect(page.getByRole('status')).toContainText('password reset email will arrive');
+  await checkedExpect(page).toHaveURL(/mode=reset/);
   await page.reload();
   await checkedExpect(page.getByRole('heading', { name: 'Reset your password' })).toBeVisible();
   await page.getByRole('button', { name: 'New here? Create an account' }).click();

@@ -1,3 +1,4 @@
+import { registrationDetails, hasRegistrationDetails } from "@/lib/lms/registration-details";
 import { studentZoomRecording, zoomRecordingUrlSchema, zoomRecordingPasscodeSchema } from "@/lib/lms/zoom-recordings";
 import { isCompletedOctoberCourse } from "@/lib/lms/cohort-registration";
 import { guardPublicForm } from "@/lib/security/form-guard";
@@ -121,19 +122,20 @@ export async function GET(request: Request, context: Context) {
     }
     if (action === "dashboard") {
       const { user } = await student(request);
-      const [orderRows, progressRows] = await Promise.all([
+      const [orderRows, progressRows, profileRow] = await Promise.all([
         db
           .from("pwd_lms_orders")
           .select("*")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false }),
         db.from("pwd_lms_progress").select("*").eq("user_id", user.id),
+        db.from("pwd_lms_profiles").select("full_name,phone").eq("user_id", user.id).maybeSingle(),
       ]);
       const orders = checked(orderRows),
         progress = checked(progressRows);
       // Admin-created isolated QA identities must never dispatch the shared email queue.
       if (user.app_metadata?.lms_qa_no_email !== true) after(sendLmsEmails);
-      return json({ orders, progress });
+      return json({ orders, progress, registration: registrationDetails(checked(profileRow), orders || [], user.user_metadata?.full_name) });
     }
     if (action === "course") {
       const { user } = await student(request);
@@ -388,7 +390,17 @@ export async function POST(request: Request, context: Context) {
     if (action === "order") {
       const { db, user } = await student(request);
       await rateLimit(request, `lms-order-${user.id}`, 20);
-      const input = await readJson(request, orderSchema);
+      const input = await readJson(request, z.union([orderSchema, z.object({ course_id: z.uuid(), use_saved_details: z.literal(true), expected_user_id: z.uuid() })]));
+      if ("expected_user_id" in input && input.expected_user_id !== user.id) throw new HttpError(409, "Your signed-in account changed. Refresh before continuing.");
+      let details;
+      if ("use_saved_details" in input) {
+        const [profile, previous] = await Promise.all([
+          db.from("pwd_lms_profiles").select("full_name,phone").eq("user_id", user.id).maybeSingle(),
+          db.from("pwd_lms_orders").select("name,phone,attendance").eq("user_id", user.id).order("created_at", { ascending: false }),
+        ]);
+        details = registrationDetails(checked(profile), checked(previous) || [], user.user_metadata?.full_name);
+        if (!hasRegistrationDetails(details)) throw new HttpError(422, "Please add the missing name or phone number to continue to payment.");
+      } else details = input;
       const course = checked(
         await db
           .from("pwd_lms_courses")
@@ -419,9 +431,9 @@ export async function POST(request: Request, context: Context) {
             user_id: user.id,
             course_id: course.id,
             email: user.email,
-            name: input.name,
-            phone: input.phone,
-            attendance: input.attendance,
+            name: details.name,
+            phone: details.phone,
+            attendance: details.attendance,
             amount: course.amount,
             currency: course.currency,
             ...(course.requires_approval ? { status: "pending", method: "grant", package_label: "Awaiting workshop approval" } : course.amount === 0 ? { status: "granted", method: "grant", package_label: "Workshop participant access" } : {}),
@@ -438,7 +450,7 @@ export async function POST(request: Request, context: Context) {
           .single(),
       );
       await attachReferral(db, request, order.id);
-      after(sendLmsEmails);
+      if (user.app_metadata?.lms_qa_no_email !== true) after(sendLmsEmails);
       return json({ order });
     }
     if (action === "coupon") {

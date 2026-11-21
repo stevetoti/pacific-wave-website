@@ -1,4 +1,5 @@
 "use client";
+import { hasRegistrationDetails, type RegistrationDetails } from "@/lib/lms/registration-details";
 import {formatCourseDate} from "@/lib/lms/course-date";
 import type {CourseLanguage} from "@/lib/lms/course-language";
 import { onboardingCourse, onboardingPath, onboardingSignIn } from "@/lib/lms/onboarding";
@@ -133,6 +134,8 @@ function TrainingCenterContent({
           ? "signup"
           : "signin",
     );
+  const [registration, setRegistration] = useState<RegistrationDetails>({ name: "", phone: "", attendance: "online" });
+  const [editRegistration, setEditRegistration] = useState(false);
   const [accountEmail, setAccountEmail] = useState("");
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
@@ -148,7 +151,7 @@ function TrainingCenterContent({
     for (const key of ["course", "next", "onboarding"] as const) {
       if (query[key]) params.set(key, query[key]);
     }
-    router.replace(`${base}/account?${params}`);
+    window.history.replaceState(null, "", `${base}/account?${params}`);
   }
   useEffect(() => {
     if (view === "account")
@@ -191,13 +194,24 @@ function TrainingCenterContent({
     setEmail(session?.user.email || null);
     setAuthReady(true);
     if (session && ["dashboard", "checkout", "course"].includes(view)) {
-      const [dash, detail] = await Promise.all([
+      const [initialDash, detail] = await Promise.all([
         api("dashboard"),
         view === "course" && coursePathId
           ? api(`course?id=${encodeURIComponent(coursePathId)}`)
           : Promise.resolve(null),
       ]);
+      let dash = initialDash;
+      if (dash.registration) setRegistration(dash.registration);
+      // Visiting an explicitly selected paid course is an enrolment intent. Reuse
+      // the student's own saved details; a pending order never grants paid access.
+      if (view === "checkout" && query.course && selected?.course?.enrollment_open && selected.course.amount > 0
+        && !dash.orders.some((order: Order) => order.course_id === selected.course.id)
+        && dash.registration && hasRegistrationDetails(dash.registration)) {
+        await api("order", { course_id: selected.course.id, use_saved_details: true, expected_user_id: session.user.id });
+        dash = await api("dashboard");
+      }
       setOrders(dash.orders);
+      if (dash.registration) setRegistration(dash.registration);
       setProgress(dash.progress);
       if (detail) {
         setCurrent(detail.course);
@@ -922,7 +936,7 @@ function TrainingCenterContent({
                         </>
                       ) : !order ? (
                         <>
-                          <h2><CourseText text={"Your registration details"} /></h2>
+                          <h2><CourseText text={hasRegistrationDetails(registration) && !editRegistration ? "Confirm your details" : "Your registration details"} /></h2>
                           <form
                             onSubmit={(e) => {
                               e.preventDefault();
@@ -942,25 +956,23 @@ function TrainingCenterContent({
                             <fieldset
                               disabled={busy || !checkout.enrollment_open}
                             >
+                              {hasRegistrationDetails(registration) && !editRegistration ? <>
+                                <p><CourseText text="Your saved account details are ready. Confirm below to continue to payment." /></p>
+                                <p><strong>{registration.name}</strong><br />{email}<br />{registration.phone}</p>
+                                <input type="hidden" name="name" value={registration.name} />
+                                <input type="hidden" name="phone" value={registration.phone} />
+                                <button type="button" className="lms-text" onClick={() => setEditRegistration(true)}><CourseText text="Edit my details" /></button>
+                              </> : <>
                               <label><CourseText text={"Full name"} /><input
-                                  name="name"
-                                  required
-                                  minLength={2}
-                                  maxLength={120}
-                                  autoComplete="name"
-                                />
-                              </label>
+                                  name="name" required minLength={2} maxLength={120} autoComplete="name"
+                                  value={registration.name} onChange={event => setRegistration(previous => ({ ...previous, name: event.target.value }))}
+                                /></label>
                               <label><CourseText text={"Phone / WhatsApp"} /><input
-                                  name="phone"
-                                  type="tel"
-                                  required
-                                  minLength={5}
-                                  maxLength={40}
-                                  defaultValue="+678 "
-                                  autoComplete="tel"
-                                />
-                              </label>
-                              <label><CourseText text={"How will you attend?"} /><select name="attendance">
+                                  name="phone" type="tel" required minLength={5} maxLength={40} autoComplete="tel"
+                                  placeholder="+678 …" value={registration.phone} onChange={event => setRegistration(previous => ({ ...previous, phone: event.target.value }))}
+                                /></label>
+                              </>}
+                              <label><CourseText text={"How will you attend?"} /><select name="attendance" value={registration.attendance} onChange={event => setRegistration(previous => ({ ...previous, attendance: event.target.value as RegistrationDetails["attendance"] }))}>
                                   <option value="online"><CourseText text={"Online"} /></option>
                                   <option value="in_person"><CourseText text={"In person"} /></option>
                                   <option value="mixed"><CourseText text={"A mix of both"} /></option>
@@ -969,7 +981,7 @@ function TrainingCenterContent({
                               <label className="lms-check">
                                 <input type="checkbox" required />{t(checkout.requires_approval ? "I understand that workshop access requires approval and have read the" : "I understand the course fee and have read the")}{" "}
                                 <Link href="/privacy#training-registrations"><CourseText text={"privacy notice"} /></Link><CourseText text={"."} /></label>
-                              <button className="lms-button"><CourseText text={"Save registration & continue"} />{" "}
+                              <button className="lms-button"><CourseText text={checkout.requires_approval ? "Register for approval" : "Continue to payment"} />{" "}
                                 <ArrowRight size={18} />
                               </button>
                             </fieldset>
