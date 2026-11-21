@@ -22,7 +22,7 @@ export async function createTrainingAccount(input: z.infer<typeof signupSchema>)
     user_metadata: { full_name: input.name, training_signup: true, attendance: input.attendance, training_privacy_accepted_at: new Date().toISOString(), training_email_confirmation_skipped: true },
   });
   if (result.error) {
-    if (['email_exists', 'user_already_exists'].includes(result.error.code || '')) throw new HttpError(409, 'An account already uses this email. Choose “Already a student? Sign in” to continue, or reset your password.');
+    if (['email_exists', 'user_already_exists'].includes(result.error.code || '')) throw new HttpError(409, 'An account already uses this email. Choose “Already a student? Sign in” to continue, or reset your password.', 'ACCOUNT_EXISTS');
     throw result.error;
   }
   const user = result.data.user;
@@ -33,7 +33,7 @@ export async function createTrainingAccount(input: z.infer<typeof signupSchema>)
     if (course) orderId = checked(await db.from('pwd_lms_orders').insert({ user_id: user.id, course_id: course.id, email: input.email, name: input.name, phone: input.phone, attendance: input.attendance, amount: course.amount, currency: course.currency, ...(course.requires_approval ? { status: "pending", method: "grant", package_label: "Awaiting workshop approval" } : course.amount === 0 ? { status: "granted", method: "grant", package_label: "Workshop participant access" } : {}) }).select('id').single())!.id as string;
   } catch {
     // Keep the new account recoverable. Never delete it or override existing records.
-    throw new HttpError(503, 'Your account was created, but registration could not finish. Please sign in to complete your course registration.');
+    throw new HttpError(503, 'Your account was created, but registration could not finish. Please sign in to complete your course registration.', 'ACCOUNT_CREATED_SIGN_IN');
   }
   return { courseId: course?.id || null, orderId };
 }

@@ -887,5 +887,9 @@
   "Watch this class in Zoom’s recording player. No download is needed.": "Regardez ce cours dans le lecteur d’enregistrements Zoom. Aucun téléchargement n’est nécessaire.",
   "Watch recording": "Voir l’enregistrement",
   "Recording passcode": "Code d’accès à l’enregistrement",
-  "Opens in a new tab. Enter the recording passcode if Zoom asks for it.": "S’ouvre dans un nouvel onglet. Saisissez le code d’accès à l’enregistrement si Zoom le demande."
+  "Opens in a new tab. Enter the recording passcode if Zoom asks for it.": "S’ouvre dans un nouvel onglet. Saisissez le code d’accès à l’enregistrement si Zoom le demande.",
+  "Taken a class with us before? Use the same account for every course.": "Vous avez déjà suivi un cours avec nous ? Utilisez le même compte pour tous vos cours.",
+  "Sign in to your existing account": "Connectez-vous à votre compte existant",
+  "You already have an account. Sign in with your existing password to continue, or choose Forgot password.": "Vous avez déjà un compte. Connectez-vous avec votre mot de passe actuel pour continuer, ou choisissez Mot de passe oublié.",
+  "Your account is ready. Sign in to finish your course registration.": "Votre compte est prêt. Connectez-vous pour terminer votre inscription au cours."
 }

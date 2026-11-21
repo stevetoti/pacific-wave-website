@@ -25,10 +25,10 @@ export async function readJson<T>(request: Request, schema: z.ZodType<T>): Promi
   return result.data;
 }
 export class HttpError extends Error {
-  constructor(public status: number, message: string) { super(message); }
+  constructor(public status: number, message: string, public code?: string) { super(message); }
 }
 export async function apiError(error: unknown, route: string) {
-  if (error instanceof HttpError) return NextResponse.json({ success: false, error: error.message }, { status: error.status });
+  if (error instanceof HttpError) return NextResponse.json({ success: false, error: error.message, ...(error.code ? { code: error.code } : {}) }, { status: error.status });
   await reportServerError(route, error);
   return NextResponse.json({ success: false, error: 'Service temporarily unavailable. Please try again.' }, { status: 503 });
 }

@@ -12,7 +12,7 @@ import YouTubeRecordings from "./YouTubeRecordings";
 import { liveRecordingPending } from "@/lib/lms/lesson-recording";
 import { CourseText, useCourseLanguage } from '@/components/lms/CourseLanguage';
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -58,6 +58,9 @@ const base = "/training-center";
 function classImage(course: Course, lesson: Lesson, index: number) {
   return lesson.thumbnail_url || (course.slug === blpSlug && blpModules[index] ? `/images/training/blp/scene-0${blpModules[index].image}.webp` : undefined) || (["vanuatu-october-2026", novemberCourseSlug].includes(course.slug) && index >= 0 && index < 12 ? `/images/training/classes/class-${String(index+1).padStart(2,"0")}.webp` : undefined);
 }
+class TrainingApiError extends Error {
+  constructor(message: string, readonly code?: string) { super(message); }
+}
 async function api(path: string, body?: unknown) {
   const r = await authFetch(
     `/api/lms/${path}`,
@@ -70,7 +73,7 @@ async function api(path: string, body?: unknown) {
       : {},
   );
   const data = await r.json();
-  if (!r.ok) throw new Error(data.error || "Please try again.");
+  if (!r.ok) throw new TrainingApiError(data.error || "Please try again.", data.code);
   return data;
 }
 const when = (s: string, language: CourseLanguage = "en") =>
@@ -131,6 +134,22 @@ function TrainingCenterContent({
           : "signin",
     );
   const [accountEmail, setAccountEmail] = useState("");
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const passwordInput = useRef<HTMLInputElement>(null);
+  function switchAuthMode(mode: "signup" | "signin" | "reset") {
+    setAuthMode(mode);
+    setError("");
+    setMessage("");
+    setAccountEmail("");
+    setAuthPassword("");
+    // Keep the intended course and dashboard destination through reload/back/reset.
+    const params = new URLSearchParams({ mode });
+    for (const key of ["course", "next", "onboarding"] as const) {
+      if (query[key]) params.set(key, query[key]);
+    }
+    router.replace(`${base}/account?${params}`);
+  }
   useEffect(() => {
     if (view === "account")
       setAuthMode(
@@ -390,7 +409,7 @@ function TrainingCenterContent({
         )}
         {message && (
           <div className="lms-notice" role="status">
-            {message}
+            {t(message)}
           </div>
         )}
         {!ready ? (
@@ -558,7 +577,7 @@ function TrainingCenterContent({
                 <div className="lms-auth-form">
                   <p className="lms-auth-kicker"><CourseText text={"PACIFIC WAVE DIGITAL · TRAINING CENTRE"} /></p>
 
-                  {authMode === "signup" && queryCourse && checkout && (
+                  {["signup", "signin", "reset"].includes(authMode) && queryCourse && checkout && (
                     <div className="lms-notice">
                       <strong>{checkout.title}</strong>
                       <p>
@@ -584,6 +603,14 @@ function TrainingCenterContent({
                       ? checkout?.requires_approval ? "Register for free. Our team will approve your workshop access after checking participant eligibility." : "Register once, then choose how to pay. No email confirmation needed."
                       : "Your courses, class recordings and learning progress in one place.")}
                   </p>
+                  {authMode === "signup" && (
+                    <div className="lms-notice">
+                      <p><CourseText text="Taken a class with us before? Use the same account for every course." /></p>
+                      <button type="button" className="lms-button" disabled={busy} onClick={() => switchAuthMode("signin")}>
+                        <CourseText text="Sign in to your existing account" />
+                      </button>
+                    </div>
+                  )}
                   {accountEmail && (
                     <div className="lms-notice">
                       <p><CourseText text={"Account email:"} /><strong>{accountEmail}</strong>
@@ -684,6 +711,16 @@ function TrainingCenterContent({
                             course: queryCourse || undefined,
                             intent: forAffiliate ? "affiliate" : undefined,
                           });
+                          } catch (error) {
+                            if (error instanceof TrainingApiError && ["ACCOUNT_EXISTS", "ACCOUNT_CREATED_SIGN_IN"].includes(error.code || "")) {
+                              switchAuthMode("signin");
+                              setMessage(error.code === "ACCOUNT_EXISTS"
+                                ? "You already have an account. Sign in with your existing password to continue, or choose Forgot password."
+                                : "Your account is ready. Sign in to finish your course registration.");
+                              requestAnimationFrame(() => passwordInput.current?.focus());
+                              return;
+                            }
+                            throw error;
                           } finally {
                             setTurnstileToken(null);
                             setCaptchaAttempt(value => value + 1);
@@ -750,6 +787,8 @@ function TrainingCenterContent({
                       {authMode !== "update" && (
                         <label><CourseText text={"Email address"} /><input
                             name="email"
+                            value={authEmail}
+                            onChange={event => setAuthEmail(event.target.value)}
                             type="email"
                             autoComplete="email"
                             required
@@ -759,6 +798,9 @@ function TrainingCenterContent({
                       {authMode !== "reset" && (
                         <label><CourseText text={"Password"} /><input
                             name="password"
+                            ref={passwordInput}
+                            value={authPassword}
+                            onChange={event => setAuthPassword(event.target.value)}
                             type="password"
                             minLength={
                               authMode === "signup" || authMode === "update"
@@ -801,8 +843,9 @@ function TrainingCenterContent({
                   </form>
                   <div className="lms-auth-links">
                     <button
+                      disabled={busy}
                       onClick={() =>
-                        setAuthMode(authMode === "signup" ? "signin" : "signup")
+                        switchAuthMode(authMode === "signup" ? "signin" : "signup")
                       }
                     >
                       {t(authMode === "signup"
@@ -810,7 +853,7 @@ function TrainingCenterContent({
                         : "New here? Create an account")}
                     </button>
                     {authMode === "signin" && (
-                      <button onClick={() => setAuthMode("reset")}><CourseText text={"Forgot password?"} /></button>
+                      <button disabled={busy} onClick={() => switchAuthMode("reset")}><CourseText text={"Forgot password?"} /></button>
                     )}
                   </div>
                   <p className="lms-auth-reassurance">
