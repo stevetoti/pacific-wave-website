@@ -620,7 +620,7 @@ function TrainingCenterContent({
                   {authMode === "signup" && (
                     <div className="lms-notice">
                       <p><CourseText text="Taken a class with us before? Use the same account for every course." /></p>
-                      <button type="button" className="lms-button" disabled={busy} onClick={() => switchAuthMode("signin")}>
+                      <button type="button" className="lms-button" disabled={busy || !authReady} onClick={() => switchAuthMode("signin")}>
                         <CourseText text="Sign in to your existing account" />
                       </button>
                     </div>
@@ -631,7 +631,7 @@ function TrainingCenterContent({
                       </p>
                       <button
                         className="lms-text"
-                        disabled={busy}
+                        disabled={busy || !authReady}
                         onClick={() =>
                           run(async () => {
                             await api("account", {
@@ -650,7 +650,7 @@ function TrainingCenterContent({
                   {verify && (
                     <button
                       className="lms-button"
-                      disabled={busy}
+                      disabled={busy || !authReady}
                       onClick={() =>
                         run(async () => {
                           const { error } = await supabase.auth.verifyOtp({
@@ -757,7 +757,7 @@ function TrainingCenterContent({
                       });
                     }}
                   >
-                    <fieldset disabled={busy}>
+                    <fieldset disabled={busy || !authReady}>
                       {authMode === "signup" && (
                         <>
                           <label><CourseText text={"Full name"} /><input
@@ -840,7 +840,7 @@ function TrainingCenterContent({
                         {TURNSTILE_SITE_KEY ? <TurnstileWidget key={captchaAttempt} siteKey={TURNSTILE_SITE_KEY} onVerify={setTurnstileToken} theme="light" /> : <p role="alert"><CourseText text={"Registration is temporarily unavailable. Please contact us for help."} /></p>}
                       </>}
                       <button className="lms-button" disabled={authMode === "signup" && !turnstileToken}>
-                        {t(busy
+                        {t(busy || !authReady
                           ? "Please wait…"
                           : authMode === "signup"
                             ? queryCourse
@@ -857,7 +857,7 @@ function TrainingCenterContent({
                   </form>
                   <div className="lms-auth-links">
                     <button
-                      disabled={busy}
+                      disabled={busy || !authReady}
                       onClick={() =>
                         switchAuthMode(authMode === "signup" ? "signin" : "signup")
                       }
@@ -867,7 +867,7 @@ function TrainingCenterContent({
                         : "New here? Create an account")}
                     </button>
                     {authMode === "signin" && (
-                      <button disabled={busy} onClick={() => switchAuthMode("reset")}><CourseText text={"Forgot password?"} /></button>
+                      <button disabled={busy || !authReady} onClick={() => switchAuthMode("reset")}><CourseText text={"Forgot password?"} /></button>
                     )}
                   </div>
                   <p className="lms-auth-reassurance">
