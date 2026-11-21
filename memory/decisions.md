@@ -327,3 +327,6 @@ Grant unpaid follow-up per instructor assignment with a false default. Allow pen
 
 ## 2026-11-17 — [Codex] Recording source options
 Owner wants Zoom cloud share links without downloading, with YouTube retained for recordings stored elsewhere. Treat replays separately from live Zoom joining. Links/passcodes appear only to paid/granted enrolments after explicit recording publication; private one-to-one programmes keep private uploads. External Zoom sharing rules still apply.
+
+## 2026-11-21 — [Codex] Returning students reuse details
+An existing student selecting a new paid course proceeds directly to payment using their own saved profile/prior-order contact, with only a pending server-priced/idempotent order. Collect required contact only if missing. No automatic charge or paid/granted access. Preserve original account/password and course through sign-in/reset.

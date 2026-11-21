@@ -133,7 +133,7 @@ test('sign-in fields wait for hydration so early entries cannot be silently clea
  const fixture=await setup(page);
  let release!:()=>void;
  const ready=new Promise<void>(resolve=>{release=resolve;});
- await page.route('**/_next/static/**/*.js',async route=>{await ready;await route.continue();});
+ await page.route('**/_next/static/**/*.js*',async route=>{await ready;await route.continue();});
  try{
   await page.goto(`/training-center/account?mode=signin&course=${slug}`,{waitUntil:'commit'});
   await checkedExpect(page.getByLabel('Email address',{exact:true})).toBeDisabled();

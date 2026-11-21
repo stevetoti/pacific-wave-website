@@ -523,3 +523,7 @@ Live application e7a0740 (review of Claude 1fb58e6), production dpl_7yQApJJNVUB3
 
 ## 2026-11-17 — [Codex] Zoom cloud class replays
 - [x] Add Zoom recording option beside YouTube/upload and publish owner-confirmed link on November–December Day One. — [Codex] 2026-11-17: Live admin persistence, paid/unpaid/draft API/browser, language/mobile checks pass; QA removed/no emails; other lessons/live meetings preserved.
+
+## 2026-11-21 — [Codex] Returning-student checkout
+- [x] Fix and release existing-account handoff/direct payment, verify actual live Stripe checkout, expire test session and remove synthetic records. — [Codex] 2026-11-21: appd5ba468 live; paidtransaction not submitted.
+- [ ] Repeat the unrelated full desktop marketing walkthrough when browser/page-load execution is stable; earlier staged and live mobile public suites passed.

@@ -1,27 +1,49 @@
-# Returning-student registration — 21 November 2026
+# Returning students go directly to payment — 21 November 2026
 
-Stephen reports an October student tried creating another account when joining the one-on-one software class. Read-only account check confirms the original account is verified, signed in on21November, retains its paid October order and has no one-on-one order. No password or real account/enrolment change is needed.
+[Codex] Stephen reported an October student trying to create another account, then supplied a screenshot showing signed-in checkout asking for contact details again. Final instruction: all returning students should reuse their saved details and go directly to payment for a newly selected course.
 
-Complete source: `.deployment/returning-students-20261121`, branch `codex/returning-students-20261121`, based on84b8fc0/fbfcc8a complete November/Bislama/SEO/Zoom lineage. Previous production dpl_BgprrpkoVvxFFdZRHT7GrBxFoURA.
+## Live release
 
-Changes:
-- Existing-account sign-in appears before signup fields and does not require signup human verification.
-- Explicit ACCOUNT_EXISTS and ACCOUNT_CREATED_SIGN_IN errors transition to sign-in, preserving entered email/course and clearing the proposed new password. No automatic password change or sign-in attempt with the new signup password.
-- Sign-in/signup/reset mode is recorded in the URL so reload/back does not return to the wrong form. Selected course, dashboard destination and onboarding return survive.
-- Course summary remains visible during sign-in/reset. Signup mode remains available for new students.
-- New authored labels include Bislama and French translations; unknown/user-authored text remains unchanged.
+- Application `d5ba4686f240bab36787c217e1991d4e242d9a50`, deployment `dpl_DfezAgh27JmxxiTSc2bAUtkTETcE`, production READY. Exact `pacificwavedigital.com` alias/SHA verified through Vercel.
+- Complete source `.deployment/returning-students-20261121`, pushed branch `codex/returning-students-20261121`. Later commits contain tests/handoff only. Preserves full November, Bislama, SEO, Zoom, private replay and access-gating lineage.
+- Previous complete release `dpl_BgprrpkoVvxFFdZRHT7GrBxFoURA`. Interim direct-payment release `dpl_G3dhjKwXkZL6tR3PEfC9FaMnMmQk` lacks the final account-ready guard. No database migration or provider configuration change.
 
-Acceptance matrix (update with release evidence):
+## Behaviour
 
-| ID | Observable criterion | Result |
+Authenticated dashboard returns a minimal registration summary resolved from this user's profile and previous orders, with account-name fallback. Explicit selected paid-course checkout reuses those details to prepare one pending order through the existing server-priced/idempotent order action and opens bank/card payment options. It never charges or grants paid access automatically. Missing required contact is collected with known fields preserved. Existing paid/granted/review orders keep their prior handling. Closed-course checks, server prices and affiliate attribution remain.
+
+The saved-details request is bound to the expected signed-in user. The server re-reads only that user's own saved contact instead of trusting supplied contact/price. Switching accounts rejects the pending request. Existing paid orders are not overwritten by repeat visits.
+
+Signup now shows existing-account sign-in before its fields. Structured duplicate/partially-completed-signup errors hand off to sign-in, retaining email/course and clearing the proposed new password. No existing password, confirmation state or profile is overwritten. Sign-in/reset/signup mode updates the browser URL synchronously; selected course/onboarding/dashboard destination survives. Account controls wait for client initialization so early entries cannot be lost during hydration. Bislama/French labels included.
+
+## Acceptance matrix
+
+| ID | Criterion | Result |
 |---|---|---|
-| R1 | Existing verified October identity/enrolment preserved, no new real order | PASS — read-only account check |
-| R2 | Sign-in choice precedes signup fields and works without signup challenge | Pending browser checks |
-| R3 | Duplicate email hands off to sign-in; retains email/course, clears password; no implicit login | Pending browser checks |
-| R4 | Wrong password stays actionable; recovery retains course; reset mode survives reload | Pending browser checks |
-| R5 | Sign-in reaches selected one-on-one checkout; new course registration persists | Pending browser checks |
-| R6 | New signup/closed-course/security constraints remain; no existing-account mutation | PASS — server regression tests |
-| R7 | Desktop/mobile fit and existing public/training/admin/SEO source preserved | Pending browser/release checks |
-| R8 | Tested staged production commit is the promoted live alias | Pending deployment |
+| R1 | Existing October identity and paid enrolment retained | PASS — targeted read-only check; saved contact complete |
+| R2 | Prominent sign-in works without signup verification | PASS — desktop/mobile deployed browser contracts |
+| R3 | Duplicate email hands off with same email/course and cleared password | PASS — desktop/mobile; no implicit login |
+| R4 | Wrong password and recovery remain actionable; reset mode survives reload | PASS — desktop/mobile contracts; email actions intercepted |
+| R5 | Returning student reaches payment without repeating contact form; repeat visits reuse pending order | PASS — browser contract plus server handler tests; real pre-seeded pending-order checkout/reload |
+| R6 | Server-price/user-scope/idempotence/closed-course/missing-contact boundaries | PASS — focused handler/helper and existing SQL tests |
+| R7 | Actual student sign-in, payment UI and Stripe checkout on desktop/mobile, no overflow/errors | PASS — real isolated identity on staged and final live builds |
+| R8 | Exact tested application maps to live alias | PASS — Vercel deployment metadata |
+| R9 | Stripe displays VUV250000 for selected one-on-one programme | PASS — actual provider page plus retrieved live session amount/currency/metadata; unpaid |
+| R10 | Early sign-in fields remain disabled while JS is deliberately delayed, then work | PASS — staged desktop/mobile and live focused checks; asset pattern includes version query |
+| R11 | Additional full desktop marketing-page walkthrough | BLOCKED — live browser walkthrough timed out during page navigation/evaluation; previous staged public suite and live mobile full walkthrough passed |
 
-Local/deployed browser contract fixtures intercept all signup, recovery, authentication, order and profile requests. They send no emails or charges and do not mutate student accounts. These prove browser behaviour against a controlled API contract, not delivery of password-reset email or use of a real student's password. No real password reset should be sent without Stephen's explicit instruction.
+## Evidence and limits
+
+19 focused tests pass; types/lint/cloud production build/eight source+built route guards pass. Final staged account/signup browser suite14passes/2provider-only skips. Live student contract cases pass across desktop/mobile including targeted retries after transient navigation timeouts. Real student role has no admin/instructor permissions: login -> selected payment -> leave/reload -> bank/card options -> actual Stripe page, both viewports, zero page errors/overflow. Full staged public suite and live mobile public suite passed; broad live desktop marketing walk-through remains uncompleted as recorded above. No claim of real payment completion/webhook or reset-email delivery.
+
+Browser contracts intercept signup/recovery/auth/order requests and do not mutate customers. The actual provider journey used one temporary QA identity and one pending registration seeded with the database email trigger suppressed;18private lesson rows belonged only to that order. Stripe session was verified live/open/unpaid, then explicitly expired. No card details entered, payment made, email queued or message sent. Cleanup verified zero test users/profiles/orders/lessons/emails. All three30minute staging shares revoked. Production error-log scan for final deployment returned zero entries. No separate human cold reviewer was available.
+
+Private evidence is in workspace `output/returning-students-20261121`: verification.json, real-signin-pacificwavedigital.com.json, stripe-verification.json, signin-cleanup.json and desktop/mobile screenshots. Test credentials and temporary-access files removed after cleanup; no secrets committed.
+
+## Student links
+
+Existing-account entry: https://pacificwavedigital.com/training-center/account?mode=signin&course=one-on-one-mentorship
+
+Already signed in: https://pacificwavedigital.com/training-center/checkout?course=one-on-one-mentorship
+
+Ask students with an old open tab to refresh once. Sign in with their original student email; do not create another account.
